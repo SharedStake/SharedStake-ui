@@ -15,7 +15,7 @@
     "vue": "^2.6.11",
     "vue-ellipse-progress": "^1.3.0",
     "vue-router": "^3.4.9",
-    "vuex": "^3.5.1",
+    "vuex": "^3.6.0",
     "web3": "^1.3.0"
   },
   "devDependencies": {

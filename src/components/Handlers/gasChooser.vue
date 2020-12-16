@@ -8,19 +8,19 @@
         id="first"
         @click="setChoice(0)"
       >
-        {{ gas.low }}
+        {{ gas.low.toFixed(0) }}
       </div>
       <div
         :class="choice == 1 ? 'choice' : 'choice active'"
         @click="setChoice(1)"
       >
-        {{ gas.medium }}
+        {{ gas.medium.toFixed(0) }}
       </div>
       <div
         :class="choice == 2 ? 'choice' : 'choice active'"
         @click="setChoice(2)"
       >
-        {{ gas.high }}
+        {{ gas.high.toFixed(0) }}
       </div>
     </div>
   </div>
@@ -78,13 +78,14 @@ export default {
   border: 1px solid #ff007a;
   border-radius: 50%;
   font-size: 14px;
-  padding: 0.3rem;
-  width: 22px;
+  padding: 0.22rem;
+  width: 19px;
   z-index: 10;
   text-align: center;
 }
 .root {
   width: 100%;
+  margin-top: 0.5rem;
 }
 .container {
   position: relative;
@@ -95,6 +96,5 @@ export default {
 .active {
   background-color: #ff007a;
   color: #fff;
-  border: 0px solid transparent;
 }
 </style>

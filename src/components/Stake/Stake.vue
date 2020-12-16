@@ -105,6 +105,7 @@ BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 
 import { validator, bETH } from "../../contracts/contracts";
+import { mapGetters } from "vuex";
 import { timeout } from "../../utils/helpers";
 export default {
   components: { Arrow, ImageVue, gasChooser, Notifier, TotalStaked },
@@ -123,6 +124,18 @@ export default {
     remaining: BN(0),
     updateGraph: false,
   }),
+  created: function () {
+    var self = this;
+    window.ethereum.on("accountsChanged", function () {
+      self.mounted();
+    });
+  },
+  mounted: async function () {
+    await this.mounted();
+  },
+  computed: {
+    ...mapGetters({ userAddress: "userAddress" }),
+  },
   methods: {
     async addTx(tx = { id: "", success: false, msg: "Error." }) {
       this.txs.push(tx);
@@ -171,7 +184,7 @@ export default {
     },
     async onSubmit() {
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake")) return;
-      let walletAddress = await window.web3.eth.getAccounts();
+      let walletAddress = this.userAddress;
       const addTx = this.addTx;
       const automatedCloseTx = this.automatedCloseTx;
       let TXhash = null;
@@ -181,7 +194,7 @@ export default {
         await validator.methods
           .deposit()
           .send({
-            from: walletAddress[0],
+            from: walletAddress,
             value: myamount,
             gas: 200000,
             gasPrice: BN(this.gas).multipliedBy(1000000000).toString(),
@@ -227,7 +240,7 @@ export default {
         await validator.methods
           .withdraw(myamount)
           .send({
-            from: walletAddress[0],
+            from: walletAddress,
             gas: 200000,
             gasPrice: BN(this.gas).multipliedBy(1000000000).toString(),
           })
@@ -270,11 +283,10 @@ export default {
     },
     async mounted() {
       //balances
-      await window.ethereum.enable();
-      let walletAddress = await window.web3.eth.getAccounts();
-      let amount = await window.web3.eth.getBalance(walletAddress[0]);
+      let walletAddress = this.userAddress;
+      let amount = await window.web3.eth.getBalance(walletAddress);
       this.EthBal = BN(amount);
-      let beth = await bETH.methods.balanceOf(walletAddress[0]).call();
+      let beth = await bETH.methods.balanceOf(walletAddress).call();
       this.BethBal = BN(beth);
       if (this.isDeposit) this.balance = BN(amount).dividedBy(1e18).toFixed(6);
       else this.balance = BN(beth).dividedBy(1e18).toFixed(6);
@@ -325,8 +337,9 @@ export default {
         return;
       }
       if (newValue[newValue.length - 1] == 0) {
+        this.Damount = newValue;
         this.BNamount = BN(this.Damount).multipliedBy(1e18);
-        this.Damount = this.BNamount.dividedBy(1e18).toString();
+        console.log(newValue, "mm");
         this.amountCheck();
         return;
       }
@@ -335,15 +348,18 @@ export default {
         newValue[newValue.length - 2] !== "."
       ) {
         this.Damount = newValue;
-        this.BNamount = BN(0);
+        console.log(newValue, "mm");
+        // this.BNamount =    BN(0);
         this.amountCheck();
         return;
       }
       if (isNaN(newValue)) {
         this.Damount = this.BNamount.dividedBy(1e18).toString();
+        console.log(newValue, "m");
         return;
       }
       if (!newValue) {
+        console.log(newValue);
         this.Damount = 0;
       } else {
         this.Damount = newValue;
@@ -373,15 +389,6 @@ export default {
         else this.buttonText = "Unstake";
       }
     },
-  },
-  created: function () {
-    var self = this;
-    window.ethereum.on("accountsChanged", function () {
-      self.mounted();
-    });
-  },
-  mounted: async function () {
-    await this.mounted();
   },
 };
 </script>
@@ -581,7 +588,7 @@ export default {
   transform: rotate(30deg) scale(0.9);
   transition: all 0.2s ease-in-out;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
   .Graph {
     position: fixed;
     top: calc(75%);

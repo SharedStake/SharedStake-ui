@@ -9,68 +9,26 @@
       </div>
     </div>
     <div v-if="authenticated" class="address">
-      {{ address ? address.toLowerCase() : "" }}
+      {{ userAddress }}
     </div>
-    <div v-if="authenticated" class="network" v-show="network">
-      on {{ network }}
+    <div v-if="authenticated" class="network" v-show="getNetwork">
+      on {{ getNetwork }}
     </div>
-    <Socials :class="authenticated ? 'Socials-auth' : 'Socials'" />
   </div>
 </template>
 
 <script>
 import ImageVue from "../../Handlers/image";
-import Socials from "./Socials/Socials";
-const networks = {
-  0: "Olympic",
-  1: "Mainnet",
-  2: "Expanse",
-  3: "Ropsten",
-  4: "Rinkeby",
-  5: "Goerli",
-  6: "Kotti Classic",
-  7: "Mordor Classic",
-  8: "Ubiq",
-  10: "Quorum",
-  42: "Kovan",
-  60: "GoChain",
-  77: "Sokol",
-  99: "Core",
-  100: "xDai",
-};
+import { mapGetters } from "vuex";
 export default {
   name: "Figure",
-  props: {
-    authenticated: Boolean,
-    address: String,
-  },
-  components: { ImageVue, Socials },
-  data() {
-    return {
-      network: false,
-    };
-  },
-  watch: {
-    address: function (val) {
-      console.log("s", val);
-    },
-    authenticated: async function (newVal) {
-      if (newVal) {
-        let walletAddress = await window.web3.eth.getAccounts();
-        this.$emit("address", walletAddress[0]);
-        let network = await window.web3.eth.net.getId();
-        this.network = networks[network];
-      } else {
-        this.network = false;
-      }
-    },
-  },
-  created: function () {
-    var self = this;
-    window.ethereum.on("accountsChanged", function (walletAddress) {
-      console.log(walletAddress);
-      self.$emit("address", walletAddress[0]);
-    });
+  components: { ImageVue },
+  computed: {
+    ...mapGetters({
+      userAddress: "userAddress",
+      authenticated: "isAuth",
+      getNetwork: "getNetwork",
+    }),
   },
 };
 </script>
@@ -152,19 +110,6 @@ export default {
   overflow-y: hidden;
   overflow-x: scroll;
 }
-.Socials {
-  width: calc(100vw / 7 * 1.5);
-  position: fixed;
-  transition: all 1s ease-in;
-  top: 90%;
-  z-index: 200;
-}
-.Socials-auth {
-  width: calc(100vw / 7 * 1.5);
-  position: fixed;
-  transition: all 1s ease-in;
-  top: 90%;
-}
 ::-webkit-scrollbar {
   height: 2.5px;
 }
@@ -182,13 +127,7 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: #fff;
 }
-@media only screen and (max-width: 600px) {
-  .Socials {
-    width: 100vw;
-  }
-  .Socials-auth {
-    width: 100vw;
-  }
+@media only screen and (max-width: 700px) {
   .authenticator {
     flex-direction: row;
   }

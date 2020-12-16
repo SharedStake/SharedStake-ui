@@ -1,10 +1,8 @@
 <template>
   <div id="main" v-bind:class="'flex_row'">
     <Figure
-      :address="address"
-      @address="(val) => (address = val)"
-      :authenticated="authenticated"
       v-bind:id="route == '/' || !authenticated ? 'Figure' : 'FigureOut'"
+      v-if="componentsIn"
     />
 
     <Buttons v-if="authenticated" :route="route" />
@@ -17,45 +15,65 @@
     </transition>
 
     <Authenticator
-      @authenticated="Authenticate"
-      :authenticated="authenticated"
+      v-if="componentsIn"
       v-bind:class="authenticated ? 'Element-auth' : 'Authenticator'"
       v-bind:id="route == '/' || !authenticated ? '' : 'AuthenticatorOut'"
+    />
+    <Socials
+      v-if="componentsIn"
+      :class="authenticated ? 'Socials-auth' : 'Socials'"
+      v-bind:id="route == '/' || !authenticated ? '' : 'SocialsOut'"
     />
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Figure from "./Root/Figure";
 import Authenticator from "./Root/Authenticator.vue";
 import Buttons from "./Root/Buttons";
+import Socials from "./Root/Socials.vue";
 export default {
   name: "Root",
   components: {
     Figure,
     Authenticator,
     Buttons,
+    Socials,
   },
   data: () => ({
-    authenticated: false,
     route: "/",
-    address: null,
     Width: 0,
+    componentsIn: true,
   }),
-  methods: {
-    Authenticate() {
-      this.authenticated = !this.authenticated;
-      if (this.address) this.address = null;
-    },
-  },
+  methods: {},
   watch: {
     $route(to) {
       this.route = to.name;
+    },
+    async route(to) {
+      if (to == "/" || !this.authenticated) {
+        this.componentsIn = true;
+        return;
+      }
+      if (window.innerWidth < 600) {
+        this.componentsIn = false;
+      }
+    },
+    async authenticated() {
+      if (this.route == "/" || !this.authenticated) {
+        this.componentsIn = true;
+        return;
+      }
+      if (window.innerWidth < 600) this.componentsIn = false;
     },
   },
   created: function () {
     this.route = this.$route.name;
     this.Width = window.innerWidth;
+  },
+  computed: {
+    ...mapGetters({ authenticated: "isAuth" }),
   },
 };
 </script>
@@ -105,8 +123,6 @@ a {
 .Authenticator {
   width: calc(100vw / 7 * 5.5);
   padding-left: calc(100vw / 7 * 1.5);
-  height: 100%;
-  text-align: center;
   background: #fafafa;
 }
 .Element-auth {
@@ -138,6 +154,11 @@ a {
   transition: all 1s ease-in-out;
 }
 
+#SocialsOut {
+  width: 0vw;
+  transform: translateX(-20vw);
+  transition: all 1s ease-in-out;
+}
 .Container {
   height: 100%;
   width: calc(100vw / 7 * 5);
@@ -161,43 +182,74 @@ a {
 .fade-enter /* .fade-leave-active below version 2.1.8 */ {
   display: none;
 }
-@media only screen and (max-width: 600px) {
+.Socials {
+  width: calc(100vw / 7 * 1.5);
+  position: fixed;
+  transition: all 1s ease-in;
+  bottom: 3vh;
+  left: 0vw;
+  z-index: 200;
+}
+.Socials-auth {
+  width: calc(100vw / 7 * 1.5);
+  position: fixed;
+  transition: all 1s ease-in;
+  bottom: 3vh;
+  left: 0vw;
+  z-index: 200;
+}
+@media only screen and (max-width: 700px) {
   #main {
-    position: flex;
     flex-direction: column;
     overflow-x: scroll;
-    min-height: 480px;
+    overflow-y: scroll;
   }
   #Figure {
-    position: fixed;
-    top: 0;
     width: calc(100vw);
     height: 5rem;
   }
   .Element-auth {
     display: none;
+    flex: 1;
   }
   #FigureOut {
     width: 100%;
     height: 0%;
     transform: translateY(-20vw);
     transition: all 0s ease-in-out;
+    flex: 1;
   }
   #AuthenticatorOut {
     width: 100%;
     height: 0%;
     transform: translateY(20vw);
     transition: all 0s ease-in-out;
+    flex: 1;
   }
   .ContainerFull {
     min-width: 100vw;
+    flex: 1;
     align-self: baseline;
   }
   .Buttons {
+    flex: 1;
     max-height: calc(100vh / 7 * 5.5 - 5rem);
   }
   .Authenticator {
     padding-left: 0;
+    flex: 1;
+  }
+  .Socials {
+    width: 100vw;
+    flex: 1;
+    bottom: 0vh;
+    position: relative;
+  }
+  .Socials-auth {
+    width: 100vw;
+    bottom: 0vh;
+    flex: 1;
+    position: relative;
   }
 }
 </style>

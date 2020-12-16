@@ -7,19 +7,20 @@
       >
     </div>
     <div class="content">
-      Earn ETH2 validator profit and more with the Shared Stake program and vETH2
+      Earn ETH2 validator profit and more with the
+      <span id="Green">SharedStake</span> program and vETH2
     </div>
     <div class="content">
-      <span id="Green">SharedStake Governance token</span> will be distributed with an
-      <span id="Red">airdrop and staking geysers</span>!
+      <span id="Green">SharedStake</span> Governance token will be distributed
+      with an <span id="Red">airdrop and staking geysers</span>!
     </div>
     <div class="content">
       Read more details
-      <span id="Green">
-        <a href='https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05#ad81c52153ae4972839332255a2dcd39'>
-          on Notion
-        </a>
-      </span>
+      <a
+        href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05#ad81c52153ae4972839332255a2dcd39"
+      >
+        <span id="Green"> on Notion </span>
+      </a>
     </div>
     <div class="content">
       There are already
@@ -35,9 +36,10 @@
 <script>
 import { timeout } from "../../../../utils/helpers";
 import ImageVue from "../../../Handlers/image.vue";
+import axios from "axios";
 export default {
   components: { ImageVue },
-  data: () => ({ value: 32.632 }),
+  data: () => ({ value: 0 }),
   methods: {
     async increaseValue() {
       let value = 0;
@@ -45,13 +47,17 @@ export default {
       let increment = initValue / 500;
       while (value < initValue) {
         value += increment;
-        this.value = (value / 1000).toFixed(3);
+        this.value = (value / 1000).toFixed(2);
         await timeout(0);
       }
       this.value = initValue / 1000;
     },
-    mounted() {
-      this.increaseValue();
+    async mounted() {
+      let totalBeth = await axios.get(
+        "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
+      );
+      this.value = (totalBeth.data.result / 1e18).toFixed(2);
+      await this.increaseValue();
     },
   },
   mounted: function () {
@@ -79,20 +85,22 @@ export default {
 }
 a:link {
   text-decoration: none;
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size: 37px;
   font-weight: 300;
-  color: #00d395;
 }
 #mainContent {
   font-size: 37px;
+  font-weight: 500;
 }
 #Green {
   color: #00d395;
 }
-#Red {
-  color: #e56b73;
-}
+/* #Red {
+  font-weight: 300;
+} */
 .value {
-  min-width: 7ch;
+  min-width: 5ch;
   display: inline-block;
   text-align: right;
   padding-right: 0.5ch;
@@ -101,20 +109,16 @@ a:link {
 @media only screen and (max-width: 700px) {
   .landingPage {
     color: #000;
-    text-align: center;
   }
   .title {
     color: #00d395;
-    text-align: center;
-    font-size: 60px;
+    font-size: 2em;
   }
   #mainContent {
-    text-align: center;
-    font-size: 27px;
+    font-size: 0.9em;
   }
   .content {
-    font-size: 21px;
-    text-align: center;
+    font-size: 0.7em;
   }
 }
 </style>
