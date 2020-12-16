@@ -27,13 +27,13 @@ export default {
   position: absolute;
   z-index: 4;
   color: #e56b73c6;
-  font-size: 20vw;
+  font-size: 12vw;
   font-weight: 700;
   z-index: 5;
 }
 
 .exp {
-  font-size: 5vw;
+  font-size: 2vw;
   font-weight: 400;
 }
 .img {
