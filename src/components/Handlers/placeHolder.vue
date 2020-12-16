@@ -22,7 +22,6 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  font-family: "Big Shoulders Stencil Display", cursive;
 }
 .title {
   position: absolute;
