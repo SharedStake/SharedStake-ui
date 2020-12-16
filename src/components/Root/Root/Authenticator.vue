@@ -1,7 +1,7 @@
 <template>
-  <div class="flex_row">
-    <div v-if="!authenticated" class="auth flex_column">
-      <Landing v-if="!authenticated" class="landing" />
+  <div>
+    <div v-if="!isAuth" class="auth flex_column">
+      <Landing v-if="!isAuth" class="landing" />
       <button @click="Authenticate" class="button-login">Connect!</button>
     </div>
     <div v-else class="auth-in">
@@ -11,38 +11,30 @@
 </template>
 
 <script>
-import Web3 from "web3";
+import { mapGetters, mapActions } from "vuex";
 import Landing from "./Landing/Landing.vue";
 export default {
   name: "Authenticator",
   components: { Landing },
-  props: {
-    authenticated: Boolean,
-  },
   data: () => ({}),
   methods: {
-    async Authenticate() {
-      if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
-        this.$emit("authenticated");
-        return true;
+    ...mapActions(["setAddress", "exit"]),
+    Authenticate() {
+      if (this.isAuth) this.exit();
+      else {
+        this.setAddress();
       }
-      return false;
     },
+  },
+  computed: {
+    ...mapGetters(["userAddress", "isAuth"]),
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.auth {
-  height: 555px;
-  margin-top: 20px;
-  justify-content: space-around;
-}
 .auth-in {
-  width: calc(100vw / 7);
+  width: calc(100vw / 7 * 0.5);
   height: 100%;
 }
 
@@ -60,6 +52,7 @@ button {
   font-size: 20px;
   border: none;
   cursor: pointer;
+  flex: 1;
 }
 .button-login {
   background-color: #00d395;
@@ -88,10 +81,12 @@ button {
 }
 .landing {
   z-index: 100;
+  flex: 1;
   text-align: left;
+  margin-bottom: 5vh;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
   .auth-in {
     width: 100vw;
     height: calc(100vh / 7);

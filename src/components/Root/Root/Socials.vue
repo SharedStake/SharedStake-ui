@@ -1,6 +1,6 @@
 <template>
-  <div class="flex_row">
-    <div class="flex_row Social" v-for="(logo, i) in logos" :key="i">
+  <div class="grid-container">
+    <div class="Social" v-for="(logo, i) in logos" :key="i">
       <a :href="logo.link" target="_blank" rel="noopener noreferrer">
         <imageVue v-show="logo.link" :src="logo.img" :size="size" class="logo"
       /></a>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import imageVue from "../../../Handlers/image.vue";
+import imageVue from "../../Handlers/image.vue";
 export default {
   data: () => ({
     logos: [
@@ -21,6 +21,10 @@ export default {
         link:
           "https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05#ad81c52153ae4972839332255a2dcd39",
       },
+      {
+        img: "github.png",
+        link: "https://github.com/SharedStake/SharedStake-ui",
+      },
     ],
     size: "32px",
   }),
@@ -29,11 +33,33 @@ export default {
 </script>
 
 <style scoped>
+.grid-container {
+  margin-top: 2vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 3vh 0px;
+  justify-items: center;
+  align-items: center;
+}
 .Social {
   transition: 0.3s ease-in-out;
 }
 .Social:hover {
   transform: scale(1.11);
   transition: 0.3s ease-in-out;
+}
+@media only screen and (max-width: 950px) {
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2vh 0px;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 2vh 0px;
+  }
 }
 </style>

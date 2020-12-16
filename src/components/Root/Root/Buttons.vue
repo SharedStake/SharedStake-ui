@@ -127,7 +127,7 @@ export default {
   background: #dc6be5;
   box-shadow: 5px 0 10px 2px #dd6be53d, 10px 10px 10px 2px rgba(0, 0, 0, 0.204);
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
   .Buttons {
     flex-direction: column;
     width: 100%;
@@ -139,6 +139,7 @@ export default {
   #OneButton {
     max-height: calc(100vh / 7);
     width: 100%;
+    margin-top: 0;
   }
   .flex_row {
     width: 100%;

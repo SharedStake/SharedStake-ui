@@ -106,7 +106,7 @@ export default {
 .content {
   font-size: 15px;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
   .Graph {
     flex-direction: column;
   }

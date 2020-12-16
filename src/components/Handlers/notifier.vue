@@ -17,29 +17,17 @@
 </template>
 
 <script>
-const networks = {
-  0: "Olympic",
-  1: "",
-  2: "Expanse.",
-  3: "Ropsten.",
-  4: "Rinkeby.",
-  5: "Goerli.",
-  6: "Kotti Classic",
-  7: "Mordor Classic",
-  8: "Ubiq",
-  10: "Quorum",
-  42: "Kovan",
-  60: "GoChain",
-  77: "Sokol",
-  99: "Core",
-  100: "xDai",
-};
+import { mapGetters } from "vuex";
 export default {
   props: ["msg", "id", "index", "success"],
   data: () => ({ network: "" }),
   mounted: async function () {
-    let network = await window.web3.eth.net.getId();
-    this.network = networks[network];
+    this.network = this.getNetwork;
+    console.log(this.getNetwork);
+    if (this.getNetwork == "Mainnet") this.network = "";
+  },
+  computed: {
+    ...mapGetters(["getNetwork"]),
   },
 };
 </script>

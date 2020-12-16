@@ -33,4 +33,7 @@ body {
   align-items: center;
   justify-content: space-evenly;
 }
+.bn-onboard-custom.bn-onboard-modal {
+  z-index: 990;
+}
 </style>
