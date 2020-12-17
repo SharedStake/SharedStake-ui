@@ -67,7 +67,6 @@ export default {
   mounted: async function () {
     let newPerfect = "Ethereum 2";
     for (let i = 0; i < 100; i++) {
-      console.log(this.perfect);
       let oldPerfect = this.perfect;
       let len = this.perfect.length;
       for (; len > 0; len--) {
@@ -78,7 +77,6 @@ export default {
       len = newPerfect.length;
       for (let j = 0; j <= len; j++) {
         this.perfect = newPerfect.substring(0, j);
-        console.log(this.perfect, len);
         await timeout(100);
       }
       await timeout(5000);
@@ -135,12 +133,12 @@ a {
 .loginButton {
   margin-right: 20px;
   background: transparent;
-  border: 1px #0d5cf8 solid;
+  border: 1px #2f74ff solid;
   border-radius: 5px;
   text-decoration: none;
   padding: 0 10px 0 10px;
   font-size: 18px;
-  color: #0d5cf8;
+  color: #2f74ff;
   text-align: center;
   line-height: 50px; /* same as height! */
   max-height: 50px;

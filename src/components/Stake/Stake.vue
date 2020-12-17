@@ -141,14 +141,12 @@ export default {
       this.txs.push(tx);
     },
     closeTx(index) {
-      console.log(index);
       let myTx = JSON.parse(JSON.stringify(this.txs));
       let newTx = myTx.filter((tx, i) => index != i);
       this.txs = newTx;
     },
     async automatedCloseTx(id) {
       await timeout(10000);
-      console.log(id);
       let myTx = JSON.parse(JSON.stringify(this.txs));
       let newTx = myTx.filter((tx) => id != tx.id);
       this.txs = newTx;
@@ -163,7 +161,6 @@ export default {
         let BNamount = this.EthBal.minus(BN(gas * 200000 * 1000000000));
         let remaining = await validator.methods.remainingSpaceInEpoch().call();
         this.remaining = BN(remaining);
-        console.log(remaining);
         if (this.remaining.eq(0)) {
           this.amountCheck();
           return;
@@ -210,7 +207,6 @@ export default {
             automatedCloseTx(tx.id);
           })
           .once("confirmation", () => {
-            console.log(TXhash);
             let tx = {
               id: TXhash,
               success: true,
@@ -339,7 +335,6 @@ export default {
       if (newValue[newValue.length - 1] == 0) {
         this.Damount = newValue;
         this.BNamount = BN(this.Damount).multipliedBy(1e18);
-        console.log(newValue, "mm");
         this.amountCheck();
         return;
       }
@@ -348,18 +343,15 @@ export default {
         newValue[newValue.length - 2] !== "."
       ) {
         this.Damount = newValue;
-        console.log(newValue, "mm");
         // this.BNamount =    BN(0);
         this.amountCheck();
         return;
       }
       if (isNaN(newValue)) {
         this.Damount = this.BNamount.dividedBy(1e18).toString();
-        console.log(newValue, "m");
         return;
       }
       if (!newValue) {
-        console.log(newValue);
         this.Damount = 0;
       } else {
         this.Damount = newValue;

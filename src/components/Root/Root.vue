@@ -7,7 +7,7 @@
 
     <Buttons v-if="authenticated" :route="route" />
 
-    <transition name="fade" mode="out-in">
+    <transition name="instant" mode="out-in">
       <router-view
         v-if="authenticated"
         v-bind:class="route == '/' ? 'Container' : 'ContainerFull'"
@@ -174,13 +174,13 @@ a {
   background-color: #fafafa;
 }
 
-.fade-enter-active {
+.instant-enter-active {
   transition: all 0s ease-in 0s;
 }
-.fade-leave-to {
+.instant-leave-to {
   display: none;
 }
-.fade-enter /* .fade-leave-active below version 2.1.8 */ {
+.instant-enter {
   display: none;
 }
 .Socials {
