@@ -1,7 +1,7 @@
 <template>
   <div class="flex_column authenticator">
-    <div v-bind:id="authenticated ? 'Result-auth' : 'Result'" @click="clicked">
-      <div v-if="!authenticated" class="Draw" id="output">
+    <div v-bind:id="authenticated ? 'Result-auth' : 'Result'">
+      <div v-if="!authenticated" class="Draw" id="output" @click="clicked">
         <ImageVue :src="'logo-1.png'" :size="'100%'" class="image" />
       </div>
       <div v-else class="Draw" id="output">

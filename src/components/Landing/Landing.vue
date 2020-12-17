@@ -107,6 +107,7 @@ a {
   );
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 .wrapper {
   width: 100vw;
@@ -120,7 +121,7 @@ a {
   justify-content: space-between;
 }
 .header {
-  padding: 20px 20px 0 0;
+  padding: 20px 0px 0 0;
   width: 100vw;
   max-width: 1000px;
   display: flex;
@@ -132,6 +133,7 @@ a {
   width: 100%;
 }
 .loginButton {
+  margin-right: 20px;
   background: transparent;
   border: 1px #0d5cf8 solid;
   border-radius: 5px;
