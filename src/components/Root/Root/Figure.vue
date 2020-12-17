@@ -1,6 +1,6 @@
 <template>
   <div class="flex_column authenticator">
-    <div v-bind:id="authenticated ? 'Result-auth' : 'Result'">
+    <div v-bind:id="authenticated ? 'Result-auth' : 'Result'" @click="clicked">
       <div v-if="!authenticated" class="Draw" id="output">
         <ImageVue :src="'logo-1.png'" :size="'100%'" class="image" />
       </div>
@@ -29,6 +29,11 @@ export default {
       authenticated: "isAuth",
       getNetwork: "getNetwork",
     }),
+  },
+  methods: {
+    async clicked() {
+      this.$router.push("/");
+    },
   },
 };
 </script>
