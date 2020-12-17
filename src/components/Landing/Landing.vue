@@ -10,7 +10,7 @@
           <spam name="rainbow" id="rainbow"> SharedStake </spam>
           <br />
           <spam name="exp" id="exp"
-            >decentralized Ethereum staking service</spam
+            >Decentralized Ethereum Staking Service</spam
           >
         </div>
         <div id="subtitle">
@@ -20,10 +20,16 @@
           • Liquidty Mining with SharedStake Governance Token rewards!
         </div>
         <div id="subtitle">• Airdrops every 3 months!</div>
-        <div id="notion">
-          Learn more
-          <span style="font-size: 14px; font-weight: 700"> ↗</span>
-        </div>
+        <a
+          href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div id="notion">
+            Learn more
+            <span style="font-size: 14px; font-weight: 700"> ↗</span>
+          </div>
+        </a>
       </div>
       <div id="flex_row title" class="typewriter">
         <spam id="solution">Perfect Solution For {{ perfect }}</spam>
@@ -85,14 +91,19 @@ export default {
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Ubuntu:wght@300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap");
-
+a {
+  text-decoration: none;
+  color: #f5f5f7;
+  font-family: "Roboto";
+  font-weight: 300;
+}
 .landingPage {
   color: #f5f5f7;
   background: rgb(0, 0, 0);
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 1) 0%,
-    rgba(24, 24, 24, 1) 100%
+    rgba(36, 36, 36, 1) 100%
   );
   align-items: center;
   justify-content: center;
@@ -209,11 +220,6 @@ export default {
   margin-left: 5vh;
   transition: all 0.2s ease-in-out;
 }
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 .Wrapper {
   position: relative;
@@ -239,10 +245,10 @@ export default {
   width: 298vw;
 }
 .typewriter {
-  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  overflow-x: hidden; /* Ensures the content is not revealed until the animation */
   border-right: 0.15em solid orange; /* The typwriter cursor */
   white-space: nowrap; /* Keeps the content on a single line */
-  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  margin: 20px auto 0 auto; /* Gives that scrolling effect as the typing happens */
   letter-spacing: 0.15em; /* Adjust as needed */
   animation: blink-caret 0.75s step-end infinite;
 }

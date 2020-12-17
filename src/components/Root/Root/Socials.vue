@@ -17,13 +17,18 @@ export default {
       { img: "twitter.png", link: "https://twitter.com/SharedStake" },
       { img: "discord.png", link: "https://discord.gg/VezkjY9udC" },
       {
-        img: "notion.png",
+        img: "medium.png",
         link:
-          "https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05#ad81c52153ae4972839332255a2dcd39",
+          "https://medium.com/@AlexMasmej/introducing-sharedstake-the-easiest-way-to-stake-for-eth2-790d6283a55b",
       },
       {
         img: "github.png",
         link: "https://github.com/SharedStake/SharedStake-ui",
+      },
+      {
+        img: "notion.png",
+        link:
+          "https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05",
       },
     ],
     size: "32px",
@@ -36,7 +41,7 @@ export default {
 .grid-container {
   margin-top: 2vh;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   gap: 3vh 0px;
   justify-items: center;
   align-items: center;
@@ -51,14 +56,14 @@ export default {
 @media only screen and (max-width: 950px) {
   .grid-container {
     display: grid;
-    /* grid-template-columns: 1fr 1fr; */
+    grid-template-columns: 1fr 1fr;
     gap: 2vh 0px;
   }
 }
 @media only screen and (max-width: 700px) {
   .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     gap: 2vh 0px;
   }
 }
