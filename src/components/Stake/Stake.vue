@@ -595,6 +595,7 @@ export default {
     left: 1rem;
     transform: scale(0.5);
     z-index: 1000;
+    display: none;
   }
   .toggle {
     min-width: 0;
