@@ -35,7 +35,7 @@ export default {
   methods: {
     async clicked(i) {
       if (this.buttons.length == 1) {
-        this.$router.push("/");
+        this.$router.push("/app");
         return;
       }
       this.$router.push(i.toLowerCase());

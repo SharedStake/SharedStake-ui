@@ -93,7 +93,8 @@ a {
   color: #2c3e50;
 }
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
+  height: 5px;
 }
 
 /* Track */
@@ -202,7 +203,7 @@ a {
   #main {
     flex-direction: column;
     overflow-x: scroll;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
   #Figure {
     width: calc(100vw);

@@ -49,9 +49,14 @@ export default {
   font-size: 5px;
   transform: scale(1);
   transition: transform 0.5s ease-in-out 0.5s, margin 0.5s ease-in-out;
-  margin-left: 100px;
+  margin-left: 120px;
   max-width: 40vw;
   min-width: 5rem;
+}
+#Result:hover {
+  transition: transform 0.5s ease-in-out;
+  transform: scale(0.8);
+  cursor: pointer;
 }
 #Result-auth {
   cursor: default;

@@ -36,4 +36,29 @@ body {
 .bn-onboard-custom.bn-onboard-modal {
   z-index: 990;
 }
+a {
+  text-decoration: none;
+  font-family: BrandonGrotesque, sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: #2c3e50;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 </style>

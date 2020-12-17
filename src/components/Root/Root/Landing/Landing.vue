@@ -3,10 +3,11 @@
     <div class="title">SharedStake</div>
     <div class="content" id="mainContent">
       <span id="Red">
-        Shared staking for Eth 2.0! Stake while still being able to trade</span
+        Easy to use Ethereum 2 shared staking solution <br />
+        Stake while still being able to trade</span
       >
     </div>
-    <div class="content">
+    <!-- <div class="content">
       Earn ETH2 validator profit and more with the
       <span id="Green">SharedStake</span> program and vETH2
     </div>
@@ -21,7 +22,7 @@
       >
         <span id="Green"> on Notion </span>
       </a>
-    </div>
+    </div> -->
     <div class="content">
       There are already
       <span class="value" id="Green">{{ value }} </span>Eth<ImageVue

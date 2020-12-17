@@ -9,12 +9,17 @@ const Root = () => import("../components/Root/Root.vue")
 const Earn = () => import("../components/Earn/Earn.vue")
 const Stats = () => import("../components/Stats/Stats.vue")
 const Dao = () => import("../components/Dao/Dao.vue")
+const Landing = () => import("../components/Landing/Landing.vue")
 const Indexer = () => import("../components/Indexer/Indexer.vue")
 
 Vue.use(VueRouter);
 
 let routes = [{
     path: "/",
+    name: "Landing",
+    component: Landing
+}, {
+    path: "/app",
     name: "Root",
     component: Root,
     children: [
@@ -30,7 +35,7 @@ let routes = [{
         {
             path: "/info",
             name: "Info",
-            beforeEnter() {location.href = notionInfoPage},
+            beforeEnter() { location.href = notionInfoPage },
             component: Info,
         },
         {
