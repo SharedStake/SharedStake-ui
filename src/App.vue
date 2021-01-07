@@ -55,7 +55,7 @@ a {
   color: #2c3e50;
 }
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
 }
 
 /* Track */

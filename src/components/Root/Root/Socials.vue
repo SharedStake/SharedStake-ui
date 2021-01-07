@@ -53,13 +53,6 @@ export default {
   transform: scale(1.11);
   transition: 0.3s ease-in-out;
 }
-@media only screen and (max-width: 950px) {
-  .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2vh 0px;
-  }
-}
 @media only screen and (max-width: 700px) {
   .grid-container {
     display: grid;

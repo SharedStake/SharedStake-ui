@@ -90,12 +90,12 @@
       </div>
     </transition-group>
     <!-- <button @click="addTx()">change txs</button> -->
-    <TotalStaked class="Graph" :explanation="false" :updater="updateGraph" />
+    <!-- <TotalStaked class="Graph" :explanation="false" :updater="updateGraph" /> -->
   </div>
 </template>
 
 <script>
-import TotalStaked from "../Stats/Graphs/TotalStaked";
+// import TotalStaked from "../Stats/Graphs/TotalStaked";
 import ImageVue from "../Handlers/image.vue";
 import Arrow from "../../assets/svg/arrow.vue";
 import gasChooser from "../Handlers/gasChooser";
@@ -108,7 +108,7 @@ import { validator, bETH } from "../../contracts/contracts";
 import { mapGetters } from "vuex";
 import { timeout } from "../../utils/helpers";
 export default {
-  components: { Arrow, ImageVue, gasChooser, Notifier, TotalStaked },
+  components: { Arrow, ImageVue, gasChooser, Notifier },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),

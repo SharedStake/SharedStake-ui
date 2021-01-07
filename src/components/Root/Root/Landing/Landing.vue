@@ -4,42 +4,27 @@
     <div class="content" id="mainContent">
       <span id="Red">
         Easy to use Ethereum 2 shared staking solution <br />
-        Stake while still being able to trade</span
+        Stake & trade</span
       >
     </div>
-    <!-- <div class="content">
-      Earn ETH2 validator profit and more with the
-      <span id="Green">SharedStake</span> program and vETH2
-    </div>
-    <div class="content">
-      <span id="Green">SharedStake</span> Governance token will be distributed
-      with an <span id="Red">airdrop and staking geysers</span>!
-    </div>
-    <div class="content">
-      Read more details
-      <a
-        href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05#ad81c52153ae4972839332255a2dcd39"
-      >
-        <span id="Green"> on Notion </span>
-      </a>
-    </div> -->
+    <!-- 
     <div class="content">
       There are already
       <span class="value" id="Green">{{ value }} </span>Eth<ImageVue
         :src="'eth-logo.png'"
         :size="'25px'"
       />
-      staked with <span id="Green">SharedStake!</span>
-    </div>
+      staked with <span id="Green">SharedStake!</span> -->
+    <!-- </div> -->
   </div>
 </template>
 
 <script>
 import { timeout } from "../../../../utils/helpers";
-import ImageVue from "../../../Handlers/image.vue";
+// import ImageVue from "../../../Handlers/image.vue";
 import axios from "axios";
 export default {
-  components: { ImageVue },
+  // components: { ImageVue },
   data: () => ({ value: 0 }),
   methods: {
     async increaseValue() {
