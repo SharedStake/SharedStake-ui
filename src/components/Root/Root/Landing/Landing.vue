@@ -3,9 +3,9 @@
     <div class="title">SharedStake</div>
     <div class="content" id="mainContent">
       <span id="Red">
-        Easy to use Ethereum 2 shared staking solution <br />
-        Stake & trade</span
-      >
+        Stake & trade<br />
+        Easiest way to stake ETH for Ethereum 2
+      </span>
     </div>
     <!-- 
     <div class="content">

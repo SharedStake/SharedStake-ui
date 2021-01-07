@@ -13,11 +13,9 @@
             >Decentralized Ethereum Staking Service</span
           >
         </div>
+        <div id="subtitle">Easiest way to stake ETH for Ethereum 2</div>
         <div id="subtitle">
-          Earn more money by holding incentivised vEth2 token.
-        </div>
-        <div id="subtitle">
-          • Liquidty Mining with SharedStake Governance Token rewards!
+          • Liquidity Mining with SharedStake Governance Token rewards!
         </div>
         <div id="subtitle">• Profits are distributed via airdrops!</div>
         <a
@@ -487,6 +485,7 @@ a {
   justify-content: center;
 }
 #down {
+  cursor: pointer;
   filter: invert(1);
   transform: rotate(270deg);
   margin-top: 2vh;
@@ -516,8 +515,7 @@ a {
 }
 
 .Below {
-  overflow-x: scroll;
-
+  overflow-x: hidden;
   width: 99vw;
 }
 .Below2 {
