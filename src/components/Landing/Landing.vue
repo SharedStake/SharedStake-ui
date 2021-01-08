@@ -155,7 +155,7 @@
             </div>
           </div>
         </div>
-        <div
+        <!-- <div
           class="flex_row Wrapper"
           id="W4"
           :style="
@@ -219,7 +219,7 @@
                 :class="hovered ? 'photosHover' : 'photos'"
             /></a>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -522,7 +522,7 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 298vh;
+  height: 198vh;
 }
 .typewriter {
   overflow-x: hidden; /* Ensures the content is not revealed until the animation */
