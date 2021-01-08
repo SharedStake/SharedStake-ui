@@ -383,12 +383,12 @@ a {
 .loginButton {
   margin-right: 20px;
   background: transparent;
-  border: 1px #2f74ff solid;
+  border: 1px #6296ff solid;
   border-radius: 5px;
   text-decoration: none;
   padding: 0 10px 0 10px;
   font-size: 18px;
-  color: #2f74ff;
+  color: #6296ff;
   text-align: center;
   line-height: 50px; /* same as height! */
   max-height: 50px;
