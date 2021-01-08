@@ -99,7 +99,7 @@ button {
     z-index: 100;
   }
   .button-login::after {
-    content: "Not Fully Mobile Optimazed";
+    /* content: "Not Fully Mobile Optimazed"; */
     display: block;
     color: #fafafa;
     font-size: 12px;
