@@ -259,8 +259,8 @@ export default {
     el = document.getElementById("W3");
     this.W3 = el.offsetTop;
 
-    el = document.getElementById("W4");
-    this.W4 = el.offsetTop;
+    // el = document.getElementById("W4");
+    // this.W4 = el.offsetTop;
     window.addEventListener("scroll", this.handleScroll);
     this.width = window.innerWidth;
     window.addEventListener("resize", this.onResize);
@@ -301,9 +301,8 @@ export default {
       this.w3opacity = this.getOpacity(scr, this.W3);
       this.w3translate = (this.W3 - scr).toFixed(0);
 
-      this.w4opacity = this.getOpacity(scr, this.W4);
-      this.w4translate = (this.W4 - scr).toFixed(0);
-      console.log(this.w4translate, this.w2translate, this.w3translate);
+      // this.w4opacity = this.getOpacity(scr, this.W4);
+      // this.w4translate = (this.W4 - scr).toFixed(0);
     },
     scrollToNext: function (y) {
       console.log(y);
@@ -322,8 +321,8 @@ export default {
       el = document.getElementById("W3");
       this.W3 = el.offsetTop;
 
-      el = document.getElementById("W4");
-      this.W4 = el.offsetTop;
+      // el = document.getElementById("W4");
+      // this.W4 = el.offsetTop;
     },
   },
 };
