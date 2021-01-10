@@ -85,10 +85,9 @@
             "
           >
             <imageVue
-              v-if="width > 680"
+              :size="width < 680 ? '60vw' : '40vw'"
               :src="'hodl.gif'"
-              :size="'50vh'"
-              :height="true"
+              :height="width < 680 ? false : true"
               :class="hovered ? 'photosHover' : 'photos'"
             />
             <div id="continue" @click="() => scrollToNext(W3)">
@@ -122,10 +121,9 @@
             "
           >
             <imageVue
-              v-if="width > 680"
               :src="'logo-4.png'"
-              :size="'50vh'"
-              :height="true"
+              :size="width < 680 ? '60vw' : '40vw'"
+              :height="width < 680 ? false : true"
               :class="hovered ? 'photosHover' : 'photos'"
             />
             <div id="continue" @click="() => scrollToNext(W4)">
@@ -155,7 +153,7 @@
             </div>
           </div>
         </div>
-        <!-- <div
+        <div
           class="flex_row Wrapper"
           id="W4"
           :style="
@@ -213,13 +211,12 @@
             >
               <imageVue
                 :src="'snowswap.svg'"
-                v-if="width > 680"
-                :size="'50vh'"
-                :height="true"
+                :size="width < 680 ? '60vw' : '40vw'"
+                :height="width < 680 ? false : true"
                 :class="hovered ? 'photosHover' : 'photos'"
             /></a>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -259,8 +256,8 @@ export default {
     el = document.getElementById("W3");
     this.W3 = el.offsetTop;
 
-    // el = document.getElementById("W4");
-    // this.W4 = el.offsetTop;
+    el = document.getElementById("W4");
+    this.W4 = el.offsetTop;
     window.addEventListener("scroll", this.handleScroll);
     this.width = window.innerWidth;
     window.addEventListener("resize", this.onResize);
@@ -301,8 +298,8 @@ export default {
       this.w3opacity = this.getOpacity(scr, this.W3);
       this.w3translate = (this.W3 - scr).toFixed(0);
 
-      // this.w4opacity = this.getOpacity(scr, this.W4);
-      // this.w4translate = (this.W4 - scr).toFixed(0);
+      this.w4opacity = this.getOpacity(scr, this.W4);
+      this.w4translate = (this.W4 - scr).toFixed(0);
     },
     scrollToNext: function (y) {
       console.log(y);
@@ -321,8 +318,8 @@ export default {
       el = document.getElementById("W3");
       this.W3 = el.offsetTop;
 
-      // el = document.getElementById("W4");
-      // this.W4 = el.offsetTop;
+      el = document.getElementById("W4");
+      this.W4 = el.offsetTop;
     },
   },
 };
@@ -403,7 +400,7 @@ a {
 }
 .content {
   margin-top: 5vh;
-  padding: 20px 20px 0 20px;
+  padding: 20px 0 0 1vw;
   max-width: 1000px;
   align-items: flex-start;
 }
@@ -498,8 +495,7 @@ a {
 
 .Wrapper {
   position: relative;
-  padding: 20px 0 0 20px;
-  height: 99vh;
+  min-height: 99vh;
   align-items: flex-start;
   overflow: hidden;
 }
@@ -521,7 +517,7 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 198vh;
+  min-height: 298vh;
 }
 .typewriter {
   overflow-x: hidden; /* Ensures the content is not revealed until the animation */
@@ -600,9 +596,6 @@ a {
   }
 }
 @media only screen and (max-width: 540px) {
-  .Wrapper {
-    flex-direction: column;
-  }
   #title,
   .hodl {
     font-size: 64px;
@@ -619,6 +612,11 @@ a {
   }
   #subtitle {
     font-size: 5vw;
+  }
+}
+@media only screen and (max-width: 680px) {
+  .Wrapper {
+    flex-direction: column;
   }
   #W3 {
     flex-direction: column-reverse;
