@@ -39,8 +39,8 @@
       <div v-if="Damount" v-show="Damount > 0" class="balance">
         {{
           isDeposit
-            ? (Damount / 33) * 32 + " vETH2"
-            : (Damount / 32) * 33 + " ETH"
+            ? (Damount / 32.1) * 32 + " vETH2"
+            : (Damount / 32) * 32.1 + " ETH"
         }}
       </div>
       <button
