@@ -588,7 +588,12 @@ a {
   flex-direction: column;
 }
 .Below {
-  background: rgba(0, 0, 0);
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    145deg,
+    rgba(2, 0, 36, 1) 30%,
+    rgba(29, 60, 122, 1) 100%
+  );
   color: #f5f5f5;
   overflow-x: hidden;
   width: 100vw;

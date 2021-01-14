@@ -22,13 +22,13 @@ export default {
           "https://medium.com/@AlexMasmej/introducing-sharedstake-the-easiest-way-to-stake-for-eth2-790d6283a55b",
       },
       {
-        img: "github.png",
-        link: "https://github.com/SharedStake/SharedStake-ui",
-      },
-      {
         img: "notion.png",
         link:
           "https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05",
+      },
+      {
+        img: "github.png",
+        link: "https://github.com/SharedStake/SharedStake-ui",
       },
     ],
     size: "32px",
