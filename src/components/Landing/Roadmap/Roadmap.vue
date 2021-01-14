@@ -1,7 +1,7 @@
 <template>
   <div class="flex_column landingPage">
     <div id="Launcher">
-      <imageVue :src="'logo-2.png'" :size="'14vw'" class="myLogo" />
+      <ImageVue :src="'logo-4.png'" :size="'14vw'" class="myLogo" />
       <div class="flex_row upButtons">
         <router-link class="nonclickable" to="/">Introduction </router-link>
         <router-link class="nonclickable" to="/roadmap">Roadmap </router-link>
@@ -15,25 +15,25 @@
         <router-link class="loginButton" to="/app">Launch Dapp </router-link>
       </div>
     </div>
-    <div class="wrapper">
-      <diamond />
-    </div>
+    <ImageVue :src="'roadmap.png'" :size="'100vw'" class="timeline" />
   </div>
 </template>
 
-<script scoped>
-import imageVue from "../../Handlers/image.vue";
-import Diamond from "./diamond.vue";
+<script>
+import ImageVue from "../../Handlers/image.vue";
 
 export default {
-  components: { imageVue, Diamond },
+  data() {
+    return {};
+  },
+  components: { ImageVue },
 };
 </script>
 
 <style scoped>
 a {
   text-decoration: none;
-  color: #666;
+  color: #f5f5f5;
   font-family: "Roboto";
   font-weight: 300;
 }
@@ -50,14 +50,12 @@ a {
 }
 #Launcher {
   overflow: hidden;
-  width: 99.9vw;
+  width: 99vw;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0;
-  position: fixed;
-  top: 0;
   background: rgba(0, 0, 0, 0);
   z-index: 100;
   backdrop-filter: blur(5px);
@@ -69,13 +67,15 @@ a {
   transform: scale(0.95);
 }
 .landingPage {
-  background-image: url(../guilloche.svg);
-  align-items: center;
+  background: #1b1b2a;
+  align-items: flex-start;
+  justify-content: flex-start;
   background-size: cover;
   justify-content: center;
   font-family: "Roboto";
   width: 100%;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 .loginButton {
@@ -112,6 +112,13 @@ a {
   justify-content: space-between;
   backdrop-filter: blur(5px);
   padding: 1vw;
+}
+
+@media only screen and (min-width: 1350px) {
+  #Launcher {
+    position: absolute;
+    top: 0;
+  }
 }
 @media only screen and (min-width: 820px) {
   #title,
