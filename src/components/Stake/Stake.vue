@@ -1,6 +1,5 @@
 <template>
   <div class="flex_column stake">
-    <!-- <router-link to="/">back</router-link> -->
     <div class="flex_column Staker">
       <a
         class="info-icon"

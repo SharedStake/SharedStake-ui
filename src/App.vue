@@ -10,6 +10,14 @@ export default {
 };
 </script>
 <style lang="css">
+@import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Ubuntu:wght@300;400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap");
+a {
+  text-decoration: none;
+  color: #666;
+  font-family: "Roboto";
+  font-weight: 300;
+}
 .fade-enter-active,
 .fade-leave-active {
   transition-duration: 0.3s;

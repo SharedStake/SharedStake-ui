@@ -10,6 +10,7 @@ const Earn = () => import("../components/Earn/Earn.vue")
 const Stats = () => import("../components/Stats/Stats.vue")
 const Dao = () => import("../components/Dao/Dao.vue")
 const Landing = () => import("../components/Landing/Landing.vue")
+const Roadmap = () => import("../components/Landing/Roadmap/Roadmap.vue")
 const Indexer = () => import("../components/Indexer/Indexer.vue")
 
 Vue.use(VueRouter);
@@ -18,6 +19,10 @@ let routes = [{
     path: "/",
     name: "Landing",
     component: Landing
+}, {
+    path: "/roadmap",
+    name: "Roadmap",
+    component: Roadmap,
 }, {
     path: "/app",
     name: "Root",
