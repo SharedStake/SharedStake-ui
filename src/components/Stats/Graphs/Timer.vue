@@ -36,8 +36,8 @@
         Genesis
       </div>
       <div class="content">
-        This countdown shows the expected time until the Eth 2.0 Beacon chain
-        genesis. This phase requires 524,288 ETH to continue.
+        The Launch of the SGT represents the snopshot date for the First airdrop
+        of SharedStake Governance Token!
       </div>
     </div>
   </div>
@@ -133,7 +133,7 @@ export default {
   methods: {
     async runTimer() {
       var now = Math.ceil(Date.now() / 1000);
-      var nextAim = new Date("2020-12-01");
+      var nextAim = new Date("2021-01-22");
       var nextAimSec = nextAim.getTime() / 1000;
       if (nextAimSec > now) {
         while (now > nextAimSec) nextAimSec + 7 * 24 * 3600;
@@ -154,11 +154,11 @@ export default {
       this.hour = hours % 24;
       this.day = Math.floor(hours / 24);
       let tw = 14 * 24 * 3600;
-      this.progress = (val * 100) / tw;
+      this.progress = 100 - (val * 100) / tw;
     },
   },
   mounted: async function () {
-    // this.runTimer();
+    this.runTimer();
   },
 };
 </script>
