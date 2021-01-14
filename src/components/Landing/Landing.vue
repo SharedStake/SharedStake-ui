@@ -58,7 +58,7 @@
           <div class="flex_column title secondPage">
             <span name="exp" id="exp">Stake & Harvest</span>
           </div>
-          <div class="flex_row">
+          <div :class="width < 680 ? 'flex_column' : 'flex_row'">
             <div
               class="flex_column"
               @mouseover="hovered = true"
@@ -70,7 +70,7 @@
               "
             >
               <imageVue
-                :size="width < 680 ? '60vw' : '25vh'"
+                :size="width < 680 ? '25vw' : '25vh'"
                 :src="'eth.png'"
                 :height="width < 680 ? false : true"
                 :class="'photos'"
@@ -93,7 +93,7 @@
               "
             >
               <imageVue
-                :size="width < 680 ? '60vw' : '25vh'"
+                :size="width < 680 ? '25vw' : '25vh'"
                 :src="'logo-4.png'"
                 :height="width < 680 ? false : true"
                 :class="'photos'"
@@ -116,7 +116,7 @@
               "
             >
               <imageVue
-                :size="width < 680 ? '60vw' : '25vh'"
+                :size="width < 680 ? '25vw' : '25vh'"
                 :src="'earn.png'"
                 :height="width < 680 ? false : true"
                 :class="'photos'"
@@ -142,7 +142,7 @@
               "
             >
               <imageVue
-                :size="width < 680 ? '60vw' : '25vh'"
+                :size="width < 680 ? '25vw' : '25vh'"
                 :src="'sickle.png'"
                 :height="width < 680 ? false : true"
                 :class="'photos'"
