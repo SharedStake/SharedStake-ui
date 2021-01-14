@@ -1,8 +1,8 @@
 <template>
   <div class="flex_column landingPage">
     <div id="Launcher">
-      <imageVue :src="'logo-4.png'" :size="'14vw'" class="myLogo" />
-      <router-link class="loginButton" to="/app">Launch App </router-link>
+      <imageVue :src="'logo-2.png'" :size="'14vw'" class="myLogo" />
+      <router-link class="loginButton" to="/app">Launch Dapp </router-link>
     </div>
     <div class="wrapper">
       <div class="flex_column content">
@@ -38,7 +38,7 @@
         <socials class="socials" />
       </div>
       <div class="header" id="Down" @click="() => scrollToNext(W2)">
-        <imageVue :src="'back-button.png'" :size="'32px'" id="down" />
+        <imageVue :src="'back-button.png'" :size="'32px'" id="down1" />
       </div>
     </div>
     <div class="Below">
@@ -56,22 +56,100 @@
           "
         >
           <div class="flex_column title secondPage">
-            <span name="hodl" class="hodl">Just HODL</span>
-            <div id="subtitle">Stake Any Amount!</div>
-            <div id="subtitle">
-              Deposit Ether and receive vETH2<imageVue
-                :src="'logo-4.png'"
-                :size="'28px'"
+            <span name="exp" id="exp">Stake & Harvest</span>
+          </div>
+          <div class="flex_row">
+            <div
+              class="flex_column"
+              @mouseover="hovered = true"
+              @mouseleave="hovered = false"
+              :style="
+                width < 680
+                  ? ''
+                  : { transform: 'translate(0, ' + w2translate + 'px)' }
+              "
+            >
+              <imageVue
+                :size="width < 680 ? '60vw' : '25vh'"
+                :src="'eth.png'"
+                :height="width < 680 ? false : true"
+                :class="'photos'"
               />
-              token in return.
+              <div id="continue" @click="() => scrollToNext(W3)">
+                <div id="continue">Stake Any Amount of Eth</div>
+              </div>
             </div>
-            <div id="subtitle">
-              Hold vETH2<imageVue :src="'logo-4.png'" :size="'28px'" /> for any
-              amount of time and be eligible for the airdrop.
+            <div>
+              <imageVue :src="'back-button.png'" :size="'32px'" id="right" />
             </div>
-            <div id="subtitle">
-              • There will be airdrops of profit, that distributes the profit.
-              You can claim it whenever you want.
+            <div
+              class="flex_column"
+              @mouseover="hovered = true"
+              @mouseleave="hovered = false"
+              :style="
+                width < 680
+                  ? ''
+                  : { transform: 'translate(0, ' + w2translate + 'px)' }
+              "
+            >
+              <imageVue
+                :size="width < 680 ? '60vw' : '25vh'"
+                :src="'logo-4.png'"
+                :height="width < 680 ? false : true"
+                :class="'photos'"
+              />
+              <div id="continue" @click="() => scrollToNext(W3)">
+                <div id="continue">Receive vETH2 token in return.</div>
+              </div>
+            </div>
+            <div>
+              <imageVue :src="'back-button.png'" :size="'32px'" id="right" />
+            </div>
+            <div
+              class="flex_column"
+              @mouseover="hovered = true"
+              @mouseleave="hovered = false"
+              :style="
+                width < 680
+                  ? ''
+                  : { transform: 'translate(0, ' + w2translate + 'px)' }
+              "
+            >
+              <imageVue
+                :size="width < 680 ? '60vw' : '25vh'"
+                :src="'earn.png'"
+                :height="width < 680 ? false : true"
+                :class="'photos'"
+              />
+              <div id="continue" @click="() => scrollToNext(W3)">
+                <div id="continue">
+                  Get your staking rewards <br />
+                  with currently 10% APY
+                </div>
+              </div>
+            </div>
+            <div>
+              <imageVue :src="'back-button.png'" :size="'32px'" id="right" />
+            </div>
+            <div
+              class="flex_column"
+              @mouseover="hovered = true"
+              @mouseleave="hovered = false"
+              :style="
+                width < 680
+                  ? ''
+                  : { transform: 'translate(0, ' + w2translate + 'px)' }
+              "
+            >
+              <imageVue
+                :size="width < 680 ? '60vw' : '25vh'"
+                :src="'sickle.png'"
+                :height="width < 680 ? false : true"
+                :class="'photos'"
+              />
+              <div id="continue" @click="() => scrollToNext(W3)">
+                <div id="continue">Harvest more with your vETH2 token!</div>
+              </div>
             </div>
           </div>
           <div
@@ -81,15 +159,9 @@
             :style="
               width < 680
                 ? ''
-                : { transform: 'translate(0, ' + w2translate * -3 + 'px)' }
+                : { transform: 'translate(0, ' + w2translate + 'px)' }
             "
           >
-            <imageVue
-              :size="width < 680 ? '60vw' : '40vw'"
-              :src="'hodl.gif'"
-              :height="width < 680 ? false : true"
-              :class="hovered ? 'photosHover' : 'photos'"
-            />
             <div id="continue" @click="() => scrollToNext(W3)">
               <div id="continue">vETH2 & SGT</div>
               <div id="Down">
@@ -122,7 +194,7 @@
           >
             <imageVue
               :src="'logo-4.png'"
-              :size="width < 680 ? '60vw' : '40vw'"
+              :size="width < 680 ? '60vw' : '40vh'"
               :height="width < 680 ? false : true"
               :class="hovered ? 'photosHover' : 'photos'"
             />
@@ -184,7 +256,7 @@
               while earning eth2 profit & getting your SGT from airdrop!
             </div>
             <a
-              href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
+              href="https://medium.com/snowswap/%EF%B8%8Fbuilding-on-2-0-with-eth2snow-and-sharedstake-partnership-%EF%B8%8F-5ca251f8e1a0"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -199,9 +271,9 @@
             @mouseover="hovered = true"
             @mouseleave="hovered = false"
             :style="
-              width < 680
-                ? ''
-                : { transform: 'translate(0, ' + w4translate * -3 + 'px)' }
+              width > 680
+                ? { transform: 'translate(0, ' + w4translate * -3 + 'px)' }
+                : ''
             "
           >
             <a
@@ -211,7 +283,7 @@
             >
               <imageVue
                 :src="'snowswap.svg'"
-                :size="width < 680 ? '60vw' : '40vw'"
+                :size="width < 680 ? '60vw' : '40vh'"
                 :height="width < 680 ? false : true"
                 :class="hovered ? 'photosHover' : 'photos'"
             /></a>
@@ -337,22 +409,18 @@ export default {
 }
 a {
   text-decoration: none;
-  color: #f5f5f7;
+  color: #666;
   font-family: "Roboto";
   font-weight: 300;
 }
 .landingPage {
-  color: #f5f5f7;
-  background: rgb(0, 0, 0);
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(45, 45, 45, 1) 100%
-  );
+  background-image: url(./guilloche.svg);
   align-items: center;
+  background-size: contain;
   justify-content: center;
   font-family: "Roboto";
   width: 100%;
+  overflow-x: hidden;
 }
 .wrapper {
   width: 100vw;
@@ -379,13 +447,13 @@ a {
 }
 .loginButton {
   margin-right: 20px;
-  background: transparent;
+  background: #6296ff;
   border: 1px #6296ff solid;
   border-radius: 5px;
   text-decoration: none;
   padding: 0 10px 0 10px;
   font-size: 18px;
-  color: #6296ff;
+  color: #f5f5f5;
   text-align: center;
   line-height: 50px; /* same as height! */
   max-height: 50px;
@@ -413,7 +481,7 @@ a {
   padding: 50px 0 0 0;
 }
 .hodl {
-  font-size: 12vw;
+  font-size: 8vw;
   font-family: "Roboto";
   text-shadow: 2px 2px #0d5cf8;
 }
@@ -447,7 +515,7 @@ a {
 }
 #notion {
   margin: 20px 0 0 0;
-  border: 1px #fafafa solid;
+  border: 1px #666 solid;
   border-radius: 5px;
   font-size: 3vw;
   text-align: left;
@@ -482,7 +550,13 @@ a {
 }
 #down {
   cursor: pointer;
+  transform: rotate(270deg);
   filter: invert(1);
+  margin-top: 2vh;
+  transition: all 0.2s ease-in-out;
+}
+#down1 {
+  cursor: pointer;
   transform: rotate(270deg);
   margin-top: 2vh;
   transition: all 0.2s ease-in-out;
@@ -509,9 +583,15 @@ a {
   width: 99vw;
 }
 
+#W2 {
+  padding-top: 10vh;
+  flex-direction: column;
+}
 .Below {
+  background: rgba(0, 0, 0);
+  color: #f5f5f5;
   overflow-x: hidden;
-  width: 99vw;
+  width: 100vw;
 }
 .Below2 {
   overflow: hidden;
@@ -541,7 +621,7 @@ a {
 }
 #Launcher {
   overflow: hidden;
-  width: 99vw;
+  width: 99.9vw;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
