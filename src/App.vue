@@ -10,6 +10,12 @@ export default {
 };
 </script>
 <style lang="css">
+a {
+  text-decoration: none;
+  color: #666;
+  font-family: "Roboto";
+  font-weight: 300;
+}
 .fade-enter-active,
 .fade-leave-active {
   transition-duration: 0.3s;

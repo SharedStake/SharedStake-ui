@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- <router-view></router-view> -->
-    <!-- <router-link to="/">back</router-link> -->
     <comingSoon
       :title="title"
       :image="image"

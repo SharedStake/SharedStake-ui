@@ -2,7 +2,18 @@
   <div class="flex_column landingPage">
     <div id="Launcher">
       <imageVue :src="'logo-2.png'" :size="'14vw'" class="myLogo" />
-      <router-link class="loginButton" to="/app">Launch Dapp </router-link>
+      <div class="flex_row upButtons">
+        <router-link class="nonclickable" to="/">Introduction </router-link>
+        <router-link class="nonclickable" to="/roadmap">Roadmap </router-link>
+        <a
+          href="https://github.com/SharedStake/SharedStake-ui"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div class="nonclickable">Contribute</div>
+        </a>
+        <router-link class="loginButton" to="/app">Launch Dapp </router-link>
+      </div>
     </div>
     <div class="wrapper">
       <div class="flex_column content">
@@ -316,20 +327,12 @@ export default {
       w4opacity: 1,
     };
   },
+  created: function () {
+    this.width = window.innerWidth;
+    this.W2 = this.w2translate = this.W3 = this.w3translate = this.W4 = this.w4translate = 0;
+  },
   mounted: async function () {
-    const top = this.$el.getElementsByClassName("wrapper")[0];
-    if (top) {
-      top.scrollIntoView({ behavior: "smooth", alignTo: false });
-    }
-    //scrolling effect on cont pages
-    var el = document.getElementById("W2");
-    this.W2 = el.offsetTop;
-
-    el = document.getElementById("W3");
-    this.W3 = el.offsetTop;
-
-    el = document.getElementById("W4");
-    this.W4 = el.offsetTop;
+    this.onResize();
     window.addEventListener("scroll", this.handleScroll);
     this.width = window.innerWidth;
     window.addEventListener("resize", this.onResize);
@@ -378,7 +381,6 @@ export default {
       window.scrollTo({ top: y, behavior: "smooth" });
     },
     onResize() {
-      this.width = window.innerWidth;
       const top = this.$el.getElementsByClassName("wrapper")[0];
       if (top) {
         top.scrollIntoView({ behavior: "smooth", alignTo: false });
@@ -540,6 +542,7 @@ a {
   cursor: pointer;
   padding: 6px;
 }
+.nonclickable:hover,
 #continue:hover,
 #notion:hover {
   transform: scale(0.95);
@@ -638,6 +641,20 @@ a {
   z-index: 100;
   backdrop-filter: blur(5px);
 }
+.nonclickable {
+  border-radius: 5px;
+  font-size: 3vw;
+  text-align: left;
+  vertical-align: text-top;
+  display: flex;
+  transition: transform 0.2s ease-in-out;
+  flex-direction: row;
+  cursor: pointer;
+  align-items: flex-start;
+  justify-content: space-between;
+  backdrop-filter: blur(5px);
+  padding: 1vw;
+}
 /* The typing effect */
 @keyframes typing {
   from {
@@ -672,6 +689,7 @@ a {
   #solution {
     font-size: 32px;
   }
+  .nonclickable,
   #continue,
   #notion {
     font-size: 20px;
@@ -695,6 +713,10 @@ a {
     line-height: 100%;
     word-break: break-all;
   }
+  .loginButton {
+    font-size: 14px;
+  }
+
   #subtitle {
     font-size: 5vw;
   }
