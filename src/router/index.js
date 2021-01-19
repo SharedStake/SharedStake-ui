@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-
+import { timeout } from "../utils/helpers"
+import store from "../store/index"
 const notionInfoPage = "https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
 
 const Stake = () => import("../components/Stake/Stake.vue")
@@ -27,6 +28,11 @@ let routes = [{
     path: "/app",
     name: "Root",
     component: Root,
+    beforeEnter: async (to, from, next) => {
+        await store.dispatch('setAddress');
+        await timeout(200);
+        next();
+    },
     children: [
         {
             path: "/",

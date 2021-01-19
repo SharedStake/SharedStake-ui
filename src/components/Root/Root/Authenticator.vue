@@ -5,18 +5,22 @@
       <button @click="Authenticate" class="button-login">Connect!</button>
     </div>
     <div v-else class="auth-in">
-      <button @click="Authenticate" class="button-logout">E X I T</button>
+      <router-link @click="Authenticate" to="/"
+        ><button @click="Authenticate" class="button-logout">
+          E X I T
+        </button></router-link
+      >
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import Landing from "./Landing/Landing.vue";
+// import Landing from "./Landing/Landing.vue";
 export default {
   name: "Authenticator",
-  components: { Landing },
-  data: () => ({}),
+  // components: { Landing },
+  // data: () => ({}),
   methods: {
     ...mapActions(["setAddress", "exit"]),
     Authenticate() {
