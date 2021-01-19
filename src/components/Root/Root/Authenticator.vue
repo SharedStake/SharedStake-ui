@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-if="!isAuth" class="auth flex_column">
-      <Landing v-if="!isAuth" class="landing" />
-      <button @click="Authenticate" class="button-login">Connect!</button>
-    </div>
-    <div v-else class="auth-in">
+    <!-- <div v-if="!isAuth" class="auth flex_column"> -->
+    <!-- <Landing v-if="!isAuth" class="landing" /> -->
+    <!-- <button @click="Authenticate" class="button-login">Connect!</button> -->
+    <!-- </div> -->
+    <div class="auth-in">
       <router-link @click="Authenticate" to="/"
         ><button @click="Authenticate" class="button-logout">
           E X I T
