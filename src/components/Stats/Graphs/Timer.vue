@@ -133,7 +133,7 @@ export default {
   methods: {
     async runTimer() {
       var now = Math.ceil(Date.now() / 1000);
-      var nextAim = new Date("2021-01-22");
+      var nextAim = new Date("2021-02-02");
       var nextAimSec = nextAim.getTime() / 1000;
       if (nextAimSec > now) {
         while (now > nextAimSec) nextAimSec + 7 * 24 * 3600;
