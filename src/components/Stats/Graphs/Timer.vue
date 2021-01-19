@@ -33,7 +33,7 @@
     <div class="explanation" v-show="explanation">
       <div class="title">
         <ImageVue :src="'eth-logo.png'" :size="'30px'" />
-        Genesis
+        SGT Genesis
       </div>
       <div class="content">
         The Launch of the SGT represents the snopshot date for the First airdrop
@@ -153,7 +153,7 @@ export default {
       let hours = Math.floor(minutes / 60);
       this.hour = hours % 24;
       this.day = Math.floor(hours / 24);
-      let tw = 14 * 24 * 3600;
+      let tw = 40 * 24 * 3600; //represents 14 days
       this.progress = 100 - (val * 100) / tw;
     },
   },
