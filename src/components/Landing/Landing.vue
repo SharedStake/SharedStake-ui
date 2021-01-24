@@ -98,7 +98,7 @@
           </div>
           <div :class="width < 680 ? 'flex_column' : 'flex_row'">
             <div
-              class="flex_column"
+              class="flex_column SHOW"
               @mouseover="hovered = true"
               @mouseleave="hovered = false"
               :style="
@@ -125,7 +125,7 @@
               />
             </div>
             <div
-              class="flex_column"
+              class="flex_column SHOW"
               @mouseover="hovered = true"
               @mouseleave="hovered = false"
               :style="
@@ -152,7 +152,7 @@
               />
             </div>
             <div
-              class="flex_column"
+              class="flex_column SHOW"
               @mouseover="hovered = true"
               @mouseleave="hovered = false"
               :style="
@@ -182,7 +182,7 @@
               />
             </div>
             <div
-              class="flex_column"
+              class="flex_column SHOW"
               @mouseover="hovered = true"
               @mouseleave="hovered = false"
               :style="
@@ -374,7 +374,6 @@ export default {
   mounted: async function () {
     this.onResize();
     window.addEventListener("scroll", this.handleScroll);
-    this.width = window.innerWidth;
     window.addEventListener("resize", this.onResize);
     //text effect 3
     let newPerfect = "Ethereum 2";
@@ -421,6 +420,7 @@ export default {
       window.scrollTo({ top: y, behavior: "smooth" });
     },
     onResize() {
+      this.width = window.innerWidth;
       const top = this.$el.getElementsByClassName("wrapper")[0];
       if (top) {
         top.scrollIntoView({ behavior: "smooth", alignTo: false });
@@ -735,6 +735,10 @@ a {
   padding: 1vw;
   background: transparent;
 }
+.SHOW {
+  margin: 1vh 1vw 1vh 1vw;
+}
+
 /* The typing effect */
 @keyframes typing {
   from {
