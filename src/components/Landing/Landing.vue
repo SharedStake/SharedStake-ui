@@ -499,7 +499,7 @@ a {
 #solution {
   z-index: 100;
   font-size: 3.8vw;
-  font-family: "Roboto";
+  font-family: "Consolas";
   text-shadow: 2px 2px #0d5cf8;
 }
 #exp {
