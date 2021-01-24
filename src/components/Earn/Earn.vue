@@ -1,20 +1,22 @@
 <template>
   <div class="flex_column Earn">
-    <geyser :img="'geyser1.jpg'" />
-    <geyser :img="'geyser2.jpg'" />
-    <geyser :img="'geyser3.jpg'" />
-    <geyser :img="'geyser4.jpg'" />
-    <span
-      >* These pools represent planned incentivised pools that will be deployed
-      when our governance token, <span class="logo">SharedStake</span> is
-      distributed.</span
-    >
+    <geyser v-for="pool in pools" :pool="pool" v-bind:key="pool.name" />
   </div>
 </template>
 
 <script>
 import geyser from "./geyser.vue";
-export default { components: { geyser }, data: () => ({}) };
+export default {
+  components: { geyser },
+  data: () => ({
+    pools: {
+      pool1: { name: "oh no1" },
+      pool2: { name: "oh no2" },
+      pool3: { name: "oh no3" },
+      pool4: { name: "oh no4" },
+    },
+  }),
+};
 </script>
 
 <style scoped>

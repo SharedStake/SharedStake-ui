@@ -53,6 +53,7 @@ const wallets = [
 const onboard = Onboard({
     dappId: "5f2bd7eb-6a4d-43d0-8569-8de42386cb2d",       // [String] The API key created by step one above
     networkId: 1,  // [Integer] The Ethereum network ID your Dapp uses.
+    darkMode: true,
     subscriptions: {
         wallet: wallet => {
             console.log(`wallet switched to: ${wallet.name}`);
