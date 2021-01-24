@@ -1,34 +1,62 @@
 <template>
   <div class="flex_column landingPage">
     <div id="Launcher">
-      <imageVue :src="'logo-2.png'" :size="'14vw'" class="myLogo" />
+      <imageVue :src="'logo-4.png'" :size="'14vw'" class="myLogo" />
       <div class="flex_row upButtons">
         <router-link class="nonclickable" to="/">Introduction </router-link>
         <router-link class="nonclickable" to="/roadmap">Roadmap </router-link>
-        <a
-          href="https://github.com/SharedStake/SharedStake-ui"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          class="nonclickable Community"
+          @click="mouseOverCommunity = !mouseOverCommunity"
         >
-          <div class="nonclickable">Contribute</div>
-        </a>
+          <div>Community</div>
+          <socials v-if="mouseOverCommunity" class="socials" :dir="'down'" />
+        </button>
         <router-link class="loginButton" to="/app">Launch Dapp </router-link>
       </div>
     </div>
+    <div class="lamp">
+      <div class="lava">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+      </div>
+    </div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="goo">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+            result="goo"
+          />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+      </defs>
+    </svg>
     <div class="wrapper">
-      <div class="flex_column content">
-        <div id="title">
-          <span name="rainbow" id="rainbow"> SharedStake </span>
-          <br />
-          <span name="exp1" id="exp"
-            >Decentralized Ethereum Staking Service</span
-          >
-        </div>
-        <div id="subtitle">Easiest way to stake ETH for Ethereum 2</div>
+      <div id="title">
+        <span name="rainbow" id="rainbow"> SHARED </span>
+        <span name="rainbow" id="rainbow"> STAKE </span>
+      </div>
+      <span name="exp1" id="exp1">Decentralized Ethereum Staking Service</span>
+      <div class="subtitles">
+        <div id="subtitle">Easiest way to stake ETH for Ethereum 2:</div>
+        <div id="subtitle">• Stake Eth and earn staking rewards</div>
+        <div id="subtitle">• Use vEth2 on Defi Protocols</div>
         <div id="subtitle">
-          • Liquidity Mining with SharedStake Governance Token rewards!
+          • Liquidity Mining with Governance Token rewards!
         </div>
-        <div id="subtitle">• Profits are distributed via airdrops!</div>
+        <div id="subtitle">• SGT airdrop on : 02/02/2021</div>
         <a
           href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
           target="_blank"
@@ -45,11 +73,10 @@
           >Perfect Solution For {{ perfect }}</span
         >
       </div>
-      <div class="header">
-        <socials class="socials" />
-      </div>
-      <div class="header" id="Down" @click="() => scrollToNext(W2)">
-        <imageVue :src="'back-button.png'" :size="'32px'" id="down1" />
+      <div class="flex_column header">
+        <div class="header" id="Down" @click="() => scrollToNext(W2)">
+          <imageVue :src="'back-button.png'" :size="'32px'" id="down" />
+        </div>
       </div>
     </div>
     <div class="Below">
@@ -313,6 +340,7 @@ export default {
   components: { imageVue, Socials },
   data: function () {
     return {
+      mouseOverCommunity: false,
       perfect: " Defi",
       hovered: false,
       width: 0,
@@ -400,6 +428,11 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;0,700;1,700&display=swap");
+@font-face {
+  font-family: hacked;
+  src: url(Hacked.ttf);
+}
 .secondPage {
   text-align: left;
   padding: 20px 20px 50px 20px;
@@ -409,51 +442,71 @@ export default {
 }
 a {
   text-decoration: none;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);
   font-family: "Roboto";
   font-weight: 300;
 }
 .landingPage {
-  background-image: url(./guilloche.svg);
-  align-items: center;
-  background-size: contain;
+  background: transparent;
   justify-content: center;
   font-family: "Roboto";
   width: 100%;
+  color: #fafafa;
   overflow-x: hidden;
 }
 .wrapper {
   width: 100vw;
   font-family: "Roboto";
-  max-width: 1000px;
   font-weight: 300;
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
+  background: transparent;
+  height: 85vh;
+  padding-top: 15vh; /*
+  // display: flex;
+  // flex-direction: column;
+  // align-items: flex-start;
+  // justify-content: space-between;
+  */
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  grid-template-rows: 0.4fr 1fr 0.4fr 0.2fr;
+  gap: 0em 0em;
+  grid-template-areas:
+    "rainbow exp1 exp1"
+    "rainbow subtitle subtitle"
+    "rainbow typewriter typewriter"
+    "socials socials socials";
 }
 .header {
   padding: 10px 0px 0 0;
   width: 100vw;
-  max-width: 1000px;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  grid-area: socials;
 }
+
+.Community {
+  display: block;
+}
+
 .socials {
-  width: 100%;
+  position: absolute;
+  top: 100%;
+  width: 80%;
+  background: #050505;
+  border: 1px transparent solid;
+  height: 30vh;
+  border-radius: 5%;
 }
 .loginButton {
   margin-right: 20px;
-  background: #6296ff;
-  border: 1px #6296ff solid;
+  background: #09fa8b;
+  border: 1px #09fa8b solid;
   border-radius: 5px;
   text-decoration: none;
   padding: 0 10px 0 10px;
   font-size: 18px;
-  color: #f5f5f5;
+  color: #050505;
   text-align: center;
   line-height: 50px; /* same as height! */
   max-height: 50px;
@@ -461,6 +514,7 @@ a {
 }
 .loginButton:hover {
   transform: scale(0.95);
+  border: 1px #6296ff solid;
 }
 .myLogo {
   min-width: 60px;
@@ -473,49 +527,63 @@ a {
   align-items: flex-start;
 }
 #title {
+  padding-left: 5vw;
   font-size: 12vw;
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: center;
   text-align: left;
-  font-family: "Black Ops One", cursive;
-  padding: 50px 0 0 0;
+  font-family: "Roboto Mono", monospace;
+  font-weight: 500;
+  grid-area: rainbow;
+  line-height: 1.5;
 }
 .hodl {
   font-size: 8vw;
   font-family: "Roboto";
-  text-shadow: 2px 2px #0d5cf8;
+  text-shadow: 2px 2px #f60574;
 }
 
 #rainbow {
   font-weight: 500;
-  margin: 0;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: rgba(256, 256, 256, 0.1);
-  background-image: url("bg.gif");
-  background-size: contain;
-  text-shadow: 0px 0px #fafafa45;
+  margin-bottom: 6vh;
+  color: #09fa8b;
+  letter-spacing: 1vw;
 }
 #solution {
   z-index: 100;
+  border-right: 0.15em solid orange; /* The typwriter cursor */
   font-size: 3.8vw;
-  font-family: "Consolas";
-  text-shadow: 2px 2px #0d5cf8;
+  font-family: hacked, "Consolas";
+  text-shadow: 2px 2px #f60574;
+  animation: blink-caret 0.75s step-end infinite;
 }
+#exp1,
 #exp {
   font-size: 8vw;
   font-family: "Roboto";
-  text-shadow: 2px 2px #0d5cf8;
+  text-shadow: 2px 2px #f60574;
 }
-
+#exp1 {
+  text-align: left;
+  grid-area: exp1;
+}
 #subtitle {
   padding: 20px 0 0 0;
   font-size: 3vw;
   text-align: left;
 }
+.subtitles {
+  grid-area: subtitle;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
 #notion {
   margin: 20px 0 0 0;
-  border: 1px #666 solid;
+  border: 1px rgba(255, 255, 255, 0.5) solid;
   border-radius: 5px;
   font-size: 3vw;
   text-align: left;
@@ -544,6 +612,7 @@ a {
 #continue:hover,
 #notion:hover {
   transform: scale(0.95);
+  color: #fafafa;
 }
 #Down {
   align-items: center;
@@ -595,7 +664,6 @@ a {
     rgba(2, 0, 36, 1) 30%,
     rgba(29, 60, 122, 1) 100%
   );
-  color: #f5f5f5;
   overflow-x: hidden;
   width: 100vw;
 }
@@ -607,11 +675,10 @@ a {
 }
 .typewriter {
   overflow-x: hidden; /* Ensures the content is not revealed until the animation */
-  border-right: 0.15em solid orange; /* The typwriter cursor */
-  white-space: nowrap; /* Keeps the content on a single line */
-  margin: 20px auto 0 auto; /* Gives that scrolling effect as the typing happens */
+  margin: 5vh auto 0 auto; /* Gives that scrolling effect as the typing happens */
   letter-spacing: 0.15em; /* Adjust as needed */
-  animation: blink-caret 0.75s step-end infinite;
+  grid-area: typewriter;
+  text-align: left;
 }
 .photos {
   padding: 0;
@@ -626,7 +693,6 @@ a {
   box-shadow: 5px 5px 0px 0px #fafafa, 12px 12px 10px 10px #000;
 }
 #Launcher {
-  overflow: hidden;
   width: 99.9vw;
   display: flex;
   flex-direction: row;
@@ -637,21 +703,25 @@ a {
   top: 0;
   background: rgba(0, 0, 0, 0);
   z-index: 100;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
 }
 .nonclickable {
-  border-radius: 5px;
+  position: relative;
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
   font-size: 3vw;
   text-align: left;
   vertical-align: text-top;
   display: flex;
-  transition: transform 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
   flex-direction: row;
   cursor: pointer;
   align-items: flex-start;
   justify-content: space-between;
   backdrop-filter: blur(5px);
   padding: 1vw;
+  background: transparent;
+  overflow: visible;
 }
 /* The typing effect */
 @keyframes typing {
@@ -680,6 +750,7 @@ a {
     line-height: 80%;
   }
   .header,
+  #exp1,
   #exp,
   .content {
     font-size: 48px;
@@ -693,19 +764,22 @@ a {
     font-size: 20px;
   }
   #subtitle {
-    font-size: 32px;
+    font-size: 28px;
   }
 }
 @media only screen and (max-width: 540px) {
   #title,
   .hodl {
-    font-size: 64px;
+    justify-content: flex-start;
+    overflow: visible;
+    font-size: 48px;
   }
   .header,
   .content,
+  #exp1,
   #exp {
     line-height: 100%;
-    font-size: 8vw;
+    font-size: 6vw;
   }
   #rainbow {
     line-height: 100%;
@@ -725,6 +799,208 @@ a {
   }
   #W3 {
     flex-direction: column-reverse;
+  }
+}
+/*lava lamp */
+.goo {
+  height: 1px;
+}
+.lamp {
+  filter: url("#goo");
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  height: 99vh;
+  min-width: 99vw;
+  z-index: -1;
+}
+
+.lava {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.blob {
+  border-radius: 50%;
+  background: #09fa8b;
+  /* Other sample colors:
+  Orange: #e8630a
+  Pink: #EA3281
+  Fuscia: #E71669
+  Purple: #661BAC
+  Kermit green: #75AC25
+  Yellow: #FDC600
+  Light blue: #3283B5
+  Dark blue: #0A5D9A
+  Gunmetal: #232F37
+  BGLight: #1B2735
+  BGDark: #090a0f
+  Want more colors? check out https://coolors.co/ for inspiration.
+  */
+  position: absolute;
+}
+
+.blob.top {
+  border-radius: 50%;
+  width: 100%;
+  height: 4%;
+  top: -3%;
+  left: 0;
+}
+.blob.bottom {
+  border-radius: 50%;
+  width: 100%;
+  height: 4%;
+  bottom: -3%;
+  left: 0;
+}
+.blob:nth-child(1) {
+  width: 200px;
+  height: 200px;
+  left: 35%;
+  bottom: -15%;
+
+  animation: wobble 4s ease-in-out alternate infinite,
+    blob-one ease-in-out 18s infinite;
+}
+.blob:nth-child(2) {
+  width: 330px;
+  height: 330px;
+  right: 72%;
+  bottom: -65%;
+
+  animation: wobble 5s ease-in-out alternate infinite,
+    blob-two ease-in-out 22s infinite;
+}
+.blob:nth-child(3) {
+  width: 150px;
+  height: 150px;
+  bottom: -15%;
+  left: 54%;
+
+  animation: wobble 6s ease-in-out alternate infinite,
+    blob-three ease-in-out 16s infinite;
+}
+.blob:nth-child(4) {
+  width: 235px;
+  height: 235px;
+  bottom: -19%;
+  left: 70%;
+
+  animation: wobble 7s ease-in-out alternate infinite,
+    blob-four ease-in-out 22s infinite;
+}
+.blob:nth-child(4) {
+  width: 235px;
+  height: 235px;
+  bottom: -19%;
+  left: 30%;
+  animation: wobble 8s ease-in-out alternate infinite,
+    blob-four ease-in-out 20s infinite;
+}
+.blob:nth-child(5) {
+  width: 55px;
+  height: 55px;
+  bottom: -25%;
+  left: 54%;
+
+  animation: wobble 9s ease-in-out alternate infinite,
+    blob-five ease-in-out 32s infinite;
+}
+.blob:nth-child(6) {
+  width: 35px;
+  height: 35px;
+  bottom: -25%;
+  right: 22%;
+
+  animation: wobble 10s ease-in-out alternate infinite,
+    blob-six ease-in-out 16s infinite;
+}
+.blob:nth-child(7) {
+  width: 435px;
+  height: 435px;
+  bottom: -85%;
+  right: 20%;
+
+  animation: wobble 11s ease-in-out alternate infinite,
+    blob-seven ease-in-out 32s infinite;
+}
+@keyframes blob-one {
+  0%,
+  100% {
+    transform: translatey(0);
+  }
+  50% {
+    transform: translatey(-700%);
+  }
+}
+
+@keyframes blob-two {
+  0%,
+  100% {
+    transform: translatey(0);
+  }
+  50% {
+    transform: translatey(-420%);
+  }
+}
+
+@keyframes blob-three {
+  0%,
+  100% {
+    transform: translatey(0);
+  }
+  50% {
+    transform: translatey(-305%);
+  }
+}
+@keyframes blob-four {
+  0%,
+  100% {
+    transform: translatey(0);
+  }
+  50% {
+    transform: translatey(-605%);
+  }
+}
+@keyframes blob-five {
+  0%,
+  100% {
+    transform: translatey(0);
+  }
+  50% {
+    transform: translatey(-700%);
+  }
+}
+@keyframes blob-six {
+  0%,
+  100% {
+    transform: translatey(0);
+  }
+  50% {
+    transform: translatey(-700%);
+  }
+}
+@keyframes blob-seven {
+  0%,
+  100% {
+    transform: translatey(0);
+  }
+  50% {
+    transform: translatey(-300%);
+  }
+}
+@keyframes wobble {
+  50% {
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  }
+  100% {
+    border-radius: 38% 52% 75% 36% / 50% 40% 50% 60%;
   }
 }
 </style>

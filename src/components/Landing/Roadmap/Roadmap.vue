@@ -5,13 +5,13 @@
       <div class="flex_row upButtons">
         <router-link class="nonclickable" to="/">Introduction </router-link>
         <router-link class="nonclickable" to="/roadmap">Roadmap </router-link>
-        <a
-          href="https://github.com/SharedStake/SharedStake-ui"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          class="nonclickable Community"
+          @click="mouseOverCommunity = !mouseOverCommunity"
         >
-          <div class="nonclickable">Contribute</div>
-        </a>
+          <div>Community</div>
+          <socials v-if="mouseOverCommunity" class="socials" :dir="'down'" />
+        </button>
         <router-link class="loginButton" to="/app">Launch Dapp </router-link>
       </div>
     </div>
@@ -21,16 +21,30 @@
 
 <script>
 import ImageVue from "../../Handlers/image.vue";
+import Socials from "../../Root/Root/Socials.vue";
 
 export default {
   data() {
-    return {};
+    return { mouseOverCommunity: false };
   },
-  components: { ImageVue },
+  components: { ImageVue, Socials },
 };
 </script>
 
 <style scoped>
+.Community {
+  display: block;
+}
+
+.socials {
+  position: absolute;
+  top: 100%;
+  width: 80%;
+  background: #050505;
+  border: 1px transparent solid;
+  height: 30vh;
+  border-radius: 5%;
+}
 a {
   text-decoration: none;
   color: #f5f5f5;
@@ -49,7 +63,6 @@ a {
   justify-content: space-between;
 }
 #Launcher {
-  overflow: hidden;
   width: 99vw;
   display: flex;
   flex-direction: row;
@@ -100,20 +113,23 @@ a {
   max-width: 100px;
 }
 .nonclickable {
-  border-radius: 5px;
+  position: relative;
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
   font-size: 3vw;
   text-align: left;
   vertical-align: text-top;
   display: flex;
-  transition: transform 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
   flex-direction: row;
   cursor: pointer;
   align-items: flex-start;
   justify-content: space-between;
   backdrop-filter: blur(5px);
   padding: 1vw;
+  background: transparent;
+  overflow: visible;
 }
-
 @media only screen and (min-width: 1350px) {
   #Launcher {
     position: absolute;

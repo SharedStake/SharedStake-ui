@@ -1,5 +1,12 @@
 <template>
-  <div class="grid-container">
+  <div
+    class="grid-container"
+    :style="
+      dir == 'down'
+        ? { 'grid-template-rows': '1fr 1fr 1fr 1fr 1fr' }
+        : { 'grid-template-columns': '1fr 1fr 1fr 1fr 1fr' }
+    "
+  >
     <div class="Social" v-for="(logo, i) in logos" :key="i">
       <a :href="logo.link" target="_blank" rel="noopener noreferrer">
         <imageVue v-show="logo.link" :src="logo.img" :size="size" class="logo"
@@ -11,6 +18,7 @@
 <script>
 import imageVue from "../../Handlers/image.vue";
 export default {
+  props: { dir: String },
   data: () => ({
     logos: [
       //   { img: "medium.png", link: "" },
@@ -41,8 +49,6 @@ export default {
 .grid-container {
   margin-top: 2vh;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  gap: 3vh 0px;
   justify-items: center;
   align-items: center;
 }
