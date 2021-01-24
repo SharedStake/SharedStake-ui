@@ -118,7 +118,11 @@
               </div>
             </div>
             <div>
-              <imageVue :src="'back-button.png'" :size="'32px'" id="right" />
+              <imageVue
+                :src="'back-button.png'"
+                :size="'32px'"
+                :id="width < 680 ? 'down' : 'right'"
+              />
             </div>
             <div
               class="flex_column"
@@ -141,7 +145,11 @@
               </div>
             </div>
             <div>
-              <imageVue :src="'back-button.png'" :size="'32px'" id="right" />
+              <imageVue
+                :src="'back-button.png'"
+                :size="'32px'"
+                :id="width < 680 ? 'down' : 'right'"
+              />
             </div>
             <div
               class="flex_column"
@@ -167,7 +175,11 @@
               </div>
             </div>
             <div>
-              <imageVue :src="'back-button.png'" :size="'32px'" id="right" />
+              <imageVue
+                :src="'back-button.png'"
+                :size="'32px'"
+                :id="width < 680 ? 'down' : 'right'"
+              />
             </div>
             <div
               class="flex_column"
@@ -459,7 +471,7 @@ a {
   font-family: "Roboto";
   font-weight: 300;
   background: transparent;
-  height: 85vh;
+  min-height: 85vh;
   padding-top: 15vh; /*
   // display: flex;
   // flex-direction: column;
@@ -487,6 +499,7 @@ a {
 
 .Community {
   display: block;
+  overflow: visible;
 }
 
 .socials {
@@ -495,7 +508,7 @@ a {
   width: 80%;
   background: #050505;
   border: 1px transparent solid;
-  height: 30vh;
+  min-height: 30vh;
   border-radius: 5%;
 }
 .loginButton {
@@ -510,6 +523,7 @@ a {
   text-align: center;
   line-height: 50px; /* same as height! */
   max-height: 50px;
+  overflow: hidden;
   transition: transform 0.2s ease-in-out;
 }
 .loginButton:hover {
@@ -674,7 +688,6 @@ a {
   min-height: 298vh;
 }
 .typewriter {
-  overflow-x: hidden; /* Ensures the content is not revealed until the animation */
   margin: 5vh auto 0 auto; /* Gives that scrolling effect as the typing happens */
   letter-spacing: 0.15em; /* Adjust as needed */
   grid-area: typewriter;
@@ -721,7 +734,6 @@ a {
   backdrop-filter: blur(5px);
   padding: 1vw;
   background: transparent;
-  overflow: visible;
 }
 /* The typing effect */
 @keyframes typing {

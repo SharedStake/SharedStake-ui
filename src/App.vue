@@ -13,7 +13,7 @@ export default {
 body {
   background: radial-gradient(
     ellipse at bottom,
-    rgb(40, 60, 80),
+    rgb(50, 70, 90),
     rgba(0, 0, 0, 1)
   );
 }

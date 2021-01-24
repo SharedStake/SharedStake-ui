@@ -42,7 +42,7 @@ export default {
   width: 80%;
   background: #050505;
   border: 1px transparent solid;
-  height: 30vh;
+  min-height: 30vh;
   border-radius: 5%;
 }
 a {
@@ -75,9 +75,11 @@ a {
 }
 .loginButton {
   font-size: 14px;
+  overflow: hidden;
 }
 .nonclickable:hover {
   transform: scale(0.95);
+  color: #fafafa;
 }
 .landingPage {
   background: #1b1b2a;
