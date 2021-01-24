@@ -11,7 +11,11 @@ export default {
 </script>
 <style lang="css">
 body {
-  background-color: #090a0f;
+  background: radial-gradient(
+    ellipse at bottom,
+    rgb(40, 60, 80),
+    rgba(0, 0, 0, 1)
+  );
 }
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap");
