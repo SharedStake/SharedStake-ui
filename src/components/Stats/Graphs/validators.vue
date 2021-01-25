@@ -38,7 +38,7 @@
 
 <script>
 import ImageVue from "../../Handlers/image";
-import { validator } from "../../../contracts/contracts";
+import { validator } from "@/contracts";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });

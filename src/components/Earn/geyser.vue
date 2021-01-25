@@ -1,5 +1,5 @@
 <template>
-  <div class="flex_column geyser">{{ pool }}</div>
+  <div class="flex_column geyser">{{ pool.name }}</div>
 </template>
 
 <script>
@@ -13,6 +13,5 @@ export default { components: {}, props: ["pool"] };
   transition: transform 0.2s ease-in-out;
 }
 .geyser:hover {
-  transform: scale(0.95);
 }
 </style>

@@ -77,7 +77,7 @@
         v-show="txs.length > 0"
         class="exp"
         v-for="(tx, index) in txs"
-        :key="index"
+        v-bind:key="index * Math.random()"
       >
         <Notifier
           :id="tx.id"
@@ -94,18 +94,20 @@
 </template>
 
 <script>
-// import TotalStaked from "../Stats/Graphs/TotalStaked";
-import ImageVue from "../Handlers/image.vue";
-import Arrow from "../../assets/svg/arrow.vue";
-import gasChooser from "../Handlers/gasChooser";
-import Notifier from "../Handlers/notifier.vue";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 
-import { validator, vEth2 } from "../../contracts/contracts";
 import { mapGetters } from "vuex";
-import { timeout } from "../../utils/helpers";
+import { validator, vEth2 } from "@/contracts";
+import { timeout } from "@/utils/helpers";
+
+import ImageVue from "../Handlers/image.vue";
+import Arrow from "../../assets/svg/arrow.vue";
+import gasChooser from "../Handlers/gasChooser";
+import Notifier from "../Handlers/notifier.vue";
+// import TotalStaked from "../Stats/Graphs/TotalStaked";
+
 export default {
   components: { Arrow, ImageVue, gasChooser, Notifier },
   data: () => ({

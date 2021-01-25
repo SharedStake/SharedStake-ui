@@ -6,14 +6,22 @@
 
 <script>
 import geyser from "./geyser.vue";
+import {
+  SGT,
+  vEth2,
+  SGT_uniswap,
+  geyser_vEth2,
+  geyser_SGT,
+  geyser_SGT_uniswap,
+} from "@/contracts";
 export default {
   components: { geyser },
   data: () => ({
     pools: {
-      pool1: { name: "oh no1", geyser: null, token: null },
-      pool2: { name: "oh no2", geyser: null, token: null },
-      pool3: { name: "oh no3", geyser: null, token: null },
-      pool4: { name: "oh no4", geyser: null, token: null },
+      pool1: { name: "SGT", geyser: geyser_SGT, token: SGT },
+      pool3: { name: "SGT LP", geyser: geyser_SGT_uniswap, token: SGT_uniswap },
+      pool2: { name: "vEth2", geyser: geyser_vEth2, token: vEth2 },
+      pool4: { name: "vEth2 LP", geyser: null, token: null },
     },
   }),
 };
@@ -21,8 +29,10 @@ export default {
 
 <style scoped>
 .Earn {
-  overflow-y: hidden;
+  overflow-y: scroll;
   scroll-behavior: smooth;
+  align-items: center;
+  justify-content: flex-start;
 }
 span {
   text-align: left;

@@ -33,7 +33,7 @@ export default {
   props: ["updateGas"],
   data: () => ({
     gas: {
-      low: " 0",
+      low: 10,
       medium: 20,
       high: 50,
     },
