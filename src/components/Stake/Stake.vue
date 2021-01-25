@@ -284,7 +284,7 @@ export default {
       let amount = await window.web3.eth.getBalance(walletAddress);
       this.EthBal = BN(amount);
       let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
-      this.vEth2Bal = BN(vEth2);
+      this.vEth2Bal = BN(veth2);
       if (this.isDeposit) this.balance = BN(amount).dividedBy(1e18).toFixed(6);
       else this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
       let remaining = await validator.methods.remainingSpaceInEpoch().call();

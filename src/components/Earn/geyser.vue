@@ -1,5 +1,5 @@
 <template>
-  <div class="geyserwrapper">
+  <div class="geyserwrapper" :id="active ? 'pinkShadow' : 'noShadow'">
     <div class="geyserChooser" @click="$emit('toggle')">
       <ImageVue
         :src="'tokens/' + pool.name + '.png'"
@@ -128,7 +128,7 @@
             MAX
           </div>
         </div>
-        <button class="mainButton">stake</button>
+        <button class="mainButton" @click="Deposit">stake</button>
       </div>
       <div class="mainPart">
         <div :class="'stakePage'">
@@ -160,8 +160,8 @@
           </div>
         </div>
         <div>
-          <button class="mainButton half">withdraw</button>
-          <button class="mainButton half pink">harvest</button>
+          <button class="mainButton half" @click="Withdraw">withdraw</button>
+          <button class="mainButton half pink" @click="Harvest">harvest</button>
         </div>
       </div>
     </div>
@@ -192,71 +192,73 @@ export default {
   mounted: function () {
     this.mounted();
   },
-
-  DAmount(newValue, oldVal) {
-    if (newValue.length > 40) {
-      this.Damount = oldVal;
-      this.amountCheck();
-      return;
-    }
-    if (newValue[newValue.length - 1] == 0) {
-      this.Damount = newValue;
+  watch: {
+    DAmount(newValue, oldVal) {
+      console.log(newValue, oldVal);
+      if (newValue.length > 40) {
+        this.Damount = oldVal;
+        // this.amountCheck();
+        return;
+      }
+      if (newValue[newValue.length - 1] == 0) {
+        this.Damount = newValue;
+        this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
+        // this.amountCheck();
+        return;
+      }
+      if (
+        newValue[newValue.length - 1] === "." &&
+        newValue[newValue.length - 2] !== "."
+      ) {
+        this.Damount = newValue;
+        // this.amountCheck();
+        return;
+      }
+      if (isNaN(newValue)) {
+        this.Damount = this.bigDAmount.dividedBy(1e18).toString();
+        return;
+      }
+      if (!newValue) {
+        this.Damount = 0;
+      } else {
+        this.Damount = newValue;
+      }
       this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
-      this.amountCheck();
-      return;
-    }
-    if (
-      newValue[newValue.length - 1] === "." &&
-      newValue[newValue.length - 2] !== "."
-    ) {
-      this.Damount = newValue;
-      this.amountCheck();
-      return;
-    }
-    if (isNaN(newValue)) {
       this.Damount = this.bigDAmount.dividedBy(1e18).toString();
-      return;
-    }
-    if (!newValue) {
-      this.Damount = 0;
-    } else {
-      this.Damount = newValue;
-    }
-    this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
-    this.Damount = this.bigDAmount.dividedBy(1e18).toString();
-    this.amountCheck();
-  },
-  WAmount(newValue, oldVal) {
-    if (newValue.length > 40) {
-      this.WAmount = oldVal;
-      this.amountCheck();
-      return;
-    }
-    if (newValue[newValue.length - 1] == 0) {
-      this.WAmount = newValue;
+      // this.amountCheck();
+    },
+    WAmount(newValue, oldVal) {
+      if (newValue.length > 40) {
+        this.WAmount = oldVal;
+        // this.amountCheck();
+        return;
+      }
+      if (newValue[newValue.length - 1] == 0) {
+        this.WAmount = newValue;
+        this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
+        // this.amountCheck();
+        return;
+      }
+      if (
+        newValue[newValue.length - 1] === "." &&
+        newValue[newValue.length - 2] !== "."
+      ) {
+        this.WAmount = newValue;
+        // this.amountCheck();
+        return;
+      }
+      if (isNaN(newValue)) {
+        this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+        return;
+      }
+      if (!newValue) {
+        this.WAmount = 0;
+      } else {
+        this.WAmount = newValue;
+      }
       this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
-      this.amountCheck();
-      return;
-    }
-    if (
-      newValue[newValue.length - 1] === "." &&
-      newValue[newValue.length - 2] !== "."
-    ) {
-      this.WAmount = newValue;
-      this.amountCheck();
-      return;
-    }
-    if (isNaN(newValue)) {
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
-      return;
-    }
-    if (!newValue) {
-      this.WAmount = 0;
-    } else {
-      this.WAmount = newValue;
-    }
-    this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
-    this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+    },
   },
   methods: {
     async mounted() {
@@ -282,6 +284,37 @@ export default {
         BN(this.pool.locked).div(BN(duration).div(60).div(60).div(24))
       );
       this.locked = BN(remRewards);
+    },
+    async Deposit() {
+      let myAmount = this.bigDAmount.toString();
+      let geyserAddress = this.pool.geyser._address;
+      let allowance = await this.pool.token.methods
+        .allowance(this.userAddress, geyserAddress)
+        .call();
+
+      if (BN(allowance).lt(this.bigDAmount)) {
+        await this.pool.token.methods
+          .approve(geyserAddress, myAmount)
+          .send({ from: this.userAddress });
+      }
+      await this.pool.geyser.methods
+        .stake(myAmount)
+        .send({ from: this.userAddress });
+    },
+    async Withdraw() {
+      if (this.bigWAmount.eq(this.staked)) {
+        await this.pool.geyser.methods.exit().send({ from: this.userAddress });
+      } else {
+        let myAmount = this.bigWAmount.toString();
+        await this.pool.geyser.methods
+          .withdraw(myAmount)
+          .send({ from: this.userAddress });
+      }
+    },
+    async Harvest() {
+      await this.pool.geyser.methods
+        .getReward()
+        .send({ from: this.userAddress });
     },
   },
   computed: {
@@ -309,7 +342,12 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  transition: 0.42s ease-in-out;
+  -webkit-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.517);
+  -moz-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.619);
+  box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.469);
 }
+
 .geyserChooser {
   cursor: pointer;
   width: 90%;
