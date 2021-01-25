@@ -7,7 +7,7 @@
         :pool="pool"
         v-bind:key="pool.name"
         :active="active === pool.name"
-        @click.native="active = active ? null : pool.name"
+        @click.native="active = active == pool.name ? null : pool.name"
       />
     </div>
     <Arrow :direction="'down'" :size="28" class="arrow" />
@@ -15,7 +15,9 @@
 </template>
 
 <script>
+import BN from "bignumber.js";
 import geyser from "./geyser.vue";
+import Arrow from "../../assets/svg/arrow.vue";
 import {
   SGT,
   vEth2,
@@ -24,7 +26,6 @@ import {
   geyser_SGT,
   geyser_SGT_uniswap,
 } from "@/contracts";
-import Arrow from "../../assets/svg/arrow.vue";
 export default {
   components: { geyser, Arrow },
   data: () => ({
@@ -35,24 +36,28 @@ export default {
         explanation: "SharedStake Governance",
         token: SGT,
         geyser: geyser_SGT,
+        locked: BN(20000),
       },
       pool2: {
         name: "vEth2",
         explanation: "validator ETH2",
         token: vEth2,
         geyser: geyser_vEth2,
+        locked: BN(40000),
       },
       pool3: {
         name: "SGT LP",
         explanation: "on uniswap",
         token: SGT_uniswap,
         geyser: geyser_SGT_uniswap,
+        locked: BN(20000),
       },
       pool4: {
         name: "vEth2 LP",
         explanation: "on snowswap",
         token: null,
         geyser: null,
+        locked: BN(2000),
       },
     },
   }),
