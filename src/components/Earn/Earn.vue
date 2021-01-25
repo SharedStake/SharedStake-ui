@@ -75,18 +75,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /*  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "."
-    "."
-    "."
-    ".";
-  grid-gap: 3px;
-  justify-items: center;
-  align-items: center;*/
 }
 .arrow {
   position: fixed;

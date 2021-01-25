@@ -118,7 +118,11 @@
           />
           <div
             class="toMax"
-            @click="bigDAmount = balance"
+            @click="
+              () => {
+                DAmount = balance ? balance.div(10 ** decimals).toString() : 0;
+              }
+            "
             title="Get max token"
           >
             MAX
@@ -143,13 +147,21 @@
             value=""
             v-model="WAmount"
           />
-          <div class="toMax" @click="bigWAmount = staked" title="Get max token">
+          <div
+            class="toMax"
+            @click="
+              () => {
+                WAmount = staked ? staked.div(10 ** decimals).toString() : 0;
+              }
+            "
+            title="Get max token"
+          >
             MAX
           </div>
         </div>
         <div>
           <button class="mainButton half">withdraw</button>
-          <button class="mainButton half">harvest</button>
+          <button class="mainButton half pink">harvest</button>
         </div>
       </div>
     </div>
@@ -180,6 +192,72 @@ export default {
   mounted: function () {
     this.mounted();
   },
+
+  DAmount(newValue, oldVal) {
+    if (newValue.length > 40) {
+      this.Damount = oldVal;
+      this.amountCheck();
+      return;
+    }
+    if (newValue[newValue.length - 1] == 0) {
+      this.Damount = newValue;
+      this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
+      this.amountCheck();
+      return;
+    }
+    if (
+      newValue[newValue.length - 1] === "." &&
+      newValue[newValue.length - 2] !== "."
+    ) {
+      this.Damount = newValue;
+      this.amountCheck();
+      return;
+    }
+    if (isNaN(newValue)) {
+      this.Damount = this.bigDAmount.dividedBy(1e18).toString();
+      return;
+    }
+    if (!newValue) {
+      this.Damount = 0;
+    } else {
+      this.Damount = newValue;
+    }
+    this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
+    this.Damount = this.bigDAmount.dividedBy(1e18).toString();
+    this.amountCheck();
+  },
+  WAmount(newValue, oldVal) {
+    if (newValue.length > 40) {
+      this.WAmount = oldVal;
+      this.amountCheck();
+      return;
+    }
+    if (newValue[newValue.length - 1] == 0) {
+      this.WAmount = newValue;
+      this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
+      this.amountCheck();
+      return;
+    }
+    if (
+      newValue[newValue.length - 1] === "." &&
+      newValue[newValue.length - 2] !== "."
+    ) {
+      this.WAmount = newValue;
+      this.amountCheck();
+      return;
+    }
+    if (isNaN(newValue)) {
+      this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+      return;
+    }
+    if (!newValue) {
+      this.WAmount = 0;
+    } else {
+      this.WAmount = newValue;
+    }
+    this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
+    this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+  },
   methods: {
     async mounted() {
       let user = this.userAddress;
@@ -204,12 +282,6 @@ export default {
         BN(this.pool.locked).div(BN(duration).div(60).div(60).div(24))
       );
       this.locked = BN(remRewards);
-      console.log(
-        remDays.toString(),
-        this.pool.locked.toString(),
-        duration.toString(),
-        this.locked.toString()
-      );
     },
   },
   computed: {
@@ -341,9 +413,7 @@ export default {
   font-size: 14px;
   color: #ff007b9c;
 }
-.blue {
-  color: #1d3c7a;
-}
+
 /* stake input part */
 .stakePage {
   display: flex;
@@ -395,7 +465,6 @@ export default {
 }
 .mainButton {
   width: 100%;
-  background-color: #fafafa;
   min-height: 15%;
   border-radius: 15px;
   border: none;
@@ -416,5 +485,15 @@ export default {
 }
 .half {
   width: 50%;
+}
+.blue {
+  color: #1d3c7a;
+}
+.pink {
+  color: #ff007a;
+}
+.pink:hover {
+  background-color: #ff007a;
+  color: #fafafa;
 }
 </style>
