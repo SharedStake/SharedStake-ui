@@ -460,11 +460,6 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;0,700;1,700&display=swap");
-@font-face {
-  font-family: hacked;
-  src: url(Hacked.ttf);
-}
 .secondPage {
   text-align: left;
   padding: 20px 20px 50px 20px;

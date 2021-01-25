@@ -1,6 +1,16 @@
 <template>
-  <div class="flex_column Earn">
-    <geyser v-for="pool in pools" :pool="pool" v-bind:key="pool.name" />
+  <div class="EarnWrapper">
+    <div class="Earn">
+      <geyser
+        class="geyser"
+        v-for="pool in pools"
+        :pool="pool"
+        v-bind:key="pool.name"
+        :active="active === pool.name"
+        @click.native="active = active ? null : pool.name"
+      />
+    </div>
+    <Arrow :direction="'down'" :size="28" class="arrow" />
   </div>
 </template>
 
@@ -14,25 +24,69 @@ import {
   geyser_SGT,
   geyser_SGT_uniswap,
 } from "@/contracts";
+import Arrow from "../../assets/svg/arrow.vue";
 export default {
-  components: { geyser },
+  components: { geyser, Arrow },
   data: () => ({
+    active: null,
     pools: {
-      pool1: { name: "SGT", geyser: geyser_SGT, token: SGT },
-      pool3: { name: "SGT LP", geyser: geyser_SGT_uniswap, token: SGT_uniswap },
-      pool2: { name: "vEth2", geyser: geyser_vEth2, token: vEth2 },
-      pool4: { name: "vEth2 LP", geyser: null, token: null },
+      pool1: {
+        name: "SGT",
+        explanation: "SharedStake Governance",
+        token: SGT,
+        geyser: geyser_SGT,
+      },
+      pool2: {
+        name: "vEth2",
+        explanation: "validator ETH2",
+        token: vEth2,
+        geyser: geyser_vEth2,
+      },
+      pool3: {
+        name: "SGT LP",
+        explanation: "on uniswap",
+        token: SGT_uniswap,
+        geyser: geyser_SGT_uniswap,
+      },
+      pool4: {
+        name: "vEth2 LP",
+        explanation: "on snowswap",
+        token: null,
+        geyser: null,
+      },
     },
   }),
 };
 </script>
 
 <style scoped>
-.Earn {
+.EarnWrapper {
   overflow-y: scroll;
+}
+.Earn {
   scroll-behavior: smooth;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start;
+  /*  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "."
+    "."
+    "."
+    ".";
+  grid-gap: 3px;
+  justify-items: center;
+  align-items: center;*/
+}
+.arrow {
+  position: fixed;
+  bottom: 5vh;
+  right: 5vw;
 }
 span {
   text-align: left;
