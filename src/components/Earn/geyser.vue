@@ -1,6 +1,6 @@
 <template>
   <div class="geyserwrapper">
-    <div class="geyserChooser">
+    <div class="geyserChooser" @click="$emit('toggle')">
       <ImageVue
         :src="'tokens/' + pool.name + '.png'"
         :size="'40px'"
@@ -23,7 +23,7 @@
                 .toFixed(3)
                 .toString()
         }}
-        <div class="minitext">{{ pool.name }} available to deposit</div>
+        <div class="minitext">{{ pool.name }} available to stake</div>
       </div>
       <span class="headerPart label" :id="active ? 'headDown' : 'headUp'"
         ><svg
@@ -98,6 +98,61 @@
         SGT
       </div>
     </div>
+    <div class="geyserMain" v-show="active">
+      <div class="mainPart" id="rightBorder">
+        <div :class="'stakePage'">
+          <input
+            class="token-amount-input"
+            inputmode="decimal"
+            title="Token Amount"
+            autocomplete="off"
+            autocorrect="off"
+            type="text"
+            pattern="^[0-9]*[.,]?[0-9]*$"
+            placeholder="0.0"
+            minlength="1"
+            maxlength="39"
+            spellcheck="false"
+            value=""
+            v-model="DAmount"
+          />
+          <div
+            class="toMax"
+            @click="bigDAmount = balance"
+            title="Get max token"
+          >
+            MAX
+          </div>
+        </div>
+        <button class="mainButton">stake</button>
+      </div>
+      <div class="mainPart">
+        <div :class="'stakePage'">
+          <input
+            class="token-amount-input"
+            inputmode="decimal"
+            title="Token Amount"
+            autocomplete="off"
+            autocorrect="off"
+            type="text"
+            pattern="^[0-9]*[.,]?[0-9]*$"
+            placeholder="0.0"
+            minlength="1"
+            maxlength="39"
+            spellcheck="false"
+            value=""
+            v-model="WAmount"
+          />
+          <div class="toMax" @click="bigWAmount = staked" title="Get max token">
+            MAX
+          </div>
+        </div>
+        <div>
+          <button class="mainButton half">withdraw</button>
+          <button class="mainButton half">harvest</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -116,6 +171,11 @@ export default {
     totalStaked: 0,
     stakedSchedule: 0,
     decimals: 1,
+    //functional
+    DAmount: 0,
+    bigDAmount: BN(0),
+    WAmount: 0,
+    bigWAmount: BN(0),
   }),
   mounted: function () {
     this.mounted();
@@ -164,7 +224,6 @@ export default {
 
 <style scoped>
 .geyserwrapper {
-  cursor: pointer;
   position: relative;
   transition: transform 0.2s ease-in-out;
   font-family: "Work Sans";
@@ -173,13 +232,14 @@ export default {
   width: 60vw;
   border: 1px #ff007a solid;
   border-radius: 49px;
-  background-color: #ffffff;
+  background-color: #fafafa;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
 }
 .geyserChooser {
+  cursor: pointer;
   width: 90%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -203,13 +263,15 @@ export default {
   color: #fafafa;
   background-color: #ff007a;
 }
-
+.geyserMain,
 .geyserUser {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 10px;
+}
+.geyserMain {
   border-top: 1px #ff007a solid;
 }
 .headerPart,
@@ -219,15 +281,20 @@ export default {
   font-weight: 500;
   line-height: 1.2;
 }
+
+.mainPart,
 .statsPart,
 .userPart {
   padding: 1vh 2vw 1vh 2vw;
 }
 
+.mainPart,
 .userPart {
   margin: 2vh 0 2vh 0;
-  text-shadow: 1px 1px #ff007a;
   font-size: 32px;
+}
+.userPart {
+  text-shadow: 1px 1px #ff007a;
 }
 #rightBorder {
   border-right: 1px #ff007a solid;
@@ -276,5 +343,78 @@ export default {
 }
 .blue {
   color: #1d3c7a;
+}
+/* stake input part */
+.stakePage {
+  display: flex;
+  max-width: 23vw;
+  min-width: 185px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 20%;
+  border-radius: 30px;
+  border: 1px solid #afb2b6;
+  align-items: center;
+  padding: 0.75rem 0.75rem 0.75rem 1rem;
+  text-align: center;
+}
+.token-amount-input {
+  color: #000000;
+  position: relative;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  background-color: transparent;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0px;
+  font-family: "Graduate", cursive;
+  -webkit-appearance: textfield;
+}
+.toMax {
+  padding: 0.3rem 0.3rem 0 0.2rem;
+  height: 1.7rem;
+  background-color: rgb(253, 234, 241);
+  border: 1px solid rgb(253, 234, 241);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  color: rgb(255, 0, 122);
+  text-align: center;
+  cursor: pointer;
+}
+.toMax:hover {
+  border: 1px solid #007bff;
+}
+.mainButton {
+  width: 100%;
+  background-color: #fafafa;
+  min-height: 15%;
+  border-radius: 15px;
+  border: none;
+  align-items: center;
+  margin: 15px 0 15px 0;
+  padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  border-bottom: 1px solid #afb2b6;
+  transition: all 0.2s linear, transform 0.1s ease-in-out;
+  cursor: pointer;
+  color: #0b8f92;
+}
+.mainButton:hover {
+  background-color: #0b8f92;
+  color: #fafafa;
+}
+.half {
+  width: 50%;
 }
 </style>

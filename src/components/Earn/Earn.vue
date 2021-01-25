@@ -7,7 +7,7 @@
         :pool="pool"
         v-bind:key="pool.name"
         :active="active === pool.name"
-        @click.native="active = active == pool.name ? null : pool.name"
+        @toggle="active = active == pool.name ? null : pool.name"
       />
     </div>
     <Arrow :direction="'down'" :size="28" class="arrow" />
