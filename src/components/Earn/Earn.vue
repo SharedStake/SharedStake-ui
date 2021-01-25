@@ -10,10 +10,10 @@ export default {
   components: { geyser },
   data: () => ({
     pools: {
-      pool1: { name: "oh no1" },
-      pool2: { name: "oh no2" },
-      pool3: { name: "oh no3" },
-      pool4: { name: "oh no4" },
+      pool1: { name: "oh no1", geyser: null, token: null },
+      pool2: { name: "oh no2", geyser: null, token: null },
+      pool3: { name: "oh no3", geyser: null, token: null },
+      pool4: { name: "oh no4", geyser: null, token: null },
     },
   }),
 };

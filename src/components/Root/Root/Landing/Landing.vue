@@ -39,10 +39,10 @@ export default {
       this.value = initValue / 1000;
     },
     async mounted() {
-      let totalBeth = await axios.get(
+      let totalvEth2 = await axios.get(
         "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
       );
-      this.value = (totalBeth.data.result / 1e18).toFixed(2);
+      this.value = (totalvEth2.data.result / 1e18).toFixed(2);
       await this.increaseValue();
     },
   },

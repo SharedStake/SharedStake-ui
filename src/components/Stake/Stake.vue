@@ -103,7 +103,7 @@ import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 
-import { validator, bETH } from "../../contracts/contracts";
+import { validator, vEth2 } from "../../contracts/contracts";
 import { mapGetters } from "vuex";
 import { timeout } from "../../utils/helpers";
 export default {
@@ -114,7 +114,7 @@ export default {
     Damount: "",
     isDeposit: true,
     EthBal: BN(0),
-    BethBal: BN(0),
+    vEth2Bal: BN(0),
     balance: 0,
     gas: 20,
     validInput: true,
@@ -171,7 +171,7 @@ export default {
         }
         this.Damount = this.BNamount.dividedBy(1e18);
       } else {
-        this.BNamount = this.BethBal;
+        this.BNamount = this.vEth2Bal;
         this.Damount = this.BNamount.dividedBy(1e18);
       }
     },
@@ -281,10 +281,10 @@ export default {
       let walletAddress = this.userAddress;
       let amount = await window.web3.eth.getBalance(walletAddress);
       this.EthBal = BN(amount);
-      let beth = await bETH.methods.balanceOf(walletAddress).call();
-      this.BethBal = BN(beth);
+      let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
+      this.vEth2Bal = BN(vEth2);
       if (this.isDeposit) this.balance = BN(amount).dividedBy(1e18).toFixed(6);
-      else this.balance = BN(beth).dividedBy(1e18).toFixed(6);
+      else this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
       let remaining = await validator.methods.remainingSpaceInEpoch().call();
       this.remaining = BN(remaining);
       this.amountCheck(true);
@@ -315,7 +315,7 @@ export default {
         ? this.EthBal.minus(BN(this.gas * 200000 * 1000000000)).gte(
             this.BNamount
           )
-        : this.BethBal.gte(this.BNamount);
+        : this.vEth2Bal.gte(this.BNamount);
       if (!this.validInput) {
         this.buttonText = "Insufficient balance";
       }
@@ -360,7 +360,7 @@ export default {
       this.amountCheck();
     },
     isDeposit: function (val) {
-      let balance = val ? this.EthBal : this.BethBal;
+      let balance = val ? this.EthBal : this.vEth2Bal;
       this.balance = balance.dividedBy(1e18).toFixed(6);
       this.Damount = "";
       this.buttonText = "Enter an amount";
