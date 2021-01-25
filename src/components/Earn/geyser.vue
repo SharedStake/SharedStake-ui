@@ -128,7 +128,9 @@
             MAX
           </div>
         </div>
-        <button class="mainButton" @click="Deposit">stake</button>
+        <button class="mainButton" @click="Deposit" :disabled="disableDeposit">
+          stake
+        </button>
       </div>
       <div class="mainPart">
         <div :class="'stakePage'">
@@ -160,8 +162,20 @@
           </div>
         </div>
         <div>
-          <button class="mainButton half" @click="Withdraw">withdraw</button>
-          <button class="mainButton half pink" @click="Harvest">harvest</button>
+          <button
+            class="mainButton half"
+            @click="Withdraw"
+            :disabled="disableWithdraw"
+          >
+            withdraw
+          </button>
+          <button
+            class="mainButton half pink"
+            @click="Harvest"
+            :disabled="disableHarvest"
+          >
+            harvest
+          </button>
         </div>
       </div>
     </div>
@@ -218,6 +232,31 @@ export default {
   },
   mounted: async function () {
     await this.mounted();
+  },
+  computed: {
+    ...mapGetters({ userAddress: "userAddress" }),
+    disableDeposit: function () {
+      let disable = false;
+      if (this.DAmount[this.DAmount.length - 1] === ".") disable = true;
+      else if (isNaN(this.bigDAmount)) disable = true;
+      else if (BN(this.bigDAmount).lte(0)) disable = true;
+      else if (BN(this.balance).lt(this.bigDAmount)) disable = true;
+      return disable;
+    },
+    disableWithdraw: function () {
+      let disable = false;
+      if (this.WAmount[this.WAmount.length - 1] === ".") disable = true;
+      else if (isNaN(this.bigWAmount)) disable = true;
+      else if (BN(this.bigWAmount).lte(0)) disable = true;
+      else if (BN(this.staked).lt(this.bigWAmount)) disable = true;
+      return disable;
+    },
+    disableHarvest: function () {
+      let disable = false;
+      if (this.disableWithdraw) disable = true;
+      else if (this.earned.lte(0)) disable = true;
+      return disable;
+    },
   },
   watch: {
     DAmount(newValue, oldVal) {
@@ -548,13 +587,6 @@ export default {
         });
     },
   },
-  computed: {
-    ...mapGetters({
-      userAddress: "userAddress",
-      authenticated: "isAuth",
-      getNetwork: "getNetwork",
-    }),
-  },
 };
 </script>
 
@@ -752,6 +784,7 @@ export default {
   background-color: #0b8f92;
   color: #fafafa;
 }
+
 .half {
   width: 50%;
 }
@@ -764,5 +797,11 @@ export default {
 .pink:hover {
   background-color: #ff007a;
   color: #fafafa;
+}
+.mainButton:disabled {
+  cursor: default;
+  background-color: rgba(239, 239, 239, 0.3);
+  color: #0b8f92;
+  opacity: 0.5;
 }
 </style>
