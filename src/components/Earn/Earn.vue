@@ -6,8 +6,8 @@
         v-for="pool in pools"
         :pool="pool"
         v-bind:key="pool.name"
-        :active="active === pool.name"
-        @toggle="active = active == pool.name ? null : pool.name"
+        :chosen="chosen === pool.name"
+        @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
     </div>
     <Arrow :direction="'down'" :size="28" class="arrow" />
@@ -29,38 +29,72 @@ import {
 export default {
   components: { geyser, Arrow },
   data: () => ({
-    active: null,
-    pools: {
-      pool1: {
+    chosen: null,
+    pools: [
+      {
         name: "SGT",
         explanation: "SharedStake Governance",
         token: SGT,
         geyser: geyser_SGT,
         locked: BN(20000),
+        external: false,
+        active: false,
+        tokenPerSgt: 1,
       },
-      pool2: {
+      {
         name: "vEth2",
         explanation: "validator ETH2",
         token: vEth2,
         geyser: geyser_vEth2,
         locked: BN(40000),
+        external: false,
+        active: false,
+        tokenPerSgt: 0,
       },
-      pool3: {
+      {
         name: "SGT LP",
         explanation: "on uniswap",
         token: SGT_uniswap,
         geyser: geyser_SGT_uniswap,
         locked: BN(20000),
+        external: false,
+        active: false,
+        tokenPerSgt: 0,
       },
-      pool4: {
+      {
         name: "vEth2 LP",
         explanation: "on snowswap",
         token: null,
         geyser: null,
         locked: BN(2000),
+        external: true,
+        active: false,
+        status: "Check out snowswap to stake your eth2snow tokens!", //for inactive pools
+        link: "https://snowswap.org/ethsnow/deposit", //for inactive pools
       },
-    },
+    ],
   }),
+  mounted: async function () {
+    // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
+    // 100* (sgtprice/tokenprice)*locked/staked
+    // tokenPerSgt=sgtprice/tokenprice
+    let tokenPerSgt = 0;
+
+    // pool1
+    let token = this.pools[2].token;
+    let reserves = await token.methods.getReserves().call();
+    let Eth = reserves[0];
+    let Sgt = reserves[1];
+    tokenPerSgt = Eth / Sgt; //revise
+    this.pools[1].tokenPerSgt = tokenPerSgt;
+
+    // pool 2
+    let totalSupply = await token.methods.totalSupply().call();
+    tokenPerSgt = (Eth + Sgt) / totalSupply / Eth; //or maybe divide to sgt?
+    this.pools[2].tokenPerSgt = tokenPerSgt;
+
+    // no need for 3. pool
+  },
 };
 </script>
 

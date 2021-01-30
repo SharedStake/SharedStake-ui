@@ -1,5 +1,5 @@
 <template>
-  <div class="geyserwrapper" :id="active ? 'pinkShadow' : 'noShadow'">
+  <div class="geyserwrapper" :id="chosen ? 'pinkShadow' : 'noShadow'">
     <div class="geyserChooser" @click="$emit('toggle')">
       <ImageVue
         :src="'tokens/' + pool.name + '.png'"
@@ -12,7 +12,15 @@
       </div>
       <div class="headerPart poolGrowth">
         <div class="minitext">Yearly Growth:</div>
-        <div class="yearlyGrowth">69%</div>
+        <div class="yearlyGrowth">
+          {{
+            apy == 0 || isNaN(apy)
+              ? pool.external
+                ? "↓"
+                : "Inactive"
+              : apy.toFixed(2) + "%"
+          }}
+        </div>
       </div>
       <div class="headerPart poolBalance">
         {{
@@ -25,7 +33,7 @@
         }}
         <div class="minitext">{{ pool.name }} available to stake</div>
       </div>
-      <span class="headerPart label" :id="active ? 'headDown' : 'headUp'"
+      <span class="headerPart label" :id="chosen ? 'headDown' : 'headUp'"
         ><svg
           class="MuiSvgIcon-root"
           focusable="false"
@@ -36,7 +44,17 @@
           <path fill="none" d="M0 0h24v24H0z"></path></svg
       ></span>
     </div>
-    <div class="geyserStats" v-show="active">
+    <div class="geyserExp" v-if="pool.external">
+      <div class="statsPart" id="whiteBorder">
+        <a :href="pool.link" target="_blank" rel="noopener noreferrer">
+          <div class="minitext blue">
+            {{ pool.status }}
+            <span style="font-size: 14px; font-weight: 700"> ↗</span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="geyserStats" v-show="chosen && !pool.external">
       <div class="statsPart" id="whiteBorder">
         <div class="minitext blue">Total Staked:</div>
         {{
@@ -68,7 +86,7 @@
         <div class="minitext blue">until the end.</div>
       </div>
     </div>
-    <div class="geyserUser" v-show="active">
+    <div class="geyserUser" v-show="chosen && !pool.external">
       <div class="userPart" id="rightBorder">
         <div class="minitext blue">Staked:</div>
         {{
@@ -98,7 +116,7 @@
         SGT
       </div>
     </div>
-    <div class="geyserMain" v-show="active">
+    <div class="geyserMain" v-show="chosen && !pool.external">
       <div class="mainPart" id="rightBorder">
         <div :class="'stakePage'">
           <input
@@ -208,7 +226,7 @@ import { timeout } from "@/utils/helpers";
 import Notifier from "../Handlers/notifier.vue";
 export default {
   components: { ImageVue, Notifier },
-  props: ["pool", "active"],
+  props: ["pool", "chosen"],
   data: () => ({
     balance: 0,
     staked: 0,
@@ -227,17 +245,22 @@ export default {
   created: function () {
     var self = this;
     window.ethereum.on("accountsChanged", function () {
-      self.mounted();
+      if (this.pool.active) {
+        self.mounted();
+      }
     });
   },
   mounted: async function () {
-    await this.mounted();
+    if (this.pool.active) {
+      await this.mounted();
+    }
   },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
     disableDeposit: function () {
       let disable = false;
-      if (this.DAmount[this.DAmount.length - 1] === ".") disable = true;
+      if (!this.pool.active) disable = true;
+      else if (this.DAmount[this.DAmount.length - 1] === ".") disable = true;
       else if (isNaN(this.bigDAmount)) disable = true;
       else if (BN(this.bigDAmount).lte(0)) disable = true;
       else if (BN(this.balance).lt(this.bigDAmount)) disable = true;
@@ -245,7 +268,8 @@ export default {
     },
     disableWithdraw: function () {
       let disable = false;
-      if (this.WAmount[this.WAmount.length - 1] === ".") disable = true;
+      if (!this.pool.active) disable = true;
+      else if (this.WAmount[this.WAmount.length - 1] === ".") disable = true;
       else if (isNaN(this.bigWAmount)) disable = true;
       else if (BN(this.bigWAmount).lte(0)) disable = true;
       else if (BN(this.staked).lt(this.bigWAmount)) disable = true;
@@ -253,9 +277,21 @@ export default {
     },
     disableHarvest: function () {
       let disable = false;
-      if (this.disableWithdraw) disable = true;
+      if (this.earned == 0) disable = true;
       else if (this.earned.lte(0)) disable = true;
       return disable;
+    },
+    apy: function () {
+      // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
+      // 100* (sgtprice/tokenprice)*locked/staked
+      // tokenPerSgt=sgtprice/tokenprice
+      // then go yearly
+      return (
+        100 *
+        this.pool.tokenPerSgt *
+        ((this.locked * 1e18) / this.totalStaked) *
+        (360 / this.stakedSchedule)
+      );
     },
   },
   watch: {
