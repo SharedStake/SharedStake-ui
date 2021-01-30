@@ -48,15 +48,31 @@
         <span name="rainbow" id="rainbow"> SHARED </span>
         <span name="rainbow" id="rainbow"> STAKE </span>
       </div>
-      <span name="exp1" id="exp1">Decentralized Ethereum Staking Service</span>
+      <span
+        name="exp1"
+        id="exp1"
+        class="glitch"
+        data-text="Decentralized Ethereum Staking Service"
+        >Decentralized Ethereum Staking Service</span
+      >
       <div class="subtitles">
-        <div id="subtitle">Easiest way to stake ETH for Ethereum 2:</div>
-        <div id="subtitle">• Stake Eth and earn staking rewards</div>
-        <div id="subtitle">• Use vEth2 on Defi Protocols</div>
+        <div id="subtitle">Easiest way to stake ETH for Ethereum 2</div>
         <div id="subtitle">
-          • Liquidity Mining with Governance Token rewards!
+          <imageVue :src="'back-button.png'" :size="'16px'" id="right" /> Stake
+          Eth and earn staking rewards
         </div>
-        <div id="subtitle">• SGT airdrop on : 02/02/2021</div>
+        <div id="subtitle">
+          <imageVue :src="'back-button.png'" :size="'16px'" id="right" /> Use
+          vEth2 on Defi Protocols
+        </div>
+        <div id="subtitle">
+          <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
+          Liquidity Mining with Governance Token rewards!
+        </div>
+        <div id="subtitle">
+          <imageVue :src="'back-button.png'" :size="'16px'" id="right" /> SGT
+          airdrop on : 02/02/2021
+        </div>
         <a
           href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
           target="_blank"
@@ -70,8 +86,8 @@
       </div>
       <div class="typewriter">
         <span name="solution" id="solution"
-          >Perfect Solution For {{ perfect }}</span
-        >
+          >Perfect Solution For {{ perfect }}
+        </span>
       </div>
       <div class="flex_column header">
         <div class="header" id="Down" @click="() => scrollToNext(W2)">
@@ -113,7 +129,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">Stake Any Amount of Eth</div>
               </div>
             </div>
@@ -140,7 +156,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">Receive vETH2 token in return.</div>
               </div>
             </div>
@@ -167,7 +183,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">
                   Get your staking rewards <br />
                   with currently 10% APY
@@ -197,7 +213,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">Harvest more with your vETH2 token!</div>
               </div>
             </div>
@@ -220,27 +236,11 @@
             </div>
           </div>
         </div>
-        <div
-          class="flex_row Wrapper"
-          id="W3"
-          :style="
-            width < 680
-              ? ''
-              : {
-                  transform: 'translate(0, ' + w3translate + 'px)',
-                  opacity: w3opacity,
-                }
-          "
-        >
+        <div class="flex_row Wrapper" id="W3">
           <div
             class="flex_column"
             @mouseover="hovered = true"
             @mouseleave="hovered = false"
-            :style="
-              width < 680
-                ? ''
-                : { transform: 'translate(0, ' + w3translate * -3 + 'px)' }
-            "
           >
             <imageVue
               :src="'logo-4.png'"
@@ -258,35 +258,28 @@
           <div class="flex_column title secondPage">
             <span name="exp" id="exp">Incentivized Staking</span>
             <div id="subtitle">
+              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
               vETH2<imageVue :src="'logo-4.png'" :size="'28px'" /> is erc-20
               version of staked Eth.
             </div>
             <div id="subtitle">
+              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
               By staking your vETH2 on our staking contracts you can harvest
               Sharedstake governance token (SGT).
             </div>
             <div id="subtitle">
+              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
               SGT is the Governance Token of SharedStake platform. DAO will be
               launched after the first airdrop that issued snowswap stakers!
             </div>
             <div id="subtitle">
+              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
               SharedStake is also incentivising Ethereum staking via
               collabration with defi projects.
             </div>
           </div>
         </div>
-        <div
-          class="flex_row Wrapper"
-          id="W4"
-          :style="
-            width < 680
-              ? ''
-              : {
-                  transform: 'translate(0, ' + w4translate + 'px)',
-                  opacity: w4opacity,
-                }
-          "
-        >
+        <div class="flex_row Wrapper" id="W4">
           <div class="flex_column title secondPage">
             <span name="hodl2" class="hodl">Make It Snow!</span>
             <div id="subtitle">Our first collabration is with Snowswap!</div>
@@ -320,11 +313,6 @@
             class="flex_column"
             @mouseover="hovered = true"
             @mouseleave="hovered = false"
-            :style="
-              width > 680
-                ? { transform: 'translate(0, ' + w4translate * -3 + 'px)' }
-                : ''
-            "
           >
             <a
               href="https://snowswap.org/"
@@ -360,16 +348,12 @@ export default {
       w2translate: 0,
       w2opacity: 1,
       W3: 0,
-      w3translate: 0,
-      w3opacity: 1,
       W4: 0,
-      w4translate: 0,
-      w4opacity: 1,
     };
   },
   created: function () {
     this.width = window.innerWidth;
-    this.W2 = this.w2translate = this.W3 = this.w3translate = this.W4 = this.w4translate = 0;
+    this.W2 = this.W3 = this.W4 = 0;
   },
   mounted: async function () {
     this.onResize();
@@ -408,15 +392,8 @@ export default {
       const scr = document.documentElement.scrollTop; // Any code to be executed when the window is scrolled
       this.w2opacity = this.getOpacity(scr, this.W2);
       this.w2translate = (this.W2 - scr).toFixed(0);
-
-      this.w3opacity = this.getOpacity(scr, this.W3);
-      this.w3translate = (this.W3 - scr).toFixed(0);
-
-      this.w4opacity = this.getOpacity(scr, this.W4);
-      this.w4translate = (this.W4 - scr).toFixed(0);
     },
     scrollToNext: function (y) {
-      console.log(y);
       window.scrollTo({ top: y, behavior: "smooth" });
     },
     onResize() {
@@ -440,11 +417,6 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;0,700;1,700&display=swap");
-@font-face {
-  font-family: hacked;
-  src: url(Hacked.ttf);
-}
 .secondPage {
   text-align: left;
   padding: 20px 20px 50px 20px;
@@ -524,7 +496,7 @@ a {
   line-height: 50px; /* same as height! */
   max-height: 50px;
   overflow: hidden;
-  transition: transform 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 .loginButton:hover {
   transform: scale(0.95);
@@ -553,6 +525,24 @@ a {
   grid-area: rainbow;
   line-height: 1.5;
 }
+@keyframes opac {
+  0% {
+    opacity: 0;
+  }
+  7.5% {
+    opacity: 1;
+  }
+  10% {
+    opacity: 1;
+  }
+  15% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .hodl {
   font-size: 8vw;
   font-family: "Roboto";
@@ -564,13 +554,14 @@ a {
   margin-bottom: 6vh;
   color: #09fa8b;
   letter-spacing: 1vw;
+  cursor: pointer;
 }
 #solution {
   z-index: 100;
   border-right: 0.15em solid orange; /* The typwriter cursor */
   font-size: 3.8vw;
   font-family: hacked, "Consolas";
-  text-shadow: 2px 2px #f60574;
+  /* text-shadow: 2px 2px #f60574;*/
   animation: blink-caret 0.75s step-end infinite;
 }
 #exp1,
@@ -582,12 +573,18 @@ a {
 #exp1 {
   text-align: left;
   grid-area: exp1;
+  text-shadow: -1px -1px 0 rgba(256, 256, 256, 0.4),
+    1px -1px 0 rgba(256, 256, 256, 0.4), -1px 1px 0 rgba(256, 256, 256, 0.4),
+    1px 1px 0 rgba(256, 256, 256, 0.4), 0 -2px 8px, 0 0 2px, 0 0 5px #09fa8b,
+    0 0 15px #00fd87, 0 0 2px #09fa8b, 0 2px 3px #000;
 }
 #subtitle {
   padding: 20px 0 0 0;
   font-size: 3vw;
   text-align: left;
+  font-weight: 500;
 }
+
 .subtitles {
   grid-area: subtitle;
   display: flex;
@@ -1017,6 +1014,369 @@ a {
   }
   100% {
     border-radius: 38% 52% 75% 36% / 50% 40% 50% 60%;
+  }
+}
+
+/*glitch effect  :( */
+
+.glitch {
+  color: white;
+  font-size: 150px;
+  text-transform: upercase;
+  position: relative;
+  display: inline-block;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 #49fc00;
+  clip: rect(24px, 550px, 90px, 0);
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 #b300fc;
+  clip: rect(85px, 550px, 140px, 0);
+  animation: glitch-anim 2.5s infinite linear alternate-reverse;
+}
+@-webkit-keyframes glitch-anim {
+  0% {
+    clip: rect(49px, 9999px, 42px, 0);
+  }
+  4.166666666666666% {
+    clip: rect(131px, 9999px, 23px, 0);
+  }
+  8.333333333333332% {
+    clip: rect(36px, 9999px, 89px, 0);
+  }
+  12.5% {
+    clip: rect(28px, 9999px, 55px, 0);
+  }
+  16.666666666666664% {
+    clip: rect(79px, 9999px, 101px, 0);
+  }
+  20.833333333333336% {
+    clip: rect(58px, 9999px, 70px, 0);
+  }
+  25% {
+    clip: rect(83px, 9999px, 128px, 0);
+  }
+  29.166666666666668% {
+    clip: rect(86px, 9999px, 65px, 0);
+  }
+  33.33333333333333% {
+    clip: rect(113px, 9999px, 66px, 0);
+  }
+  37.5% {
+    clip: rect(86px, 9999px, 121px, 0);
+  }
+  41.66666666666667% {
+    clip: rect(138px, 9999px, 134px, 0);
+  }
+  45.83333333333333% {
+    clip: rect(73px, 9999px, 115px, 0);
+  }
+  50% {
+    clip: rect(134px, 9999px, 103px, 0);
+  }
+  54.166666666666664% {
+    clip: rect(5px, 9999px, 38px, 0);
+  }
+  58.333333333333336% {
+    clip: rect(120px, 9999px, 90px, 0);
+  }
+  62.5% {
+    clip: rect(76px, 9999px, 79px, 0);
+  }
+  66.66666666666666% {
+    clip: rect(101px, 9999px, 62px, 0);
+  }
+  70.83333333333334% {
+    clip: rect(125px, 9999px, 141px, 0);
+  }
+  75% {
+    clip: rect(129px, 9999px, 67px, 0);
+  }
+  79.16666666666666% {
+    clip: rect(107px, 9999px, 147px, 0);
+  }
+  83.33333333333334% {
+    clip: rect(47px, 9999px, 116px, 0);
+  }
+  87.5% {
+    clip: rect(74px, 9999px, 29px, 0);
+  }
+  91.66666666666666% {
+    clip: rect(137px, 9999px, 92px, 0);
+  }
+  95.83333333333334% {
+    clip: rect(67px, 9999px, 70px, 0);
+  }
+  100% {
+    clip: rect(125px, 9999px, 107px, 0);
+  }
+}
+@keyframes glitch-anim {
+  0% {
+    clip: rect(49px, 9999px, 42px, 0);
+  }
+  4.166666666666666% {
+    clip: rect(131px, 9999px, 23px, 0);
+  }
+  8.333333333333332% {
+    clip: rect(36px, 9999px, 89px, 0);
+  }
+  12.5% {
+    clip: rect(28px, 9999px, 55px, 0);
+  }
+  16.666666666666664% {
+    clip: rect(79px, 9999px, 101px, 0);
+  }
+  20.833333333333336% {
+    clip: rect(58px, 9999px, 70px, 0);
+  }
+  25% {
+    clip: rect(83px, 9999px, 128px, 0);
+  }
+  29.166666666666668% {
+    clip: rect(86px, 9999px, 65px, 0);
+  }
+  33.33333333333333% {
+    clip: rect(113px, 9999px, 66px, 0);
+  }
+  37.5% {
+    clip: rect(86px, 9999px, 121px, 0);
+  }
+  41.66666666666667% {
+    clip: rect(138px, 9999px, 134px, 0);
+  }
+  45.83333333333333% {
+    clip: rect(73px, 9999px, 115px, 0);
+  }
+  50% {
+    clip: rect(134px, 9999px, 103px, 0);
+  }
+  54.166666666666664% {
+    clip: rect(5px, 9999px, 38px, 0);
+  }
+  58.333333333333336% {
+    clip: rect(120px, 9999px, 90px, 0);
+  }
+  62.5% {
+    clip: rect(76px, 9999px, 79px, 0);
+  }
+  66.66666666666666% {
+    clip: rect(101px, 9999px, 62px, 0);
+  }
+  70.83333333333334% {
+    clip: rect(125px, 9999px, 141px, 0);
+  }
+  75% {
+    clip: rect(129px, 9999px, 67px, 0);
+  }
+  79.16666666666666% {
+    clip: rect(107px, 9999px, 147px, 0);
+  }
+  83.33333333333334% {
+    clip: rect(47px, 9999px, 116px, 0);
+  }
+  87.5% {
+    clip: rect(74px, 9999px, 29px, 0);
+  }
+  91.66666666666666% {
+    clip: rect(137px, 9999px, 92px, 0);
+  }
+  95.83333333333334% {
+    clip: rect(67px, 9999px, 70px, 0);
+  }
+  100% {
+    clip: rect(125px, 9999px, 107px, 0);
+  }
+}
+@-webkit-keyframes glitch-anim-2 {
+  6.666666666666667% {
+    clip: rect(59px, 9999px, 148px, 0);
+  }
+  10% {
+    clip: rect(82px, 9999px, 66px, 0);
+  }
+  13.333333333333334% {
+    clip: rect(149px, 9999px, 20px, 0);
+  }
+  16.666666666666664% {
+    clip: rect(133px, 9999px, 86px, 0);
+  }
+  20% {
+    clip: rect(73px, 9999px, 69px, 0);
+  }
+  23.333333333333332% {
+    clip: rect(98px, 9999px, 132px, 0);
+  }
+  26.666666666666668% {
+    clip: rect(24px, 9999px, 72px, 0);
+  }
+  30% {
+    clip: rect(21px, 9999px, 140px, 0);
+  }
+  33.33333333333333% {
+    clip: rect(44px, 9999px, 42px, 0);
+  }
+  36.666666666666664% {
+    clip: rect(142px, 9999px, 114px, 0);
+  }
+  40% {
+    clip: rect(44px, 9999px, 106px, 0);
+  }
+  43.333333333333336% {
+    clip: rect(149px, 9999px, 44px, 0);
+  }
+  46.666666666666664% {
+    clip: rect(77px, 9999px, 132px, 0);
+  }
+  50% {
+    clip: rect(26px, 9999px, 32px, 0);
+  }
+  53.333333333333336% {
+    clip: rect(120px, 9999px, 3px, 0);
+  }
+  56.666666666666664% {
+    clip: rect(145px, 9999px, 51px, 0);
+  }
+  60% {
+    clip: rect(36px, 9999px, 58px, 0);
+  }
+  63.33333333333333% {
+    clip: rect(70px, 9999px, 147px, 0);
+  }
+  66.66666666666666% {
+    clip: rect(74px, 9999px, 53px, 0);
+  }
+  70% {
+    clip: rect(77px, 9999px, 120px, 0);
+  }
+  73.33333333333333% {
+    clip: rect(81px, 9999px, 14px, 0);
+  }
+  76.66666666666667% {
+    clip: rect(115px, 9999px, 16px, 0);
+  }
+  80% {
+    clip: rect(38px, 9999px, 60px, 0);
+  }
+  83.33333333333334% {
+    clip: rect(112px, 9999px, 15px, 0);
+  }
+  86.66666666666667% {
+    clip: rect(133px, 9999px, 8px, 0);
+  }
+  90% {
+    clip: rect(118px, 9999px, 73px, 0);
+  }
+  93.33333333333333% {
+    clip: rect(44px, 9999px, 41px, 0);
+  }
+  96.66666666666667% {
+    clip: rect(148px, 9999px, 125px, 0);
+  }
+  100% {
+    clip: rect(31px, 9999px, 40px, 0);
+  }
+}
+@keyframes glitch-anim-2 {
+  6.666666666666667% {
+    clip: rect(59px, 9999px, 148px, 0);
+  }
+  10% {
+    clip: rect(82px, 9999px, 66px, 0);
+  }
+  13.333333333333334% {
+    clip: rect(149px, 9999px, 20px, 0);
+  }
+  16.666666666666664% {
+    clip: rect(133px, 9999px, 86px, 0);
+  }
+  20% {
+    clip: rect(73px, 9999px, 69px, 0);
+  }
+  23.333333333333332% {
+    clip: rect(98px, 9999px, 132px, 0);
+  }
+  26.666666666666668% {
+    clip: rect(24px, 9999px, 72px, 0);
+  }
+  30% {
+    clip: rect(21px, 9999px, 140px, 0);
+  }
+  33.33333333333333% {
+    clip: rect(44px, 9999px, 42px, 0);
+  }
+  36.666666666666664% {
+    clip: rect(142px, 9999px, 114px, 0);
+  }
+  40% {
+    clip: rect(44px, 9999px, 106px, 0);
+  }
+  43.333333333333336% {
+    clip: rect(149px, 9999px, 44px, 0);
+  }
+  46.666666666666664% {
+    clip: rect(77px, 9999px, 132px, 0);
+  }
+  50% {
+    clip: rect(26px, 9999px, 32px, 0);
+  }
+  53.333333333333336% {
+    clip: rect(120px, 9999px, 3px, 0);
+  }
+  56.666666666666664% {
+    clip: rect(145px, 9999px, 51px, 0);
+  }
+  60% {
+    clip: rect(36px, 9999px, 58px, 0);
+  }
+  63.33333333333333% {
+    clip: rect(70px, 9999px, 147px, 0);
+  }
+  66.66666666666666% {
+    clip: rect(74px, 9999px, 53px, 0);
+  }
+  70% {
+    clip: rect(77px, 9999px, 120px, 0);
+  }
+  73.33333333333333% {
+    clip: rect(81px, 9999px, 14px, 0);
+  }
+  76.66666666666667% {
+    clip: rect(115px, 9999px, 16px, 0);
+  }
+  80% {
+    clip: rect(38px, 9999px, 60px, 0);
+  }
+  83.33333333333334% {
+    clip: rect(112px, 9999px, 15px, 0);
+  }
+  86.66666666666667% {
+    clip: rect(133px, 9999px, 8px, 0);
+  }
+  90% {
+    clip: rect(118px, 9999px, 73px, 0);
+  }
+  93.33333333333333% {
+    clip: rect(44px, 9999px, 41px, 0);
+  }
+  96.66666666666667% {
+    clip: rect(148px, 9999px, 125px, 0);
+  }
+  100% {
+    clip: rect(31px, 9999px, 40px, 0);
   }
 }
 </style>

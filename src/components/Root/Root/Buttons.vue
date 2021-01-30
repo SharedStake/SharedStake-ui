@@ -28,7 +28,7 @@ export default {
   },
   data: function () {
     return {
-      initButtons: ["Stake", "Stats", "Earn", "Dao", "Info"],
+      initButtons: ["Stake", "Earn", "Stats", "Dao", "Info"],
       buttons: this.initButtons,
     };
   },

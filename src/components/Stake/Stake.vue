@@ -77,7 +77,7 @@
         v-show="txs.length > 0"
         class="exp"
         v-for="(tx, index) in txs"
-        :key="index"
+        v-bind:key="index * Math.random()"
       >
         <Notifier
           :id="tx.id"
@@ -88,33 +88,34 @@
         />
       </div>
     </transition-group>
-    <!-- <button @click="addTx()">change txs</button> -->
-    <!-- <TotalStaked class="Graph" :explanation="false" :updater="updateGraph" /> -->
+    <TotalStaked class="Graph" :explanation="false" :updater="updateGraph" />
   </div>
 </template>
 
 <script>
-// import TotalStaked from "../Stats/Graphs/TotalStaked";
-import ImageVue from "../Handlers/image.vue";
-import Arrow from "../../assets/svg/arrow.vue";
-import gasChooser from "../Handlers/gasChooser";
-import Notifier from "../Handlers/notifier.vue";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 
-import { validator, bETH } from "../../contracts/contracts";
 import { mapGetters } from "vuex";
-import { timeout } from "../../utils/helpers";
+import { validator, vEth2 } from "@/contracts";
+import { timeout } from "@/utils/helpers";
+
+import ImageVue from "../Handlers/image.vue";
+import Arrow from "../../assets/svg/arrow.vue";
+import gasChooser from "../Handlers/gasChooser";
+import Notifier from "../Handlers/notifier.vue";
+import TotalStaked from "../Stats/Graphs/TotalStaked";
+
 export default {
-  components: { Arrow, ImageVue, gasChooser, Notifier },
+  components: { Arrow, ImageVue, gasChooser, Notifier, TotalStaked },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),
     Damount: "",
     isDeposit: true,
     EthBal: BN(0),
-    BethBal: BN(0),
+    vEth2Bal: BN(0),
     balance: 0,
     gas: 20,
     validInput: true,
@@ -171,7 +172,7 @@ export default {
         }
         this.Damount = this.BNamount.dividedBy(1e18);
       } else {
-        this.BNamount = this.BethBal;
+        this.BNamount = this.vEth2Bal;
         this.Damount = this.BNamount.dividedBy(1e18);
       }
     },
@@ -281,10 +282,10 @@ export default {
       let walletAddress = this.userAddress;
       let amount = await window.web3.eth.getBalance(walletAddress);
       this.EthBal = BN(amount);
-      let beth = await bETH.methods.balanceOf(walletAddress).call();
-      this.BethBal = BN(beth);
+      let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
+      this.vEth2Bal = BN(veth2);
       if (this.isDeposit) this.balance = BN(amount).dividedBy(1e18).toFixed(6);
-      else this.balance = BN(beth).dividedBy(1e18).toFixed(6);
+      else this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
       let remaining = await validator.methods.remainingSpaceInEpoch().call();
       this.remaining = BN(remaining);
       this.amountCheck(true);
@@ -315,7 +316,7 @@ export default {
         ? this.EthBal.minus(BN(this.gas * 200000 * 1000000000)).gte(
             this.BNamount
           )
-        : this.BethBal.gte(this.BNamount);
+        : this.vEth2Bal.gte(this.BNamount);
       if (!this.validInput) {
         this.buttonText = "Insufficient balance";
       }
@@ -360,7 +361,7 @@ export default {
       this.amountCheck();
     },
     isDeposit: function (val) {
-      let balance = val ? this.EthBal : this.BethBal;
+      let balance = val ? this.EthBal : this.vEth2Bal;
       this.balance = balance.dividedBy(1e18).toFixed(6);
       this.Damount = "";
       this.buttonText = "Enter an amount";
@@ -409,7 +410,7 @@ export default {
     0px 24px 32px rgba(0, 0, 0, 0.01),
     10px 10px 130px -50px rgba(244, 180, 0, 1);
   -moz-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01),
-    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(172, 76, 76, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01),
     10px 10px 130px -50px rgba(244, 180, 0, 1);
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
