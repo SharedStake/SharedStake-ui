@@ -36,10 +36,12 @@ export default {
         explanation: "SharedStake Governance",
         token: SGT,
         geyser: geyser_SGT,
-        locked: BN(20000),
+        locked: BN(1000),
         external: false,
         active: false,
         tokenPerSgt: 1,
+        link:
+          "https://etherscan.io/address/0x0a2395cA473c3c756738905574F71A20A19e8dB2", //for inactive pools => change this to uniswap
       },
       {
         name: "vEth2",
@@ -50,6 +52,7 @@ export default {
         external: false,
         active: false,
         tokenPerSgt: 0,
+        link: "https://www.sharedstake.org/stake", //for inactive pools
       },
       {
         name: "SGT LP",
@@ -60,6 +63,8 @@ export default {
         external: false,
         active: false,
         tokenPerSgt: 0,
+        link:
+          "https://etherscan.io/address/0x0a2395cA473c3c756738905574F71A20A19e8dB2", //for inactive pools => change this to uniswap
       },
       {
         name: "vEth2 LP",
@@ -69,7 +74,8 @@ export default {
         locked: BN(2000),
         external: true,
         active: false,
-        status: "Check out snowswap to stake your eth2snow tokens!", //for inactive pools
+        status:
+          "Check out snowswap to stake your eth2snow tokens with extra SGT rewards!", //for inactive pools
         link: "https://snowswap.org/ethsnow/deposit", //for inactive pools
       },
     ],
@@ -78,21 +84,23 @@ export default {
     // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
     // 100* (sgtprice/tokenprice)*locked/staked
     // tokenPerSgt=sgtprice/tokenprice
-    let tokenPerSgt = 0;
+    if (this.pools[2].active) {
+      //not if its goerli => testing ju1st sgt
+      console.log("asas");
+      let tokenPerSgt = 0;
+      // pool1
+      let token = this.pools[2].token;
+      let reserves = await token.methods.getReserves().call();
+      let Eth = reserves[0];
+      let Sgt = reserves[1];
+      tokenPerSgt = Eth / Sgt; //revise
+      this.pools[1].tokenPerSgt = tokenPerSgt;
 
-    // pool1
-    let token = this.pools[2].token;
-    let reserves = await token.methods.getReserves().call();
-    let Eth = reserves[0];
-    let Sgt = reserves[1];
-    tokenPerSgt = Eth / Sgt; //revise
-    this.pools[1].tokenPerSgt = tokenPerSgt;
-
-    // pool 2
-    let totalSupply = await token.methods.totalSupply().call();
-    tokenPerSgt = (Eth + Sgt) / totalSupply / Eth; //or maybe divide to sgt?
-    this.pools[2].tokenPerSgt = tokenPerSgt;
-
+      // pool 2
+      let totalSupply = await token.methods.totalSupply().call();
+      tokenPerSgt = (Eth + Sgt) / totalSupply / Eth; //or maybe divide to sgt?
+      this.pools[2].tokenPerSgt = tokenPerSgt;
+    }
     // no need for 3. pool
   },
 };

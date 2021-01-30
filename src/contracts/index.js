@@ -23,21 +23,30 @@ if (chainId == "0x1") {
         validator: "0xbca3b7b87dcb15f0efa66136bc0e4684a3e5da4d",
         // Protocol Tokens
         vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
-        SGT: "0xfe9a29ab92522d14fc65880d817214261d8479ae", //change this address and abi + with SGT address
+        SGT: "0x0a2395cA473c3c756738905574F71A20A19e8dB2", //changed 🆗
         // OTHER Tokens
         SGT_uniswap: "0xE4f8F3CB9b33247789e4984A457bb69A1a621Df3",// change this address
-        vETH2_snowswap: "0xCd6713970828B32113d12B2dE0872a3CaFAf65b5",// eth2snow address : correct
+        vETH2_snowswap: "0xCd6713970828B32113d12B2dE0872a3CaFAf65b5",//  🆗
         // Geysers
         geyser_vEth2: "0x7d2c8B58032844F222e2c80219975805DcE1921c",// change this address
-        geyser_vEth2_snowswap: "0x6208D3fdfC396eB065c8FFc291e6BC1902b8b1bf",// change this address
+        geyser_vEth2_snowswap: "0x6208D3fdfC396eB065c8FFc291e6BC1902b8b1bf",// change this address when snowswap ended
         geyser_SGT: "0x7d2c8B58032844F222e2c80219975805DcE1921c",// change this address 
         geyser_SGT_uniswap: "0x4f1aD17E22f919fFf12bC936C1CaA9c5d49BF504",// change this address 
         // OLD Geysers
     }
 } else {
+    //Goerli
     addressTemp = {
-        validator: "0xF7930fA4cddbf00Ea495f9A522010734580909f8",
-        vEth2: "0x64A0ED7f89d9F6de790F7d77022017be9Dcb405A",
+        validator: "0xF7930fA4cddbf00Ea495f9A522010734580909f8",// 🆗
+        // Protocol Tokens
+        vEth2: "0x64A0ED7f89d9F6de790F7d77022017be9Dcb405A",// 🆗
+        SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 🆗
+        // Geysers
+        geyser_SGT: "0xFD126CE5887AD11618cfBbdc59F1F382C528d761",// 🆗
+        geyser_vEth2: "0xFD126CE5887AD11618cfBbdc59F1F382C528d761",// no need to edit
+        geyser_vEth2_snowswap: "0xFD126CE5887AD11618cfBbdc59F1F382C528d761",//no need to edit
+        geyser_SGT_uniswap: "0xFD126CE5887AD11618cfBbdc59F1F382C528d761",// no need to edit
+        // OLD Geysers
     }
 }
 

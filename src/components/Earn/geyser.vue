@@ -7,8 +7,16 @@
         class="headerPart poolIcon"
       />
       <div class="headerPart poolName">
-        {{ pool.name }}
-        <div class="minitext">{{ pool.explanation }}</div>
+        <a
+          :href="pool.link"
+          class="headerPart"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ pool.name }}
+          <span style="font-size: 14px; font-weight: 700"> ↗</span>
+          <div class="minitext">{{ pool.explanation }}</div>
+        </a>
       </div>
       <div class="headerPart poolGrowth">
         <div class="minitext">Yearly Growth:</div>
@@ -70,7 +78,7 @@
         {{ pool.name }}
       </div>
       <div class="statsPart" id="whiteBorder">
-        <div class="minitext blue">Total Locked:</div>
+        <div class="minitext blue">Remaining Locked:</div>
         {{ locked == 0 ? 0 : locked.eq(0) ? 0 : locked.toFixed(1).toString() }}
         SGT
       </div>
@@ -244,9 +252,9 @@ export default {
   }),
   created: function () {
     var self = this;
-    window.ethereum.on("accountsChanged", function () {
-      if (this.pool.active) {
-        self.mounted();
+    window.ethereum.on("accountsChanged", async function () {
+      if (self.pool.active) {
+        await self.mounted();
       }
     });
   },
