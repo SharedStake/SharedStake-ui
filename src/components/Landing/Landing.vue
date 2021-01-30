@@ -129,7 +129,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">Stake Any Amount of Eth</div>
               </div>
             </div>
@@ -156,7 +156,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">Receive vETH2 token in return.</div>
               </div>
             </div>
@@ -183,7 +183,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">
                   Get your staking rewards <br />
                   with currently 10% APY
@@ -213,7 +213,7 @@
                 :height="width < 680 ? false : true"
                 :class="'photos'"
               />
-              <div id="continue" @click="() => scrollToNext(W3)">
+              <div id="continue">
                 <div id="continue">Harvest more with your vETH2 token!</div>
               </div>
             </div>
@@ -236,27 +236,11 @@
             </div>
           </div>
         </div>
-        <div
-          class="flex_row Wrapper"
-          id="W3"
-          :style="
-            width < 680
-              ? ''
-              : {
-                  transform: 'translate(0, ' + w3translate + 'px)',
-                  opacity: w3opacity,
-                }
-          "
-        >
+        <div class="flex_row Wrapper" id="W3">
           <div
             class="flex_column"
             @mouseover="hovered = true"
             @mouseleave="hovered = false"
-            :style="
-              width < 680
-                ? ''
-                : { transform: 'translate(0, ' + w3translate * -3 + 'px)' }
-            "
           >
             <imageVue
               :src="'logo-4.png'"
@@ -295,18 +279,7 @@
             </div>
           </div>
         </div>
-        <div
-          class="flex_row Wrapper"
-          id="W4"
-          :style="
-            width < 680
-              ? ''
-              : {
-                  transform: 'translate(0, ' + w4translate + 'px)',
-                  opacity: w4opacity,
-                }
-          "
-        >
+        <div class="flex_row Wrapper" id="W4">
           <div class="flex_column title secondPage">
             <span name="hodl2" class="hodl">Make It Snow!</span>
             <div id="subtitle">Our first collabration is with Snowswap!</div>
@@ -340,11 +313,6 @@
             class="flex_column"
             @mouseover="hovered = true"
             @mouseleave="hovered = false"
-            :style="
-              width > 680
-                ? { transform: 'translate(0, ' + w4translate * -3 + 'px)' }
-                : ''
-            "
           >
             <a
               href="https://snowswap.org/"
@@ -380,16 +348,12 @@ export default {
       w2translate: 0,
       w2opacity: 1,
       W3: 0,
-      w3translate: 0,
-      w3opacity: 1,
       W4: 0,
-      w4translate: 0,
-      w4opacity: 1,
     };
   },
   created: function () {
     this.width = window.innerWidth;
-    this.W2 = this.w2translate = this.W3 = this.w3translate = this.W4 = this.w4translate = 0;
+    this.W2 = this.W3 = this.W4 = 0;
   },
   mounted: async function () {
     this.onResize();
@@ -428,15 +392,8 @@ export default {
       const scr = document.documentElement.scrollTop; // Any code to be executed when the window is scrolled
       this.w2opacity = this.getOpacity(scr, this.W2);
       this.w2translate = (this.W2 - scr).toFixed(0);
-
-      this.w3opacity = this.getOpacity(scr, this.W3);
-      this.w3translate = (this.W3 - scr).toFixed(0);
-
-      this.w4opacity = this.getOpacity(scr, this.W4);
-      this.w4translate = (this.W4 - scr).toFixed(0);
     },
     scrollToNext: function (y) {
-      console.log(y);
       window.scrollTo({ top: y, behavior: "smooth" });
     },
     onResize() {
