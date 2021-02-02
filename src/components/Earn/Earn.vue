@@ -1,6 +1,7 @@
 <template>
   <div class="EarnWrapper">
     <div class="Earn">
+      <Claim />
       <geyser
         class="geyser"
         v-for="pool in pools"
@@ -26,8 +27,9 @@ import {
   geyser_SGT,
   geyser_SGT_uniswap,
 } from "@/contracts";
+import Claim from "./claim.vue";
 export default {
-  components: { geyser, Arrow },
+  components: { geyser, Arrow, Claim },
   data: () => ({
     chosen: null,
     pools: [

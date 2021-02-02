@@ -12,6 +12,7 @@ import erc20 from './abis/erc20.json'
 import erc20_uniswap from './abis/erc20_uniswap.json'
 import geyserABI from './abis/geyser.json'
 import sgtABI from './abis/erc20.json' //change this
+import airdrop_distributor from './abis/distributor.json' //change this
 
 const web3 = new Web3(window.ethereum);
 
@@ -33,6 +34,9 @@ if (chainId == "0x1") {
         geyser_SGT: "0x7d2c8B58032844F222e2c80219975805DcE1921c",// change this address 
         geyser_SGT_uniswap: "0x4f1aD17E22f919fFf12bC936C1CaA9c5d49BF504",// change this address 
         // OLD Geysers
+        // SGT airdrop
+        airdrop_distributor: "0x2011A0c8437b735DD7A7f2987006ED692a24994B",
+
     }
 } else {
     //Goerli
@@ -63,6 +67,7 @@ export const ABIs = {
     geyser: geyserABI,
     erc20,
     erc20_uniswap,
+    airdrop_distributor
 }
 
 /************************************* CONTRACTS ****************************************/
@@ -85,4 +90,8 @@ export const geyser_SGT_uniswap = new web3.eth.Contract(ABIs["geyser"], addresse
 
 
 // OLD Geysers HERE
+
+//Airdrop
+export const airdrop = new web3.eth.Contract(ABIs["airdrop_distributor"], addresses["airdrop_distributor"]);
+
 /*********************************** DELETE USELESS INFO *******************************/

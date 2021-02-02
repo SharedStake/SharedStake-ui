@@ -663,7 +663,7 @@ export default {
   padding: 1vh 2vw 1vh 2vw;
   grid-template-rows: 1fr;
   gap: 0px 0px;
-  grid-template-areas: "icon poolname poolname poolname growth growth growth balance balance  label";
+  grid-template-areas: "icon poolname poolname poolname growth growth growth balance balance label";
   justify-items: start;
   align-items: center;
   margin: 15px 0 15px 0;
