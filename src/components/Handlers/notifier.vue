@@ -4,7 +4,9 @@
     :id="success ? '' : 'error'"
     v-bind:style="{ bottom: index * 4 + 2 + 'rem' }"
   >
-    <div :class="success ? 'sider' : 'sider-error'"></div>
+    <div :class="success ? 'sider' : 'sider-error'">
+      <span v-if="success" style="font-size: 14px; font-weight: 700"> ↗</span>
+    </div>
     <div class="text">{{ msg }}</div>
     <a
       v-if="success"
@@ -82,10 +84,12 @@ a {
   width: 1rem;
   height: 2rem;
   background: #007bff;
+  color: #fff;
 }
 .sider-error {
   width: 1rem;
   height: 2rem;
+  color: #fff;
   background: #e56b73;
 }
 .text {

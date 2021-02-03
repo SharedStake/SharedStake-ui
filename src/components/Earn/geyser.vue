@@ -639,7 +639,7 @@ export default {
   position: relative;
   transition: transform 0.2s ease-in-out;
   font-family: "Work Sans";
-  margin: 7vh 1vw 2vh 1vw;
+  margin: 4vh 1vw 2vh 1vw;
   min-width: 500px;
   width: 60vw;
   border: 1px #ff007a solid;
@@ -663,7 +663,7 @@ export default {
   padding: 1vh 2vw 1vh 2vw;
   grid-template-rows: 1fr;
   gap: 0px 0px;
-  grid-template-areas: "icon poolname poolname poolname growth growth growth balance balance  label";
+  grid-template-areas: "icon poolname poolname poolname growth growth growth balance balance label";
   justify-items: start;
   align-items: center;
   margin: 15px 0 15px 0;

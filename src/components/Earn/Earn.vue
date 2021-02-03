@@ -1,6 +1,7 @@
 <template>
   <div class="EarnWrapper">
     <div class="Earn">
+      <Claim />
       <geyser
         class="geyser"
         v-for="pool in pools"
@@ -26,8 +27,9 @@ import {
   geyser_SGT,
   geyser_SGT_uniswap,
 } from "@/contracts";
+import Claim from "./claim.vue";
 export default {
-  components: { geyser, Arrow },
+  components: { geyser, Arrow, Claim },
   data: () => ({
     chosen: null,
     pools: [
@@ -36,42 +38,42 @@ export default {
         explanation: "SharedStake Governance",
         token: SGT,
         geyser: geyser_SGT,
-        locked: BN(1000),
+        locked: BN(50000),
         external: false,
-        active: false,
+        active: true,
         tokenPerSgt: 1,
         link:
-          "https://etherscan.io/address/0x0a2395cA473c3c756738905574F71A20A19e8dB2", //for inactive pools => change this to uniswap
-      },
-      {
-        name: "vEth2",
-        explanation: "validator ETH2",
-        token: vEth2,
-        geyser: geyser_vEth2,
-        locked: BN(40000),
-        external: false,
-        active: false,
-        tokenPerSgt: 0,
-        link: "https://www.sharedstake.org/stake", //for inactive pools
+          "https://info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
       },
       {
         name: "SGT LP",
         explanation: "on uniswap",
         token: SGT_uniswap,
         geyser: geyser_SGT_uniswap,
-        locked: BN(20000),
+        locked: BN(75000),
         external: false,
-        active: false,
+        active: true,
         tokenPerSgt: 0,
         link:
-          "https://etherscan.io/address/0x0a2395cA473c3c756738905574F71A20A19e8dB2", //for inactive pools => change this to uniswap
+          "https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
+      },
+      {
+        name: "vEth2",
+        explanation: "validator ETH2",
+        token: vEth2,
+        geyser: geyser_vEth2,
+        locked: BN(75000),
+        external: false,
+        active: true,
+        tokenPerSgt: 0,
+        link: "https://www.sharedstake.org/stake", //for inactive pools
       },
       {
         name: "vEth2 LP",
         explanation: "on snowswap",
         token: null,
         geyser: null,
-        locked: BN(2000),
+        locked: BN(1),
         external: true,
         active: false,
         status:
@@ -84,22 +86,21 @@ export default {
     // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
     // 100* (sgtprice/tokenprice)*locked/staked
     // tokenPerSgt=sgtprice/tokenprice
-    if (this.pools[2].active) {
+    if (this.pools[1].active) {
       //not if its goerli => testing ju1st sgt
-      console.log("asas");
       let tokenPerSgt = 0;
       // pool1
-      let token = this.pools[2].token;
+      let token = this.pools[1].token;
       let reserves = await token.methods.getReserves().call();
-      let Eth = reserves[0];
-      let Sgt = reserves[1];
-      tokenPerSgt = Eth / Sgt; //revise
-      this.pools[1].tokenPerSgt = tokenPerSgt;
-
+      let Eth = reserves[1];
+      let Sgt = reserves[0];
+      tokenPerSgt = Eth / Sgt; //ok
+      this.pools[2].tokenPerSgt = tokenPerSgt;
+      console.log(tokenPerSgt);
       // pool 2
       let totalSupply = await token.methods.totalSupply().call();
-      tokenPerSgt = (Eth + Sgt) / totalSupply / Eth; //or maybe divide to sgt?
-      this.pools[2].tokenPerSgt = tokenPerSgt;
+      tokenPerSgt = totalSupply / (Sgt * 2);
+      this.pools[1].tokenPerSgt = tokenPerSgt;
     }
     // no need for 3. pool
   },
