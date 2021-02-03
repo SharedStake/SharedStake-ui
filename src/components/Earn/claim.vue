@@ -75,7 +75,7 @@ import Notifier from "../Handlers/notifier.vue";
 export default {
   components: { ImageVue, Notifier },
   data: () => ({
-    address: "0x0",
+    address: "",
     isClaimed: false,
     txs: [],
     available: 0,
@@ -101,7 +101,6 @@ export default {
   },
   methods: {
     async mounted() {
-      this.address = this.userAddress;
       await this.isEligible();
     },
     async isEligible() {
@@ -124,7 +123,6 @@ export default {
           this.claim = claim;
         }
       } else this.eligible = false;
-      console.log("ssa");
     },
     async addTx(tx = { id: "", success: false, msg: "Error." }) {
       this.txs.push(tx);
