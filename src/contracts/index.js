@@ -24,9 +24,9 @@ if (chainId == "0x1") {
         validator: "0xbca3b7b87dcb15f0efa66136bc0e4684a3e5da4d",
         // Protocol Tokens
         vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
-        SGT: "0x0a2395cA473c3c756738905574F71A20A19e8dB2", //changed 🆗
+        SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078", //changed 🆗
         // OTHER Tokens
-        SGT_uniswap: "0xE4f8F3CB9b33247789e4984A457bb69A1a621Df3",// change this address
+        SGT_uniswap: "0x3d07f6e1627DA96B8836190De64c1aED70e3FC55",//changed 🆗
         vETH2_snowswap: "0xCd6713970828B32113d12B2dE0872a3CaFAf65b5",//  🆗
         // Geysers
         geyser_vEth2: "0x7d2c8B58032844F222e2c80219975805DcE1921c",// change this address
