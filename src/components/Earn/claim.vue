@@ -216,7 +216,6 @@ export default {
 }
 
 .geyserChooser {
-  cursor: pointer;
   width: 90%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -354,6 +353,7 @@ export default {
   text-overflow: ellipsis;
   padding: 0px;
   -webkit-appearance: textfield;
+  cursor: pointer;
 }
 
 .mainButton {

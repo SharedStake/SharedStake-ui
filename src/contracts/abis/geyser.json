@@ -25,11 +25,6 @@
                 "internalType": "uint256",
                 "name": "_rewardsDuration",
                 "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_boostPrct",
-                "type": "uint256"
             }
         ],
         "payable": false,
@@ -217,21 +212,6 @@
             }
         ],
         "name": "balanceOf",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "boostPrct",
         "outputs": [
             {
                 "internalType": "uint256",
