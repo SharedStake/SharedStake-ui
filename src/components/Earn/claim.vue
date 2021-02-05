@@ -3,7 +3,7 @@
     <div class="geyserChooser">
       <ImageVue
         :src="'tokens/SGT.png'"
-        :size="'40px'"
+        :size="innerWidth > 700 ? '40px' : '8vw'"
         class="headerPart poolIcon"
       />
       <div class="headerPart poolName">
@@ -75,6 +75,7 @@ import Notifier from "../Handlers/notifier.vue";
 export default {
   components: { ImageVue, Notifier },
   data: () => ({
+    innerWidth: 0,
     address: "",
     isClaimed: false,
     txs: [],
@@ -88,6 +89,8 @@ export default {
     },
   },
   created: function () {
+    this.innerWidth = window.innerWidth;
+    window.addEventListener("resize", this.onResize);
     var self = this;
     window.ethereum.on("accountsChanged", async function () {
       await self.mounted();
@@ -96,12 +99,18 @@ export default {
   mounted: async function () {
     await this.mounted();
   },
+  destroyed() {
+    window.removeEventListener("resize", this.onResize);
+  },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
   },
   methods: {
     async mounted() {
       await this.isEligible();
+    },
+    onResize() {
+      this.innerWidth = window.innerWidth;
     },
     async isEligible() {
       const claims = merkle.claims;
@@ -197,8 +206,7 @@ export default {
   position: relative;
   transition: transform 0.2s ease-in-out;
   font-family: "Work Sans";
-  margin: 7vh 1vw 2vh 1vw;
-  min-width: 500px;
+  margin: 3vh 1vw 2vh 1vw;
   width: 60vw;
   border-radius: 49px;
   border: 1px #00ff84 solid;
@@ -254,6 +262,8 @@ export default {
   text-align: left;
   font-weight: 500;
   line-height: 1.2;
+  width: 97%;
+  word-break: break-all;
 }
 
 .mainPart,
@@ -373,5 +383,39 @@ export default {
 .mainButton:hover {
   background-color: #0b8f92;
   color: #fafafa;
+}
+@media only screen and (max-width: 700px) {
+  .geyserwrapper {
+    position: relative;
+    transition: transform 0.2s ease-in-out;
+    font-family: "Work Sans";
+    margin: 4vh 1vw 2vh 1vw;
+    width: 90vw;
+    border: 1px #ff007a solid;
+    border-radius: 49px;
+    background-color: #fafafa;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: 0.42s ease-in-out;
+    -webkit-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.517);
+    -moz-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.619);
+    box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.469);
+  }
+  .geyserChooser {
+    padding: 0;
+  }
+  .headerPart {
+    font-size: 20px;
+    width: 90%;
+    word-break: break-all;
+  }
+  .minitext {
+    font-size: 10px;
+  }
+  .mainButton {
+    font-size: 10px;
+  }
 }
 </style>

@@ -56,7 +56,7 @@ export default {
         this.componentsIn = true;
         return;
       }
-      if (window.innerWidth < 600) {
+      if (window.innerWidth < 700) {
         this.componentsIn = false;
       }
     },
@@ -65,7 +65,7 @@ export default {
         this.componentsIn = true;
         return;
       }
-      if (window.innerWidth < 600) this.componentsIn = false;
+      if (window.innerWidth < 700) this.componentsIn = false;
     },
   },
   created: function () {
