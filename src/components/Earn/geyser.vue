@@ -773,7 +773,7 @@ export default {
 .stakePage {
   display: flex;
   max-width: 23vw;
-  min-width: 185px;
+  /* min-width: 185px; */
   align-items: center;
   justify-content: space-between;
   min-height: 20%;
@@ -894,6 +894,9 @@ export default {
   .minitext {
     font-size: 10px;
     font-size: 10px;
+  }
+  .stakePage {
+    max-width: 31vw;
   }
 }
 </style>
