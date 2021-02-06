@@ -157,6 +157,15 @@
         <button class="mainButton" @click="Deposit" :disabled="disableDeposit">
           stake
         </button>
+        <div class="s-toggle">
+          <input
+            id="inf-approval"
+            type="checkbox"
+            name="inf-approval"
+            v-model="inf_approval"
+          />
+          <label for="inf-approval">Infinite Approval</label>
+        </div>
       </div>
       <div class="mainPart">
         <div :class="'stakePage'">
@@ -250,6 +259,7 @@ export default {
     bigDAmount: BN(0),
     WAmount: 0,
     bigWAmount: BN(0),
+    inf_approval: false,
   }),
   created: function () {
     this.innerWidth = window.innerWidth;
@@ -413,7 +423,7 @@ export default {
       this.txs = newTx;
     },
     async automatedCloseTx(id) {
-      await timeout(10000);
+      await timeout(12500);
       let myTx = JSON.parse(JSON.stringify(this.txs));
       let newTx = myTx.filter((tx) => id != tx.id);
       this.txs = newTx;
@@ -432,6 +442,7 @@ export default {
         .call();
 
       if (BN(allowance).lt(this.bigDAmount)) {
+        if (this.inf_approval) myAmount = BN(2).pow(BN(256)).minus(BN(1));
         await this.pool.token.methods
           .approve(geyserAddress, myAmount)
           .send({ from: this.userAddress })
@@ -470,6 +481,7 @@ export default {
             console.log(err);
           });
       }
+      timeout(1500);
       await this.pool.geyser.methods
         .stake(myAmount)
         .send({ from: this.userAddress })
@@ -699,6 +711,9 @@ export default {
 .geyserMain {
   border-top: 1px #ff007a solid;
 }
+.s-toggle {
+  font-size: 16px;
+}
 .headerPart,
 .statsPart,
 .userPart {
@@ -861,6 +876,10 @@ export default {
 .geyserExp {
   max-width: 70%;
 }
+#inf-approval {
+  font-size: 22px;
+}
+
 @media only screen and (max-width: 700px) {
   .geyserwrapper {
     position: relative;
