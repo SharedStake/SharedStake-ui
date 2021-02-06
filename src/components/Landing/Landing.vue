@@ -10,7 +10,12 @@
           @click="mouseOverCommunity = !mouseOverCommunity"
         >
           <div>Community</div>
-          <socials v-if="mouseOverCommunity" class="socials" :dir="'down'" />
+          <socials
+            v-if="mouseOverCommunity"
+            class="socials"
+            :dir="'down'"
+            :names="true"
+          />
         </button>
         <router-link class="loginButton" to="/app">Launch Dapp </router-link>
       </div>
@@ -69,10 +74,7 @@
           <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
           Liquidity Mining with Governance Token rewards!
         </div>
-        <div id="subtitle">
-          <imageVue :src="'back-button.png'" :size="'16px'" id="right" /> SGT
-          airdrop on : 02/02/2021
-        </div>
+
         <a
           href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
           target="_blank"
@@ -90,6 +92,44 @@
         </span>
       </div>
       <div class="flex_column header">
+        <div class="stats">
+          <span class="stat">
+            <div class="miniStats">Staked with SharedStake</div>
+            <div>{{ staked }} ETH</div>
+            <a
+              class="loginButton SGT"
+              href="https://www.sharedstake.org/stake"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div>Stake</div>
+            </a>
+          </span>
+          <span class="stat">
+            <div class="miniStats">Current APY</div>
+            <div>4% + 307%</div>
+            <a
+              class="loginButton SGT"
+              href="https://www.sharedstake.org/earn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div>Earn</div>
+            </a>
+          </span>
+          <span class="stat">
+            <div class="miniStats">SGT price</div>
+            <div>2.45$</div>
+            <a
+              class="loginButton SGT"
+              href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div>Buy</div>
+            </a>
+          </span>
+        </div>
         <div class="header" id="Down" @click="() => scrollToNext(W2)">
           <imageVue :src="'back-button.png'" :size="'32px'" id="down" />
         </div>
@@ -336,6 +376,8 @@
 import imageVue from "../Handlers/image.vue";
 import Socials from "../Root/Root/Socials.vue";
 import { timeout } from "../../utils/helpers";
+import axios from "axios";
+import BN from "bignumber.js";
 export default {
   components: { imageVue, Socials },
   data: function () {
@@ -349,6 +391,7 @@ export default {
       w2opacity: 1,
       W3: 0,
       W4: 0,
+      staked: BN(0),
     };
   },
   created: function () {
@@ -359,6 +402,11 @@ export default {
     this.onResize();
     window.addEventListener("scroll", this.handleScroll);
     window.addEventListener("resize", this.onResize);
+    // stats:
+    let link =
+      "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8";
+    let response = await axios.get(link);
+    this.staked = BN(response.data.result).div(1e18).toFixed(0);
     //text effect 3
     let newPerfect = "Ethereum 2";
     for (let i = 0; i < 100; i++) {
@@ -444,12 +492,7 @@ a {
   font-weight: 300;
   background: transparent;
   min-height: 85vh;
-  padding-top: 15vh; /*
-  // display: flex;
-  // flex-direction: column;
-  // align-items: flex-start;
-  // justify-content: space-between;
-  */
+  padding-top: 14vh;
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr;
   grid-template-rows: 0.4fr 1fr 0.4fr 0.2fr;
@@ -497,6 +540,16 @@ a {
   max-height: 50px;
   overflow: hidden;
   transition: all 0.2s ease-in-out;
+}
+.SGT {
+  background: transparent;
+  margin: 0.5vh 0 0.5vh 0;
+  backdrop-filter: blur(12px);
+  border: 1px #fff solid;
+  color: #fff;
+  line-height: 38px;
+  font-size: 24px;
+  width: 40%;
 }
 .loginButton:hover {
   transform: scale(0.95);
@@ -553,6 +606,7 @@ a {
   font-weight: 500;
   margin-bottom: 6vh;
   color: #09fa8b;
+  word-break: break-all;
   letter-spacing: 1vw;
   cursor: pointer;
 }
@@ -566,7 +620,7 @@ a {
 }
 #exp1,
 #exp {
-  font-size: 8vw;
+  font-size: 6vw;
   font-family: "Roboto";
   text-shadow: 2px 2px #f60574;
 }
@@ -633,7 +687,6 @@ a {
   cursor: pointer;
   transform: rotate(270deg);
   filter: invert(1);
-  margin-top: 2vh;
   transition: all 0.2s ease-in-out;
 }
 #down1 {
@@ -736,6 +789,39 @@ a {
   margin: 1vh 1vw 1vh 1vw;
 }
 
+.stats {
+  width: 100%;
+  padding: 15px 0 15px 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 10px;
+  color: #fff;
+  text-shadow: 1px 1px #ff007a;
+  justify-content: center;
+  align-items: center;
+}
+
+.miniStats {
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  color: rgb(255, 255, 255);
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  margin-top: 4px;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 38px;
+  text-align: center;
+}
+
 /* The typing effect */
 @keyframes typing {
   from {
@@ -794,16 +880,40 @@ a {
     line-height: 100%;
     font-size: 6vw;
   }
-  #rainbow {
-    line-height: 100%;
-    word-break: break-all;
+  #exp1 {
+    margin-left: 5vw;
   }
   .loginButton {
     font-size: 14px;
   }
-
+  .typewriter {
+    margin-top: 0;
+    margin-left: 5vw;
+    width: 95vw;
+  }
+  #notion {
+    margin-left: 5vw;
+  }
   #subtitle {
     font-size: 5vw;
+    margin-left: 5vw;
+    width: 95vw;
+  }
+  .miniStats {
+    font-size: 16px;
+  }
+  .stat {
+    font-size: 22px;
+  }
+  .wrapper {
+    padding-top: 8vh;
+    grid-template-rows: 0.3fr 0.3fr 1fr 0.1fr 0.3fr;
+    grid-template-areas:
+      "rainbow rainbow rainbow"
+      "exp1 exp1 exp1"
+      "subtitle subtitle subtitle"
+      "typewriter typewriter typewriter"
+      "socials socials socials";
   }
 }
 @media only screen and (max-width: 680px) {

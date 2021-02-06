@@ -3,7 +3,7 @@
     <div class="geyserChooser" @click="$emit('toggle')">
       <ImageVue
         :src="'tokens/' + pool.name + '.png'"
-        :size="'40px'"
+        :size="innerWidth > 700 ? '40px' : '8vw'"
         class="headerPart poolIcon"
       />
       <div class="headerPart poolName">
@@ -14,7 +14,7 @@
           rel="noopener noreferrer"
         >
           {{ pool.name }}
-          <span style="font-size: 14px; font-weight: 700"> ↗</span>
+          <span class="minitext" style="font-weight: 700"> ↗</span>
           <div class="minitext">{{ pool.explanation }}</div>
         </a>
       </div>
@@ -39,7 +39,7 @@
                 .toFixed(3)
                 .toString()
         }}
-        <div class="minitext">{{ pool.name }} available to stake</div>
+        <div class="minitext">available to stake</div>
       </div>
       <span class="headerPart label" :id="chosen ? 'headDown' : 'headUp'"
         ><svg
@@ -57,7 +57,7 @@
         <a :href="pool.link" target="_blank" rel="noopener noreferrer">
           <div class="minitext blue">
             {{ pool.status }}
-            <span style="font-size: 14px; font-weight: 700"> ↗</span>
+            <span class="minitext" style="font-weight: 700"> ↗</span>
           </div>
         </a>
       </div>
@@ -78,7 +78,7 @@
         {{ pool.name }}
       </div>
       <div class="statsPart" id="whiteBorder">
-        <div class="minitext blue">Remaining Locked:</div>
+        <div class="minitext blue">Remaining Rewards:</div>
         {{ locked == 0 ? 0 : locked.eq(0) ? 0 : locked.toFixed(1).toString() }}
         SGT
       </div>
@@ -236,6 +236,7 @@ export default {
   components: { ImageVue, Notifier },
   props: ["pool", "chosen"],
   data: () => ({
+    innerWidth: 0,
     balance: 0,
     staked: 0,
     earned: 0,
@@ -251,6 +252,8 @@ export default {
     bigWAmount: BN(0),
   }),
   created: function () {
+    this.innerWidth = window.innerWidth;
+    window.addEventListener("resize", this.onResize);
     var self = this;
     window.ethereum.on("accountsChanged", async function () {
       if (self.pool.active) {
@@ -262,6 +265,9 @@ export default {
     if (this.pool.active) {
       await this.mounted();
     }
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.onResize);
   },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
@@ -371,6 +377,9 @@ export default {
     },
   },
   methods: {
+    onResize() {
+      this.innerWidth = window.innerWidth;
+    },
     async mounted() {
       let user = this.userAddress;
       let decimals = await this.pool.token.methods.decimals().call();
@@ -640,7 +649,6 @@ export default {
   transition: transform 0.2s ease-in-out;
   font-family: "Work Sans";
   margin: 4vh 1vw 2vh 1vw;
-  min-width: 500px;
   width: 60vw;
   border: 1px #ff007a solid;
   border-radius: 49px;
@@ -696,6 +704,8 @@ export default {
 .userPart {
   text-align: left;
   font-weight: 500;
+  width: 90%;
+  word-break: break-all;
   line-height: 1.2;
 }
 
@@ -763,14 +773,14 @@ export default {
 .stakePage {
   display: flex;
   max-width: 23vw;
-  min-width: 185px;
+  /* min-width: 185px; */
   align-items: center;
   justify-content: space-between;
   min-height: 20%;
   border-radius: 30px;
   border: 1px solid #afb2b6;
   align-items: center;
-  padding: 0.75rem 0.75rem 0.75rem 1rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
   text-align: center;
 }
 .token-amount-input {
@@ -793,7 +803,7 @@ export default {
 }
 .toMax {
   padding: 0.3rem 0.3rem 0 0.2rem;
-  height: 1.7rem;
+  min-height: 1.4rem;
   background-color: rgb(253, 234, 241);
   border: 1px solid rgb(253, 234, 241);
   border-radius: 0.5rem;
@@ -847,5 +857,46 @@ export default {
   background-color: rgba(239, 239, 239, 0.3);
   color: #0b8f92;
   opacity: 0.5;
+}
+.geyserExp {
+  max-width: 70%;
+}
+@media only screen and (max-width: 700px) {
+  .geyserwrapper {
+    position: relative;
+    transition: transform 0.2s ease-in-out;
+    font-family: "Work Sans";
+    margin: 4vh 1vw 2vh 1vw;
+    width: 90vw;
+    border: 1px #ff007a solid;
+    border-radius: 49px;
+    background-color: #fafafa;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: 0.42s ease-in-out;
+    -webkit-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.517);
+    -moz-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.619);
+    box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.469);
+  }
+  .geyserChooser {
+    padding: 0;
+  }
+  .statsPart,
+  .userPart,
+  .mainPart,
+  .headerPart {
+    font-size: 20px;
+  }
+  .toMax,
+  .mainButton,
+  .minitext {
+    font-size: 10px;
+    font-size: 10px;
+  }
+  .stakePage {
+    max-width: 31vw;
+  }
 }
 </style>
