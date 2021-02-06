@@ -95,7 +95,7 @@
         <div class="stats">
           <span class="stat">
             <div class="miniStats">Staked with SharedStake</div>
-            <div>601 ETH</div>
+            <div>{{ staked }} ETH</div>
             <a
               class="loginButton SGT"
               href="https://www.sharedstake.org/stake"
@@ -376,6 +376,8 @@
 import imageVue from "../Handlers/image.vue";
 import Socials from "../Root/Root/Socials.vue";
 import { timeout } from "../../utils/helpers";
+import axios from "axios";
+import BN from "bignumber.js";
 export default {
   components: { imageVue, Socials },
   data: function () {
@@ -389,6 +391,7 @@ export default {
       w2opacity: 1,
       W3: 0,
       W4: 0,
+      staked: BN(0),
     };
   },
   created: function () {
@@ -399,6 +402,11 @@ export default {
     this.onResize();
     window.addEventListener("scroll", this.handleScroll);
     window.addEventListener("resize", this.onResize);
+    // stats:
+    let link =
+      "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8";
+    let response = await axios.get(link);
+    this.staked = BN(response.data.result).div(1e18).toFixed(0);
     //text effect 3
     let newPerfect = "Ethereum 2";
     for (let i = 0; i < 100; i++) {
@@ -598,6 +606,7 @@ a {
   font-weight: 500;
   margin-bottom: 6vh;
   color: #09fa8b;
+  word-break: break-all;
   letter-spacing: 1vw;
   cursor: pointer;
 }
@@ -611,6 +620,7 @@ a {
 }
 #exp1,
 #exp {
+  font-size: 6vw;
   font-family: "Roboto";
   text-shadow: 2px 2px #f60574;
 }
@@ -870,22 +880,40 @@ a {
     line-height: 100%;
     font-size: 6vw;
   }
-  #rainbow {
-    line-height: 100%;
-    word-break: break-all;
+  #exp1 {
+    margin-left: 5vw;
   }
   .loginButton {
     font-size: 14px;
   }
-
+  .typewriter {
+    margin-top: 0;
+    margin-left: 5vw;
+    width: 95vw;
+  }
+  #notion {
+    margin-left: 5vw;
+  }
   #subtitle {
     font-size: 5vw;
+    margin-left: 5vw;
+    width: 95vw;
   }
   .miniStats {
     font-size: 16px;
   }
   .stat {
     font-size: 22px;
+  }
+  .wrapper {
+    padding-top: 8vh;
+    grid-template-rows: 0.3fr 0.3fr 1fr 0.1fr 0.3fr;
+    grid-template-areas:
+      "rainbow rainbow rainbow"
+      "exp1 exp1 exp1"
+      "subtitle subtitle subtitle"
+      "typewriter typewriter typewriter"
+      "socials socials socials";
   }
 }
 @media only screen and (max-width: 680px) {
