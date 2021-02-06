@@ -871,7 +871,7 @@ a {
   .hodl {
     justify-content: flex-start;
     overflow: visible;
-    font-size: 48px;
+    font-size: 12vw;
   }
   .header,
   .content,
@@ -902,8 +902,11 @@ a {
   .miniStats {
     font-size: 16px;
   }
+  #title {
+    flex-direction: row;
+  }
   .stat {
-    font-size: 22px;
+    font-size: 20px;
   }
   .wrapper {
     padding-top: 8vh;
@@ -914,6 +917,9 @@ a {
       "subtitle subtitle subtitle"
       "typewriter typewriter typewriter"
       "socials socials socials";
+  }
+  #rainbow {
+    margin-bottom: 0vh;
   }
 }
 @media only screen and (max-width: 680px) {
