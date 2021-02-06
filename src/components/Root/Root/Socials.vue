@@ -54,7 +54,7 @@ export default {
       {
         name: "Github",
         img: "github.png",
-        link: "https://github.com/SharedStake/SharedStake-ui",
+        link: "https://github.com/SharedStake",
       },
     ],
     size: "32px",
