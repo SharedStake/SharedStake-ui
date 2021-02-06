@@ -107,7 +107,7 @@
           </span>
           <span class="stat">
             <div class="miniStats">Current APY</div>
-            <div>4% + 343%</div>
+            <div>4% + 307%</div>
             <a
               class="loginButton SGT"
               href="https://www.sharedstake.org/earn"
