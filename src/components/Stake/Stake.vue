@@ -42,13 +42,59 @@
             : (Damount / 32) * 32.1 + " ETH"
         }}
       </div>
-      <button
-        class="flex_row stakeButton"
-        @click="onSubmit"
-        :id="buttonText == 'Stake' || buttonText == 'Unstake' ? '' : 'disabled'"
-      >
-        {{ buttonText }}
-      </button>
+      <div class="flex_row stakerButtons">
+        <button
+          class="stakeButton longEth"
+          @click="onSubmit"
+          v-if="buttonText == 'Stake' && chosedStakeButton == 1"
+          :id="
+            buttonText == 'Stake' || buttonText == 'Unstake' ? '' : 'disabled'
+          "
+        >
+          {{ buttonText == "Stake" ? "Long & Stake" : buttonText }}
+        </button>
+        <button
+          class="stakeButton"
+          v-if="chosedStakeButton == 0"
+          @click="onSubmit"
+          :id="
+            buttonText == 'Stake' || buttonText == 'Unstake' ? '' : 'disabled'
+          "
+        >
+          {{ buttonText }}
+        </button>
+        <button
+          class="stakeButton shortEth"
+          @click="onSubmit"
+          v-if="buttonText == 'Stake' && chosedStakeButton == 2"
+          :id="
+            buttonText == 'Stake' || buttonText == 'Unstake' ? '' : 'disabled'
+          "
+        >
+          {{ buttonText == "Stake" ? "Short & Stake" : buttonText }}
+        </button>
+        <div class="dropdown" v-if="buttonText == 'Stake'">
+          <span @click="() => (chosedStakeButton = 0)">{{
+            chosedStakeButton == 0 ? "ᐁ" : "X"
+          }}</span>
+          <div class="dropdown-content">
+            <button
+              class="stakeButtonSelect longEth"
+              @click="() => (chosedStakeButton = 1)"
+            >
+              long eth via <br />
+              aave
+            </button>
+            <button
+              class="stakeButtonSelect shortEth"
+              @click="() => (chosedStakeButton = 2)"
+            >
+              short eth via <br />
+              aave
+            </button>
+          </div>
+        </div>
+      </div>
       <gasChooser :updateGas="this.updateGas" />
     </div>
     <div
@@ -123,6 +169,7 @@ export default {
     maxValShares: 0,
     remaining: BN(0),
     updateGraph: false,
+    chosedStakeButton: 0, //1=> long and stake, 2=> short and stake.
   }),
   created: function () {
     var self = this;
@@ -472,9 +519,59 @@ export default {
   transition: all 0.2s linear, transform 0.1s ease-in-out;
   cursor: pointer;
 }
+.stakeButtonSelect:hover,
 .stakeButton:hover {
   transition: transform 0.1s ease-in-out;
   transform: scale(0.95);
+}
+.longEth {
+  background-color: #00d395;
+}
+
+.shortEth {
+  background-color: #e56b73;
+}
+.stakeButtonSelect {
+  min-height: 15%;
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.stakerButtons {
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: stretch;
+  transition: all 0.2s linear, transform 0.1s ease-in-out;
+  z-index: 100;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+  color: #007bff;
+  border: 2px solid #007bff;
+  border-radius: 15px;
+  font-size: 30px;
+  width: 10%;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.2s linear, transform 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  padding: 0;
+  margin: 0;
+  display: none;
+  position: absolute;
+}
+.dropdown:hover {
+  width: 20%;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
 }
 #disabled {
   color: rgb(136, 141, 155);
