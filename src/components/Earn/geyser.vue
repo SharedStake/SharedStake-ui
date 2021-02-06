@@ -91,7 +91,7 @@
             : stakedSchedule.toFixed(0).toString()
         }}
         Days
-        <div class="minitext blue">until the end.</div>
+        <div class="minitext blue">emission period.</div>
       </div>
     </div>
     <div class="geyserUser" v-show="chosen && !pool.external">
