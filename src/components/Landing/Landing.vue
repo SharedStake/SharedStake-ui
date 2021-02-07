@@ -107,7 +107,7 @@
           </span>
           <span class="stat">
             <div class="miniStats">Current APY</div>
-            <div>7% + 380%</div>
+            <div>7% + 600%</div>
             <a
               class="loginButton SGT"
               href="https://www.sharedstake.org/earn"
@@ -119,7 +119,7 @@
           </span>
           <span class="stat">
             <div class="miniStats">SGT price</div>
-            <div>12.75$</div>
+            <div>20.45$</div>
             <a
               class="loginButton SGT"
               href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
