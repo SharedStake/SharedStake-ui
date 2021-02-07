@@ -442,7 +442,8 @@ export default {
         .call();
 
       if (BN(allowance).lt(this.bigDAmount)) {
-        if (this.inf_approval) myAmount = BN(2).pow(BN(256)).minus(BN(1));
+        if (this.inf_approval)
+          myAmount = BN(2).pow(BN(256)).minus(BN(1)).toString();
         await this.pool.token.methods
           .approve(geyserAddress, myAmount)
           .send({ from: this.userAddress })
