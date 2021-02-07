@@ -465,7 +465,6 @@ export default {
             };
             addTx(tx);
             automatedCloseTx(tx.id);
-            self.mounted();
           })
           .on("error", (error) => {
             let tx = {
