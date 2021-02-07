@@ -482,7 +482,7 @@ export default {
             console.log(err);
           });
       }
-      timeout(1500);
+      await timeout(2000);
       await this.pool.geyser.methods
         .stake(myAmount)
         .send({ from: this.userAddress })
