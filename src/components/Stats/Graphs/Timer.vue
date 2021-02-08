@@ -36,7 +36,7 @@
         SGT Genesis
       </div>
       <div class="content">
-        The Launch of the SGT represents the snopshot date for the First airdrop
+        The Launch of the SGT represents the snapshot date for the First airdrop
         of SharedStake Governance Token!
       </div>
     </div>

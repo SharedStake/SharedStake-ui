@@ -107,7 +107,7 @@
           </span>
           <span class="stat">
             <div class="miniStats">Current APY</div>
-            <div>7% + 600%</div>
+            <div>7% + 680%</div>
             <a
               class="loginButton SGT"
               href="https://www.sharedstake.org/earn"
@@ -119,7 +119,7 @@
           </span>
           <span class="stat">
             <div class="miniStats">SGT price</div>
-            <div>23.45$</div>
+            <div>28.66$</div>
             <a
               class="loginButton SGT"
               href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
@@ -329,7 +329,7 @@
             </div>
             <div id="subtitle">
               • To be eligible: Stake at least 0.5 Ether to via SharedStake &
-              Hold at least 10 snow token at the snopshot date.
+              Hold at least 10 snow token at the snapshot date.
             </div>
             <div id="subtitle">
               • Distribution will be linear with the staked amount of ether.
