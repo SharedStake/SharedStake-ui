@@ -299,44 +299,44 @@
             <span name="exp" id="exp">Incentivized Staking</span>
             <div id="subtitle">
               <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
-              vETH2<imageVue :src="'logo-4.png'" :size="'28px'" /> is erc-20
+              vETH2<imageVue :src="'logo-4.png'" :size="'28px'" /> is an erc-20
               version of staked Eth.
             </div>
             <div id="subtitle">
               <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
               By staking your vETH2 on our staking contracts you can harvest
-              Sharedstake governance token (SGT).
+              the SharedStake Governance Token (SGT).
             </div>
             <div id="subtitle">
               <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
-              SGT is the Governance Token of SharedStake platform. DAO will be
-              launched after the first airdrop that issued snowswap stakers!
+              SGT is the Governance Token of the SharedStake platform. A DAO will
+              be launched soon!
             </div>
             <div id="subtitle">
               <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
               SharedStake is also incentivising Ethereum staking via
-              collabration with defi projects.
+              collaboration with other DeFi projects.
             </div>
           </div>
         </div>
         <div class="flex_row Wrapper" id="W4">
           <div class="flex_column title secondPage">
             <span name="hodl2" class="hodl">Make It Snow!</span>
-            <div id="subtitle">Our first collabration is with Snowswap!</div>
+            <div id="subtitle">Our first collaboration is with SnowSwap!</div>
             <div id="subtitle">
-              First airdrop of the SGT will take place for SnowSwap Stakers
+              The first SGT airdrop will take place for SnowSwap Stakers
               <imageVue :src="'snowswap2.svg'" :size="'28px'" />
             </div>
             <div id="subtitle">
-              • To be eligible: Stake at least 0.5 Ether to via SharedStake &
-              Hold at least 10 snow token at the snapshot date.
+              • To be eligible: Stake at least 0.5 ETH via SharedStake &
+              Hold at least 10 SNOW tokens at the snapshot date.
             </div>
             <div id="subtitle">
               • Distribution will be linear with the staked amount of ether.
             </div>
             <div id="subtitle">
-              • You can also stake your vETH2 token on snowswap's ethSnow pool
-              while earning eth2 profit & getting your SGT from airdrop!
+              • You can also stake your vETH2 token on SnowSwap's ETHSnow pool
+              to earn rewards on your ETH2 & your SGT airdrop!
             </div>
             <a
               href="https://medium.com/snowswap/%EF%B8%8Fbuilding-on-2-0-with-eth2snow-and-sharedstake-partnership-%EF%B8%8F-5ca251f8e1a0"
