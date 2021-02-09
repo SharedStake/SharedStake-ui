@@ -35,8 +35,8 @@ export default {
         link: "https://twitter.com/SharedStake",
       },
       {
-        img: "discord.png",
         name: "Discord",
+        img: "discord.png",
         link: "https://discord.gg/VezkjY9udC",
       },
       {
@@ -46,10 +46,9 @@ export default {
           "https://medium.com/@AlexMasmej/introducing-sharedstake-the-easiest-way-to-stake-for-eth2-790d6283a55b",
       },
       {
-        name: "Notion",
-        img: "notion.png",
-        link:
-          "https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05",
+        name: "Reddit",
+        img: "reddit.png",
+        link: "https://www.reddit.com/r/SharedStake/",
       },
       {
         name: "Github",
