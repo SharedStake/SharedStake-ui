@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import { timeout } from "../utils/helpers"
 import store from "../store/index"
 const InfoPage = "https://docs.sharedstake.org"
+const DaoPage = "https://snapshot.page/#/sharedstake.eth"
 
 const Stake = () => import("../components/Stake/Stake.vue")
 const Info = () => import("../components/Info/Info.vue")
@@ -69,6 +70,7 @@ let routes = [{
         {
             path: "/dao",
             name: "Dao",
+            beforeEnter() { location.href = DaoPage },
             component: Dao,
         },
         {
