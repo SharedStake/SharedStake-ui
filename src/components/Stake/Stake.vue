@@ -3,7 +3,7 @@
     <div class="flex_column Staker">
       <a
         class="info-icon"
-        :href="'https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05#f9f8c7bca1344d32b0d308d9dad5a35c'"
+        href="https://docs.sharedstake.org"
         target="_blank"
         rel="noopener noreferrer"
         ><ImageVue :src="'info-icon.png'" :size="'16px'"

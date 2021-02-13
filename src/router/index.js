@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import { timeout } from "../utils/helpers"
 import store from "../store/index"
-const notionInfoPage = "https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
+const InfoPage = "https://docs.sharedstake.org"
 
 const Stake = () => import("../components/Stake/Stake.vue")
 const Info = () => import("../components/Info/Info.vue")
@@ -46,7 +46,7 @@ let routes = [{
         {
             path: "/info",
             name: "Info",
-            beforeEnter() { location.href = notionInfoPage },
+            beforeEnter() { location.href = InfoPage },
             component: Info,
         },
         {

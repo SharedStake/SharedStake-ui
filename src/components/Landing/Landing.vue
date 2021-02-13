@@ -3,7 +3,16 @@
     <div id="Launcher">
       <imageVue :src="'logo-4.png'" :size="'14vw'" class="myLogo" />
       <div class="flex_row upButtons">
-        <router-link class="nonclickable" to="/">Introduction </router-link>
+        <a
+          href="https://docs.sharedstake.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div class="nonclickable">
+            Docs
+            <span style="font-size: 14px; font-weight: 700"> ↗</span>
+          </div>
+        </a>
         <router-link class="nonclickable" to="/roadmap">Roadmap </router-link>
         <button
           class="nonclickable Community"
@@ -76,7 +85,7 @@
         </div>
 
         <a
-          href="https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05"
+          href="https://docs.sharedstake.org"
           target="_blank"
           rel="noopener noreferrer"
         >

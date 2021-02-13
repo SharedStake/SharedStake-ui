@@ -4,7 +4,6 @@
       <ImageVue :src="'logo-4.png'" :size="'14vw'" class="myLogo" />
       <div class="flex_row upButtons">
         <router-link class="nonclickable" to="/">Introduction </router-link>
-        <router-link class="nonclickable" to="/roadmap">Roadmap </router-link>
         <button
           class="nonclickable Community"
           @click="mouseOverCommunity = !mouseOverCommunity"
