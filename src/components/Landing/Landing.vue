@@ -128,7 +128,7 @@
           </span>
           <span class="stat">
             <div class="miniStats">SGT price</div>
-            <div>49.56$</div>
+            <div>79.56$</div>
             <a
               class="loginButton SGT"
               href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
