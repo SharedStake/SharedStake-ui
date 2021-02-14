@@ -128,7 +128,7 @@
           </span>
           <span class="stat">
             <div class="miniStats">SGT price</div>
-            <div>79.56$</div>
+            <div>{{ price }}$</div>
             <a
               class="loginButton SGT"
               href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
@@ -401,6 +401,7 @@ export default {
       W3: 0,
       W4: 0,
       staked: BN(0),
+      price: 0,
     };
   },
   created: function () {
@@ -416,6 +417,11 @@ export default {
       "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8";
     let response = await axios.get(link);
     this.staked = BN(response.data.result).div(1e18).toFixed(0);
+    let gecko = await axios.get(
+      "https://api.coingecko.com/api/v3/coins/sharedstake-governance-token?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false"
+    );
+    this.price = gecko.data.market_data.current_price.usd;
+
     //text effect 3
     let newPerfect = "Ethereum 2";
     for (let i = 0; i < 100; i++) {
