@@ -10,9 +10,7 @@
 <script>
 export default {
   props: { size: String, src: String },
-  created: function () {
-    // console.log(this.size, this.src);
-  },
+  created: function () {},
   computed: {
     publicPath() {
       return process.env.BASE_URL;

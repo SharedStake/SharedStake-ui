@@ -88,7 +88,7 @@ export default {
   flex-direction: column;
   word-break: break-all;
   max-width: 40vw;
-  /* background-color: #1d3c7a;
+  /* background-color: #1d3c7a ;
   color: #fafafa; */
 }
 .authenticator {
