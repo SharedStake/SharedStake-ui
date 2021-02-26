@@ -16,6 +16,7 @@
 
 <script>
 import BN from "bignumber.js";
+import { mapGetters } from "vuex";
 import geyser from "./geyser.vue";
 import {
   SGT,
@@ -84,27 +85,40 @@ export default {
       },
     ],
   }),
+  computed: {
+    ...mapGetters({ userAddress: "userAddress" }),
+  },
   mounted: async function () {
-    // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
-    // 100* (sgtprice/tokenprice)*locked/staked
-    // tokenPerSgt=sgtprice/tokenprice
-    if (this.pools[1].active) {
-      //not if its goerli => testing ju1st sgt
-      let tokenPerSgt = 0;
-      // pool1
-      let token = this.pools[1].token;
-      let reserves = await token.methods.getReserves().call();
-      let Eth = reserves[1];
-      let Sgt = reserves[0];
-      tokenPerSgt = Eth / Sgt; //ok
-      this.pools[2].tokenPerSgt = tokenPerSgt;
-      console.log(tokenPerSgt);
-      // pool 2
-      let totalSupply = await token.methods.totalSupply().call();
-      tokenPerSgt = totalSupply / (Sgt * 2);
-      this.pools[1].tokenPerSgt = tokenPerSgt;
-    }
-    // no need for 3. pool
+    await this.mounted();
+  },
+  watch: {
+    async userAddress(newVal) {
+      if (newVal) await this.mounted;
+      console.log(newVal);
+    },
+  },
+  methods: {
+    async mounted() {
+      // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
+      // 100* (sgtprice/tokenprice)*locked/staked
+      // tokenPerSgt=sgtprice/tokenprice
+      if (this.pools[1].active) {
+        //not if its goerli => testing ju1st sgt
+        let tokenPerSgt = 0;
+        // pool1
+        let token = this.pools[1].token;
+        let reserves = await token.methods.getReserves().call();
+        let Eth = reserves[1];
+        let Sgt = reserves[0];
+        tokenPerSgt = Eth / Sgt; //ok
+        this.pools[2].tokenPerSgt = tokenPerSgt;
+        // pool 2
+        let totalSupply = await token.methods.totalSupply().call();
+        tokenPerSgt = totalSupply / (Sgt * 2);
+        this.pools[1].tokenPerSgt = tokenPerSgt;
+      }
+      // no need for 3. pool
+    },
   },
 };
 </script>

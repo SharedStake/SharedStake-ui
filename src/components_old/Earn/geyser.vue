@@ -272,7 +272,7 @@ export default {
     });
   },
   mounted: async function () {
-    if (this.pool.active) {
+    if (this.pool.active && this.userAddress) {
       await this.mounted();
     }
   },
@@ -384,6 +384,10 @@ export default {
       }
       this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+    },
+    async userAddress(newVal) {
+      console.log(newVal);
+      if (newVal) await this.mounted;
     },
   },
   methods: {

@@ -89,21 +89,21 @@
         <button
           class="switch"
           :class="{ switch_active: chosenGas == gas.low }"
-          @click="chosenGas = gas.low"
+          @click="updateGas(gas.low)"
         >
           <span>{{ gas.low }}</span>
         </button>
         <button
           class="switch"
           :class="{ switch_active: chosenGas == gas.medium }"
-          @click="chosenGas = gas.medium"
+          @click="updateGas(gas.medium)"
         >
           <span>{{ gas.medium }}</span>
         </button>
         <button
           class="switch"
           :class="{ switch_active: chosenGas == gas.high }"
-          @click="chosenGas = gas.high"
+          @click="updateGas(gas.high)"
         >
           <span>{{ gas.high }}</span>
         </button>
@@ -116,6 +116,7 @@
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
+import { getCurrentGasPrices } from "@/utils/common";
 
 import { mapGetters } from "vuex";
 import { validator, vEth2 } from "@/contracts";
@@ -146,6 +147,8 @@ export default {
     });
   },
   mounted: async function () {
+    this.gas = await getCurrentGasPrices();
+    this.chosenGas = this.gas.medium;
     await this.mounted();
   },
   computed: {
@@ -167,12 +170,13 @@ export default {
       this.txs = newTx;
     },
     updateGas(gas) {
-      this.gas = gas;
+      this.chosenGas = gas;
       this.amountCheck(true);
     },
     async onMAX() {
       if (this.isDeposit) {
-        let gas = this.gas;
+        let gas = this.chosenGas;
+        console.log(this.EthBal.toString());
         let BNamount = this.EthBal.minus(BN(gas * 200000 * 1000000000));
         let remaining = await validator.methods.remainingSpaceInEpoch().call();
         this.remaining = BN(remaining);
@@ -209,7 +213,7 @@ export default {
             from: walletAddress,
             value: myamount,
             gas: 200000,
-            gasPrice: BN(this.gas).multipliedBy(1000000000).toString(),
+            gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
           })
           .on("transactionHash", function (hash) {
             TXhash = hash;
@@ -253,7 +257,7 @@ export default {
           .send({
             from: walletAddress,
             gas: 200000,
-            gasPrice: BN(this.gas).multipliedBy(1000000000).toString(),
+            gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
           })
           .on("transactionHash", function (hash) {
             TXhash = hash;
@@ -328,7 +332,7 @@ export default {
         return;
       }
       this.validInput = this.isDeposit
-        ? this.EthBal.minus(BN(this.gas * 200000 * 1000000000)).gte(
+        ? this.EthBal.minus(BN(this.chosenGas * 200000 * 1000000000)).gte(
             this.BNamount
           )
         : this.vEth2Bal.gte(this.BNamount);
@@ -396,14 +400,21 @@ export default {
         else this.buttonText = "Unstake";
       }
     },
+    async userAddress(newVal) {
+      console.log(newVal);
+      if (newVal) await this.mounted();
+    },
   },
 };
 </script>
 
 <style scoped>
 .stake {
-  padding-top: 5vh;
-  height: 100vh;
+  padding-top: 10vh;
+  height: 95vh;
+  background-image: url(bg-1.png);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .staker {
   -webkit-font-smoothing: antialiased;
@@ -552,6 +563,7 @@ export default {
   align-items: center;
   text-decoration: underline;
   z-index: 10;
+  cursor: pointer;
   font-weight: bolder;
 }
 .token-amount-input {

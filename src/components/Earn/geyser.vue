@@ -385,6 +385,10 @@ export default {
       this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
     },
+    async userAddress(newVal) {
+      console.log(newVal);
+      if (newVal) await this.mounted();
+    },
   },
   methods: {
     onResize() {
@@ -782,7 +786,7 @@ export default {
 .minitext {
   font-weight: 700;
   font-size: 14px;
-  color: rgb(250, 82, 160);
+  color: rgba(250, 82, 160, 0.803);
 }
 
 /* stake input part */

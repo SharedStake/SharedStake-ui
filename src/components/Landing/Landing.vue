@@ -545,11 +545,10 @@ export default {
 
 .vEth2PanelHeader {
   padding-top: 5vw;
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
-    brightness(200%);
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(200%);
   z-index: 5;
+  animation: Glow 1s linear alternate infinite;
 }
+
 .third {
   width: 90%;
   height: 90%;
@@ -582,6 +581,7 @@ export default {
 }
 .roadMap {
   padding-top: 2rem;
+  padding-bottom: 5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -672,6 +672,7 @@ export default {
   color: #ffffff;
   line-height: 1.47em;
   width: 50%;
+  padding-bottom: 20px;
 }
 .mainCon .list.next {
   padding-left: 5rem;
@@ -699,6 +700,16 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   to {
     transform: translate3d(0, 0, 0);
     opacity: 1;
+  }
+}
+
+@keyframes Glow {
+  from {
+    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(120%);
+  }
+
+  to {
+    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
   }
 }
 @keyframes TextEnter {

@@ -84,6 +84,9 @@ export default {
     claim: {},
   }),
   watch: {
+    async userAddress() {
+      await this.isEligible();
+    },
     async address() {
       await this.isEligible();
     },
@@ -328,7 +331,7 @@ export default {
 .minitext {
   font-weight: 700;
   font-size: 14px;
-  color: #ff007b9c;
+  color: #00ff849c;
 }
 
 /* stake input part */
@@ -387,7 +390,7 @@ export default {
     transition: transform 0.2s ease-in-out;
     margin: 4vh 1vw 2vh 1vw;
     width: 90vw;
-    border: 1px #ff007a solid;
+    border: 1px #00ff84 solid;
     border-radius: 49px;
     background-color: #181818;
     display: inline-flex;

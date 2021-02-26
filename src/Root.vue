@@ -16,7 +16,12 @@
         <span class="link">Dao</span>
         <span class="link">Docs</span>
         <span class="link" v-bind:style="{ opacity: 1 }">
-          <div class="ConnectButton">Connect Wallet</div>
+          <div v-if="userAddress" class="ConnectButton" @click="Connect">
+            {{ userAddress.slice(0, 12) }}
+          </div>
+          <div v-else class="ConnectButton animatedButton" @click="Connect">
+            Connect Wallet
+          </div>
         </span>
       </div>
     </div>
@@ -70,7 +75,8 @@
 </template>
 
 <script>
-import ImageVue from "./components/Handlers/ImageVue.vue";
+import ImageVue from "./components/Handlers/ImageVue";
+import { mapGetters, mapActions } from "vuex";
 export default {
   components: { ImageVue },
   data() {
@@ -86,7 +92,14 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.onScroll);
   },
+  computed: {
+    ...mapGetters({ userAddress: "userAddress" }),
+  },
   methods: {
+    ...mapActions(["setAddress"]),
+    async Connect() {
+      await this.setAddress();
+    },
     onScroll() {
       const currentScrollPosition =
         window.pageYOffset || document.documentElement.scrollTop;
@@ -205,15 +218,17 @@ export default {
   background-origin: border-box;
   background-clip: padding-box, border-box;
   background-size: 100% 100%;
-  animation: TextEnter 3s ease-out backwards infinite;
   transition: filter 0.5s ease-out;
+}
+.animatedButton {
+  animation: animatedButton 3s ease-out backwards infinite;
 }
 .ConnectButton:hover {
   -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
     brightness(200%);
   filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
 }
-@keyframes TextEnter {
+@keyframes animatedButton {
   from {
     background-position: 0px;
   }
