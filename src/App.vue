@@ -14,6 +14,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
 
 body {
   scroll-behavior: smooth;
@@ -44,20 +45,9 @@ body {
 }
 a {
   text-decoration: none;
-  font-family: BrandonGrotesque, sans-serif;
+  font-family: "Roboto";
   font-weight: 700;
-  color: #666;
+  color: #fff;
   font-size: 26px;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition-duration: 0.3s;
-  transition-property: opacity;
-  transition-timing-function: ease;
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
 }
 </style>

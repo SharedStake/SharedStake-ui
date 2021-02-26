@@ -1,14 +1,16 @@
 <template>
   <div class="Root">
-    <div class="Header">
-      <div class="flex_row LogoContainer">
-        <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
-        <div class="main">SharedStake</div>
-      </div>
+    <div class="navbar" :class="{ 'navbar--hidden': !showNavbar }">
+      <router-link class="link" to="/">
+        <div class="flex_row LogoContainer">
+          <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
+          <div class="main">SharedStake</div>
+        </div>
+      </router-link>
       <div class="links">
-        <span class="link">Stake</span>
-        <span class="link">Earn</span>
-        <span class="link">Dashboard</span>
+        <router-link class="link" to="/stake"> Stake </router-link>
+        <router-link class="link" to="/earn"> Earn </router-link>
+        <router-link class="link" to="/dashboard"> Dashboard </router-link>
       </div>
       <div class="links">
         <span class="link">Dao</span>
@@ -18,7 +20,9 @@
         </span>
       </div>
     </div>
-    <router-view />
+    <!--App-->
+    <router-view :scrolled="currentScrollPosition" />
+    <!--App-->
     <div class="footer">
       <div class="flex_column LogoContainer">
         <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
@@ -69,6 +73,36 @@
 import ImageVue from "./components/Handlers/ImageVue.vue";
 export default {
   components: { ImageVue },
+  data() {
+    return {
+      showNavbar: true,
+      lastScrollPosition: 0,
+      currentScrollPosition: 0,
+    };
+  },
+  mounted() {
+    window.addEventListener("scroll", this.onScroll);
+  },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.onScroll);
+  },
+  methods: {
+    onScroll() {
+      const currentScrollPosition =
+        window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScrollPosition < 0) {
+        return;
+      }
+      this.currentScrollPosition = currentScrollPosition;
+      // Stop executing this function if the difference between
+      // current scroll position and last scroll position is less than some offset
+      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 100) {
+        return;
+      }
+      this.showNavbar = currentScrollPosition < this.lastScrollPosition;
+      this.lastScrollPosition = currentScrollPosition;
+    },
+  },
 };
 </script>
 
@@ -77,7 +111,11 @@ export default {
   min-height: 100vh;
   background: rgb(15, 16, 19);
 }
-.Header {
+.navbar,
+.footer {
+  z-index: 100;
+}
+.navbar {
   display: flex;
   flex-direction: row;
   -webkit-box-pack: justify;
@@ -87,14 +125,19 @@ export default {
   box-sizing: border-box;
   padding: 1.5rem;
   width: 100%;
-  z-index: 3;
-  position: sticky;
+  position: fixed;
   top: -1px;
   background: rgb(15, 16, 19);
   border-bottom: 1px solid rgb(41, 44, 47);
-  transition: background-color 0.25s ease 0s;
   color: rgb(255, 255, 255);
+  transform: translate3d(0, 0, 0);
+  transition: 0.5s all ease-out;
 }
+.navbar.navbar--hidden {
+  box-shadow: none;
+  transform: translate3d(0, -100%, 0);
+}
+
 .LogoContainer {
   margin-left: 1vw;
   font-size: 24px;
@@ -145,6 +188,7 @@ export default {
   cursor: pointer;
   transition: opacity 0.35s ease 0s;
 }
+.router-link-active,
 .link:hover {
   opacity: 1;
 }
@@ -152,14 +196,34 @@ export default {
   padding: 0.5rem 1.5rem;
   border: 3px double transparent;
   border-radius: 80px;
-  background-image: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(circle at left top, rgb(37, 167, 219), rgb(250, 82, 160));
+  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
+    radial-gradient(
+      circle at left top,
+      rgb(250, 82, 160) 0%,
+      rgb(37, 167, 219) 100%
+    );
   background-origin: border-box;
   background-clip: padding-box, border-box;
+  background-size: 100% 100%;
+  animation: TextEnter 3s ease-out backwards infinite;
+  transition: filter 0.5s ease-out;
+}
+.ConnectButton:hover {
+  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
+    brightness(200%);
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
+}
+@keyframes TextEnter {
+  from {
+    background-position: 0px;
+  }
+
+  to {
+    background-position: 168.6px;
+  }
 }
 .footer {
   padding: 40px 30px 30px;
-  margin-top: 30px;
   background-color: rgb(24, 24, 24);
   color: rgb(255, 255, 255);
   min-height: 350px;

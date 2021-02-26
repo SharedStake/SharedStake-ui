@@ -87,10 +87,10 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap");
 a {
   text-decoration: none;
-  font-family: BrandonGrotesque, sans-serif;
+  font-family: "Roboto";
   font-weight: 700;
   font-size: 26px;
-  color: #2c3e50;
+  color: #fff;
 }
 ::-webkit-scrollbar {
   width: 5px;

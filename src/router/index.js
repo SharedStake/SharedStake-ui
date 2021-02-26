@@ -5,10 +5,10 @@ import VueRouter from "vue-router";
 // const InfoPage = "https://docs.sharedstake.org"
 // const DaoPage = "https://snapshot.page/#/sharedstake.eth"
 
-// const Stake = () => import("../components/Stake/Stake.vue")
+const Stake = () => import("../components/Stake/Stake.vue")
 // const Info = () => import("../components/Info/Info.vue")
 // const Root = () => import("../components/Root/Root.vue")
-// const Earn = () => import("../components/Earn/Earn.vue")
+const Earn = () => import("../components/Earn/Earn.vue")
 // const Stats = () => import("../components/Stats/Stats.vue")
 // const Dao = () => import("../components/Dao/Dao.vue")
 // const Landing = () => import("../components/Landing/Landing.vue")
@@ -26,7 +26,18 @@ let routes = [{
         path: "/",
         name: "Landing",
         component: Landing,
-    }]
+    },
+    {
+        path: "/stake",
+        name: "Stake",
+        component: Stake,
+    },
+    {
+        path: "/earn",
+        name: "Earn",
+        component: Earn,
+    }
+    ]
 },
     // {
     //     path: "/roadmap",

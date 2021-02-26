@@ -1,94 +1,114 @@
 <template>
   <div class="flex_column stake">
-    <div class="flex_column Staker">
-      <a
-        class="info-icon"
-        href="https://docs.sharedstake.org"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><ImageVue :src="'info-icon.png'" :size="'16px'"
-      /></a>
-      <div class="balance" id="balance">balance: {{ balance }}</div>
-      <div
-        :class="validInput ? 'flex_row stakePage' : 'flex_row stakePage redBG'"
-      >
-        <input
-          class="token-amount-input"
-          inputmode="decimal"
-          title="Token Amount"
-          autocomplete="off"
-          autocorrect="off"
-          type="text"
-          pattern="^[0-9]*[.,]?[0-9]*$"
-          placeholder="0.0"
-          minlength="1"
-          maxlength="39"
-          spellcheck="false"
-          value=""
-          v-model="Damount"
-        />
-        <ImageVue
-          :src="isDeposit ? 'eth-logo.png' : 'logo-2.png'"
-          :size="'20px'"
-        />
-        <div class="ETH">{{ isDeposit ? "ETH" : "vETH2" }}</div>
-        <div class="toMax" @click="onMAX" title="Get max token">MAX</div>
+    <div class="staker">
+      <div class="chooser">
+        <div class="navbar">
+          <button
+            class="switch"
+            :class="{ switch_active: isDeposit }"
+            @click="isDeposit = true"
+          >
+            <span>Stake</span>
+          </button>
+          <button
+            class="switch"
+            :class="{ switch_active: !isDeposit }"
+            @click="isDeposit = false"
+          >
+            <span>Unstake</span>
+          </button>
+        </div>
       </div>
-      <div class="arrow_down"><Arrow :direction="'down'" :size="16" /></div>
-      <div v-if="Damount" v-show="Damount > 0" class="balance">
-        {{
-          isDeposit
-            ? (Damount / 32.1) * 32 + " vETH2"
-            : (Damount / 32) * 32.1 + " ETH"
-        }}
+      <div class="stakePage">
+        <div class="sPElement input">
+          <div class="inputBody">
+            <div class="flex_row">
+              <input
+                class="token-amount-input"
+                inputmode="decimal"
+                title="Token Amount"
+                autocomplete="off"
+                autocorrect="off"
+                type="text"
+                pattern="^[0-9]*[.,]?[0-9]*$"
+                placeholder="0.0"
+                minlength="1"
+                maxlength="39"
+                spellcheck="false"
+                value=""
+                v-model="Damount"
+              />
+              <div class="ant-col">{{ isDeposit ? " ETH" : "vETH2" }}</div>
+            </div>
+            <div class="balance" id="balance" @click="onMAX">
+              wallet: {{ balance }}
+            </div>
+            <div :class="isDeposit ? 'background2' : 'background3'" />
+          </div>
+        </div>
+        <ImageVue class="sPElement" :src="'down.png'" :size="'30px'" />
+        <div class="sPElement input">
+          <div class="inputBody">
+            <div class="flex_row">
+              <input
+                class="token-amount-input"
+                inputmode="decimal"
+                title="Token Amount"
+                autocomplete="off"
+                autocorrect="off"
+                type="text"
+                pattern="^[0-9]*[.,]?[0-9]*$"
+                placeholder="0.0"
+                minlength="1"
+                maxlength="39"
+                spellcheck="false"
+                :value="
+                  isDeposit ? (Damount / 32.1) * 32 : (Damount / 32) * 32.1
+                "
+                readonly
+              />
+              <div class="ant-col">
+                {{ isDeposit ? " vETH2" : " ETH" }}
+              </div>
+            </div>
+            <div :class="isDeposit ? 'background3' : 'background2'" />
+          </div>
+        </div>
+        <button
+          class="StakeButton"
+          :class="{
+            switch_active: buttonText == 'Stake' || buttonText == 'Unstake',
+          }"
+          @click="onSubmit"
+        >
+          {{ buttonText }}
+        </button>
       </div>
-      <button
-        class="flex_row stakeButton"
-        @click="onSubmit"
-        :id="buttonText == 'Stake' || buttonText == 'Unstake' ? '' : 'disabled'"
-      >
-        {{ buttonText }}
-      </button>
-      <gasChooser :updateGas="this.updateGas" />
+      <div class="navbar">
+        <span id="gas">Gas</span>
+        <button
+          class="switch"
+          :class="{ switch_active: chosenGas == gas.low }"
+          @click="chosenGas = gas.low"
+        >
+          <span>{{ gas.low }}</span>
+        </button>
+        <button
+          class="switch"
+          :class="{ switch_active: chosenGas == gas.medium }"
+          @click="chosenGas = gas.medium"
+        >
+          <span>{{ gas.medium }}</span>
+        </button>
+        <button
+          class="switch"
+          :class="{ switch_active: chosenGas == gas.high }"
+          @click="chosenGas = gas.high"
+        >
+          <span>{{ gas.high }}</span>
+        </button>
+      </div>
     </div>
-    <div
-      :class="{ toggle: true, 'toggle--withdraw': !isDeposit }"
-      @click="toggleMode"
-    >
-      <div class="toggle__label-wrapper">
-        <span class="toggle__label">Stake</span>
-      </div>
-
-      <div class="toggle__label-wrapper">
-        <span class="toggle__label">Unstake</span>
-      </div>
-
-      <div class="toggle__switch">
-        <span class="toggle__label toggle__label--active" v-show="isDeposit">
-          Stake
-        </span>
-        <span class="toggle__label toggle__label--active" v-show="!isDeposit">
-          Unstake
-        </span>
-      </div>
-    </div>
-    <transition-group name="list" tag="span">
-      <div
-        v-show="txs.length > 0"
-        class="exp"
-        v-for="(tx, index) in txs"
-        v-bind:key="index * Math.random()"
-      >
-        <Notifier
-          :id="tx.id"
-          :index="index"
-          :success="tx.success"
-          :msg="tx.msg"
-          @click.native="closeTx(index)"
-        />
-      </div>
-    </transition-group>
-    <TotalStaked class="Graph" :explanation="false" :updater="updateGraph" />
   </div>
 </template>
 
@@ -100,15 +120,9 @@ BN.config({ EXPONENTIAL_AT: 100 });
 import { mapGetters } from "vuex";
 import { validator, vEth2 } from "@/contracts";
 import { timeout } from "@/utils/helpers";
-
-import ImageVue from "../Handlers/image.vue";
-import Arrow from "../../assets/svg/arrow.vue";
-import gasChooser from "../Handlers/gasChooser";
-import Notifier from "../Handlers/notifier.vue";
-import TotalStaked from "../Stats/Graphs/TotalStaked";
-
+import ImageVue from "../Handlers/ImageVue";
 export default {
-  components: { Arrow, ImageVue, gasChooser, Notifier, TotalStaked },
+  components: { ImageVue },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),
@@ -117,12 +131,13 @@ export default {
     EthBal: BN(0),
     vEth2Bal: BN(0),
     balance: 0,
-    gas: 20,
+    gas: { low: 90, medium: 130, high: 180 },
     validInput: true,
     txs: [],
     maxValShares: 0,
     remaining: BN(0),
     updateGraph: false,
+    chosenGas: 130,
   }),
   created: function () {
     var self = this;
@@ -386,210 +401,211 @@ export default {
 </script>
 
 <style scoped>
-.redBG {
-  background-color: #ff007b0a;
-}
 .stake {
-  justify-content: center;
   padding-top: 5vh;
-  margin-top: 5vh;
+  height: 100vh;
 }
-.Staker {
-  padding: 1rem;
-  padding-top: 5vh;
-  min-width: 500px;
-  width: 40%;
-  min-height: 15rem;
-  height: 30%;
-  background-color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 30px;
-  margin: 0 1rem 0 1rem;
-  -webkit-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01),
-    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01),
-    10px 10px 130px -50px rgba(244, 180, 0, 1);
-  -moz-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01),
-    0px 4px 8px rgba(172, 76, 76, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01),
-    10px 10px 130px -50px rgba(244, 180, 0, 1);
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01),
-    1px 1px 300px 30px rgba(143, 153, 242, 0.4);
-}
-.balance {
-  padding-bottom: 0.5rem;
-  text-align: right;
-  font-family: "Roboto";
-  font-size: 14px;
-  font-weight: 500;
-}
-#balance {
-  position: absolute;
-  top: 1.5rem;
-  right: 3rem;
-}
-.stakePage {
-  width: 90%;
-  min-height: 20%;
-  border-radius: 30px;
-  border: 1px solid #f7f8fa;
-  align-items: center;
-  padding: 0.75rem 0.75rem 0.75rem 1rem;
-  text-align: center;
-}
-.token-amount-input {
-  color: #000000;
+.staker {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  max-width: 375px;
+  width: 100%;
+  background-color: #181818;
+  max-height: 80vh;
+  height: 100%;
+  overflow: auto;
+  box-shadow: 0 0 50px rgb(0 0 0 / 10%);
+  border-radius: 2px;
   position: relative;
-  font-weight: 500;
-  outline: none;
-  border: none;
-  -webkit-flex: 1 1 auto;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  background-color: transparent;
-  font-size: 24px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0px;
-  font-family: "Graduate", cursive;
-  -webkit-appearance: textfield;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
-.stakeButton {
-  /* background-color: #ff007a; */
-  background-color: #007bff;
-  min-width: 80%;
-  min-height: 15%;
-  border-radius: 15px;
-  border: 1px solid #f7f8fa;
+.chooser {
+  background-color: rgb(15, 16, 19);
+  height: 72px;
+  display: flex;
   align-items: center;
-  padding: 0.75rem 0.75rem 0.75rem 1rem;
-  font-size: 20px;
-  font-weight: 500;
+  justify-content: center;
+  padding: 0 16px;
+}
+.navbar {
+  display: flex;
+  border: 1px solid #3c3c3c;
+  box-sizing: border-box;
+  border-radius: 100px;
+  width: 100%;
+}
+#gas {
+  padding: 0 20px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: #fff;
+}
+.switch {
+  height: 40px;
+  padding: 0 20px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-color: transparent;
+  color: #fff;
+  border-radius: 100px;
+  line-height: 24px;
+  box-sizing: border-box;
+  white-space: nowrap;
   text-align: center;
-  color: #f7f8fa;
-  transition: all 0.2s linear, transform 0.1s ease-in-out;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
   cursor: pointer;
-}
-.stakeButton:hover {
-  transition: transform 0.1s ease-in-out;
-  transform: scale(0.95);
-}
-#disabled {
-  color: rgb(136, 141, 155);
-  transition: all 0.2s linear;
-  background-color: #ff007b;
-}
-.disabled:hover {
-  transition: transform 0.1s ease-in-out;
-}
-.toMax {
-  padding: 0.3rem 0.3rem 0 0.2rem;
-  height: 1.7rem;
-  background-color: rgb(253, 234, 241);
-  border: 1px solid rgb(253, 234, 241);
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  color: rgb(255, 0, 122);
-  text-align: center;
-  cursor: pointer;
-}
-.toMax:hover {
-  border: 1px solid #007bff;
-}
-.ETH {
-  padding: 0.5rem;
-  cursor: default;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  user-select: none;
+  touch-action: manipulation;
+  background: transparent;
 }
 
-.toggle {
+.stakePage {
+  width: calc(100% - 20px);
+  padding: 10px;
+  height: calc(80% - 20px);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 0.2fr 1fr 0.5fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "."
+    "."
+    ".";
+  justify-content: center;
+  align-items: center;
+}
+.sPElement {
+  align-self: center;
+  justify-self: center;
+  color: #fff;
+}
+.input {
+  border-radius: 4px;
+  width: 100%;
+  height: 180px;
+  max-width: 362px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(15, 16, 19);
+  border: none;
+  font-weight: 500;
+}
+.inputBody {
   position: relative;
+  height: 100%;
+  padding: 0 0 0 0;
+  width: 100%;
   display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  min-width: 500px;
-  width: 40%;
-  height: 58px;
-  margin-top: 12px;
-  padding: 8px;
-  background: #f5f8fa;
-  border-radius: 14px;
-  cursor: pointer;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 }
-.toggle--withdraw .toggle__switch {
-  left: 50%;
-}
-.toggle__label-wrapper {
+.StakeButton {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(50% - 8px);
-}
-.toggle__label {
-  font-weight: 700;
+  border: 1px solid #3c3c3c;
+  box-sizing: border-box;
+  background-color: rgb(15, 16, 19);
+  color: #fff;
+  height: 50px;
+  padding: 0 20px;
   font-size: 16px;
-  line-height: 12px;
+  border-radius: 100px;
+  line-height: 24px;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  border-radius: 100px;
+}
+.switch_active {
+  border: 2px solid rgb(37, 167, 219);
+  border-radius: 100px;
+  color: #fff;
+  cursor: pointer;
+}
+.switch_active:hover,
+.switch:hover {
+  background-color: rgba(37, 167, 219, 0.1);
+}
+.balance {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 20px;
   text-align: center;
-  letter-spacing: 0.2px;
-  text-transform: uppercase;
-  color: #414a5b;
-}
-.toggle__label--active {
-  color: #007bff;
-}
-.toggle__switch {
-  position: absolute;
-  left: 8px;
-  top: 8px;
+  letter-spacing: 0.3px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(50% - 8px);
-  height: calc(100% - 16px);
-  box-shadow: 0 8px 20px rgba(225, 230, 236, 0.8);
-  border-radius: 16px;
-  background: #ffffff;
-  transition: left, 0.3s;
+  text-decoration: underline;
+  z-index: 10;
+  font-weight: bolder;
 }
-.list-enter-active,
-.list-leave-active {
-  transition: all 0s;
+.token-amount-input {
+  box-sizing: border-box;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  font-variant: tabular-nums;
+  list-style: none;
+  font-feature-settings: "tnum";
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  padding: 4px 11px;
+  color: #fff;
+  background-color: transparent;
+  outline-width: 0;
+  font-size: 34px;
+  line-height: 40px;
+  text-align: right;
+  height: 40px;
+  padding-bottom: 0;
+  text-overflow: ellipsis;
+  border-radius: 2px;
+  border: none;
+  touch-action: manipulation;
 }
-.Graph {
+.ant-col {
+  box-sizing: border-box;
+  display: block;
+  box-sizing: border-box;
+  width: 50%;
+}
+.background3,
+.background2 {
+  background-image: url(Eth.png);
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  transform: scale(0.7);
+  z-index: 0;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 0.4) 60%
+  );
+  opacity: 0.05;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
-.green {
-  color: #007bff;
-}
-.info-icon {
-  position: absolute;
-  top: 1.3rem;
-  opacity: 0.6;
-  left: 3rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-.info-icon:hover {
-  transform: rotate(30deg) scale(0.9);
-  transition: all 0.2s ease-in-out;
-}
-@media only screen and (max-width: 700px) {
-  .toggle {
-    min-width: 0;
-    max-width: 100vw;
-    width: calc(100vw - 66px);
-  }
-  .Staker {
-    min-width: 0;
-    max-width: 100vw;
-    width: calc(100vw - 66px);
-  }
+.background3 {
+  background-image: url(vEth2.png);
 }
 </style>
