@@ -824,7 +824,6 @@ export default {
   padding: 0.3rem 0.3rem 0 0.2rem;
   min-height: 1.4rem;
   background-color: #181818;
-  border: 1px solid rgb(253, 234, 241);
   border-radius: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -833,6 +832,7 @@ export default {
   color: rgb(255, 0, 122);
   text-align: center;
   cursor: pointer;
+  border: 1px solid #007bff00;
 }
 .toMax:hover {
   border: 1px solid #007bff;
