@@ -122,6 +122,7 @@ export default {
     txs: [],
     maxValShares: 0,
     remaining: BN(0),
+    remainingByFee: BN(0),
     updateGraph: false,
   }),
   created: function () {
@@ -172,7 +173,16 @@ export default {
         }
         this.Damount = this.BNamount.dividedBy(1e18);
       } else {
+        let remainingByFee = await validator.methods.adminFeeTotal().call();
+        if (remainingByFee > 10)
+          this.remainingByFee = BN(remainingByFee).multipliedBy(320);
+        else {
+          this.remainingByFee = BN(0);
+        }
         this.BNamount = this.vEth2Bal;
+        if (this.vEth2Bal.gt(this.remainingByFee)) {
+          this.BNamount = this.remainingByFee;
+        }
         this.Damount = this.BNamount.dividedBy(1e18);
       }
     },
@@ -288,11 +298,19 @@ export default {
       else this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
       let remaining = await validator.methods.remainingSpaceInEpoch().call();
       this.remaining = BN(remaining);
+      let remainingByFee = await validator.methods.adminFeeTotal().call();
+      this.remainingByFee = BN(remainingByFee).multipliedBy(320);
       this.amountCheck(true);
       this.updateGraph = !this.updateGraph;
     },
     amountCheck(init) {
       if (init && this.Damount == 0) return;
+      if (this.userAddress == null) {
+        this.validInput = false;
+        this.buttonText = "Connect a wallet";
+        return;
+      }
+
       if (this.remaining.eq(0) && this.isDeposit) {
         this.validInput = false;
         this.buttonText = "Contract is Full";
@@ -301,6 +319,11 @@ export default {
       if (this.BNamount.gt(this.remaining) && this.isDeposit) {
         this.validInput = false;
         this.buttonText = "Amount is too big";
+        return;
+      }
+      if (this.BNamount.gt(this.remainingByFee) && !this.isDeposit) {
+        this.validInput = false;
+        this.buttonText = "Not enough funds in Exit Pool";
         return;
       }
       if (this.Damount[this.Damount.length - 1] === ".") {
