@@ -444,7 +444,8 @@ export default {
       let allowance = await this.pool.token.methods
         .allowance(this.userAddress, geyserAddress)
         .call();
-
+      allowance = 0;
+      let approval = true;
       if (BN(allowance).lt(this.bigDAmount)) {
         if (this.inf_approval)
           myAmount = BN(2).pow(BN(256)).minus(BN(1)).toString();
@@ -480,49 +481,53 @@ export default {
               tx.msg = "Transaction is rejected.";
             addTx(tx);
             automatedCloseTx(tx.id);
+            approval = false;
+          })
+          .catch((err) => {
+            approval = false;
+            console.log(err);
+          });
+        await timeout(4000);
+      }
+      if (approval) {
+        await this.pool.geyser.methods
+          .stake(myAmount)
+          .send({ from: this.userAddress })
+          .on("transactionHash", function (hash) {
+            TXhash = hash;
+            let tx = {
+              id: hash,
+              success: true,
+              msg: "Your transaction is sent.",
+            };
+            addTx(tx);
+            automatedCloseTx(tx.id);
+          })
+          .once("confirmation", () => {
+            let tx = {
+              id: TXhash,
+              success: true,
+              msg: "Transaction is approved.",
+            };
+            addTx(tx);
+            automatedCloseTx(tx.id);
+            self.mounted();
+          })
+          .on("error", (error) => {
+            let tx = {
+              id: Math.floor(Math.random() * 100000),
+              success: false,
+              msg: "Transaction is failed.",
+            };
+            if (error.message.includes("User denied transaction signature"))
+              tx.msg = "Transaction is rejected.";
+            addTx(tx);
+            automatedCloseTx(tx.id);
           })
           .catch((err) => {
             console.log(err);
           });
       }
-      await timeout(4000);
-      await this.pool.geyser.methods
-        .stake(myAmount)
-        .send({ from: this.userAddress })
-        .on("transactionHash", function (hash) {
-          TXhash = hash;
-          let tx = {
-            id: hash,
-            success: true,
-            msg: "Your transaction is sent.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
-        })
-        .once("confirmation", () => {
-          let tx = {
-            id: TXhash,
-            success: true,
-            msg: "Transaction is approved.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
-          self.mounted();
-        })
-        .on("error", (error) => {
-          let tx = {
-            id: Math.floor(Math.random() * 100000),
-            success: false,
-            msg: "Transaction is failed.",
-          };
-          if (error.message.includes("User denied transaction signature"))
-            tx.msg = "Transaction is rejected.";
-          addTx(tx);
-          automatedCloseTx(tx.id);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     },
     async Withdraw() {
       // to add tx watcher
