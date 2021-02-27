@@ -30,7 +30,7 @@
         Currently Dashboard is under construction and planned to be active on
         April 2021.
       </div>
-      <div class="StatsExp">Hold on to your Steak and come back!</div>
+      <div class="StatsExp">Hold onto your Steak and come back!</div>
       <div class="LearnButton">
         Learn More
         <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />

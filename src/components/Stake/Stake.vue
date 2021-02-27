@@ -71,6 +71,9 @@
                 {{ isDeposit ? " vETH2" : " ETH" }}
               </div>
             </div>
+            <div class="balance" id="balance" @click="onMAX">
+              wallet: {{ otherBalance }}
+            </div>
             <div :class="isDeposit ? 'background3' : 'background2'" />
           </div>
         </div>
@@ -81,7 +84,12 @@
           }"
           @click="onSubmit"
         >
-          {{ buttonText }}
+          <span v-if="loading">
+            <ImageVue :src="'loading.svg'" :size="'45px'" />
+          </span>
+          <span v-else>
+            {{ buttonText }}
+          </span>
         </button>
       </div>
       <div class="navbar">
@@ -132,6 +140,7 @@ export default {
     EthBal: BN(0),
     vEth2Bal: BN(0),
     balance: 0,
+    otherBalance: 0,
     gas: { low: 90, medium: 130, high: 180 },
     validInput: true,
     txs: [],
@@ -139,6 +148,7 @@ export default {
     remaining: BN(0),
     remainingByFee: BN(0),
     chosenGas: 130,
+    loading: true,
   }),
   created: function () {
     var self = this;
@@ -149,7 +159,13 @@ export default {
   mounted: async function () {
     this.gas = await getCurrentGasPrices();
     this.chosenGas = this.gas.medium;
-    await this.mounted();
+    this.loading = false;
+    try {
+      await this.mounted();
+    } catch {
+      console.log("ss1");
+      this.buttonText = "Connect to wallet ↗";
+    }
   },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
@@ -215,6 +231,7 @@ export default {
       let TXhash = null;
       let self = this;
       if (this.isDeposit) {
+        this.loading = true;
         let myamount = this.BNamount.toString();
         await validator.methods
           .deposit()
@@ -242,6 +259,7 @@ export default {
             };
             addTx(tx);
             automatedCloseTx(tx.id);
+            this.loading = false;
             self.mounted();
           })
           .on("error", (error) => {
@@ -253,14 +271,17 @@ export default {
             if (error.message.includes("User denied transaction signature"))
               tx.msg = "Transaction is rejected.";
             addTx(tx);
+            this.loading = false;
             automatedCloseTx(tx.id);
           })
           .catch((err) => {
+            this.loading = false;
             console.log(err);
           });
       } else {
         //unstake
         let myamount = this.BNamount.toString();
+        this.loading = true;
         await validator.methods
           .withdraw(myamount)
           .send({
@@ -299,9 +320,11 @@ export default {
               tx.msg = "Transaction is rejected.";
             addTx(tx);
             automatedCloseTx(tx.id);
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
+            this.loading = false;
           });
       }
     },
@@ -312,19 +335,26 @@ export default {
       this.EthBal = BN(amount);
       let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
       this.vEth2Bal = BN(veth2);
-      if (this.isDeposit) this.balance = BN(amount).dividedBy(1e18).toFixed(6);
-      else this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
+      if (this.isDeposit) {
+        this.balance = BN(amount).dividedBy(1e18).toFixed(6);
+        this.otherBalance = BN(veth2).dividedBy(1e18).toFixed(6);
+      } else {
+        this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
+        this.otherBalance = BN(amount).dividedBy(1e18).toFixed(6);
+      }
       let remaining = await validator.methods.remainingSpaceInEpoch().call();
       this.remaining = BN(remaining);
       let remainingByFee = await validator.methods.adminFeeTotal().call();
       this.remainingByFee = BN(remainingByFee).multipliedBy(320);
       this.amountCheck(true);
+      this.loading = false;
     },
     amountCheck(init) {
       if (init && this.Damount == 0) return;
       if (this.userAddress == null) {
         this.validInput = false;
         this.buttonText = "Connect to wallet ↗";
+        console.log("ss");
         return;
       }
       if (this.remaining.eq(0) && this.isDeposit) {
@@ -402,6 +432,8 @@ export default {
     isDeposit: function (val) {
       let balance = val ? this.EthBal : this.vEth2Bal;
       this.balance = balance.dividedBy(1e18).toFixed(6);
+      let otherBalance = val ? this.vEth2Bal : this.EthBal;
+      this.otherBalance = otherBalance.dividedBy(1e18).toFixed(6);
       this.Damount = "";
       this.buttonText = "Enter an amount";
     },
@@ -421,8 +453,12 @@ export default {
       }
     },
     async userAddress(newVal) {
-      console.log(newVal);
-      if (newVal) await this.mounted();
+      if (newVal) {
+        this.buttonText = "Enter an amount";
+        await this.mounted();
+      } else {
+        this.buttonText = "Connect to wallet ↗";
+      }
     },
   },
 };
