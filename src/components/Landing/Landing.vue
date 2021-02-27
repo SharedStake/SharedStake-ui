@@ -2,17 +2,25 @@
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
       <div class="LogoContainer">
-        <ImageVue :src="'logo-red.svg'" :size="'180px'" class="Logo" />
+        <ImageVue
+          :src="'logo-red.svg'"
+          :size="windowWidth > 900 ? '180px' : '20vw'"
+          class="Logo"
+        />
       </div>
       <div class="Explanation">
-        <div class="main">Staking For Everyone</div>
+        <div class="mainTitle">Steak For Everyone!</div>
         <div class="exp">
-          SharedStake is an easy to use Decentralized Open Source Protocol that
-          allows users to stake any amount of Ether to Ethereum 2 while keeping
-          their staked amount valuable and liquid
+          SharedStake is a Decentralized Ethereum 2 Staking solution that allows
+          users to stake any amount of Ether, while keeping their staked amount
+          valuable and liquid.
+        </div>
+        <div class="LearnButton" v-show="windowWidth <= 900">
+          Learn More
+          <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
         </div>
         <div class="social">
-          <div class="LearnButton">
+          <div class="LearnButton" v-show="windowWidth > 900">
             Learn More
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
@@ -28,25 +36,26 @@
     </div>
     <div class="flex_column Stats" v-show="scrolled >= 350">
       <div class="StatsHeader">Best in class performance</div>
+      <div class="StatsExp">Financial Optimization at its finest.</div>
       <div class="StatsExp">
-        Better prices, faster response times, and lower revert rates than any
-        other aggregator on the market.
+        Better rewards, improved user experience, and more defi compatibility
+        than any other staking service on the market.
       </div>
       <div class="StatsContent">
         <div class="Stat">
-          <div class="Num">5470</div>
+          <div class="Num">5440</div>
           <div class="NumExp">Ether Staked with SharedStake</div>
           <div class="NumDetail">Liquid & Incentivised</div>
         </div>
         <div class="Stat">
-          <div class="Num">105%</div>
+          <div class="Num">80%</div>
           <div class="NumExp">Current APY</div>
-          <div class="NumDetail">Most Profitable Eth2 Staking Protocol</div>
+          <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
         </div>
         <div class="Stat">
-          <div class="Num">5470</div>
-          <div class="NumExp">Ether Staked with SharedStake</div>
-          <div class="NumDetail">Liquid & Incentivised</div>
+          <div class="Num">99.9%</div>
+          <div class="NumExp">Uptime</div>
+          <div class="NumDetail">Industry standard cloud infrastructure</div>
         </div>
       </div>
     </div>
@@ -56,15 +65,27 @@
         <div class="X Eth">
           <ImageVue :src="'Eth.png'" :size="'90px'" />
         </div>
-        <ImageVue :src="'next.svg'" :size="'15px'" class="X next1" />
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next1"
+        />
         <div class="X vEth2">
           <ImageVue :src="'vEth2.png'" :size="'163px'" />
         </div>
-        <ImageVue :src="'next.svg'" :size="'15px'" class="X next2" />
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next2"
+        />
         <div class="X reward">
           <ImageVue :src="'Reward.png'" :size="'127px'" />
         </div>
-        <ImageVue :src="'next.svg'" :size="'15px'" class="X next3" />
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next3"
+        />
         <div class="X harvest">
           <ImageVue :src="'Harvest.png'" :size="'92px'" />
         </div>
@@ -77,19 +98,18 @@
           Harvest more with your vETH2 token in other defi protocols!
         </div>
         <div class="exp Information" v-show="scrolled >= 1500">
-          <div class="InfoHeader" v-show="scrolled >= 1500">
-            Incentivised Staking
+          <div class="InfoHeader centertext" v-show="scrolled >= 1500">
+            Staking with SharedStake
           </div>
           <div class="exp Info" v-show="scrolled >= 1500">
-            Other StaaS protocols have yet to announce how they will distribute
-            the profits of Eth2 staking. SharedStake was built with profit
-            sharing in mind.
+            SharedStake users gain staking rewards every block, while just
+            holding or investing vEth2 in supported Ethereum Applications such
+            as Uniswap, Sushiswap, Curve, Maker, Compound, Aave and many more...
           </div>
           <div class="exp Info" v-show="scrolled >= 1500">
-            Holding vEth2 allows for easy profit distribution and gives stakers
-            the option to use vEth2 to earn even more through additional
-            harvesting and/or staking in the DeFi world. Why choose one yield
-            producer when you can have so many?
+            vEth2 is designed for the highest defi compatibility. It is a yield
+            bearing token which has 1:1 price ratio with Ether. vEth2 Staking is
+            also incentivized by SGT, SharedStake Governance Token.
           </div>
         </div>
       </div>
@@ -99,51 +119,80 @@
         <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
         <div class="StatsHeader">vEth2</div>
       </div>
+      <div class="exp InfoHeader DropShadow centertext">
+        Yield Bearing Wrapped Ether
+      </div>
       <div class="exp background3" />
       <div class="third">
         <div class="Bubble">
-          <div class="exp InfoHeader">Incentivised Staking</div>
+          <div class="exp InfoHeader">Financially Optimized</div>
           <div class="exp Info mb30">
-            Other StaaS protocols have yet to announce how they will distribute
-            the profits of Eth2 staking. SharedStake was built with profit
-            sharing in mind.
+            SharedStake optimizes the Eth2 staking profits by creating an
+            off-chain yield bearing stable token. vEth2 has 1-1 price ratio with
+            Ether. Ethereum2 profits will be distributed when Eth2 is launched,
+            but it can be tracked and analyzed with the dashboard.
           </div>
+          <ImageVue
+            :src="'discount.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
           <div class="LearnButton">
             Learn More
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
         </div>
         <div class="Bubble">
-          <div class="exp InfoHeader">Incentivised Staking</div>
+          <div class="exp InfoHeader">Defi Compatible</div>
           <div class="exp Info mb30">
-            Other StaaS protocols have yet to announce how they will distribute
-            the profits of Eth2 staking. SharedStake was built with profit
-            sharing in mind.
+            By using vEth2, instead of any other kinds of wrapped Ether,
+            liquidity providers gain extra 5-6% Yearly Growth with off-chain
+            profit distribution. <br />
+            As it doesn't contain the 'imaginary' staking rewards, it is a
+            stable token pegged to the value of Ether. Pratically eliminates the
+            impermanent loss.
           </div>
+          <ImageVue
+            :src="'diamond.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
           <div class="LearnButton">
             Learn More
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
         </div>
         <div class="Bubble">
-          <div class="exp InfoHeader">Incentivised Staking</div>
+          <div class="exp InfoHeader">Incentivized Staking</div>
           <div class="exp Info mb30">
-            Other StaaS protocols have yet to announce how they will distribute
-            the profits of Eth2 staking. SharedStake was built with profit
-            sharing in mind.
+            On top of the Ethereum-2 Staking profits, vEth2 and its usage on
+            other Decentralized Finance Applications are further incentivized
+            with SGT, which is used as a Token for Proof of Participation in the
+            SharedStake Protocol.
           </div>
+          <ImageVue
+            :src="'dowload.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
           <div class="LearnButton">
             Learn More
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
         </div>
         <div class="Bubble">
-          <div class="exp InfoHeader">Incentivised Staking</div>
+          <div class="exp InfoHeader">Natural Exit Pool</div>
           <div class="exp Info mb30">
-            Other StaaS protocols have yet to announce how they will distribute
-            the profits of Eth2 staking. SharedStake was built with profit
-            sharing in mind.
+            10% of the all Staked Ether, is left in the staking pool, creating a
+            liquidity bridge between old and new users. SharedStakers can
+            un-stake their Ether by burning vEth2, subject to the amount of
+            Ether in the staking pool.
           </div>
+          <ImageVue
+            :src="'balance.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
           <div class="LearnButton">
             Learn More
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
@@ -151,69 +200,88 @@
         </div>
       </div>
     </div>
-    <div class="roadMap" v-show="scrolled > 2700">
+    <div class="exp roadMap" v-show="scrolled > 2700">
       <div class="mainBox">
-        <div class="titleBox"><div class="X">Roadmap</div></div>
+        <div class="exp titleBox"><div class="X">Roadmap</div></div>
         <div class="main">
           <div class="mainCon">
             <div class="list">
               <div class="item">
-                <div class="date">2020 Q2</div>
-                <div class="text">
-                  Proof of Concept Core Protocol Prototype Establishment
-                </div>
-              </div>
-
-              <div class="item">
-                <div class="date">2020 Q3</div>
-                <div class="text">Development &amp; Marketing Launch</div>
-              </div>
-
-              <div class="item">
-                <div class="date">2020 Q4</div>
-                <div class="text">Smart Contract Security Audit</div>
+                <div class="date">2021 Q1</div>
+                <div class="text">Protocol Launched &amp; SGT airdrop</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q1</div>
-                <div class="text">Announce Bug Bounty Program</div>
+                <div class="text">Smart Contract Security Audit by Certik</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q2</div>
-                <div class="text">
-                  Implementing Bridges to Multiple Blockchains
-                </div>
+                <div class="text">1000 Validators Created</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q3</div>
+                <div class="text">Leveraged Eth2 staking with Aave</div>
+              </div>
+
+              <div class="item">
+                <div class="date">2021 Q4</div>
+                <div class="text">Decentralized Validators backed by SGT</div>
+              </div>
+
+              <div class="item">
+                <div class="date">2022</div>
                 <div class="text">
-                  Integrating Testnet DApps and Partners to Mainnet
+                  vEth2 backed AMM which provides Eth2 staking profits to LPs
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2023</div>
+                <div class="text">
+                  Decentralized Automated Staking Mechanism on Mainnet backed by
+                  SGT
                 </div>
               </div>
             </div>
             <div class="curve"></div>
             <div class="list next">
               <div class="item">
-                <div class="date">2020 Q3</div>
-                <div class="text">Draft and Improvement of the Whitepaper</div>
-              </div>
-              <div class="item">
-                <div class="date">2020 Q3</div>
-                <div class="text">Official Whitepaper Publish</div>
-              </div>
-              <div class="item">
-                <div class="date">2020 Q4</div>
-                <div class="text">Private Testnet Release Internally</div>
-              </div>
-              <div class="item">
                 <div class="date">2021 Q1</div>
-                <div class="text">Mainnet Test Version Online</div>
+                <div class="text">DAO Launched</div>
+              </div>
+              <div class="item">
+                <div class="date">2021 Q2</div>
+                <div class="text">
+                  First Incentivized Pools for vEth2 on Curve & Shell
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2021 Q2</div>
+                <div class="text">Defi Support with Barbecue.js</div>
               </div>
               <div class="item">
                 <div class="date">2021 Q3</div>
-                <div class="text">Mainnet Version 1.0 Online</div>
+                <div class="text">
+                  More Integrations on Defi Protocols with Sauce.js...
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2022</div>
+                <div class="text">
+                  Use your Staked Ether on Multiple Blockchains
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2023</div>
+                <div class="text">Ethereum2 deployment</div>
+              </div>
+              <div class="item">
+                <div class="date">Further Improvements</div>
+                <div class="text">
+                  Ethereum2 is just the beginning of a story for SharedStake.
+                </div>
               </div>
             </div>
           </div>
@@ -228,12 +296,13 @@
 import ImageVue from "../Handlers/ImageVue";
 export default {
   components: { ImageVue },
-  props: ["scrolled"],
+  props: ["scrolled", "windowWidth"],
 };
 </script>
 
 <style scoped>
 /*this is ok until 900px */
+
 .downSign {
   display: flex;
   justify-content: center;
@@ -241,9 +310,7 @@ export default {
   bottom: 10px;
   position: sticky;
 }
-.glow {
-  filter: brightness(300%);
-}
+
 .Container {
   position: relative;
   min-height: 100vh;
@@ -272,18 +339,19 @@ export default {
 .Logo {
   padding: 0 145px 100px 0;
 }
+.Explanation {
+  padding: 0 75px 200px 0;
+  animation: TextEnter 0.4s ease-out backwards;
+}
+
 .Exp,
 .Explanation,
 .Logo {
   align-self: center;
   justify-self: center;
 }
-.Explanation {
-  padding: 0 120px 200px 0;
-  animation: TextEnter 0.4s ease-out backwards;
-}
 
-.main {
+.mainTitle {
   margin: 4rem 0px 3rem;
   overflow-wrap: normal;
   max-width: 900px;
@@ -304,6 +372,7 @@ export default {
   text-align: justify;
   text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
+  z-index: 1;
 }
 .social {
   display: flex;
@@ -311,6 +380,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   animation: TextEnter 0.8s ease-out backwards;
+  margin-top: 30px;
 }
 .socialLogo {
   filter: brightness(300%);
@@ -327,8 +397,10 @@ export default {
   border-radius: 10px;
   text-align: center;
   width: 142px;
+  max-height: 25px;
   transition: transform 0.5s ease-out;
   cursor: pointer;
+  grid-area: Button;
 }
 .LearnButton:hover {
   transform: scale(0.98);
@@ -385,10 +457,18 @@ export default {
   line-height: 42px;
   margin-bottom: 30px;
   color: rgba(255, 255, 255, 0.95);
+  grid-area: Header;
+  align-self: center;
 }
 .Info {
   margin-bottom: 10px;
   font-size: 16px;
+  grid-area: Info;
+}
+.ICON {
+  grid-area: Icon;
+  align-self: center;
+  justify-self: end;
 }
 .Information,
 .X {
@@ -482,11 +562,12 @@ export default {
   margin-bottom: 30px;
   font-weight: 300;
   animation: TextEnter 0.4s ease-out backwards;
+  text-align: center;
 }
 .StatsExp {
   max-width: 660px;
   text-align: center;
-  margin: 0px auto 60px;
+  margin: 0px auto 30px;
   font-size: 22px;
   line-height: 31px;
   font-weight: 300;
@@ -509,6 +590,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
+  padding: 0 30px 0 0;
 }
 .Num {
   font-size: 100px;
@@ -572,9 +654,17 @@ export default {
   position: relative;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.9);
-  align-self: center;
+  align-self: stretch;
   justify-self: center;
-  padding: 65px 45px 35px 45px;
+  padding: 45px 45px 35px 45px;
+  display: grid;
+  grid-template-columns: 1fr 0.3fr;
+  grid-template-rows: 0.4fr 1fr 0.4fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "Header Icon"
+    "Info Info "
+    "Button Button";
 }
 .mb30 {
   margin-bottom: 30px;
@@ -622,12 +712,11 @@ export default {
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
-  width: 100%;
 }
 .curve {
   width: 100%;
   background-image: url(curve.png);
-  background-size: contain;
+  background-size: 100% auto;
   background-repeat: no-repeat;
   background-position: center;
   height: 90px;
@@ -653,7 +742,7 @@ export default {
   padding-left: 0.1rem;
 }
 .mainCon .list .item {
-  width: 20%; /**HERE */
+  width: 260px; /**HERE */
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   -webkit-flex: none;
@@ -671,7 +760,7 @@ export default {
   font-size: 12px;
   color: #ffffff;
   line-height: 1.47em;
-  width: 50%;
+  width: 60%;
   padding-bottom: 20px;
 }
 .mainCon .list.next {
@@ -691,6 +780,18 @@ body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
 body .roadMap .mainBox .main::-webkit-scrollbar {
   height: 4px;
   background: transparent;
+}
+.centertext {
+  text-align: center;
+}
+.glow {
+  filter: brightness(300%);
+}
+.reverse {
+  filter: invert(1);
+}
+.DropShadow {
+  filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
 }
 @keyframes LogoEnter {
   from {
@@ -721,6 +822,83 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   to {
     transform: translate3d(0, 0, 0);
     opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .first {
+    padding-top: 125px;
+    display: grid;
+    gap: 0px 0px;
+    grid-template-areas: ".";
+    background-image: url(bg-1.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.1fr 2fr;
+    justify-content: center;
+    align-items: center;
+  }
+  .Logo {
+    padding: 0;
+  }
+  .LogoContainer {
+    background: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    justify-content: center;
+    align-items: center;
+  }
+  .Explanation {
+    padding: 0 23px 100px 23px;
+    animation: TextEnter 0.4s ease-out backwards;
+  }
+  .StatsContent {
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+  }
+  .StatsHeader {
+    font-size: 42px;
+  }
+  .Stat {
+    padding: 30px 0 0 0;
+  }
+  .Num {
+    font-size: 92px;
+  }
+  .second {
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
+    grid-template-areas:
+      "Information"
+      "Eth"
+      "EthExp"
+      "next1"
+      "vEth2"
+      "vEth2Exp"
+      "next2"
+      "reward"
+      "rewardExp"
+      "next3"
+      "harvest"
+      "harvestExp";
+    padding-bottom: 15vh;
+  }
+  .InfoHeader {
+    padding: 15px;
+  }
+  .third {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 30px 30px;
+    grid-template-areas:
+      ". "
+      ".";
   }
 }
 </style>

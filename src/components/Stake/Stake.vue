@@ -91,21 +91,21 @@
           :class="{ switch_active: chosenGas == gas.low }"
           @click="updateGas(gas.low)"
         >
-          <span>{{ gas.low }}</span>
+          <span>{{ gas.low.toFixed(0) }}</span>
         </button>
         <button
           class="switch"
           :class="{ switch_active: chosenGas == gas.medium }"
           @click="updateGas(gas.medium)"
         >
-          <span>{{ gas.medium }}</span>
+          <span>{{ gas.medium.toFixed(0) }}</span>
         </button>
         <button
           class="switch"
           :class="{ switch_active: chosenGas == gas.high }"
           @click="updateGas(gas.high)"
         >
-          <span>{{ gas.high }}</span>
+          <span>{{ gas.high.toFixed(0) }}</span>
         </button>
       </div>
     </div>
@@ -410,11 +410,12 @@ export default {
 
 <style scoped>
 .stake {
-  padding-top: 10vh;
+  padding-top: 65px;
   height: 95vh;
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
   background-position: center;
+  min-height: 800px;
 }
 .staker {
   -webkit-font-smoothing: antialiased;
@@ -432,6 +433,7 @@ export default {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  min-height: 634px;
 }
 .chooser {
   background-color: rgb(15, 16, 19);

@@ -1,20 +1,40 @@
 <template>
   <div class="Root">
-    <div class="navbar" :class="{ 'navbar--hidden': !showNavbar }">
-      <router-link class="link" to="/">
+    <div
+      :class="{
+        navbar: true,
+        upNavbar: currentScrollPosition <= 1,
+        'navbar--hidden': !showNavbar,
+      }"
+    >
+      <router-link to="/">
         <div class="flex_row LogoContainer">
           <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
           <div class="main">SharedStake</div>
         </div>
       </router-link>
-      <div class="links">
+      <div class="links" v-show="windowWidth > 900">
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
         <router-link class="link" to="/dashboard"> Dashboard </router-link>
       </div>
-      <div class="links">
-        <span class="link">Dao</span>
-        <span class="link">Docs</span>
+      <div class="links" v-show="windowWidth > 900">
+        <span class="link">
+          <a
+            href="https://snapshot.page/#/sharedstake.eth"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Dao
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://docs.sharedstake.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Docs
+          </a>
+        </span>
         <span class="link" v-bind:style="{ opacity: 1 }">
           <div v-if="userAddress" class="ConnectButton" @click="Connect">
             {{ userAddress.slice(0, 12) }}
@@ -24,15 +44,65 @@
           </div>
         </span>
       </div>
+      <div
+        @click="showSidebar = !showSidebar"
+        class="showers"
+        v-show="windowWidth < 900"
+      >
+        <svg
+          viewBox="0 0 32 2"
+          fill="white"
+          class="shower"
+          :class="{ cross1: showSidebar }"
+        >
+          <path fill="currentColor" d="M0 0h32v2H0z"></path></svg
+        ><svg
+          viewBox="0 0 32 2"
+          fill="white"
+          class="shower"
+          :class="{ cross2: showSidebar }"
+        >
+          <path fill="currentColor" d="M0 0h32v2H0z"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="sidebar" v-show="windowWidth < 900 && showSidebar">
+      <span class="link" v-bind:style="{ opacity: 1 }">
+        <div v-if="userAddress" class="ConnectButton" @click="Connect">
+          {{ userAddress.slice(0, 12) }}
+        </div>
+        <div v-else class="ConnectButton animatedButton" @click="Connect">
+          Connect Wallet
+        </div>
+      </span>
+      <router-link class="link" to="/stake"> Stake </router-link>
+      <router-link class="link" to="/earn"> Earn </router-link>
+      <router-link class="link" to="/dashboard"> Dashboard </router-link>
+      <span class="link">
+        <a
+          href="https://snapshot.page/#/sharedstake.eth"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Dao
+        </a>
+      </span>
+      <span class="link">
+        <a
+          href="https://docs.sharedstake.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Docs
+        </a>
+      </span>
     </div>
     <!--App-->
-    <router-view :scrolled="currentScrollPosition" />
+    <router-view :scrolled="currentScrollPosition" :windowWidth="windowWidth" />
     <!--App-->
     <div class="footer">
       <div class="flex_column LogoContainer">
         <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
       </div>
-      <div class="link disclaimer">
+      <div class="disclaimer">
         <p>
           Please note that this is a Beta version of the SharedStake protocol.
           The platform, its software, and all content found on it are provided
@@ -84,12 +154,16 @@ export default {
       showNavbar: true,
       lastScrollPosition: 0,
       currentScrollPosition: 0,
+      windowWidth: window.innerWidth,
+      showSidebar: false,
     };
   },
   mounted() {
+    window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
   },
   beforeDestroy() {
+    window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("scroll", this.onScroll);
   },
   computed: {
@@ -99,6 +173,9 @@ export default {
     ...mapActions(["setAddress"]),
     async Connect() {
       await this.setAddress();
+    },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
     },
     onScroll() {
       const currentScrollPosition =
@@ -146,11 +223,40 @@ export default {
   transform: translate3d(0, 0, 0);
   transition: 0.5s all ease-out;
 }
+.upNavbar {
+  border-bottom: none;
+}
 .navbar.navbar--hidden {
   box-shadow: none;
+  border-bottom: none;
   transform: translate3d(0, -100%, 0);
 }
 
+.showers {
+  width: max-content;
+  min-width: 32px;
+  height: 32px;
+  padding-right: 32px;
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+
+  overflow: visible;
+}
+.shower {
+  margin-bottom: 8px;
+  height: auto;
+  transform-origin: center;
+  transition-duration: 250ms;
+  transition-property: transform;
+  transition-timing-function: linear;
+}
+.cross1 {
+  transform: rotate(45deg);
+}
+.cross2 {
+  transform: rotate(-45deg);
+}
 .LogoContainer {
   margin-left: 1vw;
   font-size: 24px;
@@ -184,6 +290,33 @@ export default {
   -webkit-box-pack: center;
   justify-content: center;
   transition: right 0.25s ease 0s;
+}
+.sidebar {
+  position: fixed;
+  top: 84px;
+  width: 100%;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  -webkit-box-align: center;
+  align-items: flex-start;
+  -webkit-box-pack: center;
+  justify-content: center;
+  transition: right 0.25s ease 0s;
+  animation: SidebarUp 0.5s ease-out 0s forwards;
+  z-index: 99;
+  background: rgb(15, 16, 19);
+}
+@keyframes SidebarUp {
+  from {
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
 }
 .link {
   text-decoration: none;
@@ -219,6 +352,7 @@ export default {
   background-clip: padding-box, border-box;
   background-size: 100% 100%;
   transition: filter 0.5s ease-out;
+  white-space: nowrap;
 }
 .animatedButton {
   animation: animatedButton 3s ease-out backwards infinite;
@@ -255,12 +389,16 @@ export default {
 
 .disclaimer {
   grid-area: Disclaimer;
-  width: 35vw;
   font-size: 14px;
   padding: 0;
   text-align: justify;
   text-justify: inter-word;
   line-height: 22px;
+  opacity: 0.5;
+  transition: opacity 0.35s ease 0s;
+}
+.disclaimer:hover {
+  opacity: 1;
 }
 .footerLinks {
   grid-area: Info;
@@ -294,6 +432,16 @@ export default {
   grid-area: bottom;
   color: #afafaf;
 }
+
 @media only screen and (max-width: 900px) {
+  .footer {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 0.3fr 1fr 1fr 0.2fr;
+    grid-template-areas:
+      "Logo Logo"
+      "Info Info "
+      "Disclaimer Disclaimer"
+      "bottom bottom ";
+  }
 }
 </style>

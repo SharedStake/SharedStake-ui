@@ -6,10 +6,10 @@ import VueRouter from "vue-router";
 // const DaoPage = "https://snapshot.page/#/sharedstake.eth"
 
 const Stake = () => import("../components/Stake/Stake.vue")
-// const Info = () => import("../components/Info/Info.vue")
-// const Root = () => import("../components/Root/Root.vue")
 const Earn = () => import("../components/Earn/Earn.vue")
-// const Stats = () => import("../components/Stats/Stats.vue")
+const Dashboard = () => import("../components/Dashboard/Dashboard.vue")
+// const Root = () => import("../components/Root/Root.vue")
+// const Info = () => import("../components/Info/Info.vue")
 // const Dao = () => import("../components/Dao/Dao.vue")
 // const Landing = () => import("../components/Landing/Landing.vue")
 // const Roadmap = () => import("../components/Landing/Roadmap/Roadmap.vue")
@@ -36,6 +36,11 @@ let routes = [{
         path: "/earn",
         name: "Earn",
         component: Earn,
+    },
+    {
+        path: "/dashboard",
+        name: "Dashboard",
+        component: Dashboard,
     }
     ]
 },

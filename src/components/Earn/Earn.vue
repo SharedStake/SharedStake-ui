@@ -126,7 +126,7 @@ export default {
 <style scoped>
 .EarnWrapper {
   font-family: "Work Sans";
-  padding-top: 15vh;
+  padding-top: 100px;
   padding-bottom: 5vh;
 }
 .Earn {
@@ -134,13 +134,8 @@ export default {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-}
-.arrow {
-  position: fixed;
-  bottom: 5vh;
-  right: 5vw;
 }
 span {
   text-align: left;

@@ -48,6 +48,5 @@ a {
   font-family: "Roboto";
   font-weight: 700;
   color: #fff;
-  font-size: 26px;
 }
 </style>
