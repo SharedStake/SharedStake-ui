@@ -124,11 +124,11 @@
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
-import { getCurrentGasPrices } from "@/utils/common";
-
 import { mapGetters } from "vuex";
+
+import { getCurrentGasPrices, notifyHandler } from "@/utils/common";
 import { validator, vEth2 } from "@/contracts";
-import { timeout } from "@/utils/helpers";
+
 import ImageVue from "../Handlers/ImageVue";
 export default {
   components: { ImageVue },
@@ -161,20 +161,6 @@ export default {
     ...mapGetters({ userAddress: "userAddress" }),
   },
   methods: {
-    async addTx(tx = { id: "", success: false, msg: "Error." }) {
-      this.txs.push(tx);
-    },
-    closeTx(index) {
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx, i) => index != i);
-      this.txs = newTx;
-    },
-    async automatedCloseTx(id) {
-      await timeout(10000);
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx) => id != tx.id);
-      this.txs = newTx;
-    },
     updateGas(gas) {
       this.chosenGas = gas;
       this.amountCheck(true);
@@ -216,9 +202,6 @@ export default {
     async onSubmit() {
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake")) return;
       let walletAddress = this.userAddress;
-      const addTx = this.addTx;
-      const automatedCloseTx = this.automatedCloseTx;
-      let TXhash = null;
       let self = this;
       if (this.isDeposit) {
         this.loading = true;
@@ -232,37 +215,15 @@ export default {
             gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
           })
           .on("transactionHash", function (hash) {
-            TXhash = hash;
-            let tx = {
-              id: hash,
-              success: true,
-              msg: "Your transaction is sent.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            notifyHandler(hash);
           })
           .once("confirmation", () => {
-            let tx = {
-              id: TXhash,
-              success: true,
-              msg: "Transaction is approved.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
             this.loading = false;
             self.mounted();
           })
-          .on("error", (error) => {
-            let tx = {
-              id: Math.floor(Math.random() * 100000),
-              success: false,
-              msg: "Transaction is failed.",
-            };
-            if (error.message.includes("User denied transaction signature"))
-              tx.msg = "Transaction is rejected.";
-            addTx(tx);
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
             this.loading = false;
-            automatedCloseTx(tx.id);
           })
           .catch((err) => {
             this.loading = false;
@@ -280,41 +241,19 @@ export default {
             gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
           })
           .on("transactionHash", function (hash) {
-            TXhash = hash;
-            let tx = {
-              id: hash,
-              success: true,
-              msg: "Your transaction is sent.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            notifyHandler(hash);
           })
-          .once("confirmation", (block) => {
-            console.log(block);
-            let tx = {
-              id: TXhash,
-              success: true,
-              msg: "Transaction is approved.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .once("confirmation", () => {
+            this.loading = false;
             self.mounted();
           })
-          .on("error", (error) => {
-            let tx = {
-              id: Math.floor(Math.random() * 100000),
-              success: false,
-              msg: "Transaction is failed.",
-            };
-            if (error.message.includes("User denied transaction signature"))
-              tx.msg = "Transaction is rejected.";
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
             this.loading = false;
           })
           .catch((err) => {
-            console.log(err);
             this.loading = false;
+            console.log(err);
           });
       }
     },

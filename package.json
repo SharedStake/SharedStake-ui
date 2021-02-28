@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.21.0",
     "bignumber.js": "^9.0.1",
+    "bnc-notify": "^1.5.1",
     "bnc-onboard": "^1.16.1",
     "core-js": "^3.6.5",
     "three": "^0.123.0",
