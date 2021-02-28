@@ -95,9 +95,10 @@ export default {
     this.innerWidth = window.innerWidth;
     window.addEventListener("resize", this.onResize);
     var self = this;
-    window.ethereum.on("accountsChanged", async function () {
-      await self.mounted();
-    });
+    if (window.ethereum)
+      window.ethereum.on("accountsChanged", async function () {
+        await self.mounted();
+      });
   },
   mounted: async function () {
     await this.mounted();

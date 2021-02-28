@@ -15,12 +15,12 @@
           users to stake any amount of Ether, while keeping their staked amount
           valuable and liquid.
         </div>
-        <div class="LearnButton" v-show="windowWidth <= 900">
+        <div class="LearnButton" v-show="windowWidth <= 500">
           Learn More
           <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
         </div>
         <div class="social">
-          <div class="LearnButton" v-show="windowWidth > 900">
+          <div class="LearnButton" v-show="windowWidth > 500">
             Learn More
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
@@ -145,10 +145,10 @@
         <div class="Bubble">
           <div class="exp InfoHeader">Defi Compatible</div>
           <div class="exp Info mb30">
-            By using vEth2, instead of any other kinds of wrapped Ether,
-            liquidity providers gain extra 5-6% Yearly Growth with off-chain
-            profit distribution. <br />
-            As it doesn't contain the 'imaginary' staking rewards, it is a
+            By using vEth2, instead of any other kind of wrapped Ether, defi
+            users gain extra 5-6% Yearly Growth with off-chain profit
+            distribution. <br />
+            Since it doesn't contain the 'imaginary' staking rewards, it is a
             stable token pegged to the value of Ether. Pratically eliminates the
             impermanent loss.
           </div>
@@ -166,7 +166,7 @@
           <div class="exp InfoHeader">Incentivized Staking</div>
           <div class="exp Info mb30">
             On top of the Ethereum-2 Staking profits, vEth2 and its usage on
-            other Decentralized Finance Applications are further incentivized
+            other Decentralized Finance Applications are incentivized further
             with SGT, which is used as a Token for Proof of Participation in the
             SharedStake Protocol.
           </div>
@@ -183,10 +183,10 @@
         <div class="Bubble">
           <div class="exp InfoHeader">Natural Exit Pool</div>
           <div class="exp Info mb30">
-            10% of the all Staked Ether, is left in the staking pool, creating a
-            liquidity bridge between old and new users. SharedStakers can
-            un-stake their Ether by burning vEth2, subject to the amount of
-            Ether in the staking pool.
+            10% of the all Staked Ether, is left in the staking contract,
+            creating a liquidity bridge between old and new users. <br />
+            SharedStakers can un-stake their Ether by burning vEth2 anytime!
+            Subject to the amount of Ether in the staking contract.
           </div>
           <ImageVue
             :src="'balance.svg'"
@@ -559,7 +559,7 @@ export default {
   align-items: center;
   font-size: 50px;
   line-height: 1.16em;
-  margin-bottom: 30px;
+  margin: 30px;
   font-weight: 300;
   animation: TextEnter 0.4s ease-out backwards;
   text-align: center;
@@ -810,7 +810,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 
   to {
-    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
+    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
   }
 }
 @keyframes TextEnter {
@@ -866,11 +866,25 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     font-size: 42px;
   }
   .Stat {
-    padding: 30px 0 0 0;
+    margin: 30px 0 50px 0;
   }
   .Num {
     font-size: 92px;
   }
+
+  .InfoHeader {
+    padding: 15px;
+  }
+  .third {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 30px 30px;
+    grid-template-areas:
+      ". "
+      ".";
+  }
+}
+@media only screen and (max-width: 770px) {
   .second {
     grid-template-columns: 1fr;
     grid-template-rows: 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
@@ -888,17 +902,6 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "harvest"
       "harvestExp";
     padding-bottom: 15vh;
-  }
-  .InfoHeader {
-    padding: 15px;
-  }
-  .third {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    gap: 30px 30px;
-    grid-template-areas:
-      ". "
-      ".";
   }
 }
 </style>

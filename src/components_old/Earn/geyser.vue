@@ -265,11 +265,12 @@ export default {
     this.innerWidth = window.innerWidth;
     window.addEventListener("resize", this.onResize);
     var self = this;
-    window.ethereum.on("accountsChanged", async function () {
-      if (self.pool.active) {
-        await self.mounted();
-      }
-    });
+    if (window.ethereum)
+      window.ethereum.on("accountsChanged", async function () {
+        if (self.pool.active) {
+          await self.mounted();
+        }
+      });
   },
   mounted: async function () {
     if (this.pool.active && this.userAddress) {

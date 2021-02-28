@@ -126,9 +126,10 @@ export default {
   }),
   created: function () {
     var self = this;
-    window.ethereum.on("accountsChanged", function () {
-      self.mounted();
-    });
+    if (window.ethereum)
+      window.ethereum.on("accountsChanged", function () {
+        self.mounted();
+      });
   },
   mounted: async function () {
     await this.mounted();

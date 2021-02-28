@@ -150,22 +150,13 @@ export default {
     chosenGas: 130,
     loading: true,
   }),
-  created: function () {
-    var self = this;
-    window.ethereum.on("accountsChanged", function () {
-      self.mounted();
-    });
-  },
   mounted: async function () {
+    console.log("mama");
     this.gas = await getCurrentGasPrices();
     this.chosenGas = this.gas.medium;
     this.loading = false;
-    try {
-      await this.mounted();
-    } catch {
-      console.log("ss1");
-      this.buttonText = "Connect to wallet ↗";
-    }
+
+    await this.mounted();
   },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
@@ -330,24 +321,29 @@ export default {
     },
     async mounted() {
       //balances
-      let walletAddress = this.userAddress;
-      let amount = await window.web3.eth.getBalance(walletAddress);
-      this.EthBal = BN(amount);
-      let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
-      this.vEth2Bal = BN(veth2);
-      if (this.isDeposit) {
-        this.balance = BN(amount).dividedBy(1e18).toFixed(6);
-        this.otherBalance = BN(veth2).dividedBy(1e18).toFixed(6);
-      } else {
-        this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
-        this.otherBalance = BN(amount).dividedBy(1e18).toFixed(6);
+      try {
+        let walletAddress = this.userAddress;
+        let amount = await window.web3.eth.getBalance(walletAddress);
+        this.EthBal = BN(amount);
+        let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
+        this.vEth2Bal = BN(veth2);
+        if (this.isDeposit) {
+          this.balance = BN(amount).dividedBy(1e18).toFixed(6);
+          this.otherBalance = BN(veth2).dividedBy(1e18).toFixed(6);
+        } else {
+          this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
+          this.otherBalance = BN(amount).dividedBy(1e18).toFixed(6);
+        }
+        let remaining = await validator.methods.remainingSpaceInEpoch().call();
+        this.remaining = BN(remaining);
+        let remainingByFee = await validator.methods.adminFeeTotal().call();
+        this.remainingByFee = BN(remainingByFee).multipliedBy(320);
+        this.amountCheck(true);
+        this.loading = false;
+      } catch (err) {
+        this.buttonText = "Connect to wallet ↗";
+        console.log(err);
       }
-      let remaining = await validator.methods.remainingSpaceInEpoch().call();
-      this.remaining = BN(remaining);
-      let remainingByFee = await validator.methods.adminFeeTotal().call();
-      this.remainingByFee = BN(remainingByFee).multipliedBy(320);
-      this.amountCheck(true);
-      this.loading = false;
     },
     amountCheck(init) {
       if (init && this.Damount == 0) return;

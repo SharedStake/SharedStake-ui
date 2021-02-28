@@ -13,7 +13,7 @@
         Dashboard allows users to see their
         <span id="colored">Eth2 staking profits </span>
         with important parameters. Users can also keep track of the overall
-        statistics of SharedStake Protocol.
+        statistics of the Protocol.
       </div>
       <div class="StatsExp">
         Dashboard works with an off-chain calculator:<span id="colored">
@@ -35,8 +35,8 @@
         Learn More
         <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
       </div>
-      <div class="background" />
     </div>
+    <div class="background" />
   </div>
 </template>
 
