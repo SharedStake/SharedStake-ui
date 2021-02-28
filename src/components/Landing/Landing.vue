@@ -24,10 +24,34 @@
             Learn More
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
-          <ImageVue :src="'twitter.svg'" :size="'30px'" class="socialLogo" />
-          <ImageVue :src="'discord.svg'" :size="'30px'" class="socialLogo" />
-          <ImageVue :src="'reddit.svg'" :size="'30px'" class="socialLogo" />
-          <ImageVue :src="'github.svg'" :size="'30px'" class="socialLogo" />
+          <a
+            href="https://twitter.com/SharedStake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'twitter.svg'" :size="'30px'" class="socialLogo" />
+          </a>
+          <a
+            href="https://discord.com/invite/VezkjY9udC"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'discord.svg'" :size="'30px'" class="socialLogo" />
+          </a>
+          <a
+            href="https://www.reddit.com/r/SharedStake/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'reddit.svg'" :size="'30px'" class="socialLogo" />
+          </a>
+          <a
+            href="https://github.com/SharedStake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'github.svg'" :size="'30px'" class="socialLogo" />
+          </a>
         </div>
       </div>
     </div>
@@ -655,7 +679,7 @@ export default {
   overflow: hidden;
   color: rgba(255, 255, 255, 0.9);
   align-self: stretch;
-  justify-self: center;
+  justify-self: stretch;
   padding: 45px 45px 35px 45px;
   display: grid;
   grid-template-columns: 1fr 0.3fr;

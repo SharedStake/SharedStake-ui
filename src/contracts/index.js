@@ -25,6 +25,7 @@ let _geyser_vEth2;
 let _geyser_SGT;
 let _geyser_SGT_uniswap;
 let _airdrop;
+console.log(window.ethereum)
 if (window.ethereum) {
 
     const web3 = new Web3(window.ethereum);

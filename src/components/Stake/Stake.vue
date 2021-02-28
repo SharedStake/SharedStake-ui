@@ -151,7 +151,6 @@ export default {
     loading: true,
   }),
   mounted: async function () {
-    console.log("mama");
     this.gas = await getCurrentGasPrices();
     this.chosenGas = this.gas.medium;
     this.loading = false;

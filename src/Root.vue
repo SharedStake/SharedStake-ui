@@ -75,9 +75,19 @@
           Connect Wallet
         </div>
       </span>
-      <router-link class="link" to="/stake"> Stake </router-link>
-      <router-link class="link" to="/earn"> Earn </router-link>
-      <router-link class="link" to="/dashboard"> Dashboard </router-link>
+      <router-link class="link" to="/stake" @click.native="showSidebar = false">
+        Stake
+      </router-link>
+      <router-link class="link" to="/earn" @click.native="showSidebar = false">
+        Earn
+      </router-link>
+      <router-link
+        class="link"
+        to="/dashboard"
+        @click.native="showSidebar = false"
+      >
+        Dashboard
+      </router-link>
       <span class="link">
         <a
           href="https://snapshot.page/#/sharedstake.eth"
@@ -122,21 +132,69 @@
       </div>
       <div class="footerLinks">
         <div class="footerGroup">
+          <div class="footerGroupName">Community</div>
+          <span class="link footerLink">
+            <a
+              href="https://twitter.com/SharedStake"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Twitter
+            </a></span
+          >
+          <span class="link footerLink">
+            <a
+              href="https://discord.com/invite/VezkjY9udC"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Discord
+            </a></span
+          >
+          <span class="link footerLink">
+            <a
+              href="https://www.reddit.com/r/SharedStake/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Reddit
+            </a></span
+          >
+        </div>
+        <div class="footerGroup">
           <div class="footerGroupName">Developers</div>
-          <span class="link footerLink">Documentation</span>
-          <span class="link footerLink">Github</span>
+          <span class="link footerLink">
+            <a
+              href="https://docs.sharedstake.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Documentation
+            </a></span
+          >
+          <span class="link footerLink">
+            <a
+              href="https://github.com/SharedStake"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Github
+            </a></span
+          >
         </div>
         <div class="footerGroup">
           <div class="footerGroupName">About</div>
-          <span class="link footerLink">Privacy Policy</span>
-          <span class="link footerLink">Terms of Service</span>
-        </div>
-        <div class="footerGroup">
-          <div class="footerGroupName">Community</div>
-          <span class="link footerLink">Twitter</span>
-          <span class="link footerLink">Discord</span>
-          <span class="link footerLink">Reddit</span>
-          <span class="link footerLink">Medium</span>
+          <span class="link footerLink">
+            <a
+              href="https://docs.sharedstake.org/faq."
+              target="_blank"
+              rel="noopener noreferrer"
+              >FAQ
+            </a></span
+          >
+          <span class="link footerLink">
+            <a
+              href="https://docs.sharedstake.org/risks"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Risks
+            </a></span
+          >
         </div>
       </div>
       <div class="bottom">SharedStake © 2021</div>
