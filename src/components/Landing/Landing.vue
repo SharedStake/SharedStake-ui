@@ -172,7 +172,7 @@
             By using vEth2, instead of any other kind of wrapped Ether, defi
             users gain extra 5-6% Yearly Growth with off-chain profit
             distribution. <br />
-            Since it doesn't contain the 'imaginary' staking rewards, it is a
+            Since vEth2 doesn't contain any 'imaginary' staking rewards, it is a
             stable token pegged to the value of Ether. Pratically eliminates the
             impermanent loss.
           </div>
@@ -866,6 +866,8 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
   .Logo {
     padding: 0;
+    max-width: 145px;
+    min-width: 100px;
   }
   .LogoContainer {
     background: transparent;
@@ -876,6 +878,9 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     grid-template-rows: 1fr;
     justify-content: center;
     align-items: center;
+  }
+  .mainTitle {
+    margin: 0 auto;
   }
   .Explanation {
     padding: 0 23px 100px 23px;

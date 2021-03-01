@@ -197,7 +197,17 @@
           >
         </div>
       </div>
-      <div class="bottom">SharedStake © 2021</div>
+      <div class="bottom">
+        SharedStake by
+        <a
+          href="https://twitter.com/eth_bear"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ImageVue :src="'icebear.png'" :size="'25px'" class="Logo icebear" />
+        </a>
+        © 2021
+      </div>
     </div>
   </div>
 </template>
@@ -316,7 +326,6 @@ export default {
   transform: rotate(-45deg);
 }
 .LogoContainer {
-  margin-left: 1vw;
   font-size: 24px;
   align-items: center;
   cursor: pointer;
@@ -430,13 +439,13 @@ export default {
   }
 }
 .footer {
-  padding: 40px 30px 30px;
+  padding: 40px 30px 10px 30px;
   background-color: rgb(24, 24, 24);
   color: rgb(255, 255, 255);
   min-height: 350px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.2fr;
+  grid-template-rows: 1fr 1fr 0.4fr;
   gap: 0px 0px;
   grid-template-areas:
     "Disclaimer Logo"
@@ -472,6 +481,7 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  padding: 0 10px 10px 10px;
 }
 .footerGroupName {
   color: inherit;
@@ -487,14 +497,19 @@ export default {
 .bottom {
   text-align: center;
   font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   grid-area: bottom;
   color: #afafaf;
 }
-
+.icebear {
+  padding: 0 10px;
+}
 @media only screen and (max-width: 900px) {
   .footer {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 0.3fr 1fr 1fr 0.2fr;
+    grid-template-rows: 0.3fr 1fr 1fr 0.4fr;
     grid-template-areas:
       "Logo Logo"
       "Info Info "

@@ -34,7 +34,7 @@ export default {
     pools: [
       {
         name: "SGT",
-        pic: "logo-red.svg",
+        pic: "tokens/logo-red.svg",
         explanation: "SharedStake Governance",
         token: SGT,
         geyser: geyser_SGT,
