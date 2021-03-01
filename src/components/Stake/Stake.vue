@@ -413,8 +413,8 @@ export default {
   max-width: 375px;
   width: 100%;
   background-color: #181818;
-  max-height: 80vh;
-  height: 100%;
+  height: 90%;
+  max-height: 716px;
   overflow: auto;
   box-shadow: 0 0 50px rgb(0 0 0 / 10%);
   border-radius: 2px;
