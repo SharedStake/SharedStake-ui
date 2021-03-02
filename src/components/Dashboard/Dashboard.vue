@@ -28,7 +28,7 @@
       </div>
       <div class="StatsExp">
         Currently Dashboard is under construction and planned to be active on
-        April 2021.
+        May 2021.
       </div>
       <div class="StatsExp">Hold onto your Steak and come back!</div>
       <div class="LearnButton">
