@@ -9,11 +9,11 @@
         />
       </div>
       <div class="Explanation">
-        <div class="mainTitle">Steak For Everyone!</div>
+        <div class="mainTitle">Claim Your Stake</div>
         <div class="exp">
-          SharedStake is a Decentralized Ethereum 2 Staking solution that allows
-          users to stake any amount of Ether, while keeping their staked amount
-          valuable and liquid.
+          SharedStake is a decentralized Ethereum 2 staking solution that allows
+          users to stake any amount of Ether and earn additional yield on top of
+          their ETH2 rewards.
         </div>
         <div class="LearnButton" v-show="windowWidth <= 500">
           <a
@@ -71,11 +71,11 @@
       <ImageVue :src="'down.svg'" :size="'30px'" />
     </div>
     <div class="flex_column Stats" v-show="scrolled >= 350">
-      <div class="StatsHeader">Best in class performance</div>
-      <div class="StatsExp">Financial Optimization at its finest.</div>
+      <div class="StatsHeader">Capital efficient staking</div>
+      <div class="StatsExp">Financial optimization with best-in-class performance</div>
       <div class="StatsExp">
-        Better rewards, improved user experience, and more defi compatibility
-        than any other staking service on the market.
+        Better rewards, improved user experience, and more DeFi compatibility
+        than any other Staking-as-a-Service model on the market.
       </div>
       <div class="StatsContent">
         <div class="Stat">
@@ -91,7 +91,7 @@
         <div class="Stat">
           <div class="Num">99.9%</div>
           <div class="NumExp">Uptime</div>
-          <div class="NumDetail">Industry standard cloud infrastructure</div>
+          <div class="NumDetail">Industry leading cloud infrastructure</div>
         </div>
       </div>
     </div>
@@ -125,27 +125,28 @@
         <div class="X harvest">
           <ImageVue :src="'Harvest.png'" :size="'92px'" />
         </div>
-        <div class="Exp EthExp">Stake Any Amount of Eth</div>
-        <div class="Exp vEth2Exp">Receive vETH2 token in return.</div>
+        <div class="Exp EthExp">Stake any amount of Eth</div>
+        <div class="Exp vEth2Exp">Receive your vEth2 token</div>
         <div class="Exp rewardExp">
-          Get your staking rewards by just holding vEth2.
+          Simply holding vEth2 entitles you to staking rewards
         </div>
         <div class="Exp harvestExp">
-          Harvest more with your vETH2 token in other defi protocols!
+          Harvest more yield with your vEth2 token in partner DeFi protocols!
         </div>
         <div class="exp Information" v-show="scrolled >= 1500">
           <div class="InfoHeader centertext" v-show="scrolled >= 1500">
             Staking with SharedStake
           </div>
           <div class="exp Info" v-show="scrolled >= 1500">
-            SharedStake users gain staking rewards every block, while just
-            holding or investing vEth2 in supported Ethereum Applications such
-            as Uniswap, Sushiswap, Curve, Maker, Compound, Aave and many more...
+            SharedStake users earn staking rewards every block so you win whether 
+            you hodl your stake or decide to invest your vEth2 in supported Ethereum 
+            dapps like Uniswap, SushiSwap, Curve, Maker, Compound, Aave, 
+            and many more...
           </div>
           <div class="exp Info" v-show="scrolled >= 1500">
-            vEth2 is designed for the highest defi compatibility. It is a yield
-            bearing token which has 1:1 price ratio with Ether. vEth2 Staking is
-            also incentivized by SGT, SharedStake Governance Token.
+            vEth2 is designed for DeFi compatibility. It is a yield
+            bearing token with a 1:1 price ratio with Ether. vEth2 staking is
+            also incentivized with SGT, the SharedStake Governance Token.
           </div>
         </div>
       </div>
@@ -163,10 +164,10 @@
         <div class="Bubble">
           <div class="exp InfoHeader">Financially Optimized</div>
           <div class="exp Info mb30">
-            SharedStake optimizes the Eth2 staking profits by creating an
-            off-chain yield bearing stable token. vEth2 has 1-1 price ratio with
-            Ether. Ethereum2 profits will be distributed when Eth2 is launched,
-            but it can be tracked and analyzed with the dashboard.
+            SharedStake optimizes Eth2 staking profits by creating an
+            off-chain yield bearing stable token (vEth2 has a 1:1 price ratio with
+            Ether). Ethereum2 profit distribution will start with the Eth2 launch so
+            until then, track your Eth2 profits in the SharedStake dashboard.
           </div>
           <ImageVue
             :src="'discount.svg'"
@@ -175,14 +176,14 @@
           />
         </div>
         <div class="Bubble">
-          <div class="exp InfoHeader">Defi Compatible</div>
+          <div class="exp InfoHeader">DeFi Compatible</div>
           <div class="exp Info mb30">
-            By using vEth2, instead of any other kind of wrapped Ether, defi
-            users gain extra 5-6% Yearly Growth with off-chain profit
+            By using vEth2 instead of other wrapped Ether tokens, DeFi
+            users gain an extra 5-6% yearly growth with off-chain profit
             distribution. <br />
-            Since vEth2 doesn't contain any 'imaginary' staking rewards, it is a
-            stable token pegged to the value of Ether. Pratically eliminates the
-            impermanent loss.
+            Since vEth2 doesn't contain any 'imaginary' staking rewards, its
+            stability is derived from its peg to Ether's value, practically 
+            eliminating users' concerns with impermanent loss.
           </div>
           <ImageVue
             :src="'diamond.svg'"
@@ -193,10 +194,10 @@
         <div class="Bubble">
           <div class="exp InfoHeader">Incentivized Staking</div>
           <div class="exp Info mb30">
-            On top of the Ethereum-2 Staking profits, vEth2 and its usage on
-            other Decentralized Finance Applications are incentivized further
-            with SGT, which is used as a Token for Proof of Participation in the
-            SharedStake Protocol.
+            On top of Ethereum2 staking profits, holding vEth2 and leveraging 
+            it on other Decentralized Finance applications is further 
+            incentivized with SGT used as a Proof of Participation token within 
+            the SharedStake Protocol.
           </div>
           <ImageVue
             :src="'dowload.svg'"
@@ -207,10 +208,11 @@
         <div class="Bubble">
           <div class="exp InfoHeader">Natural Exit Pool</div>
           <div class="exp Info mb30">
-            10% of the all Staked Ether, is left in the staking contract,
-            creating a liquidity bridge between old and new users. <br />
-            SharedStakers can un-stake their Ether by burning vEth2 anytime!
-            Subject to the amount of Ether in the staking contract.
+            10% of all staked Ether remains in the staking contract,
+            creating a liquidity bridge between all users, old and new. <br />
+            SharedStakers can un-stake their Ether at anytime by burning 
+            their vEth2 through the staking contract (subject to current 
+            amount) or through a DeFi partner product.
           </div>
           <ImageVue
             :src="'balance.svg'"
@@ -238,7 +240,7 @@
             <div class="list">
               <div class="item">
                 <div class="date">2021 Q1</div>
-                <div class="text">Protocol Launched &amp; SGT airdrop</div>
+                <div class="text">Protocol Launch &amp; SGT Airdrop</div>
               </div>
 
               <div class="item">
@@ -253,25 +255,25 @@
 
               <div class="item">
                 <div class="date">2021 Q3</div>
-                <div class="text">Leveraged Eth2 staking with Aave</div>
+                <div class="text">Leveraged Eth2 Staking with Aave</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q4</div>
-                <div class="text">Decentralized Validators backed by SGT</div>
+                <div class="text">Decentralized Validators Backed by SGT</div>
               </div>
 
               <div class="item">
                 <div class="date">2022</div>
                 <div class="text">
-                  vEth2 backed AMM which provides Eth2 staking profits to LPs
+                  vEth2-backed AMM Provides Eth2 Staking Profits to LPs
                 </div>
               </div>
               <div class="item">
                 <div class="date">2023</div>
                 <div class="text">
-                  Decentralized Automated Staking Mechanism on Mainnet backed by
-                  SGT
+                  SGT-based Decentralized Automated Staking Mechanism on 
+                  Mainnet
                 </div>
               </div>
             </div>
@@ -289,28 +291,28 @@
               </div>
               <div class="item">
                 <div class="date">2021 Q2</div>
-                <div class="text">Defi Support with Barbecue.js</div>
+                <div class="text">DeFi Support with Barbecue.js</div>
               </div>
               <div class="item">
                 <div class="date">2021 Q3</div>
                 <div class="text">
-                  More Integrations on Defi Protocols with Sauce.js...
+                  More Integrations with DeFi Protocols through Sauce.js...
                 </div>
               </div>
               <div class="item">
                 <div class="date">2022</div>
                 <div class="text">
-                  Use your Staked Ether on Multiple Blockchains
+                  Staked Ether in Use on Multiple Blockchains
                 </div>
               </div>
               <div class="item">
                 <div class="date">2023</div>
-                <div class="text">Ethereum2 deployment</div>
+                <div class="text">Ethereum2 Deployed</div>
               </div>
               <div class="item">
-                <div class="date">Further Improvements</div>
+                <div class="date">Eth2 &amp; Beyond</div>
                 <div class="text">
-                  Ethereum2 is just the beginning of a story for SharedStake.
+                  Ethereum2 is just the beginning for SharedStake...
                 </div>
               </div>
             </div>
