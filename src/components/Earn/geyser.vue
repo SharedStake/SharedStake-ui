@@ -25,7 +25,7 @@
             apy == 0 || isNaN(apy)
               ? pool.external
                 ? "+150%"
-                : "Inactive"
+                : "Connect"
               : apy.toFixed(2) + "%"
           }}
         </div>
