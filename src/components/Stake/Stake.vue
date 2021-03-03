@@ -169,7 +169,6 @@ export default {
     maxValShares: 0,
     remaining: BN(0),
     remainingByFee: BN(0),
-
     chosenGas: 130,
     loading: true,
     adminFee: 0,

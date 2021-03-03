@@ -99,7 +99,7 @@
       <div class="exp background2" />
       <div class="second">
         <div class="X Eth">
-          <ImageVue :src="'Eth.png'" :size="'90px'" />
+          <ImageVue :src="'eth.png'" :size="'90px'" />
         </div>
         <ImageVue
           :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
