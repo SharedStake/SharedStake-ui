@@ -1,7 +1,6 @@
 <template>
   <div class="EarnWrapper">
     <div class="Earn">
-      <Claim />
       <geyser
         class="geyser"
         v-for="pool in pools"
@@ -10,15 +9,15 @@
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
+      <Claim />
     </div>
-    <Arrow :direction="'down'" :size="28" class="arrow" />
   </div>
 </template>
 
 <script>
 import BN from "bignumber.js";
+import { mapGetters } from "vuex";
 import geyser from "./geyser.vue";
-import Arrow from "../../assets/svg/arrow.vue";
 import {
   SGT,
   vEth2,
@@ -29,12 +28,13 @@ import {
 } from "@/contracts";
 import Claim from "./claim.vue";
 export default {
-  components: { geyser, Arrow, Claim },
+  components: { geyser, Claim },
   data: () => ({
     chosen: null,
     pools: [
       {
         name: "SGT",
+        pic: "tokens/logo-red.svg",
         explanation: "SharedStake Governance",
         token: SGT,
         geyser: geyser_SGT,
@@ -48,6 +48,7 @@ export default {
       {
         name: "SGT LP",
         explanation: "on uniswap",
+        pic: "tokens/SGT LP.png",
         token: SGT_uniswap,
         geyser: geyser_SGT_uniswap,
         locked: BN(75000),
@@ -60,6 +61,7 @@ export default {
       {
         name: "vEth2",
         explanation: "validator ETH2",
+        pic: "vEth2.png",
         token: vEth2,
         geyser: geyser_vEth2,
         locked: BN(75000),
@@ -72,6 +74,7 @@ export default {
         name: "vEth2 LP",
         explanation: "on snowswap",
         token: null,
+        pic: "tokens/vEth2 LP.png",
         geyser: null,
         locked: BN(1),
         external: true,
@@ -82,55 +85,64 @@ export default {
       },
     ],
   }),
+  computed: {
+    ...mapGetters({ userAddress: "userAddress" }),
+  },
   mounted: async function () {
-    // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
-    // 100* (sgtprice/tokenprice)*locked/staked
-    // tokenPerSgt=sgtprice/tokenprice
-    if (this.pools[1].active) {
-      //not if its goerli => testing ju1st sgt
-      let tokenPerSgt = 0;
-      // pool1
-      let token = this.pools[1].token;
-      let reserves = await token.methods.getReserves().call();
-      let Eth = reserves[1];
-      let Sgt = reserves[0];
-      tokenPerSgt = Eth / Sgt; //ok
-      this.pools[2].tokenPerSgt = tokenPerSgt;
-      console.log(tokenPerSgt);
-      // pool 2
-      let totalSupply = await token.methods.totalSupply().call();
-      tokenPerSgt = totalSupply / (Sgt * 2);
-      this.pools[1].tokenPerSgt = tokenPerSgt;
-    }
-    // no need for 3. pool
+    await this.mounted();
+  },
+  watch: {
+    async userAddress(newVal) {
+      if (newVal) await this.mounted;
+      console.log(newVal);
+    },
+  },
+  methods: {
+    async mounted() {
+      // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
+      // 100* (sgtprice/tokenprice)*locked/staked
+      // tokenPerSgt=sgtprice/tokenprice
+      if (this.pools[1].active) {
+        //not if its goerli => testing ju1st sgt
+        let tokenPerSgt = 0;
+        // pool1
+        let token = this.pools[1].token;
+        let reserves = await token.methods.getReserves().call();
+        let Eth = reserves[1];
+        let Sgt = reserves[0];
+        tokenPerSgt = Eth / Sgt; //ok
+        this.pools[2].tokenPerSgt = tokenPerSgt;
+        // pool 2
+        let totalSupply = await token.methods.totalSupply().call();
+        tokenPerSgt = totalSupply / (Sgt * 2);
+        this.pools[1].tokenPerSgt = tokenPerSgt;
+      }
+      // no need for 3. pool
+    },
   },
 };
 </script>
 
 <style scoped>
 .EarnWrapper {
-  overflow-y: scroll;
+  font-family: "Work Sans";
+  padding-top: 100px;
+  padding-bottom: 5vh;
 }
 .Earn {
   scroll-behavior: smooth;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-}
-.arrow {
-  position: fixed;
-  bottom: 5vh;
-  right: 5vw;
 }
 span {
   text-align: left;
   font-size: 18px;
 }
 .logo {
-  font-family: "Big Shoulders Stencil Display", cursive;
-  color: #ff007a;
+  color: rgb(250, 82, 160);
   font-size: 22px;
 }
 </style>

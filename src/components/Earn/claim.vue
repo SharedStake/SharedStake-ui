@@ -45,35 +45,19 @@
         <button class="mainButton" @click="Claim">Claim</button>
       </div>
     </div>
-    <transition-group name="list" tag="span">
-      <div
-        v-show="txs.length > 0"
-        class="exp"
-        v-for="(tx, index) in txs"
-        v-bind:key="index * Math.random()"
-      >
-        <Notifier
-          :id="tx.id"
-          :index="index"
-          :success="tx.success"
-          :msg="tx.msg"
-          @click.native="closeTx(index)"
-        />
-      </div>
-    </transition-group>
   </div>
 </template>
 
 <script>
-import ImageVue from "../Handlers/image.vue";
-import { timeout } from "@/utils/helpers";
+import ImageVue from "../Handlers/ImageVue";
 import { airdrop } from "@/contracts";
+import { notify } from "@/utils/common";
 import web3 from "web3";
 import { merkle } from "./airdrop.js";
 import { mapGetters } from "vuex";
-import Notifier from "../Handlers/notifier.vue";
+
 export default {
-  components: { ImageVue, Notifier },
+  components: { ImageVue },
   data: () => ({
     innerWidth: 0,
     address: "",
@@ -84,6 +68,9 @@ export default {
     claim: {},
   }),
   watch: {
+    async userAddress() {
+      await this.isEligible();
+    },
     async address() {
       await this.isEligible();
     },
@@ -92,9 +79,10 @@ export default {
     this.innerWidth = window.innerWidth;
     window.addEventListener("resize", this.onResize);
     var self = this;
-    window.ethereum.on("accountsChanged", async function () {
-      await self.mounted();
-    });
+    if (window.ethereum)
+      window.ethereum.on("accountsChanged", async function () {
+        await self.mounted();
+      });
   },
   mounted: async function () {
     await this.mounted();
@@ -133,27 +121,8 @@ export default {
         }
       } else this.eligible = false;
     },
-    async addTx(tx = { id: "", success: false, msg: "Error." }) {
-      this.txs.push(tx);
-    },
-    closeTx(index) {
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx, i) => index != i);
-      this.txs = newTx;
-    },
-    async automatedCloseTx(id) {
-      await timeout(10000);
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx) => id != tx.id);
-      this.txs = newTx;
-    },
     async Claim() {
       // to add tx watcher
-      const addTx = this.addTx;
-      const automatedCloseTx = this.automatedCloseTx;
-      let TXhash = null;
-      let self = this;
-
       await airdrop.methods
         .claim(
           web3.utils.numberToHex(this.claim.index),
@@ -163,37 +132,18 @@ export default {
         )
         .send({ from: this.userAddress })
         .on("transactionHash", function (hash) {
-          TXhash = hash;
-          let tx = {
-            id: hash,
-            success: true,
-            msg: "Your transaction is sent.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
+          notify.hash(hash);
         })
         .once("confirmation", () => {
-          let tx = {
-            id: TXhash,
-            success: true,
-            msg: "Transaction is approved.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
+          this.loading = false;
           self.mounted();
         })
-        .on("error", (error) => {
-          let tx = {
-            id: Math.floor(Math.random() * 100000),
-            success: false,
-            msg: "Transaction is failed.",
-          };
-          if (error.message.includes("User denied transaction signature"))
-            tx.msg = "Transaction is rejected.";
-          addTx(tx);
-          automatedCloseTx(tx.id);
+        .on("error", () => {
+          // if (error.message.includes("User denied transaction signature"))
+          this.loading = false;
         })
         .catch((err) => {
+          this.loading = false;
           console.log(err);
         });
     },
@@ -205,20 +155,16 @@ export default {
 .geyserwrapper {
   position: relative;
   transition: transform 0.2s ease-in-out;
-  font-family: "Work Sans";
   margin: 3vh 1vw 2vh 1vw;
   width: 60vw;
   border-radius: 49px;
   border: 1px #00ff84 solid;
-  background-color: #fafafa;
+  background-color: #181818;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   transition: 0.42s ease-in-out;
-  -webkit-box-shadow: 0px 0px 150px -29px rgb(0, 255, 132);
-  -moz-box-shadow: 0px 0px 150px -29px rgb(0, 255, 132);
-  box-shadow: 0px 0px 150px -29px rgb(0, 255, 132);
 }
 
 .geyserChooser {
@@ -263,6 +209,7 @@ export default {
   font-weight: 500;
   line-height: 1.2;
   width: 97%;
+  color: #fff;
   word-break: break-all;
 }
 
@@ -331,7 +278,7 @@ export default {
 .minitext {
   font-weight: 700;
   font-size: 14px;
-  color: #ff007b9c;
+  color: #00ff849c;
 }
 
 /* stake input part */
@@ -346,7 +293,7 @@ export default {
   text-align: center;
 }
 .token-amount-input {
-  color: #000000;
+  color: #fff;
   position: relative;
   font-weight: 500;
   outline: none;
@@ -388,20 +335,16 @@ export default {
   .geyserwrapper {
     position: relative;
     transition: transform 0.2s ease-in-out;
-    font-family: "Work Sans";
     margin: 4vh 1vw 2vh 1vw;
     width: 90vw;
-    border: 1px #ff007a solid;
+    border: 1px #00ff84 solid;
     border-radius: 49px;
-    background-color: #fafafa;
+    background-color: #181818;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     transition: 0.42s ease-in-out;
-    -webkit-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.517);
-    -moz-box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.619);
-    box-shadow: 0px 0px 150px -39px rgba(255, 0, 123, 0.469);
   }
   .geyserChooser {
     padding: 0;

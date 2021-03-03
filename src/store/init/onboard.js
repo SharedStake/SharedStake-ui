@@ -15,16 +15,16 @@ const wallets = [
     { walletName: "metamask", preferred: true },
     { walletName: "trust", preferred: true, rpcUrl: RPC_URL },
     { walletName: "coinbase", preferred: true },
-    { walletName: "dapper", preferred: true },
+    { walletName: "dapper", },
     {
         walletName: 'trezor',
         appUrl: APP_URL,
         email: CONTACT_EMAIL,
-        rpcUrl: RPC_URL
+        rpcUrl: RPC_URL, preferred: true
     },
     {
         walletName: 'ledger',
-        rpcUrl: RPC_URL
+        rpcUrl: RPC_URL, preferred: true
     },
     {
         walletName: 'lattice',
@@ -36,7 +36,10 @@ const wallets = [
         walletName: "walletConnect",
         infuraKey: INFURA_KEY
     },
-    { walletName: "opera" },
+    {
+        walletName: "opera",
+        infuraKey: INFURA_KEY
+    },
     { walletName: "operaTouch" },
     { walletName: "torus" },
     { walletName: "status" },
@@ -55,16 +58,16 @@ const onboard = Onboard({
     networkId: 1,  // [Integer] The Ethereum network ID your Dapp uses.
     darkMode: true,
     subscriptions: {
-        wallet: wallet => {
+        wallet: (wallet) => {
             console.log(`wallet switched to: ${wallet.name}`);
             let W3 = window.web3 = new Web3(wallet.provider)
+            console.log(window.web3)
             store.commit('setWeb3', W3);
             store.commit('setWallet', wallet.name);
             localStorage.setItem("selectedWallet", wallet.name);
         },
         address: (account) => {
             store.commit('setAddress', account)
-            console.log(account)
         },
         network: (nw) => {
             store.commit('setNetwork', nw)
@@ -81,7 +84,7 @@ const onboard = Onboard({
         { checkName: "network" },
     ],
 })
-
+window.onboard = onboard;
 export async function changeWallets() {
     await onboard.walletReset();
     localStorage.removeItem("selectedWallet");

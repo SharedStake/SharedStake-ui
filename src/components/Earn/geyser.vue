@@ -2,7 +2,7 @@
   <div class="geyserwrapper" :id="chosen ? 'pinkShadow' : 'noShadow'">
     <div class="geyserChooser" @click="$emit('toggle')">
       <ImageVue
-        :src="'tokens/' + pool.name + '.png'"
+        :src="pool.pic"
         :size="innerWidth > 700 ? '40px' : '8vw'"
         class="headerPart poolIcon"
       />
@@ -24,7 +24,7 @@
           {{
             apy == 0 || isNaN(apy)
               ? pool.external
-                ? "↓"
+                ? "+150%"
                 : "Inactive"
               : apy.toFixed(2) + "%"
           }}
@@ -52,7 +52,7 @@
           <path fill="none" d="M0 0h24v24H0z"></path></svg
       ></span>
     </div>
-    <div class="geyserExp" v-if="pool.external">
+    <div class="geyserExp" v-if="chosen && pool.external">
       <div class="statsPart" id="whiteBorder">
         <a :href="pool.link" target="_blank" rel="noopener noreferrer">
           <div class="minitext blue">
@@ -214,35 +214,19 @@
         </div>
       </div>
     </div>
-    <transition-group name="list" tag="span">
-      <div
-        v-show="txs.length > 0"
-        class="exp"
-        v-for="(tx, index) in txs"
-        v-bind:key="index * Math.random()"
-      >
-        <Notifier
-          :id="tx.id"
-          :index="index"
-          :success="tx.success"
-          :msg="tx.msg"
-          @click.native="closeTx(index)"
-        />
-      </div>
-    </transition-group>
   </div>
 </template>
 
 <script>
-import ImageVue from "../Handlers/image.vue";
+import ImageVue from "../Handlers/ImageVue";
 import { mapGetters } from "vuex";
+import { notifyHandler } from "@/utils/common";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 import { timeout } from "@/utils/helpers";
-import Notifier from "../Handlers/notifier.vue";
 export default {
-  components: { ImageVue, Notifier },
+  components: { ImageVue },
   props: ["pool", "chosen"],
   data: () => ({
     innerWidth: 0,
@@ -265,11 +249,12 @@ export default {
     this.innerWidth = window.innerWidth;
     window.addEventListener("resize", this.onResize);
     var self = this;
-    window.ethereum.on("accountsChanged", async function () {
-      if (self.pool.active) {
-        await self.mounted();
-      }
-    });
+    if (window.ethereum)
+      window.ethereum.on("accountsChanged", async function () {
+        if (self.pool.active) {
+          await self.mounted();
+        }
+      });
   },
   mounted: async function () {
     if (this.pool.active) {
@@ -385,6 +370,10 @@ export default {
       this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
     },
+    async userAddress(newVal) {
+      console.log(newVal);
+      if (newVal) await this.mounted();
+    },
   },
   methods: {
     onResize() {
@@ -414,33 +403,13 @@ export default {
       );
       this.locked = BN(remRewards);
     },
-    async addTx(tx = { id: "", success: false, msg: "Error." }) {
-      this.txs.push(tx);
-    },
-    closeTx(index) {
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx, i) => index != i);
-      this.txs = newTx;
-    },
-    async automatedCloseTx(id) {
-      await timeout(12500);
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx) => id != tx.id);
-      this.txs = newTx;
-    },
     async Deposit() {
-      // to add tx watcher
-      const addTx = this.addTx;
-      const automatedCloseTx = this.automatedCloseTx;
-      let TXhash = null;
-      let self = this;
-
       let myAmount = this.bigDAmount.toString();
       let geyserAddress = this.pool.geyser._address;
       let allowance = await this.pool.token.methods
         .allowance(this.userAddress, geyserAddress)
         .call();
-
+      let approval = true;
       if (BN(allowance).lt(this.bigDAmount)) {
         if (this.inf_approval)
           myAmount = BN(2).pow(BN(256)).minus(BN(1)).toString();
@@ -448,121 +417,62 @@ export default {
           .approve(geyserAddress, myAmount)
           .send({ from: this.userAddress })
           .on("transactionHash", function (hash) {
-            TXhash = hash;
-            let tx = {
-              id: hash,
-              success: true,
-              msg: "Your transaction is sent.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            notifyHandler(hash);
           })
           .once("confirmation", () => {
-            let tx = {
-              id: TXhash,
-              success: true,
-              msg: "Transaction is approved.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            this.loading = false;
+            self.mounted();
           })
-          .on("error", (error) => {
-            let tx = {
-              id: Math.floor(Math.random() * 100000),
-              success: false,
-              msg: "Transaction is failed.",
-            };
-            if (error.message.includes("User denied transaction signature"))
-              tx.msg = "Transaction is rejected.";
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
+            this.loading = false;
           })
           .catch((err) => {
+            this.loading = false;
+            console.log(err);
+          });
+        await timeout(4000);
+      }
+      if (approval) {
+        await this.pool.geyser.methods
+          .stake(myAmount)
+          .send({ from: this.userAddress })
+          .on("transactionHash", function (hash) {
+            notifyHandler(hash);
+          })
+          .once("confirmation", () => {
+            this.loading = false;
+            self.mounted();
+          })
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
+            this.loading = false;
+          })
+          .catch((err) => {
+            this.loading = false;
             console.log(err);
           });
       }
-      await timeout(4000);
-      await this.pool.geyser.methods
-        .stake(myAmount)
-        .send({ from: this.userAddress })
-        .on("transactionHash", function (hash) {
-          TXhash = hash;
-          let tx = {
-            id: hash,
-            success: true,
-            msg: "Your transaction is sent.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
-        })
-        .once("confirmation", () => {
-          let tx = {
-            id: TXhash,
-            success: true,
-            msg: "Transaction is approved.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
-          self.mounted();
-        })
-        .on("error", (error) => {
-          let tx = {
-            id: Math.floor(Math.random() * 100000),
-            success: false,
-            msg: "Transaction is failed.",
-          };
-          if (error.message.includes("User denied transaction signature"))
-            tx.msg = "Transaction is rejected.";
-          addTx(tx);
-          automatedCloseTx(tx.id);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     },
     async Withdraw() {
       // to add tx watcher
-      const addTx = this.addTx;
-      const automatedCloseTx = this.automatedCloseTx;
-      let TXhash = null;
-      let self = this;
-
       if (this.bigWAmount.eq(this.staked)) {
         await this.pool.geyser.methods
           .exit()
           .send({ from: this.userAddress })
           .on("transactionHash", function (hash) {
-            TXhash = hash;
-            let tx = {
-              id: hash,
-              success: true,
-              msg: "Your transaction is sent.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            notifyHandler(hash);
           })
           .once("confirmation", () => {
-            let tx = {
-              id: TXhash,
-              success: true,
-              msg: "Transaction is approved.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            this.loading = false;
             self.mounted();
           })
-          .on("error", (error) => {
-            let tx = {
-              id: Math.floor(Math.random() * 100000),
-              success: false,
-              msg: "Transaction is failed.",
-            };
-            if (error.message.includes("User denied transaction signature"))
-              tx.msg = "Transaction is rejected.";
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
+            this.loading = false;
           })
           .catch((err) => {
+            this.loading = false;
             console.log(err);
           });
       } else {
@@ -571,83 +481,39 @@ export default {
           .withdraw(myAmount)
           .send({ from: this.userAddress })
           .on("transactionHash", function (hash) {
-            TXhash = hash;
-            let tx = {
-              id: hash,
-              success: true,
-              msg: "Your transaction is sent.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            notifyHandler(hash);
           })
           .once("confirmation", () => {
-            let tx = {
-              id: TXhash,
-              success: true,
-              msg: "Transaction is approved.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            this.loading = false;
             self.mounted();
           })
-          .on("error", (error) => {
-            let tx = {
-              id: Math.floor(Math.random() * 100000),
-              success: false,
-              msg: "Transaction is failed.",
-            };
-            if (error.message.includes("User denied transaction signature"))
-              tx.msg = "Transaction is rejected.";
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
+            this.loading = false;
           })
           .catch((err) => {
+            this.loading = false;
             console.log(err);
           });
       }
     },
     async Harvest() {
-      // to add tx watcher
-      const addTx = this.addTx;
-      const automatedCloseTx = this.automatedCloseTx;
-      let TXhash = null;
-      let self = this;
-
       await this.pool.geyser.methods
         .getReward()
         .send({ from: this.userAddress })
         .on("transactionHash", function (hash) {
-          TXhash = hash;
-          let tx = {
-            id: hash,
-            success: true,
-            msg: "Your transaction is sent.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
+          notifyHandler(hash);
         })
         .once("confirmation", () => {
-          let tx = {
-            id: TXhash,
-            success: true,
-            msg: "Transaction is approved.",
-          };
-          addTx(tx);
-          automatedCloseTx(tx.id);
+          this.loading = false;
           self.mounted();
         })
-        .on("error", (error) => {
-          let tx = {
-            id: Math.floor(Math.random() * 100000),
-            success: false,
-            msg: "Transaction is failed.",
-          };
-          if (error.message.includes("User denied transaction signature"))
-            tx.msg = "Transaction is rejected.";
-          addTx(tx);
-          automatedCloseTx(tx.id);
+        .on("error", () => {
+          // if (error.message.includes("User denied transaction signature"))
+          this.loading = false;
         })
         .catch((err) => {
+          this.loading = false;
           console.log(err);
         });
     },
@@ -659,12 +525,11 @@ export default {
 .geyserwrapper {
   position: relative;
   transition: transform 0.2s ease-in-out;
-  font-family: "Work Sans";
   margin: 4vh 1vw 2vh 1vw;
   width: 60vw;
-  border: 1px #ff007a solid;
+  border: 1px rgb(250, 82, 160) solid;
   border-radius: 49px;
-  background-color: #fafafa;
+  background-color: #181818;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -697,8 +562,8 @@ export default {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 10px;
-  color: #fafafa;
-  background-color: #ff007a;
+  color: #fff;
+  background-color: rgb(250, 82, 160);
 }
 .geyserMain,
 .geyserUser {
@@ -709,10 +574,11 @@ export default {
   gap: 0px 10px;
 }
 .geyserMain {
-  border-top: 1px #ff007a solid;
+  border-top: 1px rgb(250, 82, 160) solid;
 }
 .s-toggle {
   font-size: 16px;
+  color: #fff;
 }
 .headerPart,
 .statsPart,
@@ -722,6 +588,7 @@ export default {
   width: 90%;
   word-break: break-all;
   line-height: 1.2;
+  color: #fff;
 }
 
 .mainPart,
@@ -736,13 +603,13 @@ export default {
   font-size: 32px;
 }
 .userPart {
-  text-shadow: 1px 1px #ff007a;
+  text-shadow: 1px 1px rgb(250, 82, 160);
 }
 #rightBorder {
-  border-right: 1px #ff007a solid;
+  border-right: 1px rgb(250, 82, 160) solid;
 }
 #whiteBorder {
-  border-right: 1px #fafafa solid;
+  border-right: 1px #fff solid;
 }
 .poolIcon {
   grid-area: icon;
@@ -781,7 +648,7 @@ export default {
 .minitext {
   font-weight: 700;
   font-size: 14px;
-  color: #ff007b9c;
+  color: rgba(250, 82, 160, 0.803);
 }
 
 /* stake input part */
@@ -799,7 +666,7 @@ export default {
   text-align: center;
 }
 .token-amount-input {
-  color: #000000;
+  color: #fff;
   position: relative;
   font-weight: 500;
   outline: none;
@@ -813,14 +680,12 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0px;
-  font-family: "Graduate", cursive;
   -webkit-appearance: textfield;
 }
 .toMax {
   padding: 0.3rem 0.3rem 0 0.2rem;
   min-height: 1.4rem;
-  background-color: rgb(253, 234, 241);
-  border: 1px solid rgb(253, 234, 241);
+  background-color: #181818;
   border-radius: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -829,6 +694,7 @@ export default {
   color: rgb(255, 0, 122);
   text-align: center;
   cursor: pointer;
+  border: 1px solid #007bff00;
 }
 .toMax:hover {
   border: 1px solid #007bff;
@@ -851,27 +717,26 @@ export default {
 }
 .mainButton:hover {
   background-color: #0b8f92;
-  color: #fafafa;
+  color: #fff;
 }
 
 .half {
   width: 50%;
 }
 .blue {
-  color: #1d3c7a;
+  color: #fff;
 }
 .pink {
-  color: #ff007a;
+  color: rgb(250, 82, 160);
 }
 .pink:hover {
-  background-color: #ff007a;
-  color: #fafafa;
+  background-color: rgb(250, 82, 160);
+  color: #fff;
 }
 .mainButton:disabled {
   cursor: default;
   background-color: rgba(239, 239, 239, 0.3);
   color: #0b8f92;
-  opacity: 0.5;
 }
 .geyserExp {
   max-width: 70%;
@@ -887,9 +752,9 @@ export default {
     font-family: "Work Sans";
     margin: 4vh 1vw 2vh 1vw;
     width: 90vw;
-    border: 1px #ff007a solid;
+    border: 1px rgb(250, 82, 160) solid;
     border-radius: 49px;
-    background-color: #fafafa;
+    background-color: #181818;
     display: inline-flex;
     flex-direction: column;
     align-items: center;

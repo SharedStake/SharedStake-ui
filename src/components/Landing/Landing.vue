@@ -1,1513 +1,936 @@
 <template>
-  <div class="flex_column landingPage">
-    <div id="Launcher">
-      <imageVue :src="'logo-4.png'" :size="'14vw'" class="myLogo" />
-      <div class="flex_row upButtons">
-        <a
-          href="https://docs.sharedstake.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div class="nonclickable">
-            Docs
-            <span style="font-size: 14px; font-weight: 700"> ↗</span>
+  <div class="Landing">
+    <div class="Container first" v-show="scrolled >= 0">
+      <div class="LogoContainer">
+        <ImageVue
+          :src="'logo-red.svg'"
+          :size="windowWidth > 900 ? '180px' : '20vw'"
+          class="Logo"
+        />
+      </div>
+      <div class="Explanation">
+        <div class="mainTitle">Steak For Everyone!</div>
+        <div class="exp">
+          SharedStake is a Decentralized Ethereum 2 Staking solution that allows
+          users to stake any amount of Ether, while keeping their staked amount
+          valuable and liquid.
+        </div>
+        <div class="LearnButton" v-show="windowWidth <= 500">
+          Learn More
+          <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
+        </div>
+        <div class="social">
+          <div class="LearnButton" v-show="windowWidth > 500">
+            Learn More
+            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
-        </a>
-        <router-link class="nonclickable" to="/roadmap">Roadmap </router-link>
-        <button
-          class="nonclickable Community"
-          @click="mouseOverCommunity = !mouseOverCommunity"
-        >
-          <div>Community</div>
-          <socials
-            v-if="mouseOverCommunity"
-            class="socials"
-            :dir="'down'"
-            :names="true"
+          <a
+            href="https://twitter.com/SharedStake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'twitter.svg'" :size="'30px'" class="socialLogo" />
+          </a>
+          <a
+            href="https://discord.com/invite/VezkjY9udC"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'discord.svg'" :size="'30px'" class="socialLogo" />
+          </a>
+          <a
+            href="https://www.reddit.com/r/SharedStake/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'reddit.svg'" :size="'30px'" class="socialLogo" />
+          </a>
+          <a
+            href="https://github.com/SharedStake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue :src="'github.svg'" :size="'30px'" class="socialLogo" />
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="downSign glow" v-show="scrolled >= 0">
+      <ImageVue :src="'down.svg'" :size="'30px'" />
+    </div>
+    <div class="flex_column Stats" v-show="scrolled >= 350">
+      <div class="StatsHeader">Best in class performance</div>
+      <div class="StatsExp">Financial Optimization at its finest.</div>
+      <div class="StatsExp">
+        Better rewards, improved user experience, and more defi compatibility
+        than any other staking service on the market.
+      </div>
+      <div class="StatsContent">
+        <div class="Stat">
+          <div class="Num">5440</div>
+          <div class="NumExp">Ether Staked with SharedStake</div>
+          <div class="NumDetail">Liquid & Incentivised</div>
+        </div>
+        <div class="Stat">
+          <div class="Num">80%</div>
+          <div class="NumExp">Current APY</div>
+          <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
+        </div>
+        <div class="Stat">
+          <div class="Num">99.9%</div>
+          <div class="NumExp">Uptime</div>
+          <div class="NumDetail">Industry standard cloud infrastructure</div>
+        </div>
+      </div>
+    </div>
+    <div class="Container" v-show="scrolled >= 1000">
+      <div class="exp background2" />
+      <div class="second">
+        <div class="X Eth">
+          <ImageVue :src="'Eth.png'" :size="'90px'" />
+        </div>
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next1"
+        />
+        <div class="X vEth2">
+          <ImageVue :src="'vEth2.png'" :size="'163px'" />
+        </div>
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next2"
+        />
+        <div class="X reward">
+          <ImageVue :src="'Reward.png'" :size="'127px'" />
+        </div>
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next3"
+        />
+        <div class="X harvest">
+          <ImageVue :src="'Harvest.png'" :size="'92px'" />
+        </div>
+        <div class="Exp EthExp">Stake Any Amount of Eth</div>
+        <div class="Exp vEth2Exp">Receive vETH2 token in return.</div>
+        <div class="Exp rewardExp">
+          Get your staking rewards by just holding vEth2.
+        </div>
+        <div class="Exp harvestExp">
+          Harvest more with your vETH2 token in other defi protocols!
+        </div>
+        <div class="exp Information" v-show="scrolled >= 1500">
+          <div class="InfoHeader centertext" v-show="scrolled >= 1500">
+            Staking with SharedStake
+          </div>
+          <div class="exp Info" v-show="scrolled >= 1500">
+            SharedStake users gain staking rewards every block, while just
+            holding or investing vEth2 in supported Ethereum Applications such
+            as Uniswap, Sushiswap, Curve, Maker, Compound, Aave and many more...
+          </div>
+          <div class="exp Info" v-show="scrolled >= 1500">
+            vEth2 is designed for the highest defi compatibility. It is a yield
+            bearing token which has 1:1 price ratio with Ether. vEth2 Staking is
+            also incentivized by SGT, SharedStake Governance Token.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="Container flex_column" v-show="scrolled >= 2000">
+      <div class="flex_row vEth2PanelHeader">
+        <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
+        <div class="StatsHeader">vEth2</div>
+      </div>
+      <div class="exp InfoHeader DropShadow centertext">
+        Yield Bearing Wrapped Ether
+      </div>
+      <div class="exp background3" />
+      <div class="third">
+        <div class="Bubble">
+          <div class="exp InfoHeader">Financially Optimized</div>
+          <div class="exp Info mb30">
+            SharedStake optimizes the Eth2 staking profits by creating an
+            off-chain yield bearing stable token. vEth2 has 1-1 price ratio with
+            Ether. Ethereum2 profits will be distributed when Eth2 is launched,
+            but it can be tracked and analyzed with the dashboard.
+          </div>
+          <ImageVue
+            :src="'discount.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
           />
-        </button>
-        <router-link class="loginButton" to="/app">Launch Dapp </router-link>
-      </div>
-    </div>
-    <div class="lamp">
-      <div class="lava">
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-      </div>
-    </div>
-
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="goo">
-      <defs>
-        <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-          <feColorMatrix
-            in="blur"
-            mode="matrix"
-            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-            result="goo"
+          <div class="LearnButton">
+            Learn More
+            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
+          </div>
+        </div>
+        <div class="Bubble">
+          <div class="exp InfoHeader">Defi Compatible</div>
+          <div class="exp Info mb30">
+            By using vEth2, instead of any other kind of wrapped Ether, defi
+            users gain extra 5-6% Yearly Growth with off-chain profit
+            distribution. <br />
+            Since vEth2 doesn't contain any 'imaginary' staking rewards, it is a
+            stable token pegged to the value of Ether. Pratically eliminates the
+            impermanent loss.
+          </div>
+          <ImageVue
+            :src="'diamond.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
           />
-          <feBlend in="SourceGraphic" in2="goo" />
-        </filter>
-      </defs>
-    </svg>
-    <div class="wrapper">
-      <div id="title">
-        <span name="rainbow" id="rainbow"> SHARED </span>
-        <span name="rainbow" id="rainbow"> STAKE </span>
-      </div>
-      <span
-        name="exp1"
-        id="exp1"
-        class="glitch"
-        data-text="Decentralized Ethereum Staking Service"
-        >Decentralized Ethereum Staking Service</span
-      >
-      <div class="subtitles">
-        <div id="subtitle">Easiest way to stake ETH for Ethereum 2</div>
-        <div id="subtitle">
-          <imageVue :src="'back-button.png'" :size="'16px'" id="right" /> Stake
-          Eth and earn staking rewards
-        </div>
-        <div id="subtitle">
-          <imageVue :src="'back-button.png'" :size="'16px'" id="right" /> Use
-          vEth2 on Defi Protocols
-        </div>
-        <div id="subtitle">
-          <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
-          Liquidity Mining with Governance Token rewards!
-        </div>
-
-        <a
-          href="https://docs.sharedstake.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div id="notion">
-            Learn more
-            <span style="font-size: 14px; font-weight: 700"> ↗</span>
+          <div class="LearnButton">
+            Learn More
+            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
-        </a>
-      </div>
-      <div class="typewriter">
-        <span name="solution" id="solution"
-          >Perfect Solution For {{ perfect }}
-        </span>
-      </div>
-      <div class="flex_column header">
-        <div class="stats">
-          <span class="stat">
-            <div class="miniStats">Staked with SharedStake</div>
-            <div>{{ staked }} ETH</div>
-            <a
-              class="loginButton SGT"
-              href="https://www.sharedstake.org/stake"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div>Stake</div>
-            </a>
-          </span>
-          <span class="stat">
-            <div class="miniStats">Current APY</div>
-            <div>7% + 452%</div>
-            <a
-              class="loginButton SGT"
-              href="https://www.sharedstake.org/earn"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div>Earn</div>
-            </a>
-          </span>
-          <span class="stat">
-            <div class="miniStats">SGT price</div>
-            <div>{{ price }}$</div>
-            <a
-              class="loginButton SGT"
-              href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div>Buy</div>
-            </a>
-          </span>
         </div>
-        <div class="header" id="Down" @click="() => scrollToNext(W2)">
-          <imageVue :src="'back-button.png'" :size="'32px'" id="down" />
+        <div class="Bubble">
+          <div class="exp InfoHeader">Incentivized Staking</div>
+          <div class="exp Info mb30">
+            On top of the Ethereum-2 Staking profits, vEth2 and its usage on
+            other Decentralized Finance Applications are incentivized further
+            with SGT, which is used as a Token for Proof of Participation in the
+            SharedStake Protocol.
+          </div>
+          <ImageVue
+            :src="'dowload.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
+          <div class="LearnButton">
+            Learn More
+            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
+          </div>
+        </div>
+        <div class="Bubble">
+          <div class="exp InfoHeader">Natural Exit Pool</div>
+          <div class="exp Info mb30">
+            10% of the all Staked Ether, is left in the staking contract,
+            creating a liquidity bridge between old and new users. <br />
+            SharedStakers can un-stake their Ether by burning vEth2 anytime!
+            Subject to the amount of Ether in the staking contract.
+          </div>
+          <ImageVue
+            :src="'balance.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
+          <div class="LearnButton">
+            Learn More
+            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
+          </div>
         </div>
       </div>
     </div>
-    <div class="Below">
-      <div class="Below2">
-        <div
-          class="flex_row Wrapper"
-          id="W2"
-          :style="
-            width < 680
-              ? ''
-              : {
-                  transform: 'translate(0, ' + w2translate + 'px)',
-                  opacity: w2opacity,
-                }
-          "
-        >
-          <div class="flex_column title secondPage">
-            <span name="exp" id="exp">Stake & Harvest</span>
-          </div>
-          <div :class="width < 680 ? 'flex_column' : 'flex_row'">
-            <div
-              class="flex_column SHOW"
-              @mouseover="hovered = true"
-              @mouseleave="hovered = false"
-              :style="
-                width < 680
-                  ? ''
-                  : { transform: 'translate(0, ' + w2translate + 'px)' }
-              "
-            >
-              <imageVue
-                :size="width < 680 ? '25vw' : '25vh'"
-                :src="'eth.png'"
-                :height="width < 680 ? false : true"
-                :class="'photos'"
-              />
-              <div id="continue">
-                <div id="continue">Stake Any Amount of Eth</div>
+    <div class="exp roadMap" v-show="scrolled > 2700">
+      <div class="mainBox">
+        <div class="exp titleBox"><div class="X">Roadmap</div></div>
+        <div class="main">
+          <div class="mainCon">
+            <div class="list">
+              <div class="item">
+                <div class="date">2021 Q1</div>
+                <div class="text">Protocol Launched &amp; SGT airdrop</div>
               </div>
-            </div>
-            <div>
-              <imageVue
-                :src="'back-button.png'"
-                :size="'32px'"
-                :id="width < 680 ? 'down' : 'right'"
-              />
-            </div>
-            <div
-              class="flex_column SHOW"
-              @mouseover="hovered = true"
-              @mouseleave="hovered = false"
-              :style="
-                width < 680
-                  ? ''
-                  : { transform: 'translate(0, ' + w2translate + 'px)' }
-              "
-            >
-              <imageVue
-                :size="width < 680 ? '25vw' : '25vh'"
-                :src="'logo-4.png'"
-                :height="width < 680 ? false : true"
-                :class="'photos'"
-              />
-              <div id="continue">
-                <div id="continue">Receive vETH2 token in return.</div>
+
+              <div class="item">
+                <div class="date">2021 Q1</div>
+                <div class="text">Smart Contract Security Audit by Certik</div>
               </div>
-            </div>
-            <div>
-              <imageVue
-                :src="'back-button.png'"
-                :size="'32px'"
-                :id="width < 680 ? 'down' : 'right'"
-              />
-            </div>
-            <div
-              class="flex_column SHOW"
-              @mouseover="hovered = true"
-              @mouseleave="hovered = false"
-              :style="
-                width < 680
-                  ? ''
-                  : { transform: 'translate(0, ' + w2translate + 'px)' }
-              "
-            >
-              <imageVue
-                :size="width < 680 ? '25vw' : '25vh'"
-                :src="'earn.png'"
-                :height="width < 680 ? false : true"
-                :class="'photos'"
-              />
-              <div id="continue">
-                <div id="continue">
-                  Get your staking rewards <br />
-                  with currently 10% APY
+
+              <div class="item">
+                <div class="date">2021 Q2</div>
+                <div class="text">1000 Validators Created</div>
+              </div>
+
+              <div class="item">
+                <div class="date">2021 Q3</div>
+                <div class="text">Leveraged Eth2 staking with Aave</div>
+              </div>
+
+              <div class="item">
+                <div class="date">2021 Q4</div>
+                <div class="text">Decentralized Validators backed by SGT</div>
+              </div>
+
+              <div class="item">
+                <div class="date">2022</div>
+                <div class="text">
+                  vEth2 backed AMM which provides Eth2 staking profits to LPs
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2023</div>
+                <div class="text">
+                  Decentralized Automated Staking Mechanism on Mainnet backed by
+                  SGT
                 </div>
               </div>
             </div>
-            <div>
-              <imageVue
-                :src="'back-button.png'"
-                :size="'32px'"
-                :id="width < 680 ? 'down' : 'right'"
-              />
-            </div>
-            <div
-              class="flex_column SHOW"
-              @mouseover="hovered = true"
-              @mouseleave="hovered = false"
-              :style="
-                width < 680
-                  ? ''
-                  : { transform: 'translate(0, ' + w2translate + 'px)' }
-              "
-            >
-              <imageVue
-                :size="width < 680 ? '25vw' : '25vh'"
-                :src="'sickle.png'"
-                :height="width < 680 ? false : true"
-                :class="'photos'"
-              />
-              <div id="continue">
-                <div id="continue">Harvest more with your vETH2 token!</div>
+            <div class="curve"></div>
+            <div class="list next">
+              <div class="item">
+                <div class="date">2021 Q1</div>
+                <div class="text">DAO Launched</div>
+              </div>
+              <div class="item">
+                <div class="date">2021 Q2</div>
+                <div class="text">
+                  First Incentivized Pools for vEth2 on Curve & Shell
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2021 Q2</div>
+                <div class="text">Defi Support with Barbecue.js</div>
+              </div>
+              <div class="item">
+                <div class="date">2021 Q3</div>
+                <div class="text">
+                  More Integrations on Defi Protocols with Sauce.js...
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2022</div>
+                <div class="text">
+                  Use your Staked Ether on Multiple Blockchains
+                </div>
+              </div>
+              <div class="item">
+                <div class="date">2023</div>
+                <div class="text">Ethereum2 deployment</div>
+              </div>
+              <div class="item">
+                <div class="date">Further Improvements</div>
+                <div class="text">
+                  Ethereum2 is just the beginning of a story for SharedStake.
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            class="flex_column"
-            @mouseover="hovered = true"
-            @mouseleave="hovered = false"
-            :style="
-              width < 680
-                ? ''
-                : { transform: 'translate(0, ' + w2translate + 'px)' }
-            "
-          >
-            <div id="continue" @click="() => scrollToNext(W3)">
-              <div id="continue">vETH2 & SGT</div>
-              <div id="Down">
-                <imageVue :src="'back-button.png'" :size="'32px'" id="down" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex_row Wrapper" id="W3">
-          <div
-            class="flex_column"
-            @mouseover="hovered = true"
-            @mouseleave="hovered = false"
-          >
-            <imageVue
-              :src="'logo-4.png'"
-              :size="width < 680 ? '60vw' : '40vh'"
-              :height="width < 680 ? false : true"
-              :class="hovered ? 'photosHover' : 'photos'"
-            />
-            <div id="continue" @click="() => scrollToNext(W4)">
-              <div id="continue">Make It Snow!</div>
-              <div id="Down">
-                <imageVue :src="'back-button.png'" :size="'32px'" id="down" />
-              </div>
-            </div>
-          </div>
-          <div class="flex_column title secondPage">
-            <span name="exp" id="exp">Incentivized Staking</span>
-            <div id="subtitle">
-              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
-              vETH2<imageVue :src="'logo-4.png'" :size="'28px'" /> is an erc-20
-              version of staked Eth.
-            </div>
-            <div id="subtitle">
-              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
-              By staking your vETH2 on our staking contracts you can harvest
-              the SharedStake Governance Token (SGT).
-            </div>
-            <div id="subtitle">
-              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
-              SGT is the Governance Token of the SharedStake platform. A DAO will
-              be launched soon!
-            </div>
-            <div id="subtitle">
-              <imageVue :src="'back-button.png'" :size="'16px'" id="right" />
-              SharedStake is also incentivising Ethereum staking via
-              collaboration with other DeFi projects.
-            </div>
-          </div>
-        </div>
-        <div class="flex_row Wrapper" id="W4">
-          <div class="flex_column title secondPage">
-            <span name="hodl2" class="hodl">Make It Snow!</span>
-            <div id="subtitle">Our first collaboration is with SnowSwap!</div>
-            <div id="subtitle">
-              The first SGT airdrop will take place for SnowSwap Stakers
-              <imageVue :src="'snowswap2.svg'" :size="'28px'" />
-            </div>
-            <div id="subtitle">
-              • To be eligible: Stake at least 0.5 ETH via SharedStake &
-              Hold at least 10 SNOW tokens at the snapshot date.
-            </div>
-            <div id="subtitle">
-              • Distribution will be linear with the staked amount of ether.
-            </div>
-            <div id="subtitle">
-              • You can also stake your vETH2 token on SnowSwap's ETHSnow pool
-              to earn rewards on your ETH2 & your SGT airdrop!
-            </div>
-            <a
-              href="https://medium.com/snowswap/%EF%B8%8Fbuilding-on-2-0-with-eth2snow-and-sharedstake-partnership-%EF%B8%8F-5ca251f8e1a0"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div id="notion">
-                Learn more
-                <span style="font-size: 14px; font-weight: 700"> ↗</span>
-              </div>
-            </a>
-          </div>
-          <div
-            class="flex_column"
-            @mouseover="hovered = true"
-            @mouseleave="hovered = false"
-          >
-            <a
-              href="https://snowswap.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <imageVue
-                :src="'snowswap.svg'"
-                :size="width < 680 ? '60vw' : '40vh'"
-                :height="width < 680 ? false : true"
-                :class="hovered ? 'photosHover' : 'photos'"
-            /></a>
           </div>
         </div>
       </div>
     </div>
+    <div class="Container" v-show="scrolled <= 2700"></div>
   </div>
 </template>
 
 <script>
-import imageVue from "../Handlers/image.vue";
-import Socials from "../Root/Root/Socials.vue";
-import { timeout } from "../../utils/helpers";
-import axios from "axios";
-import BN from "bignumber.js";
+import ImageVue from "../Handlers/ImageVue";
 export default {
-  components: { imageVue, Socials },
-  data: function () {
-    return {
-      mouseOverCommunity: false,
-      perfect: " Defi",
-      hovered: false,
-      width: 0,
-      W2: 0,
-      w2translate: 0,
-      w2opacity: 1,
-      W3: 0,
-      W4: 0,
-      staked: BN(0),
-      price: 0,
-    };
-  },
-  created: function () {
-    this.width = window.innerWidth;
-    this.W2 = this.W3 = this.W4 = 0;
-  },
-  mounted: async function () {
-    this.onResize();
-    window.addEventListener("scroll", this.handleScroll);
-    window.addEventListener("resize", this.onResize);
-    // stats:
-    let link =
-      "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8";
-    let response = await axios.get(link);
-    this.staked = BN(response.data.result).div(1e18).toFixed(0);
-    let gecko = await axios.get(
-      "https://api.coingecko.com/api/v3/coins/sharedstake-governance-token?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false"
-    );
-    this.price = gecko.data.market_data.current_price.usd;
-
-    //text effect 3
-    let newPerfect = "Ethereum 2";
-    for (let i = 0; i < 100; i++) {
-      let oldPerfect = this.perfect;
-      let len = this.perfect.length;
-      for (; len > 0; len--) {
-        this.perfect = oldPerfect.substring(0, len);
-        await timeout(100);
-      }
-      await timeout(100);
-      len = newPerfect.length;
-      for (let j = 0; j <= len; j++) {
-        this.perfect = newPerfect.substring(0, j);
-        await timeout(100);
-      }
-      await timeout(5000);
-      newPerfect = oldPerfect;
-    }
-  },
-  destroyed() {
-    window.removeEventListener("scroll", this.handleScroll);
-    window.removeEventListener("resize", this.onResize);
-  },
-  methods: {
-    getOpacity(scr, top, x = 0) {
-      let op =
-        (scr / top + x) * (scr / top + x) * (scr / top + x) * (scr / top + x);
-      return op > 1 ? 2 - op : op;
-    },
-    handleScroll() {
-      const scr = document.documentElement.scrollTop; // Any code to be executed when the window is scrolled
-      this.w2opacity = this.getOpacity(scr, this.W2);
-      this.w2translate = (this.W2 - scr).toFixed(0);
-    },
-    scrollToNext: function (y) {
-      window.scrollTo({ top: y, behavior: "smooth" });
-    },
-    onResize() {
-      this.width = window.innerWidth;
-      const top = this.$el.getElementsByClassName("wrapper")[0];
-      if (top) {
-        top.scrollIntoView({ behavior: "smooth", alignTo: false });
-      }
-      //scrolling effect on cont pages
-      var el = document.getElementById("W2");
-      this.W2 = el.offsetTop;
-
-      el = document.getElementById("W3");
-      this.W3 = el.offsetTop;
-
-      el = document.getElementById("W4");
-      this.W4 = el.offsetTop;
-    },
-  },
+  components: { ImageVue },
+  props: ["scrolled", "windowWidth"],
 };
 </script>
 
 <style scoped>
-.secondPage {
-  text-align: left;
-  padding: 20px 20px 50px 20px;
-  max-width: 1000px;
-  align-items: flex-start;
-  font-weight: 300;
-}
-a {
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-family: "Roboto";
-  font-weight: 300;
-}
-.landingPage {
-  background: transparent;
-  justify-content: center;
-  font-family: "Roboto";
-  width: 100%;
-  color: #fafafa;
-  overflow-x: hidden;
-}
-.wrapper {
-  width: 100vw;
-  font-family: "Roboto";
-  font-weight: 300;
-  background: transparent;
-  min-height: 85vh;
-  padding-top: 14vh;
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  grid-template-rows: 0.4fr 1fr 0.4fr 0.2fr;
-  gap: 0em 0em;
-  grid-template-areas:
-    "rainbow exp1 exp1"
-    "rainbow subtitle subtitle"
-    "rainbow typewriter typewriter"
-    "socials socials socials";
-}
-.header {
-  padding: 10px 0px 0 0;
-  width: 100vw;
+/*this is ok until 900px */
+
+.downSign {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  grid-area: socials;
+  bottom: 10px;
+  position: sticky;
 }
 
-.Community {
-  display: block;
-  overflow: visible;
-}
-
-.socials {
-  position: absolute;
-  top: 100%;
-  width: 80%;
-  background: #050505;
-  border: 1px transparent solid;
-  min-height: 30vh;
-  border-radius: 5%;
-}
-.loginButton {
-  margin-right: 20px;
-  background: #09fa8b;
-  border: 1px #09fa8b solid;
-  border-radius: 5px;
-  text-decoration: none;
-  padding: 0 10px 0 10px;
-  font-size: 18px;
-  color: #050505;
-  text-align: center;
-  line-height: 50px; /* same as height! */
-  max-height: 50px;
-  overflow: hidden;
-  transition: all 0.2s ease-in-out;
-}
-.SGT {
-  background: transparent;
-  margin: 0.5vh 0 0.5vh 0;
-  backdrop-filter: blur(12px);
-  border: 1px #fff solid;
+.Container {
+  position: relative;
+  min-height: 100vh;
   color: #fff;
-  line-height: 38px;
-  font-size: 24px;
-  width: 40%;
+  z-index: 1;
 }
-.loginButton:hover {
-  transform: scale(0.95);
-  border: 1px #6296ff solid;
-}
-.myLogo {
-  min-width: 60px;
-  max-width: 100px;
-}
-.content {
-  margin-top: 5vh;
-  padding: 20px 0 0 1vw;
-  max-width: 1000px;
-  align-items: flex-start;
-}
-#title {
-  padding-left: 5vw;
-  font-size: 12vw;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  text-align: left;
-  font-family: "Roboto Mono", monospace;
-  font-weight: 500;
-  grid-area: rainbow;
-  line-height: 1.5;
-}
-@keyframes opac {
-  0% {
-    opacity: 0;
-  }
-  7.5% {
-    opacity: 1;
-  }
-  10% {
-    opacity: 1;
-  }
-  15% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.hodl {
-  font-size: 8vw;
-  font-family: "Roboto";
-  text-shadow: 2px 2px #f60574;
-}
-
-#rainbow {
-  font-weight: 500;
-  margin-bottom: 6vh;
-  color: #09fa8b;
-  word-break: break-all;
-  letter-spacing: 1vw;
-  cursor: pointer;
-}
-#solution {
-  z-index: 100;
-  border-right: 0.15em solid orange; /* The typwriter cursor */
-  font-size: 3.8vw;
-  font-family: hacked, "Consolas";
-  /* text-shadow: 2px 2px #f60574;*/
-  animation: blink-caret 0.75s step-end infinite;
-}
-#exp1,
-#exp {
-  font-size: 6vw;
-  font-family: "Roboto";
-  text-shadow: 2px 2px #f60574;
-}
-#exp1 {
-  text-align: left;
-  grid-area: exp1;
-  text-shadow: -1px -1px 0 rgba(256, 256, 256, 0.4),
-    1px -1px 0 rgba(256, 256, 256, 0.4), -1px 1px 0 rgba(256, 256, 256, 0.4),
-    1px 1px 0 rgba(256, 256, 256, 0.4), 0 -2px 8px, 0 0 2px, 0 0 5px #09fa8b,
-    0 0 15px #00fd87, 0 0 2px #09fa8b, 0 2px 3px #000;
-}
-#subtitle {
-  padding: 20px 0 0 0;
-  font-size: 3vw;
-  text-align: left;
-  font-weight: 500;
-}
-
-.subtitles {
-  grid-area: subtitle;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-#notion {
-  margin: 20px 0 0 0;
-  border: 1px rgba(255, 255, 255, 0.5) solid;
-  border-radius: 5px;
-  font-size: 3vw;
-  text-align: left;
-  vertical-align: text-top;
-  display: flex;
-  transition: transform 0.2s ease-in-out;
-  flex-direction: row;
-  cursor: pointer;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 5px;
-}
-
-#continue {
-  display: flex;
-  flex-direction: column;
-  margin: 20px 0 0 0;
-  vertical-align: text-top;
-  border-radius: 5px;
-  font-size: 3vw;
-  transition: transform 0.2s ease-in-out;
-  cursor: pointer;
-  padding: 6px;
-}
-.nonclickable:hover,
-#continue:hover,
-#notion:hover {
-  transform: scale(0.95);
-  color: #fafafa;
-}
-#Down {
-  align-items: center;
-  justify-content: center;
-}
-#down {
-  cursor: pointer;
-  transform: rotate(270deg);
-  filter: invert(1);
-  transition: all 0.2s ease-in-out;
-}
-#down1 {
-  cursor: pointer;
-  transform: rotate(270deg);
-  margin-top: 2vh;
-  transition: all 0.2s ease-in-out;
-}
-#right {
-  filter: invert(1);
-  transform: rotate(180deg);
-  transition: all 0.2s ease-in-out;
-}
-
-.Wrapper {
-  position: relative;
-  min-height: 99vh;
-  align-items: flex-start;
-  overflow: hidden;
-}
-
-#W2,
-#W3,
-#W4 {
-  align-items: center;
-  justify-content: flex-start;
-  overflow: visible;
-  width: 99vw;
-}
-
-#W2 {
-  padding-top: 10vh;
-  flex-direction: column;
-}
-.Below {
-  background: rgb(2, 0, 36);
-  background: linear-gradient(
-    145deg,
-    rgba(2, 0, 36, 1) 30%,
-    rgba(29, 60, 122, 1) 100%
-  );
-  overflow-x: hidden;
-  width: 100vw;
-}
-.Below2 {
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  min-height: 298vh;
-}
-.typewriter {
-  margin: 5vh auto 0 auto; /* Gives that scrolling effect as the typing happens */
-  letter-spacing: 0.15em; /* Adjust as needed */
-  grid-area: typewriter;
-  text-align: left;
-}
-.photos {
-  padding: 0;
-  cursor: pointer;
-  margin: 0;
-  transition: all 0.3s ease-in-out;
-}
-.photosHover {
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  transform: translate(-5px, -5px);
-  box-shadow: 5px 5px 0px 0px #fafafa, 12px 12px 10px 10px #000;
-}
-#Launcher {
-  width: 99.9vw;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  background: rgba(0, 0, 0, 0);
-  z-index: 100;
-  backdrop-filter: blur(8px);
-}
-.nonclickable {
-  position: relative;
-  color: rgba(255, 255, 255, 0.7);
-  border: none;
-  font-size: 3vw;
-  text-align: left;
-  vertical-align: text-top;
-  display: flex;
-  transition: 0.2s ease-in-out;
-  flex-direction: row;
-  cursor: pointer;
-  align-items: flex-start;
-  justify-content: space-between;
-  backdrop-filter: blur(5px);
-  padding: 1vw;
-  background: transparent;
-}
-.SHOW {
-  margin: 1vh 1vw 1vh 1vw;
-}
-
-.stats {
-  width: 100%;
-  padding: 15px 0 15px 0;
-  margin: 0;
+.LogoContainer {
+  background-image: url(bg-1.png);
+  background-repeat: no-repeat;
+  background-position: center;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  gap: 0px 10px;
-  color: #fff;
-  text-shadow: 1px 1px #ff007a;
   justify-content: center;
   align-items: center;
 }
 
-.miniStats {
-  font-weight: normal;
-  font-size: 18px;
-  line-height: 22px;
-  text-align: center;
-  color: rgb(255, 255, 255);
+.first {
+  padding-top: 5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
+  grid-template-areas: ". .";
 }
-.stat {
+.Logo {
+  padding: 0 145px 100px 0;
+}
+.Explanation {
+  padding: 0 75px 200px 0;
+  animation: TextEnter 0.4s ease-out backwards;
+}
+
+.Exp,
+.Explanation,
+.Logo {
+  align-self: center;
+  justify-self: center;
+}
+
+.mainTitle {
+  margin: 4rem 0px 3rem;
+  overflow-wrap: normal;
+  max-width: 900px;
+  font-size: 64px;
+  font-weight: 300;
+  line-height: 1.2;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
+}
+.exp {
+  font-size: 21px;
+  line-height: 31px;
+  font-weight: 300;
+  padding: 0px;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: justify;
+  text-justify: inter-word;
+  animation: TextEnter 0.6s ease-out backwards 0.2s;
+  z-index: 1;
+}
+.social {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  animation: TextEnter 0.8s ease-out backwards;
+  margin-top: 30px;
+}
+.socialLogo {
+  filter: brightness(300%);
+  transition: filter 0.5s ease-out;
+  cursor: pointer;
+}
+.socialLogo:hover {
+  filter: brightness(500%);
+}
+.LearnButton {
+  font-size: 21px;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  text-align: center;
+  width: 142px;
+  max-height: 25px;
+  transition: transform 0.5s ease-out;
+  cursor: pointer;
+  grid-area: Button;
+}
+.LearnButton:hover {
+  transform: scale(0.98);
+}
+.background2 {
+  background-image: url(bg-2.png);
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 0.4) 60%
+  );
+}
+.second {
+  width: 90%;
+  height: 90%;
+  padding: 10% 5% 0 5%;
+  display: grid;
+  grid-template-columns: 1fr 0.2fr 1fr 0.2fr 1fr 0.2fr 1fr;
+  grid-template-rows: 0.6fr 0.4fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "Eth next1 vEth2 next2 reward next3 harvest"
+    "EthExp . vEth2Exp . rewardExp . harvestExp"
+    "Information Information Information Information Information Information Information";
+  justify-content: center;
+  align-items: center;
+}
+.Information {
+  margin-top: 2.5vh;
+  padding: 5vh;
+  width: 70%;
+  grid-area: Information;
+  font-size: 1.2rem;
+  max-width: 1500px;
+  background-color: rgba(17, 26, 25, 0.85);
+  position: relative;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.9);
+  -webkit-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.517);
+  -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
+  box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469);
+}
+.InfoHeader {
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 42px;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.95);
+  grid-area: Header;
+  align-self: center;
+}
+.Info {
+  margin-bottom: 10px;
+  font-size: 16px;
+  grid-area: Info;
+}
+.ICON {
+  grid-area: Icon;
+  align-self: center;
+  justify-self: end;
+}
+.Information,
+.X {
+  justify-self: center;
+  align-self: center;
+  z-index: 10;
+}
+.Exp {
+  max-width: 200px;
+  font-size: 16px;
+  padding: 0 10px 0 10px;
+  line-height: 31px;
+  font-weight: 300;
+  padding: 0px;
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 2;
+  align-self: start;
+  text-align: justify;
+  text-justify: inter-word;
+}
+.EthExp,
+.Eth {
+  grid-area: Eth;
+  opacity: 0;
+  animation: LogoEnter 0.5s ease-out 0.4s forwards;
+}
+.EthExp {
+  grid-area: EthExp;
+}
+.vEth2Exp,
+.vEth2 {
+  grid-area: vEth2;
+  opacity: 0;
+  animation: LogoEnter 0.5s ease-out 0.6s forwards;
+  filter: brightness(200%);
+}
+.vEth2Exp {
+  grid-area: vEth2Exp;
+}
+.rewardExp,
+.reward {
+  grid-area: reward;
+  opacity: 0;
+  animation: LogoEnter 0.5s ease-out 0.8s forwards;
+}
+.rewardExp {
+  grid-area: rewardExp;
+}
+.harvestExp,
+.harvest {
+  grid-area: harvest;
+  opacity: 0;
+  animation: LogoEnter 0.5s ease-out 1s forwards;
+}
+.harvestExp {
+  grid-area: harvestExp;
+}
+.next1 {
+  grid-area: next1;
+  opacity: 0;
+  animation: LogoEnter 0.5s ease-out 0.5s forwards;
+}
+.next2 {
+  grid-area: next2;
+  opacity: 0;
+  animation: LogoEnter 0.5s ease-out 0.7s forwards;
+}
+.next3 {
+  grid-area: next3;
+  opacity: 0;
+  animation: LogoEnter 0.5s ease-out 0.9s forwards;
+}
+
+.Stats {
+  width: calc(100% - 60px);
+  min-height: auto;
+  max-width: 1500px;
+  margin: 0px auto;
+  padding: 120px 0px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  justify-content: space-between;
+}
+.StatsHeader {
+  color: rgb(255, 255, 255);
+  -webkit-box-align: center;
+  align-items: center;
+  font-size: 50px;
+  line-height: 1.16em;
+  margin: 30px;
+  font-weight: 300;
+  animation: TextEnter 0.4s ease-out backwards;
+  text-align: center;
+}
+.StatsExp {
+  max-width: 660px;
+  text-align: center;
+  margin: 0px auto 30px;
+  font-size: 22px;
+  line-height: 31px;
+  font-weight: 300;
+  padding: 0px;
+  color: rgba(255, 255, 255, 0.75);
+  animation: TextEnter 0.4s ease-out backwards 0.2s;
+}
+.StatsContent {
+  display: flex;
+  width: calc(100% - 60px);
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  max-width: 1500px;
+  margin: 0px auto;
+  padding: 120px 0px;
+  animation: TextEnter 0.4s ease-out backwards 0.4s;
+}
+.Stat {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 30px 0 0;
+}
+.Num {
+  font-size: 100px;
+  line-height: 100px;
+  font-weight: 400;
+}
+.NumExp {
+  font-weight: 300;
+  font-size: 17px;
+  line-height: 23px;
+  margin-bottom: 6px;
+}
+.NumDetail {
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 19px;
+  color: rgb(143, 143, 143);
+}
+.background3 {
+  background-image: url(bg-3.png);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+.vEth2PanelHeader {
+  padding-top: 5vw;
+  z-index: 5;
+  animation: Glow 1s linear alternate infinite;
+}
+
+.third {
+  width: 90%;
+  height: 90%;
+  padding: 0% 5% 10% 5%;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 30px 30px;
+  grid-template-areas:
+    ". ."
+    ". .";
+  max-width: 1500px;
+  justify-content: center;
   align-items: center;
+}
+.Bubble {
+  height: calc(100%-100px);
+  font-size: 1.2rem;
+  background-color: rgba(17, 26, 25, 1);
+  position: relative;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.9);
+  align-self: stretch;
+  justify-self: stretch;
+  padding: 45px 45px 35px 45px;
+  display: grid;
+  grid-template-columns: 1fr 0.3fr;
+  grid-template-rows: 0.4fr 1fr 0.4fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "Header Icon"
+    "Info Info "
+    "Button Button";
+}
+.mb30 {
+  margin-bottom: 30px;
+}
+.roadMap {
+  padding-top: 2rem;
+  padding-bottom: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mainBox {
+  padding-bottom: 1.13rem;
+  width: 80%;
+}
+
+.titleBox {
+  color: #ffffff;
+  font-size: 50px;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 10;
+}
+.titleBox::before {
+  left: -1%;
+  position: absolute;
+  top: -7%;
+  z-index: 1;
+  content: "";
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 2px solid #e6007a;
+  border-radius: 50%;
+}
+.main {
+  width: 100%;
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
-  margin-top: 4px;
-  font-weight: 500;
-  font-size: 32px;
-  line-height: 38px;
+}
+
+.mainCon {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+.curve {
+  width: 100%;
+  background-image: url(curve.png);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 90px;
+  margin: 0.6rem 0;
+  position: relative;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+}
+.mainCon .curve canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.mainCon .list {
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+  left: 0;
+  top: 0;
+  padding-left: 0.1rem;
+}
+.mainCon .list .item {
+  width: 260px; /**HERE */
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  -webkit-flex: none;
+  -moz-box-flex: 0;
+  -ms-flex: none;
+  flex: none;
+}
+.mainCon .list .item .date {
+  font-size: 17px;
+  color: #e6007a;
+  line-height: 1.43em;
+  padding-bottom: 0.3rem;
+}
+.mainCon .list .item .text {
+  font-size: 12px;
+  color: #ffffff;
+  line-height: 1.47em;
+  width: 60%;
+  padding-bottom: 20px;
+}
+.mainCon .list.next {
+  padding-left: 5rem;
+}
+/*Scrollbar for the roadmap*/
+body .roadMap .mainBox .main::-webkit-scrollbar-button {
+  display: none;
+  background: transparent;
+  background-color: transparent;
+}
+body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
+  height: 4px;
+  border-radius: 4px;
+  background: #555;
+}
+body .roadMap .mainBox .main::-webkit-scrollbar {
+  height: 4px;
+  background: transparent;
+}
+.centertext {
   text-align: center;
 }
-
-/* The typing effect */
-@keyframes typing {
+.glow {
+  filter: brightness(300%);
+}
+.reverse {
+  filter: invert(1);
+}
+.DropShadow {
+  filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
+}
+@keyframes LogoEnter {
   from {
-    width: 0.1%;
+    transform: translate3d(-2rem, 0, 0);
+    opacity: 0;
   }
   to {
-    width: 100%;
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
   }
 }
 
-/* The typewriter cursor effect */
-@keyframes blink-caret {
-  from,
+@keyframes Glow {
+  from {
+    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(120%);
+  }
+
   to {
-    border-color: transparent;
-  }
-  50% {
-    border-color: orange;
+    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
   }
 }
-@media only screen and (min-width: 820px) {
-  #title,
-  .hodl {
-    font-size: 107px;
-    line-height: 80%;
+@keyframes TextEnter {
+  from {
+    transform: translate3d(0, 2rem, 0);
+    opacity: 0;
   }
-  .header,
-  #exp1,
-  #exp,
-  .content {
-    font-size: 48px;
-  }
-  #solution {
-    font-size: 32px;
-  }
-  .nonclickable,
-  #continue,
-  #notion {
-    font-size: 20px;
-  }
-  #subtitle {
-    font-size: 28px;
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
   }
 }
-@media only screen and (max-width: 540px) {
-  #title,
-  .hodl {
-    justify-content: flex-start;
-    overflow: visible;
-    font-size: 12vw;
+
+@media only screen and (max-width: 900px) {
+  .first {
+    padding-top: 125px;
+    display: grid;
+    gap: 0px 0px;
+    grid-template-areas: ".";
+    background-image: url(bg-1.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.1fr 2fr;
+    justify-content: center;
+    align-items: center;
   }
-  .header,
-  .content,
-  #exp1,
-  #exp {
-    line-height: 100%;
-    font-size: 6vw;
+  .Logo {
+    padding: 0;
+    max-width: 145px;
+    min-width: 100px;
   }
-  #exp1 {
-    margin-left: 5vw;
+  .LogoContainer {
+    background: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    justify-content: center;
+    align-items: center;
   }
-  .loginButton {
-    font-size: 14px;
+  .mainTitle {
+    margin: 0 auto;
   }
-  .typewriter {
-    margin-top: 0;
-    margin-left: 5vw;
-    width: 95vw;
+  .Explanation {
+    padding: 0 23px 100px 23px;
+    animation: TextEnter 0.4s ease-out backwards;
   }
-  #notion {
-    margin-left: 5vw;
-  }
-  #subtitle {
-    font-size: 5vw;
-    margin-left: 5vw;
-    width: 95vw;
-  }
-  .miniStats {
-    font-size: 16px;
-  }
-  #title {
-    flex-direction: row;
-  }
-  .stat {
-    font-size: 20px;
-  }
-  .wrapper {
-    padding-top: 8vh;
-    grid-template-rows: 0.3fr 0.3fr 1fr 0.1fr 0.3fr;
-    grid-template-areas:
-      "rainbow rainbow rainbow"
-      "exp1 exp1 exp1"
-      "subtitle subtitle subtitle"
-      "typewriter typewriter typewriter"
-      "socials socials socials";
-  }
-  #rainbow {
-    margin-bottom: 0vh;
-  }
-}
-@media only screen and (max-width: 680px) {
-  .Wrapper {
+  .StatsContent {
     flex-direction: column;
+    align-items: center;
+    padding: 0px;
   }
-  #W3 {
-    flex-direction: column-reverse;
+  .StatsHeader {
+    font-size: 42px;
   }
-}
-/*lava lamp */
-.goo {
-  height: 1px;
-}
-.lamp {
-  filter: url("#goo");
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  .Stat {
+    margin: 30px 0 50px 0;
+  }
+  .Num {
+    font-size: 92px;
+  }
 
-  height: 99vh;
-  min-width: 99vw;
-  z-index: -1;
-}
-
-.lava {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-}
-
-.blob {
-  border-radius: 50%;
-  background: #09fa8b;
-  /* Other sample colors:
-  Orange: #e8630a
-  Pink: #EA3281
-  Fuscia: #E71669
-  Purple: #661BAC
-  Kermit green: #75AC25
-  Yellow: #FDC600
-  Light blue: #3283B5
-  Dark blue: #0A5D9A
-  Gunmetal: #232F37
-  BGLight: #1B2735
-  BGDark: #090a0f
-  Want more colors? check out https://coolors.co/ for inspiration.
-  */
-  position: absolute;
-}
-
-.blob.top {
-  border-radius: 50%;
-  width: 100%;
-  height: 4%;
-  top: -3%;
-  left: 0;
-}
-.blob.bottom {
-  border-radius: 50%;
-  width: 100%;
-  height: 4%;
-  bottom: -3%;
-  left: 0;
-}
-.blob:nth-child(1) {
-  width: 200px;
-  height: 200px;
-  left: 35%;
-  bottom: -15%;
-
-  animation: wobble 4s ease-in-out alternate infinite,
-    blob-one ease-in-out 18s infinite;
-}
-.blob:nth-child(2) {
-  width: 330px;
-  height: 330px;
-  right: 72%;
-  bottom: -65%;
-
-  animation: wobble 5s ease-in-out alternate infinite,
-    blob-two ease-in-out 22s infinite;
-}
-.blob:nth-child(3) {
-  width: 150px;
-  height: 150px;
-  bottom: -15%;
-  left: 54%;
-
-  animation: wobble 6s ease-in-out alternate infinite,
-    blob-three ease-in-out 16s infinite;
-}
-.blob:nth-child(4) {
-  width: 235px;
-  height: 235px;
-  bottom: -19%;
-  left: 70%;
-
-  animation: wobble 7s ease-in-out alternate infinite,
-    blob-four ease-in-out 22s infinite;
-}
-.blob:nth-child(4) {
-  width: 235px;
-  height: 235px;
-  bottom: -19%;
-  left: 30%;
-  animation: wobble 8s ease-in-out alternate infinite,
-    blob-four ease-in-out 20s infinite;
-}
-.blob:nth-child(5) {
-  width: 55px;
-  height: 55px;
-  bottom: -25%;
-  left: 54%;
-
-  animation: wobble 9s ease-in-out alternate infinite,
-    blob-five ease-in-out 32s infinite;
-}
-.blob:nth-child(6) {
-  width: 35px;
-  height: 35px;
-  bottom: -25%;
-  right: 22%;
-
-  animation: wobble 10s ease-in-out alternate infinite,
-    blob-six ease-in-out 16s infinite;
-}
-.blob:nth-child(7) {
-  width: 435px;
-  height: 435px;
-  bottom: -85%;
-  right: 20%;
-
-  animation: wobble 11s ease-in-out alternate infinite,
-    blob-seven ease-in-out 32s infinite;
-}
-@keyframes blob-one {
-  0%,
-  100% {
-    transform: translatey(0);
+  .InfoHeader {
+    padding: 15px;
   }
-  50% {
-    transform: translatey(-700%);
+  .third {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 30px 30px;
+    grid-template-areas:
+      ". "
+      ".";
   }
 }
-
-@keyframes blob-two {
-  0%,
-  100% {
-    transform: translatey(0);
-  }
-  50% {
-    transform: translatey(-420%);
-  }
-}
-
-@keyframes blob-three {
-  0%,
-  100% {
-    transform: translatey(0);
-  }
-  50% {
-    transform: translatey(-305%);
-  }
-}
-@keyframes blob-four {
-  0%,
-  100% {
-    transform: translatey(0);
-  }
-  50% {
-    transform: translatey(-605%);
-  }
-}
-@keyframes blob-five {
-  0%,
-  100% {
-    transform: translatey(0);
-  }
-  50% {
-    transform: translatey(-700%);
-  }
-}
-@keyframes blob-six {
-  0%,
-  100% {
-    transform: translatey(0);
-  }
-  50% {
-    transform: translatey(-700%);
-  }
-}
-@keyframes blob-seven {
-  0%,
-  100% {
-    transform: translatey(0);
-  }
-  50% {
-    transform: translatey(-300%);
-  }
-}
-@keyframes wobble {
-  50% {
-    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-  }
-  100% {
-    border-radius: 38% 52% 75% 36% / 50% 40% 50% 60%;
-  }
-}
-
-/*glitch effect  :( */
-
-.glitch {
-  color: white;
-  font-size: 150px;
-  text-transform: upercase;
-  position: relative;
-  display: inline-block;
-}
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.glitch::before {
-  left: 2px;
-  text-shadow: -2px 0 #49fc00;
-  clip: rect(24px, 550px, 90px, 0);
-  animation: glitch-anim-2 3s infinite linear alternate-reverse;
-}
-.glitch::after {
-  left: -2px;
-  text-shadow: -2px 0 #b300fc;
-  clip: rect(85px, 550px, 140px, 0);
-  animation: glitch-anim 2.5s infinite linear alternate-reverse;
-}
-@-webkit-keyframes glitch-anim {
-  0% {
-    clip: rect(49px, 9999px, 42px, 0);
-  }
-  4.166666666666666% {
-    clip: rect(131px, 9999px, 23px, 0);
-  }
-  8.333333333333332% {
-    clip: rect(36px, 9999px, 89px, 0);
-  }
-  12.5% {
-    clip: rect(28px, 9999px, 55px, 0);
-  }
-  16.666666666666664% {
-    clip: rect(79px, 9999px, 101px, 0);
-  }
-  20.833333333333336% {
-    clip: rect(58px, 9999px, 70px, 0);
-  }
-  25% {
-    clip: rect(83px, 9999px, 128px, 0);
-  }
-  29.166666666666668% {
-    clip: rect(86px, 9999px, 65px, 0);
-  }
-  33.33333333333333% {
-    clip: rect(113px, 9999px, 66px, 0);
-  }
-  37.5% {
-    clip: rect(86px, 9999px, 121px, 0);
-  }
-  41.66666666666667% {
-    clip: rect(138px, 9999px, 134px, 0);
-  }
-  45.83333333333333% {
-    clip: rect(73px, 9999px, 115px, 0);
-  }
-  50% {
-    clip: rect(134px, 9999px, 103px, 0);
-  }
-  54.166666666666664% {
-    clip: rect(5px, 9999px, 38px, 0);
-  }
-  58.333333333333336% {
-    clip: rect(120px, 9999px, 90px, 0);
-  }
-  62.5% {
-    clip: rect(76px, 9999px, 79px, 0);
-  }
-  66.66666666666666% {
-    clip: rect(101px, 9999px, 62px, 0);
-  }
-  70.83333333333334% {
-    clip: rect(125px, 9999px, 141px, 0);
-  }
-  75% {
-    clip: rect(129px, 9999px, 67px, 0);
-  }
-  79.16666666666666% {
-    clip: rect(107px, 9999px, 147px, 0);
-  }
-  83.33333333333334% {
-    clip: rect(47px, 9999px, 116px, 0);
-  }
-  87.5% {
-    clip: rect(74px, 9999px, 29px, 0);
-  }
-  91.66666666666666% {
-    clip: rect(137px, 9999px, 92px, 0);
-  }
-  95.83333333333334% {
-    clip: rect(67px, 9999px, 70px, 0);
-  }
-  100% {
-    clip: rect(125px, 9999px, 107px, 0);
-  }
-}
-@keyframes glitch-anim {
-  0% {
-    clip: rect(49px, 9999px, 42px, 0);
-  }
-  4.166666666666666% {
-    clip: rect(131px, 9999px, 23px, 0);
-  }
-  8.333333333333332% {
-    clip: rect(36px, 9999px, 89px, 0);
-  }
-  12.5% {
-    clip: rect(28px, 9999px, 55px, 0);
-  }
-  16.666666666666664% {
-    clip: rect(79px, 9999px, 101px, 0);
-  }
-  20.833333333333336% {
-    clip: rect(58px, 9999px, 70px, 0);
-  }
-  25% {
-    clip: rect(83px, 9999px, 128px, 0);
-  }
-  29.166666666666668% {
-    clip: rect(86px, 9999px, 65px, 0);
-  }
-  33.33333333333333% {
-    clip: rect(113px, 9999px, 66px, 0);
-  }
-  37.5% {
-    clip: rect(86px, 9999px, 121px, 0);
-  }
-  41.66666666666667% {
-    clip: rect(138px, 9999px, 134px, 0);
-  }
-  45.83333333333333% {
-    clip: rect(73px, 9999px, 115px, 0);
-  }
-  50% {
-    clip: rect(134px, 9999px, 103px, 0);
-  }
-  54.166666666666664% {
-    clip: rect(5px, 9999px, 38px, 0);
-  }
-  58.333333333333336% {
-    clip: rect(120px, 9999px, 90px, 0);
-  }
-  62.5% {
-    clip: rect(76px, 9999px, 79px, 0);
-  }
-  66.66666666666666% {
-    clip: rect(101px, 9999px, 62px, 0);
-  }
-  70.83333333333334% {
-    clip: rect(125px, 9999px, 141px, 0);
-  }
-  75% {
-    clip: rect(129px, 9999px, 67px, 0);
-  }
-  79.16666666666666% {
-    clip: rect(107px, 9999px, 147px, 0);
-  }
-  83.33333333333334% {
-    clip: rect(47px, 9999px, 116px, 0);
-  }
-  87.5% {
-    clip: rect(74px, 9999px, 29px, 0);
-  }
-  91.66666666666666% {
-    clip: rect(137px, 9999px, 92px, 0);
-  }
-  95.83333333333334% {
-    clip: rect(67px, 9999px, 70px, 0);
-  }
-  100% {
-    clip: rect(125px, 9999px, 107px, 0);
-  }
-}
-@-webkit-keyframes glitch-anim-2 {
-  6.666666666666667% {
-    clip: rect(59px, 9999px, 148px, 0);
-  }
-  10% {
-    clip: rect(82px, 9999px, 66px, 0);
-  }
-  13.333333333333334% {
-    clip: rect(149px, 9999px, 20px, 0);
-  }
-  16.666666666666664% {
-    clip: rect(133px, 9999px, 86px, 0);
-  }
-  20% {
-    clip: rect(73px, 9999px, 69px, 0);
-  }
-  23.333333333333332% {
-    clip: rect(98px, 9999px, 132px, 0);
-  }
-  26.666666666666668% {
-    clip: rect(24px, 9999px, 72px, 0);
-  }
-  30% {
-    clip: rect(21px, 9999px, 140px, 0);
-  }
-  33.33333333333333% {
-    clip: rect(44px, 9999px, 42px, 0);
-  }
-  36.666666666666664% {
-    clip: rect(142px, 9999px, 114px, 0);
-  }
-  40% {
-    clip: rect(44px, 9999px, 106px, 0);
-  }
-  43.333333333333336% {
-    clip: rect(149px, 9999px, 44px, 0);
-  }
-  46.666666666666664% {
-    clip: rect(77px, 9999px, 132px, 0);
-  }
-  50% {
-    clip: rect(26px, 9999px, 32px, 0);
-  }
-  53.333333333333336% {
-    clip: rect(120px, 9999px, 3px, 0);
-  }
-  56.666666666666664% {
-    clip: rect(145px, 9999px, 51px, 0);
-  }
-  60% {
-    clip: rect(36px, 9999px, 58px, 0);
-  }
-  63.33333333333333% {
-    clip: rect(70px, 9999px, 147px, 0);
-  }
-  66.66666666666666% {
-    clip: rect(74px, 9999px, 53px, 0);
-  }
-  70% {
-    clip: rect(77px, 9999px, 120px, 0);
-  }
-  73.33333333333333% {
-    clip: rect(81px, 9999px, 14px, 0);
-  }
-  76.66666666666667% {
-    clip: rect(115px, 9999px, 16px, 0);
-  }
-  80% {
-    clip: rect(38px, 9999px, 60px, 0);
-  }
-  83.33333333333334% {
-    clip: rect(112px, 9999px, 15px, 0);
-  }
-  86.66666666666667% {
-    clip: rect(133px, 9999px, 8px, 0);
-  }
-  90% {
-    clip: rect(118px, 9999px, 73px, 0);
-  }
-  93.33333333333333% {
-    clip: rect(44px, 9999px, 41px, 0);
-  }
-  96.66666666666667% {
-    clip: rect(148px, 9999px, 125px, 0);
-  }
-  100% {
-    clip: rect(31px, 9999px, 40px, 0);
-  }
-}
-@keyframes glitch-anim-2 {
-  6.666666666666667% {
-    clip: rect(59px, 9999px, 148px, 0);
-  }
-  10% {
-    clip: rect(82px, 9999px, 66px, 0);
-  }
-  13.333333333333334% {
-    clip: rect(149px, 9999px, 20px, 0);
-  }
-  16.666666666666664% {
-    clip: rect(133px, 9999px, 86px, 0);
-  }
-  20% {
-    clip: rect(73px, 9999px, 69px, 0);
-  }
-  23.333333333333332% {
-    clip: rect(98px, 9999px, 132px, 0);
-  }
-  26.666666666666668% {
-    clip: rect(24px, 9999px, 72px, 0);
-  }
-  30% {
-    clip: rect(21px, 9999px, 140px, 0);
-  }
-  33.33333333333333% {
-    clip: rect(44px, 9999px, 42px, 0);
-  }
-  36.666666666666664% {
-    clip: rect(142px, 9999px, 114px, 0);
-  }
-  40% {
-    clip: rect(44px, 9999px, 106px, 0);
-  }
-  43.333333333333336% {
-    clip: rect(149px, 9999px, 44px, 0);
-  }
-  46.666666666666664% {
-    clip: rect(77px, 9999px, 132px, 0);
-  }
-  50% {
-    clip: rect(26px, 9999px, 32px, 0);
-  }
-  53.333333333333336% {
-    clip: rect(120px, 9999px, 3px, 0);
-  }
-  56.666666666666664% {
-    clip: rect(145px, 9999px, 51px, 0);
-  }
-  60% {
-    clip: rect(36px, 9999px, 58px, 0);
-  }
-  63.33333333333333% {
-    clip: rect(70px, 9999px, 147px, 0);
-  }
-  66.66666666666666% {
-    clip: rect(74px, 9999px, 53px, 0);
-  }
-  70% {
-    clip: rect(77px, 9999px, 120px, 0);
-  }
-  73.33333333333333% {
-    clip: rect(81px, 9999px, 14px, 0);
-  }
-  76.66666666666667% {
-    clip: rect(115px, 9999px, 16px, 0);
-  }
-  80% {
-    clip: rect(38px, 9999px, 60px, 0);
-  }
-  83.33333333333334% {
-    clip: rect(112px, 9999px, 15px, 0);
-  }
-  86.66666666666667% {
-    clip: rect(133px, 9999px, 8px, 0);
-  }
-  90% {
-    clip: rect(118px, 9999px, 73px, 0);
-  }
-  93.33333333333333% {
-    clip: rect(44px, 9999px, 41px, 0);
-  }
-  96.66666666666667% {
-    clip: rect(148px, 9999px, 125px, 0);
-  }
-  100% {
-    clip: rect(31px, 9999px, 40px, 0);
+@media only screen and (max-width: 770px) {
+  .second {
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
+    grid-template-areas:
+      "Information"
+      "Eth"
+      "EthExp"
+      "next1"
+      "vEth2"
+      "vEth2Exp"
+      "next2"
+      "reward"
+      "rewardExp"
+      "next3"
+      "harvest"
+      "harvestExp";
+    padding-bottom: 15vh;
   }
 }
 </style>
