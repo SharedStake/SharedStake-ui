@@ -32,7 +32,13 @@
       </div>
       <div class="StatsExp">Hold onto your Steak and come back!</div>
       <div class="LearnButton">
-        Learn More
+        <a
+          href="https://sips.sharedstake.org/SIPS/sip-3.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn More</a
+        >
         <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
       </div>
     </div>
