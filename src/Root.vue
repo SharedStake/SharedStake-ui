@@ -162,6 +162,14 @@
           <div class="footerGroupName">Developers</div>
           <span class="link footerLink">
             <a
+              href="https://github.com/SharedStake"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Github
+            </a></span
+          >
+          <span class="link footerLink">
+            <a
               href="https://docs.sharedstake.org/"
               target="_blank"
               rel="noopener noreferrer"
@@ -170,10 +178,10 @@
           >
           <span class="link footerLink">
             <a
-              href="https://github.com/SharedStake"
+              href="https://sips.sharedstake.org/"
               target="_blank"
               rel="noopener noreferrer"
-              >Github
+              >SIPs
             </a></span
           >
         </div>

@@ -46,7 +46,6 @@ body {
 a {
   text-decoration: none;
   font-family: "Roboto";
-  font-weight: 700;
   color: #fff;
 }
 </style>

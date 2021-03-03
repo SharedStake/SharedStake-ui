@@ -16,12 +16,24 @@
           valuable and liquid.
         </div>
         <div class="LearnButton" v-show="windowWidth <= 500">
-          Learn More
+          <a
+            href="https://docs.sharedstake.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn More</a
+          >
           <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
         </div>
         <div class="social">
           <div class="LearnButton" v-show="windowWidth > 500">
-            Learn More
+            <a
+              href="https://docs.sharedstake.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn More
+            </a>
             <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
           <a
@@ -161,10 +173,6 @@
             :size="'70px'"
             class="exp ICON reverse"
           />
-          <div class="LearnButton">
-            Learn More
-            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
-          </div>
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">Defi Compatible</div>
@@ -181,10 +189,6 @@
             :size="'70px'"
             class="exp ICON reverse"
           />
-          <div class="LearnButton">
-            Learn More
-            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
-          </div>
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">Incentivized Staking</div>
@@ -199,10 +203,6 @@
             :size="'70px'"
             class="exp ICON reverse"
           />
-          <div class="LearnButton">
-            Learn More
-            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
-          </div>
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">Natural Exit Pool</div>
@@ -217,11 +217,17 @@
             :size="'70px'"
             class="exp ICON reverse"
           />
-          <div class="LearnButton">
-            Learn More
-            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
-          </div>
         </div>
+      </div>
+      <div class="LearnButton">
+        <a
+          href="https://sips.sharedstake.org/SIPS/sip-3.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn More</a
+        >
+        <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
       </div>
     </div>
     <div class="exp roadMap" v-show="scrolled > 2700">
@@ -424,6 +430,7 @@ export default {
   max-height: 25px;
   transition: transform 0.5s ease-out;
   cursor: pointer;
+  z-index: 3;
   grid-area: Button;
 }
 .LearnButton:hover {
@@ -657,8 +664,8 @@ export default {
 
 .third {
   width: 90%;
-  height: 90%;
-  padding: 0% 5% 10% 5%;
+  height: 95%;
+  padding: 0% 5% 5% 5%;
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -683,12 +690,11 @@ export default {
   padding: 45px 45px 35px 45px;
   display: grid;
   grid-template-columns: 1fr 0.3fr;
-  grid-template-rows: 0.4fr 1fr 0.4fr;
+  grid-template-rows: 0.4fr 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "Header Icon"
-    "Info Info "
-    "Button Button";
+    "Info Info ";
 }
 .mb30 {
   margin-bottom: 30px;

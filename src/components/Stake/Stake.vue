@@ -63,7 +63,9 @@
                 maxlength="39"
                 spellcheck="false"
                 :value="
-                  isDeposit ? (Damount / 32.1) * 32 : (Damount / 32) * 32.1
+                  isDeposit
+                    ? (Damount / (32 + 0.1)) * 32
+                    : (Damount / 32) * (32 + adminFee)
                 "
                 readonly
               />
@@ -91,6 +93,26 @@
             {{ buttonText }}
           </span>
         </button>
+        <div class="notification" v-if="isDeposit">
+          *Checkout
+          <a
+            href="https://snowswap.org/ethsnow/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            snowswap</a
+          >
+          for better pricing.
+        </div>
+        <div class="notification" v-else>
+          *Protocol fee refund is currently
+          <a
+            href="https://snapshot.page/#/sharedstake.eth/proposal/QmdGJMwRHtTSFVsxufj7TKPK8G1zqwBbk8YuHfrqbWEsGd"
+            target="_blank"
+            rel="noopener noreferrer"
+            >disabled.</a
+          >
+        </div>
       </div>
       <div class="navbar">
         <span id="gas">Gas</span>
@@ -147,9 +169,9 @@ export default {
     maxValShares: 0,
     remaining: BN(0),
     remainingByFee: BN(0),
-
     chosenGas: 130,
     loading: true,
+    adminFee: 0,
   }),
   mounted: async function () {
     this.gas = await getCurrentGasPrices();
@@ -612,5 +634,11 @@ export default {
 }
 .background3 {
   background-image: url(vEth2.png);
+}
+.notification {
+  width: 90%;
+  padding: 5%;
+  color: tomato;
+  font-size: 16px;
 }
 </style>
