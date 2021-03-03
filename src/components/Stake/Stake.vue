@@ -591,7 +591,7 @@ export default {
   font-feature-settings: "tnum";
   position: relative;
   display: inline-block;
-  width: 100%;
+  width: 70%;
   padding: 4px 11px;
   color: #fff;
   background-color: transparent;
