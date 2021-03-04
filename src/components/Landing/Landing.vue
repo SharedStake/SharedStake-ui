@@ -15,27 +15,23 @@
           users to stake any amount of Ether, while keeping their staked amount
           valuable and liquid.
         </div>
-        <div class="LearnButton" v-show="windowWidth <= 500">
-          <a
-            href="https://docs.sharedstake.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn More</a
-          >
-          <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
-        </div>
+        <router-link
+          class="LearnButton"
+          v-show="windowWidth <= 500"
+          to="/stake"
+        >
+          Stake!
+          <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
+        </router-link>
         <div class="social">
-          <div class="LearnButton" v-show="windowWidth > 500">
-            <a
-              href="https://docs.sharedstake.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn More
-            </a>
-            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
-          </div>
+          <router-link
+            class="LearnButton"
+            v-show="windowWidth > 500"
+            to="/stake"
+          >
+            Stake!
+            <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
+          </router-link>
           <a
             href="https://twitter.com/SharedStake"
             target="_blank"
@@ -84,7 +80,7 @@
           <div class="NumDetail">Liquid & Incentivised</div>
         </div>
         <div class="Stat">
-          <div class="Num">99.5%</div>
+          <div class="Num">131%</div>
           <div class="NumExp">Current APY</div>
           <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
         </div>
@@ -147,10 +143,24 @@
             bearing token which has 1:1 price ratio with Ether. vEth2 Staking is
             also incentivized by SGT, SharedStake Governance Token.
           </div>
+          <div class="LearnButton">
+            <a
+              href="https://docs.sharedstake.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn More
+            </a>
+            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
+          </div>
         </div>
       </div>
     </div>
-    <div class="Container flex_column" v-show="scrolled >= 2000">
+    <div
+      class="Container flex_column"
+      v-show="scrolled >= 2000"
+      :style="{ paddingBottom: '5rem' }"
+    >
       <div class="flex_row vEth2PanelHeader">
         <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
         <div class="StatsHeader">vEth2</div>
@@ -664,8 +674,8 @@ export default {
 
 .third {
   width: 90%;
-  height: 95%;
-  padding: 0% 5% 5% 5%;
+  height: 90%;
+  padding: 0% 5% 1% 5%;
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -679,7 +689,7 @@ export default {
   align-items: center;
 }
 .Bubble {
-  height: calc(100%-100px);
+  height: calc(100% - 100px);
   font-size: 1.2rem;
   background-color: rgba(17, 26, 25, 1);
   position: relative;
@@ -796,21 +806,15 @@ export default {
 .mainCon .list.next {
   padding-left: 5rem;
 }
-/*Scrollbar for the roadmap*/
-body .roadMap .mainBox .main::-webkit-scrollbar-button {
-  display: none;
-  background: transparent;
-  background-color: transparent;
-}
-body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
-  height: 4px;
-  border-radius: 4px;
+
+/* body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
+  height: 5px;
   background: #555;
 }
 body .roadMap .mainBox .main::-webkit-scrollbar {
+  background: #888;
   height: 4px;
-  background: transparent;
-}
+} */
 .centertext {
   text-align: center;
 }
@@ -908,22 +912,24 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 
   .InfoHeader {
-    padding: 15px;
+    padding: 15px 15px 15px 0;
+    font-size: 25px;
   }
   .third {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     gap: 30px 30px;
     grid-template-areas:
-      ". "
+      "."
       ".";
   }
 }
 @media only screen and (max-width: 770px) {
   .second {
     grid-template-columns: 1fr;
-    grid-template-rows: 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
+    grid-template-rows: 2fr 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
     grid-template-areas:
+      "Information"
       "Information"
       "Eth"
       "EthExp"
@@ -937,6 +943,14 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "harvest"
       "harvestExp";
     padding-bottom: 15vh;
+  }
+}
+@media only screen and (max-width: 375px) {
+  .mainTitle {
+    font-size: 50px;
+  }
+  .Num {
+    font-size: 75px;
   }
 }
 </style>

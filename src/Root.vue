@@ -205,17 +205,7 @@
           >
         </div>
       </div>
-      <div class="bottom">
-        SharedStake by
-        <a
-          href="https://twitter.com/eth_bear"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ImageVue :src="'icebear.png'" :size="'25px'" class="Logo icebear" />
-        </a>
-        © 2021
-      </div>
+      <div class="bottom">SharedStake © 2021</div>
     </div>
   </div>
 </template>

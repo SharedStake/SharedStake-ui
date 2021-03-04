@@ -93,7 +93,7 @@
             {{ buttonText }}
           </span>
         </button>
-        <div class="notification" v-if="isDeposit">
+        <!-- <div class="notification" v-if="isDeposit">
           *Checkout
           <a
             href="https://snowswap.org/ethsnow/"
@@ -102,15 +102,16 @@
           >
             snowswap</a
           >
-          for better pricing.
-        </div>
-        <div class="notification" v-else>
-          *Protocol fee refund is currently
+          for better pricing↗
+        </div> -->
+        <div class="notification" v-if="!isDeposit">
+          *Protocol fee refund is <span class="underline">currently</span>
           <a
             href="https://snapshot.page/#/sharedstake.eth/proposal/QmdGJMwRHtTSFVsxufj7TKPK8G1zqwBbk8YuHfrqbWEsGd"
             target="_blank"
             rel="noopener noreferrer"
-            >disabled.</a
+          >
+            disabled↗</a
           >
         </div>
       </div>
@@ -172,6 +173,7 @@ export default {
     chosenGas: 130,
     loading: true,
     adminFee: 0,
+    contractBal: 0,
   }),
   mounted: async function () {
     this.gas = await getCurrentGasPrices();
@@ -213,8 +215,11 @@ export default {
           this.remainingByFee = BN(0);
         }
         this.BNamount = this.vEth2Bal;
-        if (this.vEth2Bal.gt(this.remainingByFee)) {
+        if (this.BNamount.gt(this.remainingByFee)) {
           this.BNamount = this.remainingByFee;
+        }
+        if (this.BNamount.gt(this.contractBal)) {
+          this.BNamount = this.contractBal;
         }
         this.Damount = this.BNamount.dividedBy(1e18);
       }
@@ -260,7 +265,6 @@ export default {
           .withdraw(myamount)
           .send({
             from: walletAddress,
-            gas: 200000,
             gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
           })
           .on("transactionHash", function (hash) {
@@ -288,6 +292,7 @@ export default {
         this.EthBal = BN(amount);
         let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
         this.vEth2Bal = BN(veth2);
+        // this.vEth2Bal = BN(1e20); //delete this line
         if (this.isDeposit) {
           this.balance = BN(amount).dividedBy(1e18).toFixed(6);
           this.otherBalance = BN(veth2).dividedBy(1e18).toFixed(6);
@@ -299,6 +304,10 @@ export default {
         this.remaining = BN(remaining);
         let remainingByFee = await validator.methods.adminFeeTotal().call();
         this.remainingByFee = BN(remainingByFee).multipliedBy(320);
+        let contractBal = await window.web3.eth.getBalance(
+          window.web3.utils.toChecksumAddress(validator._address)
+        );
+        this.contractBal = BN(contractBal);
         this.amountCheck(true);
         this.loading = false;
       } catch (err) {
@@ -324,11 +333,7 @@ export default {
         this.buttonText = "Amount is too big";
         return;
       }
-      if (this.BNamount.gt(this.remainingByFee) && !this.isDeposit) {
-        this.validInput = false;
-        this.buttonText = "Not enough funds in Exit Pool";
-        return;
-      }
+
       if (this.Damount[this.Damount.length - 1] === ".") {
         this.validInput = false;
         this.buttonText = "waiting...";
@@ -345,6 +350,17 @@ export default {
         : this.vEth2Bal.gte(this.BNamount);
       if (!this.validInput) {
         this.buttonText = "Insufficient balance";
+        return;
+      }
+      if (this.BNamount.gt(this.contractBal) && !this.isDeposit) {
+        this.validInput = false;
+        this.buttonText = "Not enough funds in Exit Pool";
+        return;
+      }
+      if (this.BNamount.gt(this.remainingByFee) && !this.isDeposit) {
+        this.validInput = false;
+        this.buttonText = "Not enough funds in Exit Pool";
+        return;
       }
       if (this.validInput) {
         this.buttonText = this.isDeposit ? "Stake" : "Unstake";
@@ -640,5 +656,8 @@ export default {
   padding: 5%;
   color: tomato;
   font-size: 16px;
+}
+.underline {
+  text-decoration: underline;
 }
 </style>
