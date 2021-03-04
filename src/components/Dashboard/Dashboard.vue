@@ -4,22 +4,22 @@
       <div class="StatsHeader">Watch your Stake Sizzle!</div>
       <div class="StatsExp">
         <span id="colored">SharedStake</span> users earn staking rewards
-        <span id="colored">every block</span>, so you win whether you 
-        hodl your stake or decide to invest your vEth2 in supported Ethereum 
-        dapps like Uniswap, SushiSwap, Curve, Maker, Compound, Aave, 
+        <span id="colored">every block</span>, whether you hodl your stake or
+        decide to invest your vEth2 in supported Ethereum dapps like Uniswap,
+        SushiSwap, Curve, Maker, Compound, Aave, and
         <span id="colored">many more...</span>
       </div>
       <div class="StatsExp">
         The SharedStake Dashboard shows you your
         <span id="colored">Eth2 staking profits </span>
-        along with additional information. Users can 
-        also track the overall statistics of the Protocol.
+        along with additional information. Users can also track the overall
+        statistics of the Protocol.
       </div>
       <div class="StatsExp">
         The Dashboard works with an off-chain calculator:<span id="colored">
           Barbecue.js</span
         >
-        that calculates the profit of any address and a Defi Adapter:<span
+        that calculates the profit of any address and a DeFi Adapter:<span
           id="colored"
         >
           Sauce.js</span
@@ -27,11 +27,10 @@
         to support additional on-chain contract interactions.
       </div>
       <div class="StatsExp">
-        The Dashboard is currently under construction and is scheduled to be 
+        The Dashboard is currently under construction and is scheduled to be
         active in May 2021.
       </div>
-      <div class="StatsExp">Let your stake marinate while you hodl and come 
-      back soon!</div>
+      <div class="StatsExp">Let your stake marinate and come back soon!</div>
       <div class="LearnButton">
         <a
           href="https://sips.sharedstake.org/SIPS/sip-3.html"

@@ -68,7 +68,7 @@
     </div>
     <div class="flex_column Stats" v-show="scrolled >= 350">
       <div class="StatsHeader">Capital efficient staking</div>
-      <div class="StatsExp">Financial optimization with best-in-class performance</div>
+      <div class="StatsExp">Financial optimization at its finest.</div>
       <div class="StatsExp">
         Better rewards, improved user experience, and more DeFi compatibility
         than any other Staking-as-a-Service model on the market.
@@ -80,7 +80,7 @@
           <div class="NumDetail">Liquid & Incentivised</div>
         </div>
         <div class="Stat">
-          <div class="Num">131%</div>
+          <div class="Num">139%</div>
           <div class="NumExp">Current APY</div>
           <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
         </div>
@@ -127,22 +127,22 @@
           Simply holding vEth2 entitles you to staking rewards
         </div>
         <div class="Exp harvestExp">
-          Harvest more yield with your vEth2 token in partner DeFi protocols!
+          Harvest more yield with your vEth2 in supported DeFi protocols!
         </div>
         <div class="exp Information" v-show="scrolled >= 1500">
           <div class="InfoHeader centertext" v-show="scrolled >= 1500">
             Staking with SharedStake
           </div>
           <div class="exp Info" v-show="scrolled >= 1500">
-            SharedStake users earn staking rewards every block so you win whether 
-            you hodl your stake or decide to invest your vEth2 in supported Ethereum 
-            dapps like Uniswap, SushiSwap, Curve, Maker, Compound, Aave, 
-            and many more...
+            SharedStake users earn staking rewards every block, whether you hodl
+            your stake or decide to invest your vEth2 in supported Ethereum
+            dapps like Uniswap, SushiSwap, Curve, Maker, Compound, Aave, and
+            many more...
           </div>
           <div class="exp Info" v-show="scrolled >= 1500">
-            vEth2 is designed for DeFi compatibility. It is a yield
-            bearing token with a 1:1 price ratio with Ether. vEth2 staking is
-            also incentivized with SGT, the SharedStake Governance Token.
+            vEth2 is designed for DeFi compatibility. It is a yield bearing
+            token with a 1:1 price ratio with Ether. vEth2 staking is also
+            incentivized further with SGT, the SharedStake Governance Token.
           </div>
           <div class="LearnButton">
             <a
@@ -174,10 +174,10 @@
         <div class="Bubble">
           <div class="exp InfoHeader">Financially Optimized</div>
           <div class="exp Info mb30">
-            SharedStake optimizes Eth2 staking profits by creating an
-            off-chain yield bearing stable token (vEth2 has a 1:1 price ratio with
-            Ether). Ethereum2 profit distribution will start with the Eth2 launch so
-            until then, track your Eth2 profits in the SharedStake dashboard.
+            SharedStake optimizes Eth2 staking profits by creating an off-chain
+            yield bearing stable token (vEth2 has a 1:1 price ratio with Ether).
+            Ethereum2 profit distribution will start with the Eth2 launch so
+            until then, track your Eth2 profits in the SharedStake Dashboard.
           </div>
           <ImageVue
             :src="'discount.svg'"
@@ -188,12 +188,12 @@
         <div class="Bubble">
           <div class="exp InfoHeader">DeFi Compatible</div>
           <div class="exp Info mb30">
-            By using vEth2 instead of other wrapped Ether tokens, DeFi
-            users gain an extra 5-6% yearly growth with off-chain profit
-            distribution. <br />
+            By using vEth2 instead of other wrapped Ether tokens, DeFi users
+            gain an extra 8-9% yearly growth with off-chain profit distribution.
+            <br />
             Since vEth2 doesn't contain any 'imaginary' staking rewards, its
-            stability is derived from its peg to Ether's value, practically 
-            eliminating users' concerns with impermanent loss.
+            stability is derived from its peg to Ether's value, practically
+            eliminating concerns with Impermanent Loss.
           </div>
           <ImageVue
             :src="'diamond.svg'"
@@ -204,10 +204,10 @@
         <div class="Bubble">
           <div class="exp InfoHeader">Incentivized Staking</div>
           <div class="exp Info mb30">
-            On top of Ethereum2 staking profits, holding vEth2 and leveraging 
-            it on other Decentralized Finance applications is further 
-            incentivized with SGT used as a Proof of Participation token within 
-            the SharedStake Protocol.
+            On top of Ethereum2 staking profits, holding vEth2 and leveraging it
+            on other Decentralized Finance applications is further incentivized
+            with SGT, used as a Proof of Participation token within the
+            SharedStake Protocol.
           </div>
           <ImageVue
             :src="'dowload.svg'"
@@ -216,13 +216,12 @@
           />
         </div>
         <div class="Bubble">
-          <div class="exp InfoHeader">Natural Exit Pool</div>
+          <div class="exp InfoHeader">Built-in Exit Pool</div>
           <div class="exp Info mb30">
-            10% of all staked Ether remains in the staking contract,
-            creating a liquidity bridge between all users, old and new. <br />
-            SharedStakers can un-stake their Ether at anytime by burning 
-            their vEth2 through the staking contract (subject to current 
-            amount) or through a DeFi partner product.
+            10% of all staked Ether remains in the staking contract, creating a
+            liquidity bridge between all users, old and new. <br />
+            SharedStakers can un-stake their Ether at anytime by burning their
+            vEth2 through the staking contract, subject to the pooled amount.
           </div>
           <ImageVue
             :src="'balance.svg'"
@@ -282,8 +281,7 @@
               <div class="item">
                 <div class="date">2023</div>
                 <div class="text">
-                  SGT-based Decentralized Automated Staking Mechanism on 
-                  Mainnet
+                  SGT-based Decentralized Automated Staking Mechanism on Mainnet
                 </div>
               </div>
             </div>
@@ -411,7 +409,7 @@ export default {
   padding: 0px;
   margin-bottom: 30px;
   color: rgba(255, 255, 255, 0.75);
-  text-align: justify;
+  /* text-align: justify; */
   text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
   z-index: 1;
@@ -529,7 +527,7 @@ export default {
   color: rgba(255, 255, 255, 0.9);
   z-index: 2;
   align-self: start;
-  text-align: justify;
+  /* text-align: justify; */
   text-justify: inter-word;
 }
 .EthExp,
@@ -636,7 +634,7 @@ export default {
   padding: 0 30px 0 0;
 }
 .Num {
-  font-size: 100px;
+  font-size: 97px;
   line-height: 100px;
   font-weight: 400;
 }
