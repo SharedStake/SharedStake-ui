@@ -594,7 +594,7 @@ export default {
 .mainPart,
 .statsPart,
 .userPart {
-  padding: 1vh 2vw 1vh 2vw;
+  padding: 0.5vh 1.5vw 0.5vh 1.5vw;
 }
 
 .mainPart,
