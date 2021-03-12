@@ -75,7 +75,7 @@
       </div>
       <div class="StatsContent">
         <div class="Stat">
-          <div class="Num">5440</div>
+          <div class="Num">7500</div>
           <div class="NumExp">Ether Staked with SharedStake</div>
           <div class="NumDetail">Liquid & Incentivised</div>
         </div>
