@@ -1,156 +1,202 @@
 <template>
   <div class="flex_column stake">
-    <!-- <router-link to="/">back</router-link> -->
-    <div class="flex_column Staker">
-      <a
-        class="info-icon"
-        :href="'https://www.notion.so/SharedStake-b795e062fcb54f89a79b98f09a922c05#f9f8c7bca1344d32b0d308d9dad5a35c'"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><ImageVue :src="'info-icon.png'" :size="'16px'"
-      /></a>
-      <div class="balance" id="balance">balance: {{ balance }}</div>
-      <div
-        :class="validInput ? 'flex_row stakePage' : 'flex_row stakePage redBG'"
-      >
-        <input
-          class="token-amount-input"
-          inputmode="decimal"
-          title="Token Amount"
-          autocomplete="off"
-          autocorrect="off"
-          type="text"
-          pattern="^[0-9]*[.,]?[0-9]*$"
-          placeholder="0.0"
-          minlength="1"
-          maxlength="39"
-          spellcheck="false"
-          value=""
-          v-model="Damount"
-        />
-        <ImageVue
-          :src="isDeposit ? 'eth-logo.png' : 'logo-2.png'"
-          :size="'20px'"
-        />
-        <div class="ETH">{{ isDeposit ? "ETH" : "vETH2" }}</div>
-        <div class="toMax" @click="onMAX" title="Get max token">MAX</div>
+    <div class="staker">
+      <div class="chooser">
+        <div class="navbar">
+          <button
+            class="switch"
+            :class="{ switch_active: isDeposit }"
+            @click="isDeposit = true"
+          >
+            <span>Stake</span>
+          </button>
+          <button
+            class="switch"
+            :class="{ switch_active: !isDeposit }"
+            @click="isDeposit = false"
+          >
+            <span>Unstake</span>
+          </button>
+        </div>
       </div>
-      <div class="arrow_down"><Arrow :direction="'down'" :size="16" /></div>
-      <div v-if="Damount" v-show="Damount > 0" class="balance">
-        {{
-          isDeposit
-            ? (Damount / 33) * 32 + " vETH2"
-            : (Damount / 32) * 33 + " ETH"
-        }}
+      <div class="stakePage">
+        <div class="sPElement input">
+          <div class="inputBody">
+            <div class="flex_row">
+              <input
+                class="token-amount-input"
+                inputmode="decimal"
+                title="Token Amount"
+                autocomplete="off"
+                autocorrect="off"
+                type="text"
+                pattern="^[0-9]*[.,]?[0-9]*$"
+                placeholder="0.0"
+                minlength="1"
+                maxlength="39"
+                spellcheck="false"
+                value=""
+                v-model="Damount"
+              />
+              <div class="ant-col">{{ isDeposit ? " ETH" : "vETH2" }}</div>
+            </div>
+            <div class="balance" id="balance" @click="onMAX">
+              wallet: {{ balance }}
+            </div>
+            <div :class="isDeposit ? 'background2' : 'background3'" />
+          </div>
+        </div>
+        <ImageVue class="sPElement" :src="'down.png'" :size="'30px'" />
+        <div class="sPElement input">
+          <div class="inputBody">
+            <div class="flex_row">
+              <input
+                class="token-amount-input"
+                inputmode="decimal"
+                title="Token Amount"
+                autocomplete="off"
+                autocorrect="off"
+                type="text"
+                pattern="^[0-9]*[.,]?[0-9]*$"
+                placeholder="0.0"
+                minlength="1"
+                maxlength="39"
+                spellcheck="false"
+                :value="
+                  isDeposit
+                    ? (Damount / (32 + 0.1)) * 32
+                    : (Damount / 32) * (32 + adminFee)
+                "
+                readonly
+              />
+              <div class="ant-col">
+                {{ isDeposit ? " vETH2" : " ETH" }}
+              </div>
+            </div>
+            <div class="balance" id="balance" @click="onMAX">
+              wallet: {{ otherBalance }}
+            </div>
+            <div :class="isDeposit ? 'background3' : 'background2'" />
+          </div>
+        </div>
+        <button
+          class="StakeButton"
+          :class="{
+            switch_active: buttonText == 'Stake' || buttonText == 'Unstake',
+          }"
+          @click="onSubmit"
+        >
+          <span v-if="loading">
+            <ImageVue :src="'loading.svg'" :size="'45px'" />
+          </span>
+          <span v-else>
+            {{ buttonText }}
+          </span>
+        </button>
+        <!-- <div class="notification" v-if="isDeposit">
+          *Checkout
+          <a
+            href="https://snowswap.org/ethsnow/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            snowswap</a
+          >
+          for better pricing↗
+        </div> -->
+        <div class="notification" v-if="!isDeposit">
+          *Protocol fee refund is <span class="underline">currently</span>
+          <a
+            href="https://snapshot.page/#/sharedstake.eth/proposal/QmdGJMwRHtTSFVsxufj7TKPK8G1zqwBbk8YuHfrqbWEsGd"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            disabled↗</a
+          >
+        </div>
       </div>
-      <button
-        class="flex_row stakeButton"
-        @click="onSubmit"
-        :id="buttonText == 'Stake' || buttonText == 'Unstake' ? '' : 'disabled'"
-      >
-        {{ buttonText }}
-      </button>
-      <gasChooser :updateGas="this.updateGas" />
+      <div class="navbar">
+        <span id="gas">Gas</span>
+        <button
+          class="switch"
+          :class="{ switch_active: chosenGas == gas.low }"
+          @click="updateGas(gas.low)"
+        >
+          <span>{{ gas.low.toFixed(0) }}</span>
+        </button>
+        <button
+          class="switch"
+          :class="{ switch_active: chosenGas == gas.medium }"
+          @click="updateGas(gas.medium)"
+        >
+          <span>{{ gas.medium.toFixed(0) }}</span>
+        </button>
+        <button
+          class="switch"
+          :class="{ switch_active: chosenGas == gas.high }"
+          @click="updateGas(gas.high)"
+        >
+          <span>{{ gas.high.toFixed(0) }}</span>
+        </button>
+      </div>
     </div>
-    <div
-      :class="{ toggle: true, 'toggle--withdraw': !isDeposit }"
-      @click="toggleMode"
-    >
-      <div class="toggle__label-wrapper">
-        <span class="toggle__label">Stake</span>
-      </div>
-
-      <div class="toggle__label-wrapper">
-        <span class="toggle__label">Unstake</span>
-      </div>
-
-      <div class="toggle__switch">
-        <span class="toggle__label toggle__label--active" v-show="isDeposit">
-          Stake
-        </span>
-        <span class="toggle__label toggle__label--active" v-show="!isDeposit">
-          Unstake
-        </span>
-      </div>
-    </div>
-    <transition-group name="list" tag="span">
-      <div
-        v-show="txs.length > 0"
-        class="exp"
-        v-for="(tx, index) in txs"
-        :key="index"
-      >
-        <Notifier
-          :id="tx.id"
-          :index="index"
-          :success="tx.success"
-          :msg="tx.msg"
-          @click.native="closeTx(index)"
-        />
-      </div>
-    </transition-group>
-    <!-- <button @click="addTx()">change txs</button> -->
-    <TotalStaked class="Graph" :explanation="false" :updater="updateGraph" />
   </div>
 </template>
 
 <script>
-import TotalStaked from "../Stats/Graphs/TotalStaked";
-import ImageVue from "../Handlers/image.vue";
-import Arrow from "../../assets/svg/arrow.vue";
-import gasChooser from "../Handlers/gasChooser";
-import Notifier from "../Handlers/notifier.vue";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
+import { mapGetters } from "vuex";
 
-import { validator, bETH } from "../../contracts/contracts";
-import { timeout } from "../../utils/helpers";
+import { getCurrentGasPrices, notifyHandler } from "@/utils/common";
+import { validator, vEth2 } from "@/contracts";
+
+import ImageVue from "../Handlers/ImageVue";
 export default {
-  components: { Arrow, ImageVue, gasChooser, Notifier, TotalStaked },
+  components: { ImageVue },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),
     Damount: "",
     isDeposit: true,
     EthBal: BN(0),
-    BethBal: BN(0),
+    vEth2Bal: BN(0),
     balance: 0,
-    gas: 20,
+    otherBalance: 0,
+    gas: { low: 90, medium: 130, high: 180 },
     validInput: true,
     txs: [],
     maxValShares: 0,
     remaining: BN(0),
-    updateGraph: false,
+    remainingByFee: BN(0),
+    chosenGas: 130,
+    loading: true,
+    adminFee: 0,
+    contractBal: 0,
   }),
+  mounted: async function () {
+    this.gas = await getCurrentGasPrices();
+    this.chosenGas = this.gas.medium;
+    this.loading = false;
+
+    await this.mounted();
+  },
+  computed: {
+    ...mapGetters({ userAddress: "userAddress" }),
+  },
   methods: {
-    async addTx(tx = { id: "", success: false, msg: "Error." }) {
-      this.txs.push(tx);
-    },
-    closeTx(index) {
-      console.log(index);
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx, i) => index != i);
-      this.txs = newTx;
-    },
-    async automatedCloseTx(id) {
-      await timeout(10000);
-      console.log(id);
-      let myTx = JSON.parse(JSON.stringify(this.txs));
-      let newTx = myTx.filter((tx) => id != tx.id);
-      this.txs = newTx;
-    },
     updateGas(gas) {
-      this.gas = gas;
+      this.chosenGas = gas;
       this.amountCheck(true);
     },
     async onMAX() {
       if (this.isDeposit) {
-        let gas = this.gas;
+        let gas = this.chosenGas;
+        console.log(this.EthBal.toString());
         let BNamount = this.EthBal.minus(BN(gas * 200000 * 1000000000));
         let remaining = await validator.methods.remainingSpaceInEpoch().call();
         this.remaining = BN(remaining);
-        console.log(remaining);
         if (this.remaining.eq(0)) {
           this.amountCheck();
           return;
@@ -162,7 +208,19 @@ export default {
         }
         this.Damount = this.BNamount.dividedBy(1e18);
       } else {
-        this.BNamount = this.BethBal;
+        let remainingByFee = await validator.methods.adminFeeTotal().call();
+        if (remainingByFee > 10)
+          this.remainingByFee = BN(remainingByFee).multipliedBy(320);
+        else {
+          this.remainingByFee = BN(0);
+        }
+        this.BNamount = this.vEth2Bal;
+        if (this.BNamount.gt(this.remainingByFee)) {
+          this.BNamount = this.remainingByFee;
+        }
+        if (this.BNamount.gt(this.contractBal)) {
+          this.BNamount = this.contractBal;
+        }
         this.Damount = this.BNamount.dividedBy(1e18);
       }
     },
@@ -171,120 +229,100 @@ export default {
     },
     async onSubmit() {
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake")) return;
-      let walletAddress = await window.web3.eth.getAccounts();
-      const addTx = this.addTx;
-      const automatedCloseTx = this.automatedCloseTx;
-      let TXhash = null;
+      let walletAddress = this.userAddress;
       let self = this;
       if (this.isDeposit) {
+        this.loading = true;
         let myamount = this.BNamount.toString();
         await validator.methods
           .deposit()
           .send({
-            from: walletAddress[0],
+            from: walletAddress,
             value: myamount,
             gas: 200000,
-            gasPrice: BN(this.gas).multipliedBy(1000000000).toString(),
+            gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
           })
           .on("transactionHash", function (hash) {
-            TXhash = hash;
-            let tx = {
-              id: hash,
-              success: true,
-              msg: "Your transaction is sent.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            notifyHandler(hash);
           })
           .once("confirmation", () => {
-            console.log(TXhash);
-            let tx = {
-              id: TXhash,
-              success: true,
-              msg: "Transaction is approved.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            this.loading = false;
             self.mounted();
           })
-          .on("error", (error) => {
-            let tx = {
-              id: Math.floor(Math.random() * 100000),
-              success: false,
-              msg: "Transaction is failed.",
-            };
-            if (error.message.includes("User denied transaction signature"))
-              tx.msg = "Transaction is rejected.";
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
+            this.loading = false;
           })
           .catch((err) => {
+            this.loading = false;
             console.log(err);
           });
       } else {
         //unstake
         let myamount = this.BNamount.toString();
+        this.loading = true;
         await validator.methods
           .withdraw(myamount)
           .send({
-            from: walletAddress[0],
-            gas: 200000,
-            gasPrice: BN(this.gas).multipliedBy(1000000000).toString(),
+            from: walletAddress,
+            gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
           })
           .on("transactionHash", function (hash) {
-            TXhash = hash;
-            let tx = {
-              id: hash,
-              success: true,
-              msg: "Your transaction is sent.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+            notifyHandler(hash);
           })
-          .once("confirmation", (block) => {
-            console.log(block);
-            let tx = {
-              id: TXhash,
-              success: true,
-              msg: "Transaction is approved.",
-            };
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .once("confirmation", () => {
+            this.loading = false;
             self.mounted();
           })
-          .on("error", (error) => {
-            let tx = {
-              id: Math.floor(Math.random() * 100000),
-              success: false,
-              msg: "Transaction is failed.",
-            };
-            if (error.message.includes("User denied transaction signature"))
-              tx.msg = "Transaction is rejected.";
-            addTx(tx);
-            automatedCloseTx(tx.id);
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
+            this.loading = false;
           })
           .catch((err) => {
+            this.loading = false;
             console.log(err);
           });
       }
     },
     async mounted() {
       //balances
-      await window.ethereum.enable();
-      let walletAddress = await window.web3.eth.getAccounts();
-      let amount = await window.web3.eth.getBalance(walletAddress[0]);
-      this.EthBal = BN(amount);
-      let beth = await bETH.methods.balanceOf(walletAddress[0]).call();
-      this.BethBal = BN(beth);
-      if (this.isDeposit) this.balance = BN(amount).dividedBy(1e18).toFixed(6);
-      else this.balance = BN(beth).dividedBy(1e18).toFixed(6);
-      let remaining = await validator.methods.remainingSpaceInEpoch().call();
-      this.remaining = BN(remaining);
-      this.amountCheck(true);
-      this.updateGraph = !this.updateGraph;
+      try {
+        let walletAddress = this.userAddress;
+        let amount = await window.web3.eth.getBalance(walletAddress);
+        this.EthBal = BN(amount);
+        let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
+        this.vEth2Bal = BN(veth2);
+        // this.vEth2Bal = BN(1e20); //delete this line
+        if (this.isDeposit) {
+          this.balance = BN(amount).dividedBy(1e18).toFixed(6);
+          this.otherBalance = BN(veth2).dividedBy(1e18).toFixed(6);
+        } else {
+          this.balance = BN(veth2).dividedBy(1e18).toFixed(6);
+          this.otherBalance = BN(amount).dividedBy(1e18).toFixed(6);
+        }
+        let remaining = await validator.methods.remainingSpaceInEpoch().call();
+        this.remaining = BN(remaining);
+        let remainingByFee = await validator.methods.adminFeeTotal().call();
+        this.remainingByFee = BN(remainingByFee).multipliedBy(320);
+        let contractBal = await window.web3.eth.getBalance(
+          window.web3.utils.toChecksumAddress(validator._address)
+        );
+        this.contractBal = BN(contractBal);
+        this.amountCheck(true);
+        this.loading = false;
+      } catch (err) {
+        this.buttonText = "Connect to wallet ↗";
+        console.log(err);
+      }
     },
     amountCheck(init) {
       if (init && this.Damount == 0) return;
+      if (this.userAddress == null) {
+        this.validInput = false;
+        this.buttonText = "Connect to wallet ↗";
+        console.log("ss");
+        return;
+      }
       if (this.remaining.eq(0) && this.isDeposit) {
         this.validInput = false;
         this.buttonText = "Contract is Full";
@@ -295,6 +333,7 @@ export default {
         this.buttonText = "Amount is too big";
         return;
       }
+
       if (this.Damount[this.Damount.length - 1] === ".") {
         this.validInput = false;
         this.buttonText = "waiting...";
@@ -305,12 +344,23 @@ export default {
         return;
       }
       this.validInput = this.isDeposit
-        ? this.EthBal.minus(BN(this.gas * 200000 * 1000000000)).gte(
+        ? this.EthBal.minus(BN(this.chosenGas * 200000 * 1000000000)).gte(
             this.BNamount
           )
-        : this.BethBal.gte(this.BNamount);
+        : this.vEth2Bal.gte(this.BNamount);
       if (!this.validInput) {
         this.buttonText = "Insufficient balance";
+        return;
+      }
+      if (this.BNamount.gt(this.contractBal) && !this.isDeposit) {
+        this.validInput = false;
+        this.buttonText = "Not enough funds in Exit Pool";
+        return;
+      }
+      if (this.BNamount.gt(this.remainingByFee) && !this.isDeposit) {
+        this.validInput = false;
+        this.buttonText = "Not enough funds in Exit Pool";
+        return;
       }
       if (this.validInput) {
         this.buttonText = this.isDeposit ? "Stake" : "Unstake";
@@ -325,8 +375,8 @@ export default {
         return;
       }
       if (newValue[newValue.length - 1] == 0) {
+        this.Damount = newValue;
         this.BNamount = BN(this.Damount).multipliedBy(1e18);
-        this.Damount = this.BNamount.dividedBy(1e18).toString();
         this.amountCheck();
         return;
       }
@@ -335,7 +385,7 @@ export default {
         newValue[newValue.length - 2] !== "."
       ) {
         this.Damount = newValue;
-        this.BNamount = BN(0);
+        // this.BNamount =    BN(0);
         this.amountCheck();
         return;
       }
@@ -353,8 +403,10 @@ export default {
       this.amountCheck();
     },
     isDeposit: function (val) {
-      let balance = val ? this.EthBal : this.BethBal;
+      let balance = val ? this.EthBal : this.vEth2Bal;
       this.balance = balance.dividedBy(1e18).toFixed(6);
+      let otherBalance = val ? this.vEth2Bal : this.EthBal;
+      this.otherBalance = otherBalance.dividedBy(1e18).toFixed(6);
       this.Damount = "";
       this.buttonText = "Enter an amount";
     },
@@ -373,231 +425,239 @@ export default {
         else this.buttonText = "Unstake";
       }
     },
-  },
-  created: function () {
-    var self = this;
-    window.ethereum.on("accountsChanged", function () {
-      self.mounted();
-    });
-  },
-  mounted: async function () {
-    await this.mounted();
+    async userAddress(newVal) {
+      if (newVal) {
+        this.buttonText = "Enter an amount";
+        await this.mounted();
+      } else {
+        this.buttonText = "Connect to wallet ↗";
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.redBG {
-  background-color: #ff007b0a;
-}
 .stake {
+  padding-top: 65px;
+  height: 95vh;
+  background-image: url(bg-1.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 800px;
+}
+.staker {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  max-width: 375px;
+  width: 100%;
+  background-color: #181818;
+  height: 90%;
+  max-height: 716px;
+  overflow: auto;
+  box-shadow: 0 0 50px rgb(0 0 0 / 10%);
+  border-radius: 2px;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  min-height: 634px;
+}
+.chooser {
+  background-color: rgb(15, 16, 19);
+  height: 72px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  position: relative;
+  padding: 0 16px;
 }
-.Staker {
-  position: relative;
-  padding: 1rem;
-  padding-top: 3rem;
-  min-width: 500px;
-  width: 40%;
-  min-height: 15rem;
-  height: 30%;
-  background-color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 30px;
-  margin: 0 1rem 0 1rem;
-  -webkit-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01),
-    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01),
-    10px 10px 130px -50px rgba(244, 180, 0, 1);
-  -moz-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01),
-    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01),
-    10px 10px 130px -50px rgba(244, 180, 0, 1);
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01),
-    1px 1px 300px 30px rgba(143, 153, 242, 0.4);
+.navbar {
+  display: flex;
+  border: 1px solid #3c3c3c;
+  box-sizing: border-box;
+  border-radius: 100px;
+  width: 100%;
 }
-.balance {
-  padding-bottom: 0.5rem;
-  text-align: right;
-  font-family: "Roboto";
-  font-size: 14px;
-  font-weight: 500;
-}
-#balance {
-  position: absolute;
-  top: 1.5rem;
-  right: 3rem;
-}
-.stakePage {
-  width: 90%;
-  min-height: 20%;
-  border-radius: 30px;
-  border: 1px solid #f7f8fa;
+#gas {
+  padding: 0 20px;
+  font-size: 16px;
+  display: flex;
   align-items: center;
-  padding: 0.75rem 0.75rem 0.75rem 1rem;
-  text-align: center;
+  justify-content: center;
+  width: 100%;
+  color: #fff;
 }
-.token-amount-input {
-  color: #000000;
-  position: relative;
-  font-weight: 500;
-  outline: none;
-  border: none;
-  -webkit-flex: 1 1 auto;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  background-color: transparent;
-  font-size: 24px;
+.switch {
+  height: 40px;
+  padding: 0 20px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-color: transparent;
+  color: #fff;
+  border-radius: 100px;
+  line-height: 24px;
+  box-sizing: border-box;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0px;
-  font-family: "Graduate", cursive;
-  -webkit-appearance: textfield;
-}
-.stakeButton {
-  /* background-color: #ff007a; */
-  background-color: #007bff;
-  min-width: 80%;
-  min-height: 15%;
-  border-radius: 15px;
-  border: 1px solid #f7f8fa;
-  align-items: center;
-  padding: 0.75rem 0.75rem 0.75rem 1rem;
-  font-size: 20px;
-  font-weight: 500;
   text-align: center;
-  color: #f7f8fa;
-  transition: all 0.2s linear, transform 0.1s ease-in-out;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
   cursor: pointer;
-}
-.stakeButton:hover {
-  transition: transform 0.1s ease-in-out;
-  transform: scale(0.95);
-}
-#disabled {
-  color: rgb(136, 141, 155);
-  transition: all 0.2s linear;
-  background-color: rgb(237, 238, 242);
-}
-.disabled:hover {
-  transition: transform 0.1s ease-in-out;
-}
-.toMax {
-  padding: 0.3rem 0.3rem 0 0.2rem;
-  height: 1.7rem;
-  background-color: rgb(253, 234, 241);
-  border: 1px solid rgb(253, 234, 241);
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  color: rgb(255, 0, 122);
-  text-align: center;
-  cursor: pointer;
-}
-.toMax:hover {
-  border: 1px solid #007bff;
-}
-.ETH {
-  padding: 0.5rem;
-  cursor: default;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  user-select: none;
+  touch-action: manipulation;
+  background: transparent;
 }
 
-.toggle {
+.stakePage {
+  width: calc(100% - 20px);
+  padding: 10px;
+  height: calc(80% - 20px);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 0.2fr 1fr 0.5fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "."
+    "."
+    ".";
+  justify-content: center;
+  align-items: center;
+}
+.sPElement {
+  align-self: center;
+  justify-self: center;
+  color: #fff;
+}
+.input {
+  border-radius: 4px;
+  width: 100%;
+  height: 180px;
+  max-width: 362px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(15, 16, 19);
+  border: none;
+  font-weight: 500;
+}
+.inputBody {
   position: relative;
+  height: 100%;
+  padding: 0 0 0 0;
+  width: 100%;
   display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  min-width: 500px;
-  width: 40%;
-  height: 58px;
-  margin-top: 12px;
-  padding: 8px;
-  background: #f5f8fa;
-  border-radius: 14px;
-  cursor: pointer;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 }
-.toggle--withdraw .toggle__switch {
-  left: 50%;
-}
-.toggle__label-wrapper {
+.StakeButton {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(50% - 8px);
-}
-.toggle__label {
-  font-weight: 700;
+  border: 1px solid #3c3c3c;
+  box-sizing: border-box;
+  background-color: rgb(15, 16, 19);
+  color: #fff;
+  height: 50px;
+  padding: 0 20px;
   font-size: 16px;
-  line-height: 12px;
+  border-radius: 100px;
+  line-height: 24px;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  border-radius: 100px;
+}
+.switch_active {
+  border: 2px solid rgb(37, 167, 219);
+  border-radius: 100px;
+  color: #fff;
+  cursor: pointer;
+}
+.switch_active:hover,
+.switch:hover {
+  background-color: rgba(37, 167, 219, 0.1);
+}
+.balance {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 20px;
   text-align: center;
-  letter-spacing: 0.2px;
-  text-transform: uppercase;
-  color: #414a5b;
-}
-.toggle__label--active {
-  color: #007bff;
-}
-.toggle__switch {
-  position: absolute;
-  left: 8px;
-  top: 8px;
+  letter-spacing: 0.3px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(50% - 8px);
-  height: calc(100% - 16px);
-  box-shadow: 0 8px 20px rgba(225, 230, 236, 0.8);
-  border-radius: 16px;
-  background: #ffffff;
-  transition: left, 0.3s;
-}
-.list-enter-active,
-.list-leave-active {
-  transition: all 0s;
-}
-.Graph {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  transform: scale(0.7);
-}
-.green {
-  color: #007bff;
-}
-.info-icon {
-  position: absolute;
-  top: 1.3rem;
-  opacity: 0.6;
-  left: 3rem;
+  text-decoration: underline;
+  z-index: 10;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  font-weight: bolder;
 }
-.info-icon:hover {
-  transform: rotate(30deg) scale(0.9);
-  transition: all 0.2s ease-in-out;
+.token-amount-input {
+  box-sizing: border-box;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  font-variant: tabular-nums;
+  list-style: none;
+  font-feature-settings: "tnum";
+  position: relative;
+  display: inline-block;
+  width: 70%;
+  padding: 4px 11px;
+  color: #fff;
+  background-color: transparent;
+  outline-width: 0;
+  font-size: 34px;
+  line-height: 40px;
+  text-align: right;
+  height: 40px;
+  padding-bottom: 0;
+  text-overflow: ellipsis;
+  border-radius: 2px;
+  border: none;
+  touch-action: manipulation;
 }
-@media only screen and (max-width: 600px) {
-  .Graph {
-    position: fixed;
-    top: calc(75%);
-    left: 1rem;
-    transform: scale(0.5);
-    z-index: 1000;
-  }
-  .toggle {
-    min-width: 0;
-    max-width: 100vw;
-    width: calc(100vw - 66px);
-  }
-  .Staker {
-    min-width: 0;
-    max-width: 100vw;
-    width: calc(100vw - 66px);
-  }
+.ant-col {
+  box-sizing: border-box;
+  display: block;
+  box-sizing: border-box;
+  width: 50%;
+}
+.background3,
+.background2 {
+  background-image: url(Eth.png);
+  position: absolute;
+  z-index: 0;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 0.4) 60%
+  );
+  opacity: 0.05;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.background3 {
+  background-image: url(vEth2.png);
+}
+.notification {
+  width: 90%;
+  padding: 5%;
+  color: tomato;
+  font-size: 16px;
+}
+.underline {
+  text-decoration: underline;
 }
 </style>
