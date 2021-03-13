@@ -689,6 +689,7 @@ export default {
   align-items: center;
 }
 .Bubble {
+  min-height: calc(77%);
   font-size: 1.2rem;
   background-color: rgba(17, 26, 25, 1);
   position: relative;
