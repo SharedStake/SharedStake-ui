@@ -75,7 +75,7 @@
       </div>
       <div class="StatsContent">
         <div class="Stat">
-          <div class="Num">7500</div>
+          <div class="Num">{{ TVL }}</div>
           <div class="NumExp">Ether Staked with SharedStake</div>
           <div class="NumDetail">Liquid & Incentivised</div>
         </div>
@@ -334,9 +334,28 @@
 
 <script>
 import ImageVue from "../Handlers/ImageVue";
+import axios from "axios";
+import BN from "bignumber.js";
+import { timeout } from "@/utils/helpers";
 export default {
   components: { ImageVue },
   props: ["scrolled", "windowWidth"],
+  data() {
+    return {
+      TVL: 12000,
+    };
+  },
+  async mounted() {
+    try {
+      await timeout(500);
+      let response = await axios.get(
+        "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
+      );
+      this.TVL = BN(response.data.result).div(1e18).toFixed(0).toString();
+    } catch {
+      this.TVL = BN(12050).toString();
+    }
+  },
 };
 </script>
 
