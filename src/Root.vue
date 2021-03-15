@@ -21,7 +21,7 @@
       <div class="links" v-show="windowWidth > 900">
         <span class="link">
           <a
-            href="https://snapshot.page/#/sharedstake.eth"
+            href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
             target="_blank"
             rel="noopener noreferrer"
             >Buy
@@ -98,7 +98,7 @@
       </router-link>
       <span class="link">
         <a
-          href="https://snapshot.page/#/sharedstake.eth"
+          href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
           target="_blank"
           rel="noopener noreferrer"
           >Buy
