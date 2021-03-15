@@ -80,7 +80,7 @@
           <div class="NumDetail">Liquid & Incentivised</div>
         </div>
         <div class="Stat">
-          <div class="Num">139%</div>
+          <div class="Num">124%</div>
           <div class="NumExp">Current APY</div>
           <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
         </div>

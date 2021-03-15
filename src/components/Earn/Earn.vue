@@ -70,19 +70,19 @@ export default {
         tokenPerSgt: 0,
         link: "https://www.sharedstake.org/stake", //for inactive pools
       },
-      {
-        name: "vEth2 LP",
-        explanation: "on snowswap",
-        token: null,
-        pic: "tokens/vEth2 LP.png",
-        geyser: null,
-        locked: BN(1),
-        external: true,
-        active: false,
-        status:
-          "Check out snowswap to stake your eth2snow tokens with extra SGT rewards!", //for inactive pools
-        link: "https://snowswap.org/ethsnow/deposit", //for inactive pools
-      },
+      // {
+      //   name: "vEth2 LP",
+      //   explanation: "on snowswap",
+      //   token: null,
+      //   pic: "tokens/vEth2 LP.png",
+      //   geyser: null,
+      //   locked: BN(1),
+      //   external: true,
+      //   active: false,
+      //   status:
+      //     "Check out snowswap to stake your eth2snow tokens with extra SGT rewards!", //for inactive pools
+      //   link: "https://snowswap.org/ethsnow/deposit", //for inactive pools
+      // },
     ],
   }),
   computed: {

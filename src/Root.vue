@@ -24,7 +24,15 @@
             href="https://snapshot.page/#/sharedstake.eth"
             target="_blank"
             rel="noopener noreferrer"
-            >Dao
+            >Buy
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://snapshot.page/#/sharedstake.eth"
+            target="_blank"
+            rel="noopener noreferrer"
+            >DAO
           </a>
         </span>
         <span class="link">
@@ -93,7 +101,15 @@
           href="https://snapshot.page/#/sharedstake.eth"
           target="_blank"
           rel="noopener noreferrer"
-          >Dao
+          >Buy
+        </a>
+      </span>
+      <span class="link">
+        <a
+          href="https://snapshot.page/#/sharedstake.eth"
+          target="_blank"
+          rel="noopener noreferrer"
+          >DAO
         </a>
       </span>
       <span class="link">
