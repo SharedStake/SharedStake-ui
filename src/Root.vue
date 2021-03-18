@@ -21,7 +21,7 @@
       <div class="links" v-show="windowWidth > 900">
         <span class="link">
           <a
-            href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
+            href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078"
             target="_blank"
             rel="noopener noreferrer"
             >Buy SGT ${{sgtPrice}}
