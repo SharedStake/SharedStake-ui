@@ -80,7 +80,7 @@
           <div class="NumDetail">Liquid & Incentivised</div>
         </div>
         <div class="Stat">
-          <div class="Num">124%</div>
+          <div class="Num">{{ APY }}</div>
           <div class="NumExp">Current APY</div>
           <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
         </div>
@@ -337,12 +337,17 @@ import ImageVue from "../Handlers/ImageVue";
 import axios from "axios";
 import BN from "bignumber.js";
 import { timeout } from "@/utils/helpers";
+import {
+  SGT_uniswap,
+  geyser_SGT_uniswap,
+} from "@/contracts";
 export default {
   components: { ImageVue },
   props: ["scrolled", "windowWidth"],
   data() {
     return {
-      TVL: 12000,
+      TVL: 12000, 
+      APY: "", 
     };
   },
   async mounted() {
@@ -352,8 +357,36 @@ export default {
         "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
       );
       this.TVL = BN(response.data.result).div(1e18).toFixed(0).toString();
+      this.APY = this.getAPY();
+
+      
+
     } catch {
       this.TVL = BN(12050).toString();
+      this.APY = BN(100).toString()
+    }
+  },
+  methods: {
+    async getAPY() {
+      let token = SGT_uniswap;
+      let tokenGeyser = geyser_SGT_uniswap;
+      let reserves = await token.methods.getReserves().call();
+      let Sgt = reserves[0];
+      let totalSupply = await token.methods.totalSupply().call();
+      let tokenPerSgt = totalSupply / (Sgt * 2);
+      let totalStaked = await tokenGeyser.methods.totalSupply().call();
+      totalStaked = BN(totalStaked);
+      let now = Math.floor(Date.now() / 1000);
+      let until = await tokenGeyser.methods.periodFinish().call();
+      let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
+      let stakedSchedule = remDays;
+      let duration = await tokenGeyser.methods.rewardsDuration().call(); //in second
+      let remRewards = BN(remDays).times(
+        BN(75000).div(BN(duration).div(60).div(60).div(24))
+      );
+      let locked = BN(remRewards);
+      let APY = Math.round(BN(100 * tokenPerSgt * ((locked * 1e18) / totalStaked) * (360 / stakedSchedule))).toString() + "%"
+      this.APY = APY;
     }
   },
 };
