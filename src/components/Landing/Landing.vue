@@ -363,6 +363,7 @@ export default {
 
     } catch {
       this.TVL = BN(12050).toString();
+      this.APY = BN(100).toString()
     }
   },
   methods: {
@@ -370,9 +371,9 @@ export default {
       let token = SGT_uniswap;
       let tokenGeyser = geyser_SGT_uniswap;
       let reserves = await token.methods.getReserves().call();
-      let Eth = reserves[1];
       let Sgt = reserves[0];
-      let tokenPerSgt = Eth / Sgt;
+      let totalSupply = await token.methods.totalSupply().call();
+      let tokenPerSgt = totalSupply / (Sgt * 2);
       let totalStaked = await tokenGeyser.methods.totalSupply().call();
       totalStaked = BN(totalStaked);
       let now = Math.floor(Date.now() / 1000);
