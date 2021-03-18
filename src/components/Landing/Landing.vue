@@ -346,7 +346,8 @@ export default {
   props: ["scrolled", "windowWidth"],
   data() {
     return {
-      TVL: 12000, APY: "", 
+      TVL: 12000, 
+      APY: "", 
     };
   },
   async mounted() {
@@ -356,7 +357,16 @@ export default {
         "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
       );
       this.TVL = BN(response.data.result).div(1e18).toFixed(0).toString();
+      this.APY = this.getAPY();
 
+      
+
+    } catch {
+      this.TVL = BN(12050).toString();
+    }
+  },
+  methods: {
+    async getAPY() {
       let token = SGT_uniswap;
       let tokenGeyser = geyser_SGT_uniswap;
       let reserves = await token.methods.getReserves().call();
@@ -374,10 +384,8 @@ export default {
         BN(75000).div(BN(duration).div(60).div(60).div(24))
       );
       let locked = BN(remRewards);
-      this.APY = Math.round(BN(100 * tokenPerSgt * ((locked * 1e18) / totalStaked) * (360 / stakedSchedule))).toString() + "%";
-
-    } catch {
-      this.TVL = BN(12050).toString();
+      let APY = Math.round(BN(100 * tokenPerSgt * ((locked * 1e18) / totalStaked) * (360 / stakedSchedule))).toString() + "%"
+      this.APY = APY;
     }
   },
 };
