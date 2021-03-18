@@ -21,14 +21,6 @@
       <div class="links" v-show="windowWidth > 900">
         <span class="link">
           <a
-            href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Buy SGT ${{sgtPrice}}
-          </a>
-        </span>
-        <span class="link">
-          <a
             href="https://snapshot.page/#/sharedstake.eth"
             target="_blank"
             rel="noopener noreferrer"
@@ -41,6 +33,14 @@
             target="_blank"
             rel="noopener noreferrer"
             >Docs
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Buy SGT ${{ sgtPrice }}
           </a>
         </span>
         <span class="link" v-bind:style="{ opacity: 1 }">
@@ -98,14 +98,6 @@
       </router-link>
       <span class="link">
         <a
-          href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Buy
-        </a>
-      </span>
-      <span class="link">
-        <a
           href="https://snapshot.page/#/sharedstake.eth"
           target="_blank"
           rel="noopener noreferrer"
@@ -118,6 +110,14 @@
           target="_blank"
           rel="noopener noreferrer"
           >Docs
+        </a>
+      </span>
+      <span class="link">
+        <a
+          href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Buy SGT ${{ sgtPrice }}
         </a>
       </span>
     </div>
@@ -240,7 +240,7 @@ export default {
       currentScrollPosition: 0,
       windowWidth: window.innerWidth,
       showSidebar: false,
-      sgtPrice: null
+      sgtPrice: null,
     };
   },
   mounted() {
@@ -279,12 +279,13 @@ export default {
       this.lastScrollPosition = currentScrollPosition;
     },
     async setSgtPrice() {
-      const coingeckoApiUrl = "https://api.coingecko.com/api/v3/simple/price?ids=sharedstake-governance-token&vs_currencies=usd";
+      const coingeckoApiUrl =
+        "https://api.coingecko.com/api/v3/simple/price?ids=sharedstake-governance-token&vs_currencies=usd";
       let response = await axios.get(coingeckoApiUrl);
       const sgtPrice = response.data["sharedstake-governance-token"].usd;
 
       this.sgtPrice = sgtPrice;
-    }
+    },
   },
 };
 </script>
