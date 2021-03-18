@@ -21,10 +21,10 @@
       <div class="links" v-show="windowWidth > 900">
         <span class="link">
           <a
-            href="https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55"
+            href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078"
             target="_blank"
             rel="noopener noreferrer"
-            >Buy
+            >Buy SGT ${{sgtPrice}}
           </a>
         </span>
         <span class="link">
@@ -229,6 +229,8 @@
 <script>
 import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
+import axios from "axios";
+
 export default {
   components: { ImageVue },
   data() {
@@ -238,11 +240,13 @@ export default {
       currentScrollPosition: 0,
       windowWidth: window.innerWidth,
       showSidebar: false,
+      sgtPrice: null
     };
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
+    this.setSgtPrice();
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);
@@ -274,6 +278,13 @@ export default {
       this.showNavbar = currentScrollPosition < this.lastScrollPosition;
       this.lastScrollPosition = currentScrollPosition;
     },
+    async setSgtPrice() {
+      const coingeckoApiUrl = "https://api.coingecko.com/api/v3/simple/price?ids=sharedstake-governance-token&vs_currencies=usd";
+      let response = await axios.get(coingeckoApiUrl);
+      const sgtPrice = response.data["sharedstake-governance-token"].usd;
+
+      this.sgtPrice = sgtPrice;
+    }
   },
 };
 </script>
