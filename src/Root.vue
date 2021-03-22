@@ -229,7 +229,7 @@
 <script>
 import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
-import axios from "axios";
+import { priceInUsdAsync } from "@/utils/coingecko";
 
 export default {
   components: { ImageVue },
@@ -279,12 +279,8 @@ export default {
       this.lastScrollPosition = currentScrollPosition;
     },
     async setSgtPrice() {
-      const coingeckoApiUrl =
-        "https://api.coingecko.com/api/v3/simple/price?ids=sharedstake-governance-token&vs_currencies=usd";
-      let response = await axios.get(coingeckoApiUrl);
-      const sgtPrice = response.data["sharedstake-governance-token"].usd;
-
-      this.sgtPrice = sgtPrice;
+      const sgtCoinId = "sharedstake-governance-token";
+      this.sgtPrice = await priceInUsdAsync(sgtCoinId);
     },
   },
 };
