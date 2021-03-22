@@ -77,7 +77,7 @@
         <div class="Stat">
           <div class="Num">{{ TVL }}</div>
           <div class="NumExp">Ether Staked with SharedStake</div>
-          <div class="NumDetail">Liquid & Incentivised</div>
+          <div class="NumDetail">It's {{ TVLinUsd.toLocaleString("en-US", { style: 'currency', currency: 'USD' }) }}! Liquid & Incentivised</div>
         </div>
         <div class="Stat">
           <div class="Num">{{ APY }}</div>
@@ -341,13 +341,16 @@ import {
   SGT_uniswap,
   geyser_SGT_uniswap,
 } from "@/contracts";
+import { priceInUsdAsync } from "@/utils/coingecko";
+
 export default {
   components: { ImageVue },
   props: ["scrolled", "windowWidth"],
   data() {
     return {
       TVL: 12000, 
-      APY: "", 
+      TVLinUsd: null,
+      APY: "",
     };
   },
   async mounted() {
@@ -359,9 +362,8 @@ export default {
       this.TVL = BN(response.data.result).div(1e18).toFixed(0).toString();
       this.getAPY();
 
-
-      
-
+      const etherPrice = await priceInUsdAsync("ethereum");
+      this.TVLinUsd = etherPrice * this.TVL;
     } catch {
       this.TVL = BN(12050).toString();
       this.APY = await BN(100).toString();
