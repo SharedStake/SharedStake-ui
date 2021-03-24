@@ -349,7 +349,7 @@ export default {
   data() {
     return {
       TVL: 12000, 
-      TVLinUsd: null,
+      TVLinUsd: 0,
       APY: "",
     };
   },
