@@ -31,6 +31,10 @@ if (window.ethereum) {
     const web3 = new Web3(window.ethereum);
 
     let chainId = window.ethereum.chainId;
+
+    // Hotfix for firefox. TODO: Figure out what causes FF to not connect the wallet correctly.
+    chainId = "0x1";
+
     let addressTemp;
 
     if (chainId == "0x1") {
