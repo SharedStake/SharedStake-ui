@@ -5,7 +5,7 @@
       <div class="content">
         Total of {{ ethDeposited }}ETH has been staked to SharedStake so far.
         <br />
-        32100ETH is required (for 1000 validators).<br />
+        {{ contractEtherLimit }}ETH is required (for {{ numOfValidators }} validators).<br />
         When ETH is deposited into the SharedDeposit contract, a
         Validator-Share-ETH2 token (vETH2) is minted. Redeemable for the
         deposited ETH.
@@ -52,6 +52,8 @@ export default {
     loading: true,
     ethDeposited: 0,
     maxEthDepositOnContract: 0,
+    contractEtherLimit: 0,
+    numOfValidators: 0,
   }),
   computed: {
     contractDepositRatio() {
@@ -67,14 +69,16 @@ export default {
       let maxValidatorShares = await validator.methods.maxValidatorShares().call();
       let currentValidatorShares = await validator.methods.curValidatorShares().call();
       let validatorPrice = await validator.methods.costPerValidator().call();
+      this.numOfValidators = await validator.methods.numValidators().call();
 
       maxValidatorShares = BN(maxValidatorShares).dividedBy(1e18).toFixed(2);
       currentValidatorShares = BN(currentValidatorShares).dividedBy(1e18).toFixed(2);
       validatorPrice = BN(validatorPrice).dividedBy(1e18).toFixed(2);
 
-      this.loading = false;
       this.ethDeposited = this.calculateEthDepositted(currentValidatorShares, validatorPrice);
       this.maxEthDepositOnContract = this.calculateMaxEth(maxValidatorShares, validatorPrice);
+      this.contractEtherLimit = this.numOfValidators * validatorPrice;
+      this.loading = false;
     },
     calculateMaxEth(maxValidatorShares, validatorPrice) {
       // One validator currently costs 32.1ETH.
