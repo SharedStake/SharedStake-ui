@@ -3,13 +3,12 @@
     <div class="explanation">
       <div class="title">SharedStaked vEth2</div>
       <div class="content">
-        Total of {{ ethDeposited }}Eth has been staked to SharedStake so far.
+        Total of {{ ethDeposited }}ETH has been staked to SharedStake so far.
         <br />
-        32100Eth is required (for 1000 validators) for the third deposit to ETH2 event
-        which locks it up. <br />
-        When Eth is deposited into the SharedDeposit contract, a
-        Validator-Share-Eth2 token (vEth2) is minted. Redeemable for the
-        deposited Eth.
+        32100ETH is required (for 1000 validators).<br />
+        When ETH is deposited into the SharedDeposit contract, a
+        Validator-Share-ETH2 token (vETH2) is minted. Redeemable for the
+        deposited ETH.
       </div>
     </div>
     <vep
