@@ -1,5 +1,5 @@
 <template>
-  <div class="gauge">
+  <div class="gauge" v-show="showGauge">
     <div class="explanation">
       <div class="title">SharedStaked vEth2</div>
       <div class="content">
@@ -54,6 +54,7 @@ export default {
     maxEthDepositOnContract: 0,
     contractEtherLimit: 0,
     numOfValidators: 0,
+    showGauge: true
   }),
   computed: {
     contractDepositRatio() {
@@ -66,6 +67,11 @@ export default {
   },
   methods: {
     async setupGauge() {
+      if (!window.ethereum) {
+        this.showGauge = false;
+        return;
+      }
+
       let maxValidatorShares = await validator.methods.maxValidatorShares().call();
       let currentValidatorShares = await validator.methods.curValidatorShares().call();
       let validatorPrice = await validator.methods.costPerValidator().call();
@@ -97,7 +103,7 @@ export default {
       const ethDepositedToContract = currentValidatorShares * validatorPrice / stakePerValidator;
 
       return ethDepositedToContract.toFixed(2);
-    }
+    },
   },
 };
 </script>
