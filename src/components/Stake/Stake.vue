@@ -1,84 +1,16 @@
 <template>
   <div class="flex_column stake">
+    <StakeGauge class="gauge" />
     <div class="staker">
-      <div class="chooser">
-        <div class="navbar">
-          <button
-            class="switch"
-            :class="{ switch_active: isDeposit }"
-            @click="isDeposit = true"
-          >
-            <span>Stake</span>
-          </button>
-          <button
-            class="switch"
-            :class="{ switch_active: !isDeposit }"
-            @click="isDeposit = false"
-          >
-            <span>Unstake</span>
-          </button>
-        </div>
-      </div>
-      <div class="stakePage">
-        <div class="sPElement input">
-          <div class="inputBody">
-            <div class="flex_row">
-              <input
-                class="token-amount-input"
-                inputmode="decimal"
-                title="Token Amount"
-                autocomplete="off"
-                autocorrect="off"
-                type="text"
-                pattern="^[0-9]*[.,]?[0-9]*$"
-                placeholder="0.0"
-                minlength="1"
-                maxlength="39"
-                spellcheck="false"
-                value=""
-                v-model="Damount"
-              />
-              <div class="ant-col">{{ isDeposit ? " ETH" : "vETH2" }}</div>
-            </div>
-            <div class="balance" id="balance" @click="onMAX">
-              wallet: {{ balance }}
-            </div>
-            <div :class="isDeposit ? 'background2' : 'background3'" />
-          </div>
-        </div>
-        <ImageVue class="sPElement" :src="'down.png'" :size="'30px'" />
-        <div class="sPElement input">
-          <div class="inputBody">
-            <div class="flex_row">
-              <input
-                class="token-amount-input"
-                inputmode="decimal"
-                title="Token Amount"
-                autocomplete="off"
-                autocorrect="off"
-                type="text"
-                pattern="^[0-9]*[.,]?[0-9]*$"
-                placeholder="0.0"
-                minlength="1"
-                maxlength="39"
-                spellcheck="false"
-                :value="
-                  isDeposit
-                    ? (Damount / (32 + 0.1)) * 32
-                    : (Damount / 32) * (32 + adminFee)
-                "
-                readonly
-              />
-              <div class="ant-col">
-                {{ isDeposit ? " vETH2" : " ETH" }}
-              </div>
-            </div>
-            <div class="balance" id="balance" @click="onMAX">
-              wallet: {{ otherBalance }}
-            </div>
-            <div :class="isDeposit ? 'background3' : 'background2'" />
-          </div>
-        </div>
+      <StakeSelector v-on:isDeposit="isDeposit = $event"/>
+      <div class="stakePage">    
+        <StakeInputs 
+          :maxDepositAvailable="maxDepositableAmount"
+          :isEthDeposit="isDeposit"
+          :adminFee="adminFee"
+          :ethBalance="+ethBalance"
+          :vEth2Balance="+vEth2Balance"
+          v-on:updateMaxDespositAmount="updateMaxDepositableAmount()"/>
         <button
           class="StakeButton"
           :class="{
@@ -115,30 +47,7 @@
           >
         </div>
       </div>
-      <div class="navbar">
-        <span id="gas">Gas</span>
-        <button
-          class="switch"
-          :class="{ switch_active: chosenGas == gas.low }"
-          @click="updateGas(gas.low)"
-        >
-          <span>{{ gas.low.toFixed(0) }}</span>
-        </button>
-        <button
-          class="switch"
-          :class="{ switch_active: chosenGas == gas.medium }"
-          @click="updateGas(gas.medium)"
-        >
-          <span>{{ gas.medium.toFixed(0) }}</span>
-        </button>
-        <button
-          class="switch"
-          :class="{ switch_active: chosenGas == gas.high }"
-          @click="updateGas(gas.high)"
-        >
-          <span>{{ gas.high.toFixed(0) }}</span>
-        </button>
-      </div>
+      <GasSelector v-on:gasUpdate="chosenGas = $event" />
     </div>
   </div>
 </template>
@@ -149,12 +58,17 @@ BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 import { mapGetters } from "vuex";
 
-import { getCurrentGasPrices, notifyHandler } from "@/utils/common";
+import { notifyHandler } from "@/utils/common";
 import { validator, vEth2 } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
+import StakeGauge from "./StakeGauge";
+import StakeSelector from "./StakeSelector"
+import GasSelector from "./GasSelector"
+import StakeInputs from "./StakeInputs"
+
 export default {
-  components: { ImageVue },
+  components: { ImageVue, StakeGauge, StakeSelector, GasSelector, StakeInputs },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),
@@ -174,11 +88,13 @@ export default {
     loading: true,
     adminFee: 0,
     contractBal: 0,
+    maxDepositableAmount: 0,
+    ethBalance: 0,
+    vEth2Balance: 0,
   }),
   mounted: async function () {
-    this.gas = await getCurrentGasPrices();
-    this.chosenGas = this.gas.medium;
     this.loading = false;
+    this.updateMaxDepositableAmount();
 
     await this.mounted();
   },
@@ -190,42 +106,62 @@ export default {
       this.chosenGas = gas;
       this.amountCheck(true);
     },
-    async onMAX() {
+    async updateMaxDepositableAmount() {
+      // Is depositing ETH
       if (this.isDeposit) {
-        let gas = this.chosenGas;
-        console.log(this.EthBal.toString());
-        let BNamount = this.EthBal.minus(BN(gas * 200000 * 1000000000));
+        // Calculate the possible amount user can deposit ETH:
+        // Total Eth in wallet - approximated gas cost.
+        let maxEthAvailable = this.EthBal.minus(BN(this.chosenGas * 200000 * 1000000000));
         let remaining = await validator.methods.remainingSpaceInEpoch().call();
         this.remaining = BN(remaining);
+
+        // Check if the contract is full
         if (this.remaining.eq(0)) {
           this.amountCheck();
+          this.maxDepositableAmount = 0;
           return;
         }
-        if (this.remaining.gte(BNamount) || !this.isDeposit) {
-          this.BNamount = BN(BNamount);
-        } else {
-          this.BNamount = BN(this.remaining);
+
+        // There's room for the users ETH
+        if (this.remaining.gte(maxEthAvailable)) {
+          this.maxDepositableAmount = maxEthAvailable.div(1e18).toNumber();
+
+          return;
+        } 
+
+        // Set the amount as the max available amount in contract
+        if (this.remaining.lt(maxEthAvailable)) {
+          this.maxDepositableAmount = this.remaining.div(1e18).toNumber();
+
+          return;
         }
-        this.Damount = this.BNamount.dividedBy(1e18);
-      } else {
+      }
+
+      // Is depositing vETH2
+      if (!this.isDeposit) {
         let remainingByFee = await validator.methods.adminFeeTotal().call();
+
         if (remainingByFee > 10)
           this.remainingByFee = BN(remainingByFee).multipliedBy(320);
         else {
           this.remainingByFee = BN(0);
         }
+
         this.BNamount = this.vEth2Bal;
+        this.maxDepositableAmount = this.vEth2Bal.div(1e18).toNumber();
+        
         if (this.BNamount.gt(this.remainingByFee)) {
+
+          this.maxDepositableAmount = this.remainingByFee.div(1e18).toNumber();
           this.BNamount = this.remainingByFee;
         }
+
         if (this.BNamount.gt(this.contractBal)) {
+
+          this.maxDepositableAmount = this.contractBal.div(1e18).toNumber();
           this.BNamount = this.contractBal;
         }
-        this.Damount = this.BNamount.dividedBy(1e18);
       }
-    },
-    toggleMode() {
-      this.isDeposit = !this.isDeposit;
     },
     async onSubmit() {
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake")) return;
@@ -292,6 +228,8 @@ export default {
         this.EthBal = BN(amount);
         let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
         this.vEth2Bal = BN(veth2);
+        this.ethBalance = this.EthBal.dividedBy(1e18).toFixed(6);
+        this.vEth2Balance = this.vEth2Bal.dividedBy(1e18).toFixed(6); 
         // this.vEth2Bal = BN(1e20); //delete this line
         if (this.isDeposit) {
           this.balance = BN(amount).dividedBy(1e18).toFixed(6);
@@ -439,8 +377,8 @@ export default {
 
 <style scoped>
 .stake {
-  padding-top: 65px;
-  height: 95vh;
+  padding-top: 120px;
+  padding-bottom: 80px;
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
   background-position: center;
@@ -516,7 +454,6 @@ export default {
   width: calc(100% - 20px);
   padding: 10px;
   height: calc(80% - 20px);
-  display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0.2fr 1fr 0.5fr;
   gap: 0px 0px;
@@ -526,11 +463,6 @@ export default {
     ".";
   justify-content: center;
   align-items: center;
-}
-.sPElement {
-  align-self: center;
-  justify-self: center;
-  color: #fff;
 }
 .input {
   border-radius: 4px;
@@ -597,60 +529,6 @@ export default {
   cursor: pointer;
   font-weight: bolder;
 }
-.token-amount-input {
-  box-sizing: border-box;
-  z-index: 10;
-  margin: 0;
-  padding: 0;
-  font-variant: tabular-nums;
-  list-style: none;
-  font-feature-settings: "tnum";
-  position: relative;
-  display: inline-block;
-  width: 70%;
-  padding: 4px 11px;
-  color: #fff;
-  background-color: transparent;
-  outline-width: 0;
-  font-size: 34px;
-  line-height: 40px;
-  text-align: right;
-  height: 40px;
-  padding-bottom: 0;
-  text-overflow: ellipsis;
-  border-radius: 2px;
-  border: none;
-  touch-action: manipulation;
-}
-.ant-col {
-  box-sizing: border-box;
-  display: block;
-  box-sizing: border-box;
-  width: 50%;
-}
-.background3,
-.background2 {
-  background-image: url(Eth.png);
-  position: absolute;
-  z-index: 0;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  mask-image: radial-gradient(
-    circle,
-    rgba(0, 0, 0, 1) 20%,
-    rgba(0, 0, 0, 0.4) 60%
-  );
-  opacity: 0.05;
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-.background3 {
-  background-image: url(vEth2.png);
-}
 .notification {
   width: 90%;
   padding: 5%;
@@ -659,5 +537,8 @@ export default {
 }
 .underline {
   text-decoration: underline;
+}
+.gauge {
+  padding-top: 1rem;
 }
 </style>
