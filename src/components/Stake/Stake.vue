@@ -139,7 +139,6 @@ export default {
 
       // Is depositing vETH2
       if (!this.isDeposit) {
-        console.log("SASDSA")
         let remainingByFee = await validator.methods.adminFeeTotal().call();
 
         if (remainingByFee > 10)
@@ -152,14 +151,12 @@ export default {
         this.maxDepositableAmount = this.vEth2Bal.div(1e18).toNumber();
         
         if (this.BNamount.gt(this.remainingByFee)) {
-        console.log("SASDSA2")
 
           this.maxDepositableAmount = this.remainingByFee.div(1e18).toNumber();
           this.BNamount = this.remainingByFee;
         }
 
         if (this.BNamount.gt(this.contractBal)) {
-        console.log("SASDSA3")
 
           this.maxDepositableAmount = this.contractBal.div(1e18).toNumber();
           this.BNamount = this.contractBal;
