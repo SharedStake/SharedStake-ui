@@ -202,14 +202,14 @@
             @click="Withdraw"
             :disabled="disableWithdraw"
           >
-            withdraw
+            unstake
           </button>
           <button
             class="mainButton half pink"
             @click="Harvest"
             :disabled="disableHarvest"
           >
-            harvest
+            claim rewards
           </button>
         </div>
       </div>
