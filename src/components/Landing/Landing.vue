@@ -391,13 +391,17 @@
       </div>
       <!-- </div> -->
     </div>
-    <div class="Container" v-show="scrolled <= 2900"></div>
+    <div v-show="scrolled > 3800">
+      <Partners />
+    </div>
+    <div class="Container" v-show="scrolled <= 3800"></div>
   </div>
 </template>
 
 <script>
 import ImageVue from "../Handlers/ImageVue";
 import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
+import Partners from "./Partners";
 import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
@@ -407,6 +411,7 @@ export default {
   components: {
     ImageVue,
     MailingListSubscribeForm,
+    Partners,
   },
   props: ["scrolled", "windowWidth"],
   data() {
