@@ -14,7 +14,6 @@
         </div>
       </router-link>
       <div class="links" v-show="windowWidth > 900">
-        <router-link class="link" to="/files/audition.pdf"> aud </router-link>
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
         <router-link class="link" to="/dashboard"> Dashboard </router-link>
