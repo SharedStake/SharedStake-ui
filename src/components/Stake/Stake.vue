@@ -1,5 +1,6 @@
 <template>
   <div class="flex_column stake">
+    <StakeGauge class="gauge" />
     <div class="staker">
       <div class="chooser">
         <div class="navbar">
@@ -19,7 +20,7 @@
           </button>
         </div>
       </div>
-      <div class="stakePage">
+      <div class="stakePage">    
         <div class="sPElement input">
           <div class="inputBody">
             <div class="flex_row">
@@ -153,8 +154,10 @@ import { getCurrentGasPrices, notifyHandler } from "@/utils/common";
 import { validator, vEth2 } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
+import StakeGauge from "./StakeGauge";
+
 export default {
-  components: { ImageVue },
+  components: { ImageVue, StakeGauge },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),
@@ -439,8 +442,8 @@ export default {
 
 <style scoped>
 .stake {
-  padding-top: 65px;
-  height: 95vh;
+  padding-top: 120px;
+  padding-bottom: 80px;
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
   background-position: center;
@@ -454,7 +457,7 @@ export default {
   background-color: #181818;
   height: 90%;
   max-height: 716px;
-  overflow: auto;
+  overflow: visible;
   box-shadow: 0 0 50px rgb(0 0 0 / 10%);
   border-radius: 2px;
   position: relative;
@@ -659,5 +662,8 @@ export default {
 }
 .underline {
   text-decoration: underline;
+}
+.gauge {
+  padding-top: 1rem;
 }
 </style>
