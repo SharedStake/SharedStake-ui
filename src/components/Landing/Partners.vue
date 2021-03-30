@@ -3,7 +3,7 @@
     <div class="header">Partners</div>
     <div class="partner-container">
       <PartnerItem
-        class="partner-item" 
+        :class="partners.length == 4 ? 'partner-item-quad' : 'partner-item'" 
         v-for="partner in partners" :key="partner.key"
         :name="partner.name" 
         :text="partner.text" 
@@ -42,6 +42,13 @@ export default {
           link: "https://chain.link/",
           key: 3
         },
+        {
+          name: "Defi Pulse",
+          imageUrl: "defipulse.png",
+          text: "The latest analytics, rankings, and resources for DeFi applications & protocols.",
+          link: "https://defipulse.com/",
+          key: 4
+        },
       ],
     }
   }
@@ -74,7 +81,13 @@ export default {
 }
 
 .partner-item {
+  margin-bottom: 3vh;
   width: 30%;
+}
+
+.partner-item-quad {
+  margin-bottom: 3vh;
+  width: 35%
 }
 
 @media only screen and (max-width: 1024px) {
@@ -86,6 +99,11 @@ export default {
 
 @media only screen and (max-width: 768px) {
   .partner-item {
+    width: 80%;
+    margin-bottom: 3vh;
+  }
+
+  .partner-item-quad {
     width: 80%;
     margin-bottom: 3vh;
   }
