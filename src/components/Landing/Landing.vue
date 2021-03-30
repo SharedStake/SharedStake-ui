@@ -77,7 +77,7 @@
         <div class="Stat">
           <div class="Num">{{ TVL }}</div>
           <div class="NumExp">Ether Staked with SharedStake</div>
-          <div class="NumDetail">Liquid & Incentivised</div>
+          <div class="NumDetail">It's {{ TVLinUsd.toLocaleString("en-US", { style: 'currency', currency: 'USD' }) }}! Liquid & Incentivised</div>
         </div>
         <div class="Stat">
           <div class="Num">{{ APY }}</div>
@@ -341,13 +341,16 @@ import {
   SGT_uniswap,
   geyser_SGT_uniswap,
 } from "@/contracts";
+import { priceInUsdAsync } from "@/utils/coingecko";
+
 export default {
   components: { ImageVue },
   props: ["scrolled", "windowWidth"],
   data() {
     return {
       TVL: 12000, 
-      APY: "", 
+      TVLinUsd: 0,
+      APY: "",
     };
   },
   async mounted() {
@@ -357,36 +360,42 @@ export default {
         "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
       );
       this.TVL = BN(response.data.result).div(1e18).toFixed(0).toString();
-      this.APY = this.getAPY();
+      this.getAPY();
 
-      
-
+      const etherPrice = await priceInUsdAsync("ethereum");
+      this.TVLinUsd = etherPrice * this.TVL;
     } catch {
       this.TVL = BN(12050).toString();
-      this.APY = BN(100).toString()
+      this.APY = await BN(100).toString();
     }
   },
   methods: {
     async getAPY() {
-      let token = SGT_uniswap;
-      let tokenGeyser = geyser_SGT_uniswap;
-      let reserves = await token.methods.getReserves().call();
-      let Sgt = reserves[0];
-      let totalSupply = await token.methods.totalSupply().call();
-      let tokenPerSgt = totalSupply / (Sgt * 2);
-      let totalStaked = await tokenGeyser.methods.totalSupply().call();
-      totalStaked = BN(totalStaked);
-      let now = Math.floor(Date.now() / 1000);
-      let until = await tokenGeyser.methods.periodFinish().call();
-      let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
-      let stakedSchedule = remDays;
-      let duration = await tokenGeyser.methods.rewardsDuration().call(); //in second
-      let remRewards = BN(remDays).times(
-        BN(75000).div(BN(duration).div(60).div(60).div(24))
-      );
-      let locked = BN(remRewards);
-      let APY = Math.round(BN(100 * tokenPerSgt * ((locked * 1e18) / totalStaked) * (360 / stakedSchedule))).toString() + "%"
-      this.APY = APY;
+      try {
+        let token = SGT_uniswap;
+        let tokenGeyser = geyser_SGT_uniswap;
+        let reserves = await token.methods.getReserves().call();
+        let Sgt = reserves[0];
+        let totalSupply = await token.methods.totalSupply().call();
+        let tokenPerSgt = totalSupply / (Sgt * 2);
+        let totalStaked = await tokenGeyser.methods.totalSupply().call();
+        totalStaked = BN(totalStaked);
+        let now = Math.floor(Date.now() / 1000);
+        let until = await tokenGeyser.methods.periodFinish().call();
+        let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
+        let stakedSchedule = remDays;
+        let duration = await tokenGeyser.methods.rewardsDuration().call(); //in second
+        let remRewards = BN(remDays).times(
+          BN(75000).div(BN(duration).div(60).div(60).div(24))
+        );
+        let locked = BN(remRewards);
+        let APY = Math.round(BN(100 * tokenPerSgt * ((locked * 1e18) / totalStaked) * (360 / stakedSchedule))).toString() + "%"
+        this.APY = APY;
+        return await Promise.resolve(APY);
+      } catch {
+        this.APY = BN(100).toString();
+        return await Promise.resolve(BN(100).toString());
+      }
     }
   },
 };
