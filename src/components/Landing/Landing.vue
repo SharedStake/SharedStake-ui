@@ -330,7 +330,7 @@
     </div>
       <div class="flex_row">
         <a
-          href="https://github.com/SharedStake/Contracts/files/6160456/PRE-Shared_Stake_DAO-15_03_2021.pdf"
+          href="https://github.com/SharedStake/Contracts/files/6246469/PRE-Shared_Stake_DAO-15_03_2021.2.pdf"
           target="_blank"
           rel="noopener noreferrer"
         >
