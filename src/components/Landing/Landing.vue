@@ -328,6 +328,15 @@
         </div>
       </div>
     </div>
+      <div class="flex_row">
+        <a
+          href="https://github.com/SharedStake/Contracts/files/6160456/PRE-Shared_Stake_DAO-15_03_2021.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+        <ImageVue :src="'audit-badge-white.png'" :size="'400px'" />
+        </a>
+      </div>
     <div class="Container" v-show="scrolled <= 2700"></div>
   </div>
 </template>
