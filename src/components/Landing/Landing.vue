@@ -328,7 +328,8 @@
         </div>
       </div>
     </div>
-      <div class="flex_row">
+    <div class="BadgeContainer flex_column" v-show="scrolled > 2900">
+      <div>
         <a
           href="https://github.com/SharedStake/Contracts/files/6246469/PRE-Shared_Stake_DAO-15_03_2021.2.pdf"
           target="_blank"
@@ -337,7 +338,8 @@
         <ImageVue :src="'audit-badge-white.png'" :size="'400px'" />
         </a>
       </div>
-    <div class="Container" v-show="scrolled <= 2700"></div>
+    </div>
+    <div class="Container" v-show="scrolled <= 2900"></div>
   </div>
 </template>
 
@@ -436,6 +438,14 @@ export default {
   grid-template-rows: 1fr;
   justify-content: center;
   align-items: center;
+}
+
+.BadgeContainer {
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  z-index: 1;
 }
 
 .first {
