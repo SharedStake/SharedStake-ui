@@ -448,13 +448,6 @@ export default {
   z-index: 1;
 }
 
-.badge {
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  align-self: center;
-}
-
 .first {
   padding-top: 5rem;
   display: grid;
