@@ -16,20 +16,20 @@
           their ETH2 rewards.
         </div>
         <router-link
-          class="LearnButton"
+          class="StakeButton"
           v-show="windowWidth <= 500"
           to="/stake"
         >
-          Stake!
+          STAKE
           <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
         </router-link>
         <div class="social">
           <router-link
-            class="LearnButton"
+            class="StakeButton"
             v-show="windowWidth > 500"
             to="/stake"
           >
-            Stake!
+            STAKE
             <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
           </router-link>
           <a
@@ -152,7 +152,6 @@
             >
               Learn More
             </a>
-            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
         </div>
       </div>
@@ -238,7 +237,6 @@
         >
           Learn More</a
         >
-        <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
       </div>
     </div>
     <div class="exp roadMap" v-show="scrolled > 2700">
@@ -328,16 +326,21 @@
         </div>
       </div>
     </div>
-    <div class="BadgeContainer flex_column" v-show="scrolled > 2900">
-      <div>
-        <a
-          href="https://github.com/SharedStake/Contracts/files/6246469/PRE-Shared_Stake_DAO-15_03_2021.2.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        <ImageVue :src="'audit-badge-white.png'" :size="'400px'" />
-        </a>
-      </div>
+    <div
+      class="BadgeContainer flex_column"
+      v-show="scrolled >= 2900"
+      :style="{ paddingBottom: '5rem' }"
+    >
+        <div class="StatsHeader">Audit</div>
+        <div>
+          <a
+            href="./assets/static/AuditReport.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+          <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" />
+          </a>
+        </div>
     </div>
     <div class="Container" v-show="scrolled <= 2900"></div>
   </div>
@@ -523,8 +526,24 @@ export default {
   z-index: 3;
   grid-area: Button;
 }
-.LearnButton:hover {
+.LearnButton:hover, .StakeButton:hover {
   transform: scale(0.98);
+}
+.StakeButton {
+  font-size: 21px;
+  font-weight: 500;
+  color: black;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+  border: 2px solid #e6007a;
+  background-color: #e6007a;
+  border-radius: 10px;
+  text-align: center;
+  width: 142px;
+  max-height: 25px;
+  transition: transform 0.5s ease-out;
+  cursor: pointer;
+  z-index: 3;
+  grid-area: Button;
 }
 .background2 {
   background-image: url(bg-2.png);
@@ -677,6 +696,7 @@ export default {
 .StatsHeader {
   color: rgb(255, 255, 255);
   -webkit-box-align: center;
+  padding: 0 0 50px 0;
   align-items: center;
   font-size: 50px;
   line-height: 1.16em;
@@ -686,7 +706,7 @@ export default {
   text-align: center;
 }
 .StatsExp {
-  max-width: 660px;
+  max-width: 800px;
   text-align: center;
   margin: 0px auto 30px;
   font-size: 22px;
@@ -809,17 +829,7 @@ export default {
   top: 0;
   z-index: 10;
 }
-.titleBox::before {
-  left: -1%;
-  position: absolute;
-  top: -7%;
-  z-index: 1;
-  content: "";
-  width: 2.6rem;
-  height: 2.6rem;
-  border: 2px solid #e6007a;
-  border-radius: 50%;
-}
+
 .main {
   width: 100%;
   padding-bottom: 0.5rem;

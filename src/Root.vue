@@ -125,9 +125,6 @@
     <router-view :scrolled="currentScrollPosition" :windowWidth="windowWidth" />
     <!--App-->
     <div class="footer">
-      <div class="flex_column LogoContainer">
-        <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
-      </div>
       <div class="disclaimer">
         <p>
           Please note that this is a Beta version of the SharedStake protocol.
@@ -146,7 +143,9 @@
         </p>
         <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
-      <div class="footerLinks">
+      <div class="flex_row LogoContainer">
+        <div class="footerLinks">
+        <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
         <div class="footerGroup">
           <div class="footerGroupName">Community</div>
           <span class="link footerLink">
@@ -220,6 +219,7 @@
             </a></span
           >
         </div>
+      </div>
       </div>
       <div class="bottom">SharedStake © 2021</div>
     </div>
@@ -299,7 +299,7 @@ export default {
   display: flex;
   flex-direction: row;
   -webkit-box-pack: justify;
-  justify-content: space-between;
+  justify-content: center;
   -webkit-box-align: center;
   align-items: center;
   box-sizing: border-box;
@@ -351,7 +351,8 @@ export default {
   font-size: 24px;
   align-items: center;
   cursor: pointer;
-  grid-area: Logo;
+  /* grid-area: Logo; */
+  justify-content: center;
 }
 
 .Logo {
@@ -465,22 +466,22 @@ export default {
   background-color: rgb(24, 24, 24);
   color: rgb(255, 255, 255);
   min-height: 350px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* display: grid; */
+  /* grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr 0.4fr;
   gap: 0px 0px;
   grid-template-areas:
     "Disclaimer Logo"
     "Disclaimer Info"
-    "bottom bottom ";
+    "bottom bottom "; */
   align-items: center;
 }
 
 .disclaimer {
   grid-area: Disclaimer;
   font-size: 14px;
-  padding: 0;
-  text-align: justify;
+  padding: 0 0 50px 0;
+  text-align: center;
   text-justify: inter-word;
   line-height: 22px;
   opacity: 0.5;
@@ -497,7 +498,8 @@ export default {
   display: flex;
   flex-wrap: wrap;
   -webkit-box-pack: justify;
-  justify-content: space-between;
+  justify-content: space-around;
+  padding: 0 0 50px 0;
 }
 .footerGroup {
   flex-direction: column;
