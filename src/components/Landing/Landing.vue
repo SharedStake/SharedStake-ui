@@ -326,16 +326,21 @@
         </div>
       </div>
     </div>
-    <div class="BadgeContainer flex_column" v-show="scrolled > 2900">
-      <div>
-        <a
-          href="https://github.com/SharedStake/Contracts/files/6246469/PRE-Shared_Stake_DAO-15_03_2021.2.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        <ImageVue :src="'audit-badge-white.png'" :size="'400px'" />
-        </a>
-      </div>
+    <div
+      class="BadgeContainer flex_column"
+      v-show="scrolled >= 2900"
+      :style="{ paddingBottom: '5rem' }"
+    >
+        <div class="StatsHeader">Audit</div>
+        <div>
+          <a
+            href="./assets/static/AuditReport.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+          <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" />
+          </a>
+        </div>
     </div>
     <div class="Container" v-show="scrolled <= 2900"></div>
   </div>
@@ -691,6 +696,7 @@ export default {
 .StatsHeader {
   color: rgb(255, 255, 255);
   -webkit-box-align: center;
+  padding: 0 0 50px 0;
   align-items: center;
   font-size: 50px;
   line-height: 1.16em;
