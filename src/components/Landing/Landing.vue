@@ -523,7 +523,7 @@ export default {
   z-index: 3;
   grid-area: Button;
 }
-.LearnButton:hover {
+.LearnButton:hover, .StakeButton:hover {
   transform: scale(0.98);
 }
 .StakeButton {

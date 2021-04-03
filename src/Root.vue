@@ -128,24 +128,6 @@
       <div class="flex_column LogoContainer">
         <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
       </div>
-      <div class="disclaimer">
-        <p>
-          Please note that this is a Beta version of the SharedStake protocol.
-          The platform, its software, and all content found on it are provided
-          on an “as is” and “as available” basis.
-        </p>
-        <p>
-          While we have made reasonable efforts to ensure the security and
-          functionality of the SharedStake platform, nothing approaching the
-          rigor of a formal audit has been conducted at this time and the
-          front-end is actively being tested.
-        </p>
-        <p>
-          We strongly advise caution to anyone who chooses to use the current
-          experimental version.
-        </p>
-        <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
-      </div>
       <div class="footerLinks">
         <div class="footerGroup">
           <div class="footerGroupName">Community</div>
@@ -220,6 +202,24 @@
             </a></span
           >
         </div>
+      </div>
+       <div class="flex_row">
+        <p>
+          Please note that this is a Beta version of the SharedStake protocol.
+          The platform, its software, and all content found on it are provided
+          on an “as is” and “as available” basis.
+        </p>
+        <p>
+          While we have made reasonable efforts to ensure the security and
+          functionality of the SharedStake platform, nothing approaching the
+          rigor of a formal audit has been conducted at this time and the
+          front-end is actively being tested.
+        </p>
+        <p>
+          We strongly advise caution to anyone who chooses to use the current
+          experimental version.
+        </p>
+        <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
       <div class="bottom">SharedStake © 2021</div>
     </div>
@@ -299,7 +299,7 @@ export default {
   display: flex;
   flex-direction: row;
   -webkit-box-pack: justify;
-  justify-content: space-between;
+  justify-content: center;
   -webkit-box-align: center;
   align-items: center;
   box-sizing: border-box;
