@@ -577,14 +577,16 @@ export default {
   border-radius: 100px;
 }
 .switch_active {
-  border: 2px solid rgb(37, 167, 219);
+  border: 2px solid #e6007a;
+  background-color: #e6007a;
   border-radius: 100px;
-  color: #fff;
+  color: #000;
   cursor: pointer;
+  font-weight: bold;
 }
 .switch_active:hover,
 .switch:hover {
-  background-color: rgba(37, 167, 219, 0.1);
+  transform: scale(0.98);
 }
 .balance {
   margin-top: 8px;

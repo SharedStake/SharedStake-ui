@@ -103,8 +103,8 @@ export default {
       const ethDepositedToContract = currentValidatorShares * validatorPrice / stakePerValidator;
 
       return ethDepositedToContract.toFixed(2);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -117,7 +117,7 @@ export default {
   justify-content: center
 }
 .blue {
-  color: #1d3c7a;
+  color: rgb(37, 167, 219);
   font-size: 0.8em;
 }
 .timer {
@@ -136,7 +136,7 @@ export default {
   text-align: left;
 }
 .title {
-  color: #1d3c7a;
+  color: rgb(37, 167, 219);
   font-size: 40px;
 }
 .content {

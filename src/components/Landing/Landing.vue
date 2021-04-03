@@ -152,7 +152,6 @@
             >
               Learn More
             </a>
-            <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
           </div>
         </div>
       </div>
@@ -238,7 +237,6 @@
         >
           Learn More</a
         >
-        <ImageVue :src="'link.svg'" :size="'15px'" class="glow" />
       </div>
     </div>
     <div class="exp roadMap" v-show="scrolled > 2700">
@@ -702,7 +700,7 @@ export default {
   text-align: center;
 }
 .StatsExp {
-  max-width: 660px;
+  max-width: 800px;
   text-align: center;
   margin: 0px auto 30px;
   font-size: 22px;
@@ -825,17 +823,7 @@ export default {
   top: 0;
   z-index: 10;
 }
-.titleBox::before {
-  left: -1%;
-  position: absolute;
-  top: -7%;
-  z-index: 1;
-  content: "";
-  width: 2.6rem;
-  height: 2.6rem;
-  border: 2px solid #e6007a;
-  border-radius: 50%;
-}
+
 .main {
   width: 100%;
   padding-bottom: 0.5rem;
