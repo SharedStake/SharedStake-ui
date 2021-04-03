@@ -16,20 +16,20 @@
           their ETH2 rewards.
         </div>
         <router-link
-          class="LearnButton"
+          class="StakeButton"
           v-show="windowWidth <= 500"
           to="/stake"
         >
-          Stake!
+          STAKE
           <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
         </router-link>
         <div class="social">
           <router-link
-            class="LearnButton"
+            class="StakeButton"
             v-show="windowWidth > 500"
             to="/stake"
           >
-            Stake!
+            STAKE
             <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
           </router-link>
           <a
@@ -525,6 +525,22 @@ export default {
 }
 .LearnButton:hover {
   transform: scale(0.98);
+}
+.StakeButton {
+  font-size: 21px;
+  font-weight: 500;
+  color: black;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+  border: 2px solid #e6007a;
+  background-color: #e6007a;
+  border-radius: 10px;
+  text-align: center;
+  width: 142px;
+  max-height: 25px;
+  transition: transform 0.5s ease-out;
+  cursor: pointer;
+  z-index: 3;
+  grid-area: Button;
 }
 .background2 {
   background-image: url(bg-2.png);
