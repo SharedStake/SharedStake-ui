@@ -334,7 +334,7 @@
         <div class="StatsHeader">Audit</div>
         <div>
           <a
-            href="./assets/static/AuditReport.pdf"
+            href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
             target="_blank"
             rel="noopener noreferrer"
           >
