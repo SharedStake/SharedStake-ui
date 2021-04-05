@@ -77,7 +77,17 @@
         <div class="Stat">
           <div class="Num">{{ TVL }}</div>
           <div class="NumExp">Ether Staked with SharedStake</div>
-          <div class="NumDetail">It's {{ TVLinUsd.toLocaleString("en-US", { style: 'currency', currency: 'USD' }) }}! Liquid & Incentivised</div>
+          <div class="NumDetail">
+            It's
+            {{
+              TVLinUsd.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })
+            }}! Liquid & Incentivised
+          </div>
         </div>
         <div class="Stat">
           <div class="Num">{{ APY }}</div>
@@ -331,16 +341,16 @@
       v-show="scrolled >= 2900"
       :style="{ paddingBottom: '5rem' }"
     >
-        <div class="StatsHeader">Audit</div>
-        <div>
-          <a
-            href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+      <div class="StatsHeader">Audit</div>
+      <div>
+        <a
+          href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" />
-          </a>
-        </div>
+        </a>
+      </div>
     </div>
     <div class="Container" v-show="scrolled <= 2900"></div>
   </div>
@@ -351,10 +361,7 @@ import ImageVue from "../Handlers/ImageVue";
 import axios from "axios";
 import BN from "bignumber.js";
 import { timeout } from "@/utils/helpers";
-import {
-  SGT_uniswap,
-  geyser_SGT_uniswap,
-} from "@/contracts";
+import { SGT_uniswap, geyser_SGT_uniswap } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
 
 export default {
@@ -362,7 +369,7 @@ export default {
   props: ["scrolled", "windowWidth"],
   data() {
     return {
-      TVL: 12000, 
+      TVL: 12000,
       TVLinUsd: 0,
       APY: "",
     };
@@ -403,14 +410,22 @@ export default {
           BN(75000).div(BN(duration).div(60).div(60).div(24))
         );
         let locked = BN(remRewards);
-        let APY = Math.round(BN(100 * tokenPerSgt * ((locked * 1e18) / totalStaked) * (360 / stakedSchedule))).toString() + "%"
+        let APY =
+          Math.round(
+            BN(
+              100 *
+                tokenPerSgt *
+                ((locked * 1e18) / totalStaked) *
+                (360 / stakedSchedule)
+            )
+          ).toString() + "%";
         this.APY = APY;
         return await Promise.resolve(APY);
       } catch {
         this.APY = BN(100).toString();
         return await Promise.resolve(BN(100).toString());
       }
-    }
+    },
   },
 };
 </script>
@@ -520,13 +535,13 @@ export default {
   border-radius: 10px;
   text-align: center;
   width: 142px;
-  max-height: 25px;
   transition: transform 0.5s ease-out;
   cursor: pointer;
   z-index: 3;
   grid-area: Button;
 }
-.LearnButton:hover, .StakeButton:hover {
+.LearnButton:hover,
+.StakeButton:hover {
   transform: scale(0.98);
 }
 .StakeButton {
