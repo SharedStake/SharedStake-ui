@@ -222,6 +222,7 @@ import ImageVue from "../Handlers/ImageVue";
 import { mapGetters } from "vuex";
 import { notifyHandler } from "@/utils/common";
 import BN from "bignumber.js";
+import { signERC2612Permit } from 'eth-permit';
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 import { timeout } from "@/utils/helpers";
@@ -406,15 +407,21 @@ export default {
     async Deposit() {
       let myAmount = this.bigDAmount.toString();
       let geyserAddress = this.pool.geyser._address;
+      let tokenAddress = this.pool.token._address;
       let allowance = await this.pool.token.methods
         .allowance(this.userAddress, geyserAddress)
         .call();
       let approval = true;
+      
+      // Sign message using injected provider (ie Metamask).
+      // You can replace window.ethereum with any other web3 provider.
+      const result = await signERC2612Permit(window.ethereum, tokenAddress, this.userAddress, geyserAddress, myAmount);
+
       if (BN(allowance).lt(this.bigDAmount)) {
         if (this.inf_approval)
           myAmount = BN(2).pow(BN(256)).minus(BN(1)).toString();
         await this.pool.token.methods
-          .approve(geyserAddress, myAmount)
+          .permit(this.UserAddress, geyserAddress, myAmount, result.deadline, result.v, result.r, result.s)
           .send({ from: this.userAddress })
           .on("transactionHash", function (hash) {
             notifyHandler(hash);
