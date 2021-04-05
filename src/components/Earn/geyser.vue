@@ -370,38 +370,46 @@ export default {
       this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
     },
-    async userAddress(newVal) {
+    userAddress(newVal) {
       console.log(newVal);
-      if (newVal) await this.mounted();
+      if (newVal) this.mounted(newVal);
     },
   },
   methods: {
     onResize() {
       this.innerWidth = window.innerWidth;
     },
-    async mounted() {
-      let user = this.userAddress;
-      let decimals = await this.pool.token.methods.decimals().call();
-      this.decimals = decimals;
+    async mounted(newUser) {
+      let user = newUser;
+      if (!user) user = this.userAddress;
+      if (user)
+        try {
+          let decimals = await this.pool.token.methods.decimals().call();
+          this.decimals = decimals;
 
-      let balance = await this.pool.token.methods.balanceOf(user).call();
-      this.balance = BN(balance);
-      let staked = await this.pool.geyser.methods.balanceOf(user).call();
-      this.staked = BN(staked);
-      let earned = await this.pool.geyser.methods.earned(user).call();
-      this.earned = BN(earned);
-      let totalStaked = await this.pool.geyser.methods.totalSupply().call();
-      this.totalStaked = BN(totalStaked);
+          let balance = await this.pool.token.methods.balanceOf(user).call();
+          this.balance = BN(balance);
+          let staked = await this.pool.geyser.methods.balanceOf(user).call();
+          this.staked = BN(staked);
+          let earned = await this.pool.geyser.methods.earned(user).call();
+          this.earned = BN(earned);
+          let totalStaked = await this.pool.geyser.methods.totalSupply().call();
+          this.totalStaked = BN(totalStaked);
 
-      let now = Math.floor(Date.now() / 1000);
-      let until = await this.pool.geyser.methods.periodFinish().call();
-      let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
-      this.stakedSchedule = remDays;
-      let duration = await this.pool.geyser.methods.rewardsDuration().call(); //in second
-      let remRewards = BN(remDays).times(
-        BN(this.pool.locked).div(BN(duration).div(60).div(60).div(24))
-      );
-      this.locked = BN(remRewards);
+          let now = Math.floor(Date.now() / 1000);
+          let until = await this.pool.geyser.methods.periodFinish().call();
+          let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
+          this.stakedSchedule = remDays;
+          let duration = await this.pool.geyser.methods
+            .rewardsDuration()
+            .call(); //in second
+          let remRewards = BN(remDays).times(
+            BN(this.pool.locked).div(BN(duration).div(60).div(60).div(24))
+          );
+          this.locked = BN(remRewards);
+        } catch (err) {
+          console.log(err);
+        }
     },
     async Deposit() {
       let myAmount = this.bigDAmount.toString();

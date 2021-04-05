@@ -145,81 +145,81 @@
       </div>
       <div class="flex_row LogoContainer">
         <div class="footerLinks">
-        <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
-        <div class="footerGroup">
-          <div class="footerGroupName">Community</div>
-          <span class="link footerLink">
-            <a
-              href="https://twitter.com/SharedStake"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Twitter
-            </a></span
-          >
-          <span class="link footerLink">
-            <a
-              href="https://discord.com/invite/VezkjY9udC"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Discord
-            </a></span
-          >
-          <span class="link footerLink">
-            <a
-              href="https://www.reddit.com/r/SharedStake/"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Reddit
-            </a></span
-          >
+          <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
+          <div class="footerGroup">
+            <div class="footerGroupName">Community</div>
+            <span class="link footerLink">
+              <a
+                href="https://twitter.com/SharedStake"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Twitter
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
+                href="https://discord.com/invite/VezkjY9udC"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Discord
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
+                href="https://www.reddit.com/r/SharedStake/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Reddit
+              </a></span
+            >
+          </div>
+          <div class="footerGroup">
+            <div class="footerGroupName">Developers</div>
+            <span class="link footerLink">
+              <a
+                href="https://github.com/SharedStake"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Github
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
+                href="https://docs.sharedstake.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Documentation
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
+                href="https://sips.sharedstake.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >SIPs
+              </a></span
+            >
+          </div>
+          <div class="footerGroup">
+            <div class="footerGroupName">About</div>
+            <span class="link footerLink">
+              <a
+                href="https://docs.sharedstake.org/faq."
+                target="_blank"
+                rel="noopener noreferrer"
+                >FAQ
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
+                href="https://docs.sharedstake.org/risks"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Risks
+              </a></span
+            >
+          </div>
         </div>
-        <div class="footerGroup">
-          <div class="footerGroupName">Developers</div>
-          <span class="link footerLink">
-            <a
-              href="https://github.com/SharedStake"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Github
-            </a></span
-          >
-          <span class="link footerLink">
-            <a
-              href="https://docs.sharedstake.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Documentation
-            </a></span
-          >
-          <span class="link footerLink">
-            <a
-              href="https://sips.sharedstake.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              >SIPs
-            </a></span
-          >
-        </div>
-        <div class="footerGroup">
-          <div class="footerGroupName">About</div>
-          <span class="link footerLink">
-            <a
-              href="https://docs.sharedstake.org/faq."
-              target="_blank"
-              rel="noopener noreferrer"
-              >FAQ
-            </a></span
-          >
-          <span class="link footerLink">
-            <a
-              href="https://docs.sharedstake.org/risks"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Risks
-            </a></span
-          >
-        </div>
-      </div>
       </div>
       <div class="bottom">SharedStake © 2021</div>
     </div>
@@ -379,6 +379,7 @@ export default {
   align-items: center;
   -webkit-box-pack: center;
   justify-content: center;
+  padding-left: 10px;
   transition: right 0.25s ease 0s;
 }
 .sidebar {
@@ -539,6 +540,9 @@ export default {
       "Info Info "
       "Disclaimer Disclaimer"
       "bottom bottom ";
+  }
+  .navbar {
+    justify-content: space-between;
   }
 }
 </style>
