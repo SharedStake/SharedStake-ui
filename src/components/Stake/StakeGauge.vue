@@ -5,7 +5,8 @@
       <div class="content">
         Total of {{ ethDeposited }}ETH has been staked to SharedStake so far.
         <br />
-        {{ contractEtherLimit }}ETH is required (for {{ numOfValidators }} validators).<br />
+        {{ contractEtherLimit }}ETH is required (for
+        {{ numOfValidators }} validators).<br />
         When ETH is deposited into the SharedDeposit contract, a
         Validator-Share-ETH2 token (vETH2) is minted. Redeemable for the
         deposited ETH.
@@ -18,7 +19,7 @@
       :size="180"
       :thickness="5"
       :empty-thickness="3"
-      color="#7579ff"
+      color="rgb(37, 167, 219)"
       color-fill="#181818"
       empty-color="#181818"
       empty-color-fill="#181818"
@@ -31,7 +32,7 @@
         / {{ maxEthDepositOnContract }}
         <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
       </span>
-          
+
       <span slot="legend-caption">
         <span class="blue">ETH staked</span>
       </span>
@@ -54,7 +55,7 @@ export default {
     maxEthDepositOnContract: 0,
     contractEtherLimit: 0,
     numOfValidators: 0,
-    showGauge: true
+    showGauge: true,
   }),
   computed: {
     contractDepositRatio() {
@@ -72,17 +73,29 @@ export default {
         return;
       }
 
-      let maxValidatorShares = await validator.methods.maxValidatorShares().call();
-      let currentValidatorShares = await validator.methods.curValidatorShares().call();
+      let maxValidatorShares = await validator.methods
+        .maxValidatorShares()
+        .call();
+      let currentValidatorShares = await validator.methods
+        .curValidatorShares()
+        .call();
       let validatorPrice = await validator.methods.costPerValidator().call();
       this.numOfValidators = await validator.methods.numValidators().call();
 
       maxValidatorShares = BN(maxValidatorShares).dividedBy(1e18).toFixed(2);
-      currentValidatorShares = BN(currentValidatorShares).dividedBy(1e18).toFixed(2);
+      currentValidatorShares = BN(currentValidatorShares)
+        .dividedBy(1e18)
+        .toFixed(2);
       validatorPrice = BN(validatorPrice).dividedBy(1e18).toFixed(2);
 
-      this.ethDeposited = this.calculateEthDepositted(currentValidatorShares, validatorPrice);
-      this.maxEthDepositOnContract = this.calculateMaxEth(maxValidatorShares, validatorPrice);
+      this.ethDeposited = this.calculateEthDepositted(
+        currentValidatorShares,
+        validatorPrice
+      );
+      this.maxEthDepositOnContract = this.calculateMaxEth(
+        maxValidatorShares,
+        validatorPrice
+      );
       this.contractEtherLimit = this.numOfValidators * validatorPrice;
       this.loading = false;
     },
@@ -91,7 +104,8 @@ export default {
       // We can calculate the max amount of ETH that can be depositted to contract
       // as maxShares * validatorPrice / validatorStake.
       const stakePerValidator = 32;
-      const maxEthOnContract = maxValidatorShares * validatorPrice / stakePerValidator;
+      const maxEthOnContract =
+        (maxValidatorShares * validatorPrice) / stakePerValidator;
 
       return maxEthOnContract;
     },
@@ -100,21 +114,22 @@ export default {
       // We can calculate the amount of ETH depositted to contract
       // as sharesMinted * validatorPrice / validatorStake.
       const stakePerValidator = 32;
-      const ethDepositedToContract = currentValidatorShares * validatorPrice / stakePerValidator;
+      const ethDepositedToContract =
+        (currentValidatorShares * validatorPrice) / stakePerValidator;
 
       return ethDepositedToContract.toFixed(2);
-    }
-  }
+    },
+  },
 };
 </script>
 
 
 <style scoped>
 .gauge {
-  display: flex; 
-  flex-direction: row; 
-  align-items: center; 
-  justify-content: center
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 .blue {
   color: rgb(37, 167, 219);
