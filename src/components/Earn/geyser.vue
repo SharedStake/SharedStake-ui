@@ -199,7 +199,7 @@
               MAX
             </div>
           </div>
-          <div>
+          <div class="buttons">
             <button
               class="mainButton half"
               @click="Withdraw"
@@ -715,7 +715,7 @@ export default {
 }
 
 .half {
-  width: 50%;
+  width: 49%;
 }
 .blue {
   color: #fff;
@@ -785,5 +785,10 @@ export default {
   border: 1px solid #afb2b6;
   border-radius: 30px;
   height: 40px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
