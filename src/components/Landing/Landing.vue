@@ -37,28 +37,28 @@
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'twitter.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue :src="'socialmediaicons/Twitter.svg'" :size="'30px'" class="socialLogo" />
           </a>
           <a
             href="https://discord.com/invite/VezkjY9udC"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'discord.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue :src="'socialmediaicons/Discord.svg'" :size="'30px'" class="socialLogo" />
           </a>
           <a
             href="https://www.reddit.com/r/SharedStake/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'reddit.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue :src="'socialmediaicons/Reddit.svg'" :size="'30px'" class="socialLogo" />
           </a>
           <a
             href="https://github.com/SharedStake"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'github.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue :src="'socialmediaicons/Git.svg'" :size="'30px'" class="socialLogo" />
           </a>
         </div>
       </div>
