@@ -95,7 +95,7 @@
       </div>
     </div>
     <div class="geyserUser" v-show="chosen && !pool.external">
-      <div class="userPart" id="rightBorder">
+      <div class="userPart rightBorder">
         <div class="minitext blue">Staked:</div>
         {{
           staked == 0
@@ -125,94 +125,98 @@
       </div>
     </div>
     <div class="geyserMain" v-show="chosen && !pool.external">
-      <div class="mainPart" id="rightBorder">
+      <div class="mainPart rightBorder">
         <div :class="'stakePage'">
-          <input
-            class="token-amount-input"
-            inputmode="decimal"
-            title="Token Amount"
-            autocomplete="off"
-            autocorrect="off"
-            type="text"
-            pattern="^[0-9]*[.,]?[0-9]*$"
-            placeholder="0.0"
-            minlength="1"
-            maxlength="39"
-            spellcheck="false"
-            value=""
-            v-model="DAmount"
-          />
-          <div
-            class="toMax"
-            @click="
-              () => {
-                DAmount = balance ? balance.div(10 ** decimals).toString() : 0;
-              }
-            "
-            title="Get max token"
-          >
-            MAX
+          <div class="input-style">
+            <input
+              class="token-amount-input"
+              inputmode="decimal"
+              title="Token Amount"
+              autocomplete="off"
+              autocorrect="off"
+              type="text"
+              pattern="^[0-9]*[.,]?[0-9]*$"
+              placeholder="0.0"
+              minlength="1"
+              maxlength="39"
+              spellcheck="false"
+              value=""
+              v-model="DAmount"
+            />
+            <div
+              class="toMax"
+              @click="
+                () => {
+                  DAmount = balance ? balance.div(10 ** decimals).toString() : 0;
+                }
+              "
+              title="Get max token"
+            >
+              MAX
+            </div>
           </div>
-        </div>
-        <button class="mainButton" @click="Deposit" :disabled="disableDeposit">
-          stake
-        </button>
-        <div class="s-toggle">
-          <input
-            id="inf-approval"
-            type="checkbox"
-            name="inf-approval"
-            v-model="inf_approval"
-          />
-          <label for="inf-approval">Infinite Approval</label>
+          <button class="mainButton" @click="Deposit" :disabled="disableDeposit">
+            stake
+          </button>
+          <div class="s-toggle">
+            <input
+              id="inf-approval"
+              type="checkbox"
+              name="inf-approval"
+              v-model="inf_approval"
+            />
+            <label for="inf-approval">Infinite Approval</label>
+          </div>
         </div>
       </div>
       <div class="mainPart">
         <div :class="'stakePage'">
-          <input
-            class="token-amount-input"
-            inputmode="decimal"
-            title="Token Amount"
-            autocomplete="off"
-            autocorrect="off"
-            type="text"
-            pattern="^[0-9]*[.,]?[0-9]*$"
-            placeholder="0.0"
-            minlength="1"
-            maxlength="39"
-            spellcheck="false"
-            value=""
-            v-model="WAmount"
-          />
-          <div
-            class="toMax"
-            @click="
-              () => {
-                WAmount = staked ? staked.div(10 ** decimals).toString() : 0;
-              }
-            "
-            title="Get max token"
-          >
-            MAX
+          <div class="input-style">
+            <input
+              class="token-amount-input"
+              inputmode="decimal"
+              title="Token Amount"
+              autocomplete="off"
+              autocorrect="off"
+              type="text"
+              pattern="^[0-9]*[.,]?[0-9]*$"
+              placeholder="0.0"
+              minlength="1"
+              maxlength="39"
+              spellcheck="false"
+              value=""
+              v-model="WAmount"
+            />
+            <div
+              class="toMax"
+              @click="
+                () => {
+                  WAmount = staked ? staked.div(10 ** decimals).toString() : 0;
+                }
+              "
+              title="Get max token"
+            >
+              MAX
+            </div>
+          </div>
+          <div class="buttons">
+            <button
+              class="mainButton half"
+              @click="Withdraw"
+              :disabled="disableWithdraw"
+            >
+              unstake
+            </button>
+            <button
+              class="mainButton half pink"
+              @click="Harvest"
+              :disabled="disableHarvest"
+            >
+              claim rewards
+            </button>
           </div>
         </div>
-        <div>
-          <button
-            class="mainButton half"
-            @click="Withdraw"
-            :disabled="disableWithdraw"
-          >
-            unstake
-          </button>
-          <button
-            class="mainButton half pink"
-            @click="Harvest"
-            :disabled="disableHarvest"
-          >
-            claim rewards
-          </button>
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -574,7 +578,7 @@ export default {
   background-color: rgb(250, 82, 160);
 }
 .geyserMain,
-.geyserUser {
+.geyserUser { 
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -599,13 +603,11 @@ export default {
   color: #fff;
 }
 
-.mainPart,
 .statsPart,
 .userPart {
   padding: 0.5vh 1.5vw 0.5vh 1.5vw;
 }
 
-.mainPart,
 .userPart {
   margin: 2vh 0 2vh 0;
   font-size: 32px;
@@ -613,7 +615,7 @@ export default {
 .userPart {
   text-shadow: 1px 1px rgb(250, 82, 160);
 }
-#rightBorder {
+.rightBorder {
   border-right: 1px rgb(250, 82, 160) solid;
 }
 #whiteBorder {
@@ -661,21 +663,12 @@ export default {
 
 /* stake input part */
 .stakePage {
-  display: flex;
-  max-width: 23vw;
-  /* min-width: 185px; */
-  align-items: center;
-  justify-content: space-between;
-  min-height: 20%;
-  border-radius: 30px;
-  border: 1px solid #afb2b6;
-  align-items: center;
-  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
-  text-align: center;
+  max-width: 100%;
+  padding: 0.5vh 1.5vw 0.5vh 1.5vw;
 }
 .token-amount-input {
+  width: 100%;
   color: #fff;
-  position: relative;
   font-weight: 500;
   outline: none;
   border: none;
@@ -689,16 +682,16 @@ export default {
   text-overflow: ellipsis;
   padding: 0px;
   -webkit-appearance: textfield;
+  padding-left: 15px;
 }
 .toMax {
-  padding: 0.3rem 0.3rem 0 0.2rem;
-  min-height: 1.4rem;
+  padding: 4px;
+  margin: auto;
+  margin-right: 1rem;
   background-color: #181818;
-  border-radius: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  margin-right: 0.5rem;
   color: rgb(255, 0, 122);
   text-align: center;
   cursor: pointer;
@@ -706,6 +699,7 @@ export default {
 }
 .toMax:hover {
   border: 1px solid #007bff;
+  border-radius: 5px;
 }
 .mainButton {
   width: 100%;
@@ -729,7 +723,7 @@ export default {
 }
 
 .half {
-  width: 50%;
+  width: 49%;
 }
 .blue {
   color: #fff;
@@ -777,7 +771,6 @@ export default {
   }
   .statsPart,
   .userPart,
-  .mainPart,
   .headerPart {
     font-size: 20px;
   }
@@ -787,8 +780,23 @@ export default {
     font-size: 10px;
     font-size: 10px;
   }
-  .stakePage {
-    max-width: 31vw;
-  }
+}
+
+.mainPart {
+  width: 100%;
+  margin: 2vh 0;
+}
+
+.input-style {
+  display: flex;
+  justify-items: center;
+  border: 1px solid #afb2b6;
+  border-radius: 30px;
+  height: 40px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

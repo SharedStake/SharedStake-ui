@@ -3,7 +3,6 @@
     <div
       :class="{
         navbar: true,
-        upNavbar: currentScrollPosition <= 1,
         'navbar--hidden': !showNavbar,
       }"
     >
@@ -308,17 +307,12 @@ export default {
   position: fixed;
   top: -1px;
   background: rgb(15, 16, 19);
-  border-bottom: 1px solid rgb(41, 44, 47);
   color: rgb(255, 255, 255);
   transform: translate3d(0, 0, 0);
   transition: 0.5s all ease-out;
 }
-.upNavbar {
-  border-bottom: none;
-}
 .navbar.navbar--hidden {
   box-shadow: none;
-  border-bottom: none;
   transform: translate3d(0, -100%, 0);
 }
 

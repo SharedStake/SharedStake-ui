@@ -16,6 +16,7 @@
       :loading="loading"
       :progress="contractDepositRatio"
       :legend-value="ethDeposited"
+      :legendFormatter="({currentValue}) => new Intl.NumberFormat('en-US').format(currentValue)"
       :size="180"
       :thickness="5"
       :empty-thickness="3"
@@ -29,7 +30,7 @@
       font-color="white"
     >
       <span slot="legend-value">
-        / {{ maxEthDepositOnContract }}
+        of {{ maxEthDepositOnContract.toLocaleString('en-US') }}
         <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
       </span>
 
@@ -117,9 +118,10 @@ export default {
       const ethDepositedToContract =
         (currentValidatorShares * validatorPrice) / stakePerValidator;
 
-      return ethDepositedToContract.toFixed(2);
-    },
-  },
+      // To 2 decimal accuracy and cast it to number
+      return +ethDepositedToContract.toFixed(2);
+    }
+  }
 };
 </script>
 
