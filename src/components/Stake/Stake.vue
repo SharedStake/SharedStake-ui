@@ -1,6 +1,5 @@
 <template>
   <div class="flex_column stake">
-    <StakeGauge class="gauge" />
     <div class="staker">
       <div class="chooser">
         <div class="navbar">
@@ -20,7 +19,7 @@
           </button>
         </div>
       </div>
-      <div class="stakePage">    
+      <div class="stakePage">
         <div class="sPElement input">
           <div class="inputBody">
             <div class="flex_row">
@@ -141,6 +140,7 @@
         </button>
       </div>
     </div>
+    <StakeGauge class="gauge" />
   </div>
 </template>
 
@@ -577,10 +577,9 @@ export default {
   border-radius: 100px;
 }
 .switch_active {
-  border: 2px solid #e6007a;
-  background-color: #e6007a;
+  border: 2px solid rgb(37, 167, 219);
   border-radius: 100px;
-  color: #000;
+  color: #fff;
   cursor: pointer;
   font-weight: bold;
 }

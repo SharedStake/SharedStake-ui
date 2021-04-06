@@ -158,7 +158,7 @@ export default {
   margin: 3vh 1vw 2vh 1vw;
   width: 60vw;
   border-radius: 49px;
-  border: 1px #00ff84 solid;
+  border: 1px rgb(37, 167, 219) solid;
   background-color: #181818;
   display: inline-flex;
   flex-direction: column;
