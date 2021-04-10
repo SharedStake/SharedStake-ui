@@ -454,7 +454,6 @@ export default {
 }
 .footer {
   padding: 40px 30px 10px 30px;
-  background-color: rgb(24, 24, 24);
   color: rgb(255, 255, 255);
   min-height: 350px;
   /* display: grid; */
@@ -471,7 +470,7 @@ export default {
 .disclaimer {
   grid-area: Disclaimer;
   font-size: 14px;
-  padding: 0 0 50px 0;
+  padding: 0 75px 50px 75px;
   text-align: center;
   text-justify: inter-word;
   line-height: 22px;
@@ -486,11 +485,13 @@ export default {
   max-width: 1500px;
   width: calc(100% - 60px);
   margin: 0px auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
   flex-wrap: wrap;
   -webkit-box-pack: justify;
   justify-content: space-around;
-  padding: 0 0 50px 0;
+  padding: 0 75px 50px 75px;
 }
 .footerGroup {
   flex-direction: column;
