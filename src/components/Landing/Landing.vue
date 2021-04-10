@@ -1,160 +1,191 @@
 <template>
-  <div class="Landing">
-    <div class="Container first" v-show="scrolled >= 0">
-      <div class="LogoContainer">
-        <ImageVue
-          :src="'logo-red.svg'"
-          :size="windowWidth > 900 ? '180px' : '20vw'"
-          class="Logo"
-        />
-      </div>
-      <div class="Explanation">
-        <div class="mainTitle">Claim Your Stake</div>
-        <div class="exp">
-          SharedStake is a decentralized Ethereum 2 staking solution that allows
-          users to stake any amount of Ether and earn additional yield on top of
-          their ETH2 rewards.
+    <div class="Landing">
+        <!-- Section 1 -->
+        <div class="Container first" v-show="scrolled >= 0">
+            <!-- Left Side -->
+            <div class="LogoContainer">
+                <ImageVue
+                :src="'logo-red.svg'"
+                :size="windowWidth > 900 ? '180px' : '20vw'"
+                class="Logo"
+                />
+            </div>
+            <!-- Right Side -->
+            <div class="Explanation">
+                <div class="mainTitle">Claim Your Stake</div>
+                <div class="exp">
+                    SharedStake is a decentralized Ethereum 2 staking solution that allows
+                    users to stake any amount of Ether and earn additional yield on top of
+                    their ETH2 rewards.
+                </div>
+                <div class="social">
+                    <div class="ButtonContainer">
+                        <div class="StakeButton">
+                            <router-link
+                            to="/stake"
+                            >STAKE
+                            </router-link>
+                        </div>
+                        <div class="LearnButton">
+                            <a
+                                href="https://docs.sharedstake.org/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                            LEARN MORE
+                            </a>
+                        </div>
+                    </div>
+                    <div class="LinkContainer">
+                        <div class="socialLink">
+                            <a
+                                href="https://twitter.com/SharedStake"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <ImageVue :src="'socialmediaicons/Twitter.svg'" :size="'30px'" class="socialLogo" />
+                            </a>
+                        </div>
+                        <div class="socialLink">
+                            <a
+                                href="https://discord.com/invite/VezkjY9udC"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <ImageVue :src="'socialmediaicons/Discord.svg'" :size="'30px'" class="socialLogo" />
+                            </a>
+                        </div>
+                        <div class="socialLink">
+                            <a
+                                href="https://www.reddit.com/r/SharedStake/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <ImageVue :src="'socialmediaicons/Reddit.svg'" :size="'30px'" class="socialLogo" />
+                            </a>
+                        </div>
+                        <div class="socialLink">
+                            <a
+                                href="https://github.com/SharedStake"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <ImageVue :src="'socialmediaicons/Git.svg'" :size="'30px'" class="socialLogo" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <router-link
-          class="StakeButton"
-          v-show="windowWidth <= 500"
-          to="/stake"
-        >
-          STAKE
-          <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
-        </router-link>
-        <div class="social">
-          <router-link
-            class="StakeButton"
-            v-show="windowWidth > 500"
-            to="/stake"
-          >
-            STAKE
-            <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
-          </router-link>
-          <a
-            href="https://twitter.com/SharedStake"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue :src="'socialmediaicons/Twitter.svg'" :size="'30px'" class="socialLogo" />
-          </a>
-          <a
-            href="https://discord.com/invite/VezkjY9udC"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue :src="'socialmediaicons/Discord.svg'" :size="'30px'" class="socialLogo" />
-          </a>
-          <a
-            href="https://www.reddit.com/r/SharedStake/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue :src="'socialmediaicons/Reddit.svg'" :size="'30px'" class="socialLogo" />
-          </a>
-          <a
-            href="https://github.com/SharedStake"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue :src="'socialmediaicons/Git.svg'" :size="'30px'" class="socialLogo" />
-          </a>
+        <!-- Scroll Down Arrow -->
+        <div class="downSign glow" v-show="scrolled >= 0">
+            <ImageVue :src="'down.svg'" :size="'30px'" class="downSign glow"/>
         </div>
-      </div>
-    </div>
-    <div class="downSign glow" v-show="scrolled >= 0">
-      <ImageVue :src="'down.svg'" :size="'30px'" />
-    </div>
-    <div class="flex_column Stats" v-show="scrolled >= 350">
-      <div class="StatsHeader">Capital efficient staking</div>
-      <div class="StatsExp">Financial optimization at its finest.</div>
-      <div class="StatsExp">
-        Better rewards, improved user experience, and more DeFi compatibility
-        than any other Staking-as-a-Service model on the market.
-      </div>
-      <div class="StatsContent">
-        <div class="Stat">
-          <div class="Num">{{ TVL }}</div>
-          <div class="NumExp">Ether Staked with SharedStake</div>
-          <div class="NumDetail">
-            It's
-            {{
-              TVLinUsd.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })
-            }}! Liquid & Incentivised
+
+        <div class="Container flex_container" v-show="scrolled >= 100">
+          <div class="Section" v-show="scrolled >= 250">
+            <div class="Stats">
+              <div class="SectionHeader">Live Stats</div>
+              <div class="StatsContent">
+                <div class="Stat">
+                  <div class="Num">{{ TVL }}</div>
+                  <div class="NumExp">Ether Staked with SharedStake</div>
+                  <div class="NumDetail">
+                    It's
+                    {{
+                      TVLinUsd.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })
+                    }}! Liquid & Incentivised
+                  </div>
+                </div>
+                <div class="Stat">
+                  <div class="Num">{{ APY }}</div>
+                  <div class="NumExp">Current APY</div>
+                  <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
+                </div>
+                <div class="Stat">
+                  <div class="Num">99.9%</div>
+                  <div class="NumExp">Uptime</div>
+                  <div class="NumDetail">Industry leading cloud infrastructure</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="Stats Section" v-show="scrolled >= 750">
+            <div class="SectionHeader" v-show="scrolled >= 750">Capital Efficient Staking</div>
+            <div class="Section">
+              <div class="StatsExp">Financial optimization at its finest.</div>
+              <div class="StatsExp">
+                Better rewards, improved user experience, and more DeFi compatibility
+                than any other Staking-as-a-Service model on the market.
+              </div>
+            </div>
           </div>
         </div>
-        <div class="Stat">
-          <div class="Num">{{ APY }}</div>
-          <div class="NumExp">Current APY</div>
-          <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
+
+
+
+        <!-- Section 2 -->
+        <div class="Container flex_container background2" v-show="scrolled >= 1100">
+            <div class="flex_column Section" v-show="scrolled >= 1200">
+                <div class="SectionHeader">How It Works</div>
+                <div class="second">
+                    <div class="X Eth">
+                        <ImageVue :src="'eth.png'" :size="'90px'" />
+                    </div>
+                    <ImageVue
+                        :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+                        :size="'15px'"
+                        class="X next1"
+                    />
+                    <div class="X vEth2">
+                        <ImageVue :src="'vEth2.png'" :size="'163px'" />
+                    </div>
+                    <ImageVue
+                        :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+                        :size="'15px'"
+                            class="X next2"
+                    />
+                    <div class="X reward">
+                        <ImageVue :src="'Reward.png'" :size="'127px'" />
+                    </div>
+                    <ImageVue
+                        :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+                        :size="'15px'"
+                        class="X next3"
+                    />
+                    <div class="X harvest">
+                        <ImageVue :src="'Harvest.png'" :size="'92px'" />
+                    </div>
+                    <div class="Exp EthExp">Stake any amount of Eth</div>
+                    <div class="Exp vEth2Exp">Receive your vEth2 token</div>
+                    <div class="Exp rewardExp">
+                        Simply holding vEth2 entitles you to staking rewards
+                    </div>
+                    <div class="Exp harvestExp">
+                        Harvest more yield with your vEth2 in supported DeFi protocols!
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="Stat">
-          <div class="Num">99.9%</div>
-          <div class="NumExp">Uptime</div>
-          <div class="NumDetail">Industry leading cloud infrastructure</div>
-        </div>
-      </div>
-    </div>
-    <div class="Container" v-show="scrolled >= 1000">
-      <div class="exp background2" />
-      <div class="second">
-        <div class="X Eth">
-          <ImageVue :src="'eth.png'" :size="'90px'" />
-        </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next1"
-        />
-        <div class="X vEth2">
-          <ImageVue :src="'vEth2.png'" :size="'163px'" />
-        </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next2"
-        />
-        <div class="X reward">
-          <ImageVue :src="'Reward.png'" :size="'127px'" />
-        </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next3"
-        />
-        <div class="X harvest">
-          <ImageVue :src="'Harvest.png'" :size="'92px'" />
-        </div>
-        <div class="Exp EthExp">Stake any amount of Eth</div>
-        <div class="Exp vEth2Exp">Receive your vEth2 token</div>
-        <div class="Exp rewardExp">
-          Simply holding vEth2 entitles you to staking rewards
-        </div>
-        <div class="Exp harvestExp">
-          Harvest more yield with your vEth2 in supported DeFi protocols!
-        </div>
-        <div class="exp Information" v-show="scrolled >= 1500">
-          <div class="InfoHeader centertext" v-show="scrolled >= 1500">
-            Staking with SharedStake
-          </div>
-          <div class="exp Info" v-show="scrolled >= 1500">
-            SharedStake users earn staking rewards every block, whether you hodl
+        <div class="Stats Section mb50" v-show="scrolled >= 2100">
+          <div class="SectionHeader" v-show="scrolled >= 2100">Staking with SharedStake</div>
+          <div class="Section" v-show="scrolled >= 2200">
+            <div class="StatsExp">SharedStake users earn staking rewards every block, whether you hodl
             your stake or decide to invest your vEth2 in supported Ethereum
             dapps like Uniswap, SushiSwap, Curve, Maker, Compound, Aave, and
-            many more...
-          </div>
-          <div class="exp Info" v-show="scrolled >= 1500">
-            vEth2 is designed for DeFi compatibility. It is a yield bearing
+            many more...</div>
+            <div class="StatsExp" v-show="scrolled >= 2200">
+              vEth2 is designed for DeFi compatibility. It is a yield bearing
             token with a 1:1 price ratio with Ether. vEth2 staking is also
             incentivized further with SGT, the SharedStake Governance Token.
+            </div>
           </div>
-          <div class="LearnButton">
+          <div class="LearnButton mb50" v-show="scrolled >= 2400">
             <a
               href="https://docs.sharedstake.org/"
               target="_blank"
@@ -164,196 +195,214 @@
             </a>
           </div>
         </div>
-      </div>
-    </div>
-    <div
-      class="Container flex_column"
-      v-show="scrolled >= 2000"
-      :style="{ paddingBottom: '5rem' }"
-    >
-      <div class="flex_row vEth2PanelHeader">
-        <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
-        <div class="StatsHeader">vEth2</div>
-      </div>
-      <div class="exp InfoHeader DropShadow centertext">
-        Yield Bearing Wrapped Ether
-      </div>
-      <div class="exp background3" />
-      <div class="third">
-        <div class="Bubble">
-          <div class="exp InfoHeader">Financially Optimized</div>
-          <div class="exp Info mb30">
-            SharedStake optimizes Eth2 staking profits by creating an off-chain
-            yield bearing stable token (vEth2 has a 1:1 price ratio with Ether).
-            Ethereum2 profit distribution will start with the Eth2 launch so
-            until then, track your Eth2 profits in the SharedStake Dashboard.
-          </div>
-          <ImageVue
-            :src="'discount.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
-        </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">DeFi Compatible</div>
-          <div class="exp Info mb30">
-            By using vEth2 instead of other wrapped Ether tokens, DeFi users
-            gain an extra 8-9% yearly growth with off-chain profit distribution.
-            <br />
-            Since vEth2 doesn't contain any 'imaginary' staking rewards, its
-            stability is derived from its peg to Ether's value, practically
-            eliminating concerns with Impermanent Loss.
-          </div>
-          <ImageVue
-            :src="'diamond.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
-        </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">Incentivized Staking</div>
-          <div class="exp Info mb30">
-            On top of Ethereum2 staking profits, holding vEth2 and leveraging it
-            on other Decentralized Finance applications is further incentivized
-            with SGT, used as a Proof of Participation token within the
-            SharedStake Protocol.
-          </div>
-          <ImageVue
-            :src="'dowload.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
-        </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">Built-in Exit Pool</div>
-          <div class="exp Info mb30">
-            10% of all staked Ether remains in the staking contract, creating a
-            liquidity bridge between all users, old and new. <br />
-            SharedStakers can un-stake their Ether at anytime by burning their
-            vEth2 through the staking contract, subject to the pooled amount.
-          </div>
-          <ImageVue
-            :src="'balance.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
-        </div>
-      </div>
-      <div class="LearnButton">
-        <a
-          href="https://sips.sharedstake.org/SIPS/sip-3.html"
-          target="_blank"
-          rel="noopener noreferrer"
+
+
+        <div
+          class="Container flex_column background2"
+          
         >
-          Learn More</a
-        >
-      </div>
-    </div>
-    <div class="exp roadMap" v-show="scrolled > 2700">
-      <div class="mainBox">
-        <div class="exp titleBox"><div class="X">Roadmap</div></div>
-        <div class="main">
-          <div class="mainCon">
-            <div class="list">
-              <div class="item">
-                <div class="date">2021 Q1</div>
-                <div class="text">Protocol Launch &amp; SGT Airdrop</div>
+          <div class="flex_row textEnter">
+            <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp vEth2PanelHeader" />
+            <div class="SectionHeader">vEth2</div>
+          </div>
+          <div class="exp DropShadow centertext" v-show="scrolled >= 2500">
+              Yield Bearing Wrapped Ether
+          </div>
+          <div class="third" v-show="scrolled >= 2600">
+            <div class="Bubble">
+              <div class="exp InfoHeader">Financially Optimized</div>
+              <div class="exp Info mb30">
+                SharedStake optimizes Eth2 staking profits by creating an off-chain
+                yield bearing stable token (vEth2 has a 1:1 price ratio with Ether).
+                Ethereum2 profit distribution will start with the Eth2 launch so
+                until then, track your Eth2 profits in the SharedStake Dashboard.
               </div>
+              <ImageVue
+                :src="'discount.svg'"
+                :size="'70px'"
+                class="exp ICON reverse"
+              />
+            </div>
+            <div class="Bubble">
+              <div class="exp InfoHeader">DeFi Compatible</div>
+              <div class="exp Info mb30">
+                By using vEth2 instead of other wrapped Ether tokens, DeFi users
+                gain an extra 8-9% yearly growth with off-chain profit distribution.
+                <br />
+                Since vEth2 doesn't contain any 'imaginary' staking rewards, its
+                stability is derived from its peg to Ether's value, practically
+                eliminating concerns with Impermanent Loss.
+              </div>
+              <ImageVue
+                :src="'diamond.svg'"
+                :size="'70px'"
+                class="exp ICON reverse"
+              />
+            </div>
+            <div class="Bubble">
+              <div class="exp InfoHeader">Incentivized Staking</div>
+              <div class="exp Info mb30">
+                On top of Ethereum2 staking profits, holding vEth2 and leveraging it
+                on other Decentralized Finance applications is further incentivized
+                with SGT, used as a Proof of Participation token within the
+                SharedStake Protocol.
+              </div>
+              <ImageVue
+                :src="'dowload.svg'"
+                :size="'70px'"
+                class="exp ICON reverse"
+              />
+            </div>
+            <div class="Bubble">
+              <div class="exp InfoHeader">Built-in Exit Pool</div>
+              <div class="exp Info mb30">
+                10% of all staked Ether remains in the staking contract, creating a
+                liquidity bridge between all users, old and new. <br />
+                SharedStakers can un-stake their Ether at anytime by burning their
+                vEth2 through the staking contract, subject to the pooled amount.
+              </div>
+              <ImageVue
+                :src="'balance.svg'"
+                :size="'70px'"
+                class="exp ICON reverse"
+              />
+            </div>
+          </div>
+          <div class="LearnButton mb50" v-show="scrolled >= 2400">
+            <a
+              href="https://sips.sharedstake.org/SIPS/sip-3.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn More</a
+            >
+          </div>
+        </div>
+        <!-- <div class="Container flex_container">
+          <div class="roadMap">
+            <div class="mainBox">
+              <div class="exp titleBox"><div class="SectionHeader">Roadmap</div></div>
+              <div class="main">
+                <div class="mainCon">
+                  <div class="list">
+                    <div class="item">
+                      <div class="date">2021 Q1</div>
+                      <div class="text">Protocol Launch &amp; SGT Airdrop</div>
+                    </div>
 
-              <div class="item">
-                <div class="date">2021 Q1</div>
-                <div class="text">Smart Contract Security Audit by Certik</div>
-              </div>
+                    <div class="item">
+                      <div class="date">2021 Q1</div>
+                      <div class="text">Smart Contract Security Audit by Certik</div>
+                    </div>
 
-              <div class="item">
-                <div class="date">2021 Q2</div>
-                <div class="text">1000 Validators Created</div>
-              </div>
+                    <div class="item">
+                      <div class="date">2021 Q2</div>
+                      <div class="text">1000 Validators Created</div>
+                    </div>
 
-              <div class="item">
-                <div class="date">2021 Q3</div>
-                <div class="text">Leveraged Eth2 Staking with Aave</div>
-              </div>
+                    <div class="item">
+                      <div class="date">2021 Q3</div>
+                      <div class="text">Leveraged Eth2 Staking with Aave</div>
+                    </div>
 
-              <div class="item">
-                <div class="date">2021 Q4</div>
-                <div class="text">Decentralized Validators Backed by SGT</div>
-              </div>
+                    <div class="item">
+                      <div class="date">2021 Q4</div>
+                      <div class="text">Decentralized Validators Backed by SGT</div>
+                    </div>
 
-              <div class="item">
-                <div class="date">2022</div>
-                <div class="text">
-                  vEth2-backed AMM Provides Eth2 Staking Profits to LPs
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">2023</div>
-                <div class="text">
-                  SGT-based Decentralized Automated Staking Mechanism on Mainnet
+                    <div class="item">
+                      <div class="date">2022</div>
+                      <div class="text">
+                        vEth2-backed AMM Provides Eth2 Staking Profits to LPs
+                      </div>
+                    </div>
+                    <div class="item">
+                      <div class="date">2023</div>
+                      <div class="text">
+                        SGT-based Decentralized Automated Staking Mechanism on Mainnet
+                      </div>
+                    </div>
+                  </div>
+                  <div class="curve"></div>
+                  <div class="list next">
+                    <div class="item">
+                      <div class="date">2021 Q1</div>
+                      <div class="text">DAO Launched</div>
+                    </div>
+                    <div class="item">
+                      <div class="date">2021 Q2</div>
+                      <div class="text">
+                        First Incentivized Pools for vEth2 on Curve & Shell
+                      </div>
+                    </div>
+                    <div class="item">
+                      <div class="date">2021 Q2</div>
+                      <div class="text">DeFi Support with Barbecue.js</div>
+                    </div>
+                    <div class="item">
+                      <div class="date">2021 Q3</div>
+                      <div class="text">
+                        More Integrations with DeFi Protocols through Sauce.js...
+                      </div>
+                    </div>
+                    <div class="item">
+                      <div class="date">2022</div>
+                      <div class="text">
+                        Staked Ether in Use on Multiple Blockchains
+                      </div>
+                    </div>
+                    <div class="item">
+                      <div class="date">2023</div>
+                      <div class="text">Ethereum2 Deployed</div>
+                    </div>
+                    <div class="item">
+                      <div class="date">Eth2 &amp; Beyond</div>
+                      <div class="text">
+                        Ethereum2 is just the beginning for SharedStake...
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="curve"></div>
-            <div class="list next">
-              <div class="item">
-                <div class="date">2021 Q1</div>
-                <div class="text">DAO Launched</div>
-              </div>
-              <div class="item">
-                <div class="date">2021 Q2</div>
-                <div class="text">
-                  First Incentivized Pools for vEth2 on Curve & Shell
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">2021 Q2</div>
-                <div class="text">DeFi Support with Barbecue.js</div>
-              </div>
-              <div class="item">
-                <div class="date">2021 Q3</div>
-                <div class="text">
-                  More Integrations with DeFi Protocols through Sauce.js...
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">2022</div>
-                <div class="text">
-                  Staked Ether in Use on Multiple Blockchains
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">2023</div>
-                <div class="text">Ethereum2 Deployed</div>
-              </div>
-              <div class="item">
-                <div class="date">Eth2 &amp; Beyond</div>
-                <div class="text">
-                  Ethereum2 is just the beginning for SharedStake...
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div
-      class="BadgeContainer flex_column"
-      v-show="scrolled >= 2900"
-      :style="{ paddingBottom: '5rem' }"
-    >
-      <div class="StatsHeader">Audit</div>
-      <div>
-        <a
-          href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
-          target="_blank"
-          rel="noopener noreferrer"
+        <div
+          class="BadgeContainer flex_column"
+          v-show="scrolled >= 2900"
+          :style="{ paddingBottom: '5rem' }"
         >
-          <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" />
-        </a>
+          <div class="SectionHeader">Audit</div>
+          <div>
+            <a
+              href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" />
+            </a>
+          </div>
+        </div> -->
+        
+        <!-- Incentivised Staking -->
+        <!-- <div class="Container background3" v-show="scrolled >= 1500">
+            <div class="Section" v-show="scrolled >= 1500">
+                <div class="SectionHeader">Incentivised Staking</div>
+                <div class="third">
+                    <div class="LogoSelector" @mouseover="showByIndex = 1" @mouseout="showByIndex = null">
+                      <div><ImageVue :src="'vEth2.png'" :size="'90px'" :height="'115px'" class="logoSelection"/></div>
+                      <div class="exp">vEth2</div>
+                    </div>
+                    <div class="LogoSelector" @mouseover="showByIndex = 2" @mouseout="showByIndex = null">
+                      <div><ImageVue :src="'logo-red.svg'" :size="'90px'" class="logoSelection"/></div>
+                      <div class="exp">SGT</div>
+                    </div>
+                    <div><span class="exp" v-show="showByIndex === 1">Enter Description</span></div>
+                    <div><span class="exp" v-show="showByIndex === 2">Enter Description</span></div>
+                </div>
+            </div>
+        </div> -->
       </div>
-    </div>
-    <div class="Container" v-show="scrolled <= 2900"></div>
-  </div>
 </template>
 
 <script>
@@ -361,7 +410,10 @@ import ImageVue from "../Handlers/ImageVue";
 import axios from "axios";
 import BN from "bignumber.js";
 import { timeout } from "@/utils/helpers";
-import { SGT_uniswap, geyser_SGT_uniswap } from "@/contracts";
+import {
+  SGT_uniswap,
+  geyser_SGT_uniswap,
+} from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
 
 export default {
@@ -369,9 +421,10 @@ export default {
   props: ["scrolled", "windowWidth"],
   data() {
     return {
-      TVL: 12000,
+      TVL: 12000, 
       TVLinUsd: 0,
       APY: "",
+      showByIndex: null
     };
   },
   async mounted() {
@@ -410,28 +463,54 @@ export default {
           BN(75000).div(BN(duration).div(60).div(60).div(24))
         );
         let locked = BN(remRewards);
-        let APY =
-          Math.round(
-            BN(
-              100 *
-                tokenPerSgt *
-                ((locked * 1e18) / totalStaked) *
-                (360 / stakedSchedule)
-            )
-          ).toString() + "%";
+        let APY = Math.round(BN(100 * tokenPerSgt * ((locked * 1e18) / totalStaked) * (360 / stakedSchedule))).toString() + "%"
         this.APY = APY;
         return await Promise.resolve(APY);
       } catch {
         this.APY = BN(100).toString();
         return await Promise.resolve(BN(100).toString());
       }
-    },
+    }
   },
 };
 </script>
 
 <style scoped>
 /*this is ok until 900px */
+
+.Landing {
+    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr, 1fr, 1fr, .1fr, 1fr, 1fr;
+}
+
+.Container {
+  justify-content: center;
+  position: relative;
+  min-height: 100vh;
+  color: #fff;
+  z-index: 1;
+}
+
+.first {
+  padding-top: 5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
+  
+}
+
+.Explanation {
+  padding: 0 75px 200px 0;
+  animation: TextEnter 0.4s ease-out backwards;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.5fr 1fr 0.5fr;
+  justify-content: center;
+  align-items: center;
+}
 
 .downSign {
   display: flex;
@@ -441,12 +520,14 @@ export default {
   position: sticky;
 }
 
-.Container {
-  position: relative;
-  min-height: 100vh;
-  color: #fff;
-  z-index: 1;
+.LinkContainer {
+  justify-items: space-between;
+  display: grid;
+  grid-template-columns: 1fr, 1fr, 1fr, 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: ". . . .";
 }
+
 .LogoContainer {
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
@@ -466,21 +547,10 @@ export default {
   z-index: 1;
 }
 
-.first {
-  padding-top: 5rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas: ". .";
-}
 .Logo {
   padding: 0 145px 100px 0;
 }
-.Explanation {
-  padding: 0 75px 200px 0;
-  animation: TextEnter 0.4s ease-out backwards;
-}
+
 
 .Exp,
 .Explanation,
@@ -493,33 +563,60 @@ export default {
   margin: 4rem 0px 3rem;
   overflow-wrap: normal;
   max-width: 900px;
-  font-size: 64px;
-  font-weight: 300;
+  font-size: 48px;
+  font-weight: 600;
   line-height: 1.2;
-  margin-left: auto;
+  margin-left: 0;
   margin-right: auto;
   margin-bottom: 30px;
 }
+
 .exp {
-  font-size: 21px;
+  font-size: 20px;
   line-height: 31px;
-  font-weight: 300;
+  font-weight: 500;
   padding: 0px;
   margin-bottom: 30px;
   color: rgba(255, 255, 255, 0.75);
-  /* text-align: justify; */
-  text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
+  /* text-align: left; */
   z-index: 1;
 }
+
 .social {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr, 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: ". .";
+  justify-items: space-between;
   animation: TextEnter 0.8s ease-out backwards;
   margin-top: 30px;
+  padding-top: 0;
 }
+
+.socialLink {
+    align-self: center;
+    justify-self: center;
+
+}
+
+.textEnter {
+  animation: TextEnter 0.4s ease-out backwards;
+}
+
+.ButtonContainer {
+  display: grid;
+  grid-template-columns: 1fr, 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: ". .";
+  justify-items: space-between;
+  justify-content: space-evenly;
+  text-justify: center;
+  text-align: center;
+  gap: 10px;
+  align-items: center;
+}
+
 .socialLogo {
   filter: brightness(300%);
   transition: filter 0.5s ease-out;
@@ -529,40 +626,50 @@ export default {
   filter: brightness(500%);
 }
 .LearnButton {
-  font-size: 21px;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 1rem 1rem 1rem 1rem;
   border: 2px solid #fff;
-  border-radius: 10px;
+  border-radius: 7px;
   text-align: center;
-  width: 142px;
-  transition: transform 0.5s ease-out;
-  cursor: pointer;
-  z-index: 3;
-  grid-area: Button;
-}
-.LearnButton:hover,
-.StakeButton:hover {
-  transform: scale(0.98);
-}
-.StakeButton {
-  font-size: 21px;
-  font-weight: 500;
-  color: black;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #e6007a;
-  background-color: #e6007a;
-  border-radius: 10px;
-  text-align: center;
-  width: 142px;
+  justify-self: center;
   max-height: 25px;
   transition: transform 0.5s ease-out;
   cursor: pointer;
   z-index: 3;
-  grid-area: Button;
+  white-space: nowrap;
+  margin-right: 1rem;
+  margin-left: 1rem;
 }
+
+.LearnButton:hover, .StakeButton:hover {
+  transform: scale(0.98);
+}
+
+.StakeButton {
+  font-size: 14px;
+  font-weight: 800;
+  color: white;
+  padding: 1rem 1rem 1rem 1rem;
+  border: 2px solid radial-gradient(94.26% 94.26% at 50.31% 5.74%, #E20050 0%, #850260 100%);
+  border-radius: 7px;
+  text-align: center;
+  text-justify: center;
+  justify-self: center;
+  max-height: 25px;
+  transition: transform 0.5s ease-out;
+  cursor: pointer;
+  z-index: 3;
+  background: radial-gradient(94.26% 94.26% at 50.31% 5.74%, #E20050 0%, #850260 100%);
+  white-space: nowrap;
+  margin-right: 1rem;
+  margin-left: 1rem;
+  width:100%;
+}
+
 .background2 {
   background-image: url(bg-2.png);
-  position: absolute;
+  position: relative;
   z-index: 0;
   width: 100%;
   height: 100%;
@@ -570,11 +677,11 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  mask-image: radial-gradient(
+  /* mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 20%,
     rgba(0, 0, 0, 0.4) 60%
-  );
+  ); */
 }
 .second {
   width: 90%;
@@ -582,7 +689,7 @@ export default {
   padding: 10% 5% 0 5%;
   display: grid;
   grid-template-columns: 1fr 0.2fr 1fr 0.2fr 1fr 0.2fr 1fr;
-  grid-template-rows: 0.6fr 0.4fr 1fr;
+  grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "Eth next1 vEth2 next2 reward next3 harvest"
@@ -593,22 +700,23 @@ export default {
 }
 .Information {
   margin-top: 2.5vh;
+  margin: 20vw;
   padding: 5vh;
-  width: 70%;
   grid-area: Information;
   font-size: 1.2rem;
   max-width: 1500px;
-  background-color: rgba(17, 26, 25, 0.85);
+  /* background-color: rgba(17, 26, 25, 0.85); */
   position: relative;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.9);
-  -webkit-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.517);
+  text-align: center;
+  /* -webkit-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.517);
   -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
-  box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469);
+  box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469); */
 }
 .InfoHeader {
-  font-size: 34px;
-  font-weight: 300;
+  font-size: 30px;
+  font-weight: 500;
   line-height: 42px;
   margin-bottom: 30px;
   color: rgba(255, 255, 255, 0.95);
@@ -616,8 +724,8 @@ export default {
   align-self: center;
 }
 .Info {
-  margin-bottom: 10px;
-  font-size: 16px;
+  margin-bottom: 50px;
+  font-size: 20px;
   grid-area: Info;
 }
 .ICON {
@@ -697,50 +805,59 @@ export default {
   animation: LogoEnter 0.5s ease-out 0.9s forwards;
 }
 
-.Stats {
-  width: calc(100% - 60px);
-  min-height: auto;
-  max-width: 1500px;
+.Section {
   margin: 0px auto;
-  padding: 120px 0px;
   position: relative;
   overflow: hidden;
   color: #fff;
-  justify-content: space-between;
+  align-content: center;
+  justify-content: center;
 }
-.StatsHeader {
+.SectionHeader {
   color: rgb(255, 255, 255);
   -webkit-box-align: center;
   padding: 0 0 50px 0;
   align-items: center;
-  font-size: 50px;
+  font-size: 48px;
   line-height: 1.16em;
   margin: 30px;
-  font-weight: 300;
+  font-weight: 600;
   animation: TextEnter 0.4s ease-out backwards;
   text-align: center;
+  text-shadow: 2px 0 0 #E20050;
 }
+
+
 .StatsExp {
   max-width: 800px;
   text-align: center;
   margin: 0px auto 30px;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 31px;
-  font-weight: 300;
+  font-weight: 500;
   padding: 0px;
   color: rgba(255, 255, 255, 0.75);
   animation: TextEnter 0.4s ease-out backwards 0.2s;
 }
 .StatsContent {
-  display: flex;
+  display: grid;
   width: calc(100% - 60px);
   -webkit-box-pack: justify;
   justify-content: space-between;
+  justify-items: center;
   max-width: 1500px;
   margin: 0px auto;
   padding: 120px 0px;
   animation: TextEnter 0.4s ease-out backwards 0.4s;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
 }
+.Stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: .3fr 1fr .2fr;
+}
+
 .Stat {
   display: flex;
   flex-direction: column;
@@ -767,7 +884,7 @@ export default {
 }
 .background3 {
   background-image: url(bg-3.png);
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
   z-index: 0;
@@ -782,7 +899,6 @@ export default {
 }
 
 .vEth2PanelHeader {
-  padding-top: 5vw;
   z-index: 5;
   animation: Glow 1s linear alternate infinite;
 }
@@ -790,23 +906,37 @@ export default {
 .third {
   width: 90%;
   height: 90%;
-  padding: 0% 5% 1% 5%;
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 30px 30px;
-  grid-template-areas:
-    ". ."
-    ". .";
+  grid-template-areas: ". .";
   max-width: 1500px;
   justify-content: center;
+  justify-items: center;
   align-items: center;
+  align-content: center;
 }
+
+.LogoSelector{
+    justify-self: center;
+    justify-content: center;
+    justify-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr .5fr;
+    gap: 30px;
+    animation: LogoEnter 0.5s ease-out 0.4s backwards;
+}
+
+.logoSelection:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
 .Bubble {
   min-height: calc(77%);
-  font-size: 1.2rem;
-  background-color: rgba(17, 26, 25, 1);
+  font-size: 20px;
   position: relative;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.9);
@@ -820,12 +950,16 @@ export default {
   grid-template-areas:
     "Header Icon"
     "Info Info ";
+  backdrop-filter: blur(4px);
 }
 .mb30 {
   margin-bottom: 30px;
 }
+.mb50 {
+  margin-bottom: 50px;
+}
 .roadMap {
-  padding-top: 2rem;
+  padding-top: 10rem;
   padding-bottom: 5rem;
   display: flex;
   align-items: center;
@@ -833,7 +967,7 @@ export default {
 }
 .mainBox {
   padding-bottom: 1.13rem;
-  width: 80%;
+  width: 60%;
 }
 
 .titleBox {
@@ -897,7 +1031,7 @@ export default {
 }
 .mainCon .list .item .date {
   font-size: 17px;
-  color: #e6007a;
+  color: #E20050;
   line-height: 1.43em;
   padding-bottom: 0.3rem;
 }
@@ -911,6 +1045,7 @@ export default {
 .mainCon .list.next {
   padding-left: 5rem;
 }
+
 
 /* body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
   height: 5px;
@@ -975,7 +1110,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     background-position: center;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 0.1fr 2fr;
+    grid-template-rows: 1fr 1fr;
     justify-content: center;
     align-items: center;
   }
@@ -1002,18 +1137,21 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     animation: TextEnter 0.4s ease-out backwards;
   }
   .StatsContent {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
     align-items: center;
+    justify-items: center;
     padding: 0px;
   }
-  .StatsHeader {
-    font-size: 42px;
+  .SectionHeader {
+    font-size: 50px;
+    margin: 5%
   }
   .Stat {
     margin: 30px 0 50px 0;
   }
   .Num {
-    font-size: 92px;
+    font-size: 50px;
   }
 
   .InfoHeader {
@@ -1021,18 +1159,26 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     font-size: 25px;
   }
   .third {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    gap: 30px 30px;
-    grid-template-areas:
-      "."
-      ".";
+    width: 90%;
+    height: 90%;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: ". .";
+    max-width: 1500px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mainBox {
+    width: 60%;
   }
 }
 @media only screen and (max-width: 770px) {
   .second {
     grid-template-columns: 1fr;
-    grid-template-rows: 2fr 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
+    grid-template-rows: 0fr 0fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
     grid-template-areas:
       "Information"
       "Information"
@@ -1049,6 +1195,33 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "harvestExp";
     padding-bottom: 15vh;
   }
+  .mainBox {
+    width: 60%;
+  }
+  .third {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-areas: ".";
+  }
+  .social {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: ".";
+    justify-items: space-between;
+    animation: TextEnter 0.8s ease-out backwards;
+    margin-top: 30px;
+    padding-top: 0;
+  }
+  .socialLink {
+    justify-self: center;
+  }
+  .LinkContainer {
+    margin-top: 30px;
+  }
+  
+  
+  
 }
 @media only screen and (max-width: 375px) {
   .mainTitle {

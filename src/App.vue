@@ -15,6 +15,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap");
 
 body {
   scroll-behavior: smooth;
@@ -23,7 +24,7 @@ body {
   font-size: 30px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: "Inter", -apple-system, "Roboto", BlinkMacSystemFont, "Segoe UI",
+  font-family: "Public Sans", "Inter", -apple-system, "Roboto", BlinkMacSystemFont, "Segoe UI",
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
   font-weight: 300;
@@ -45,7 +46,7 @@ body {
 }
 a {
   text-decoration: none;
-  font-family: "Roboto";
+  font-family: "Public Sans";
   color: #fff;
 }
 </style>
