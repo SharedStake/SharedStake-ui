@@ -16,8 +16,6 @@
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
         <router-link class="link" to="/dashboard"> Dashboard </router-link>
-      </div>
-      <div class="links" v-show="windowWidth > 900">
         <span class="link">
           <a
             href="https://snapshot.page/#/sharedstake.eth"
@@ -42,6 +40,9 @@
             >Buy SGT ${{ sgtPrice }}
           </a>
         </span>
+      </div>
+      <div class="links" v-show="windowWidth > 900">
+        
         <span class="link" v-bind:style="{ opacity: 1 }">
           <div v-if="userAddress" class="ConnectButton" @click="Connect">
             {{ userAddress.slice(0, 12) }}
@@ -298,11 +299,11 @@ export default {
   display: flex;
   flex-direction: row;
   -webkit-box-pack: justify;
-  justify-content: center;
+  justify-content: space-between;
   -webkit-box-align: center;
   align-items: center;
   box-sizing: border-box;
-  padding: 1.5rem;
+  padding: 1.5rem 75px;
   width: 100%;
   position: fixed;
   top: -1px;
@@ -425,14 +426,9 @@ export default {
 }
 .ConnectButton {
   padding: 0.5rem 1.5rem;
-  border: 3px double transparent;
+  border: 2px double transparent;
   border-radius: 80px;
-  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(
-      circle at left top,
-      rgb(250, 82, 160) 0%,
-      rgb(37, 167, 219) 100%
-    );
+  background: radial-gradient(94.26% 94.26% at 50.31% 5.74%, #E20050 0%, #850260 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
   background-size: 100% 100%;
