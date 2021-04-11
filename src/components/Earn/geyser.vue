@@ -539,7 +539,7 @@ export default {
   transition: transform 0.2s ease-in-out;
   margin: 4vh 1vw 2vh 1vw;
   width: 60vw;
-  border: 1px rgb(250, 82, 160) solid;
+  border: 1px #850260 solid;
   border-radius: 49px;
   background-color: #181818;
   display: inline-flex;
@@ -575,7 +575,8 @@ export default {
   grid-template-rows: 1fr;
   gap: 0px 10px;
   color: #fff;
-  background-color: rgb(250, 82, 160);
+  font-weight: 600;
+  background-color: #E20050;
 }
 .geyserMain,
 .geyserUser { 
@@ -586,7 +587,7 @@ export default {
   gap: 0px 10px;
 }
 .geyserMain {
-  border-top: 1px rgb(250, 82, 160) solid;
+  border-top: 1px #E20050 solid;
 }
 .s-toggle {
   font-size: 16px;
@@ -598,7 +599,6 @@ export default {
   text-align: left;
   font-weight: 500;
   width: 90%;
-  word-break: break-all;
   line-height: 1.2;
   color: #fff;
 }
@@ -613,10 +613,10 @@ export default {
   font-size: 32px;
 }
 .userPart {
-  text-shadow: 1px 1px rgb(250, 82, 160);
+  text-shadow: 1px 1px #E20050;
 }
 .rightBorder {
-  border-right: 1px rgb(250, 82, 160) solid;
+  border-right: 1px #E20050 solid;
 }
 #whiteBorder {
   border-right: 1px #fff solid;
@@ -658,7 +658,7 @@ export default {
 .minitext {
   font-weight: 700;
   font-size: 14px;
-  color: rgba(250, 82, 160, 0.803);
+  color: #E20050;
 }
 
 /* stake input part */
@@ -690,15 +690,15 @@ export default {
   margin-right: 1rem;
   background-color: #181818;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  color: rgb(255, 0, 122);
+  color: #E20050;
   text-align: center;
   cursor: pointer;
   border: 1px solid #007bff00;
 }
 .toMax:hover {
-  border: 1px solid #007bff;
+  border: 1px solid #E20050;
   border-radius: 5px;
 }
 .mainButton {
@@ -712,14 +712,14 @@ export default {
   font-size: 20px;
   font-weight: 500;
   text-align: center;
-  border-bottom: 1px solid #afb2b6;
   transition: all 0.2s linear, transform 0.1s ease-in-out;
   cursor: pointer;
-  color: #0b8f92;
+  background-color: #E20050;
+  color: white;
 }
 .mainButton:hover {
-  background-color: #0b8f92;
-  color: #fff;
+  transform: scale(0.98);
+  opacity: 80%;
 }
 
 .half {
@@ -729,16 +729,18 @@ export default {
   color: #fff;
 }
 .pink {
-  color: rgb(250, 82, 160);
+  color: #fff;
 }
 .pink:hover {
-  background-color: rgb(250, 82, 160);
+  background-color: #E20050;
   color: #fff;
 }
 .mainButton:disabled {
   cursor: default;
   background-color: rgba(239, 239, 239, 0.3);
-  color: #0b8f92;
+  color: white;
+  opacity: 30%;
+  transform: scale(1);
 }
 .geyserExp {
   max-width: 70%;
@@ -751,10 +753,10 @@ export default {
   .geyserwrapper {
     position: relative;
     transition: transform 0.2s ease-in-out;
-    font-family: "Work Sans";
+    font-family: "Public Sans";
     margin: 4vh 1vw 2vh 1vw;
     width: 90vw;
-    border: 1px rgb(250, 82, 160) solid;
+    border: 1px #E20050 solid;
     border-radius: 49px;
     background-color: #181818;
     display: inline-flex;

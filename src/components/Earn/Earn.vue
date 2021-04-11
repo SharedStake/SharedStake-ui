@@ -142,7 +142,7 @@ span {
   font-size: 18px;
 }
 .logo {
-  color: rgb(250, 82, 160);
+  color: #E20050;
   font-size: 22px;
 }
 </style>
