@@ -481,6 +481,7 @@ export default {
   box-sizing: border-box;
   border-radius: 100px;
   width: 100%;
+  color: white;
 }
 #gas {
   padding: 0 20px;
