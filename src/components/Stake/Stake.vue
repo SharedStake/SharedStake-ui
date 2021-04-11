@@ -477,7 +477,7 @@ export default {
 }
 .navbar {
   display: flex;
-  border: 1px solid #3c3c3c;
+  border: 2px solid rgb(37, 167, 219);
   box-sizing: border-box;
   border-radius: 100px;
   width: 100%;
@@ -491,6 +491,12 @@ export default {
   width: 100%;
   color: #fff;
 }
+
+button:focus {
+  outline:none;
+  
+}
+
 .switch {
   height: 40px;
   padding: 0 20px;
@@ -513,6 +519,7 @@ export default {
   user-select: none;
   touch-action: manipulation;
   background: transparent;
+  opacity: 40%;
 }
 
 .stakePage {
@@ -563,9 +570,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #3c3c3c;
+  border: 2px solid white;
+  background-color: transparent;
   box-sizing: border-box;
-  background-color: rgb(15, 16, 19);
   color: #fff;
   height: 50px;
   padding: 0 20px;
@@ -579,6 +586,7 @@ export default {
 .switch_active {
   border: 2px solid rgb(37, 167, 219);
   border-radius: 100px;
+  opacity: 100%;
   color: #fff;
   cursor: pointer;
   font-weight: bold;
@@ -658,7 +666,7 @@ export default {
 .notification {
   width: 90%;
   padding: 5%;
-  color: tomato;
+  color: white;
   font-size: 16px;
 }
 .underline {
