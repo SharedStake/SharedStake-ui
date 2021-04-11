@@ -152,14 +152,4 @@ export default {};
 #colored {
   color: #e6007a;
 }
-.StatsHeader::after {
-  transform: translate(-30px, 30px);
-  position: absolute;
-  z-index: 1;
-  content: "";
-  width: 1.9rem;
-  height: 1.9rem;
-  border: 2px solid #e6007a;
-  border-radius: 50%;
-}
 </style>
