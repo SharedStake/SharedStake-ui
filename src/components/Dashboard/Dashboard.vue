@@ -7,7 +7,7 @@
         <span id="colored">every block</span>, whether you hodl your stake or
         decide to invest your vEth2 in supported Ethereum dapps like Uniswap,
         SushiSwap, Curve, Maker, Compound, Aave, and
-        <span id="colored">many more...</span>
+        <span id="colored">many more.</span>
       </div>
       <div class="StatsExp">
         The SharedStake Dashboard shows you your
