@@ -352,12 +352,25 @@
         </a>
       </div>
     </div>
+    <div class=" flex_column" v-show="scrolled >= 1000">
+      <!-- <div class="exp background2"> -->
+        <div class="exp Information" v-show="scrolled >= 1500">
+          <div class="InfoHeader centertext" v-show="scrolled >= 1500">
+            Subscribe for newsletter
+          </div>
+          <div class="exp Info" v-show="scrolled >= 1500">      
+            <MailingListSubscribeForm />
+          </div>
+        </div>
+      <!-- </div> -->
+    </div>
     <div class="Container" v-show="scrolled <= 2900"></div>
   </div>
 </template>
 
 <script>
 import ImageVue from "../Handlers/ImageVue";
+import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
 import axios from "axios";
 import BN from "bignumber.js";
 import { timeout } from "@/utils/helpers";
@@ -365,7 +378,10 @@ import { SGT_uniswap, geyser_SGT_uniswap } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
 
 export default {
-  components: { ImageVue },
+  components: { 
+    ImageVue,
+    MailingListSubscribeForm,
+  },
   props: ["scrolled", "windowWidth"],
   data() {
     return {
