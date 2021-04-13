@@ -356,7 +356,7 @@
       <!-- <div class="exp background2"> -->
         <div class="exp Information" v-show="scrolled >= 1500">
           <div class="InfoHeader centertext" v-show="scrolled >= 1500">
-            Subscribe for newsletter
+            Subscribe for updates from the team
           </div>
           <div class="exp Info" v-show="scrolled >= 1500">      
             <MailingListSubscribeForm />
