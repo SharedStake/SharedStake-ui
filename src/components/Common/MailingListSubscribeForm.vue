@@ -2,7 +2,7 @@
   <div>
     <div id="mc_embed_signup">
       <form
-        action="https://sharestake.us1.list-manage.com/subscribe/post?u=6cb6b636781c4fcc0b7cbccf1&amp;id=1e3ebab5ba"
+        action="https://sharedstake.us1.list-manage.com/subscribe/post?u=6cb6b636781c4fcc0b7cbccf1&amp;id=1e3ebab5ba"
         method="post"
         id="mc-embedded-subscribe-form"
         name="mc-embedded-subscribe-form"
