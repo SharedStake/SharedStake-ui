@@ -137,7 +137,6 @@ export default {
       if (this.pools[2].active) {
         //not if its goerli => testing ju1st sgt
         let tokenPerSgt = 0;
-        // pool1
         let token = this.pools[2].token;
         let reserves = await token.methods.getReserves().call();
         let vEth2 = reserves[1];
