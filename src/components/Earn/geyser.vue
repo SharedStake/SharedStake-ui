@@ -147,7 +147,9 @@
               class="toMax"
               @click="
                 () => {
-                  DAmount = balance ? balance.div(10 ** decimals).toString() : 0;
+                  DAmount = balance
+                    ? balance.div(10 ** decimals).toString()
+                    : 0;
                 }
               "
               title="Get max token"
@@ -155,7 +157,11 @@
               MAX
             </div>
           </div>
-          <button class="mainButton" @click="Deposit" :disabled="disableDeposit">
+          <button
+            class="mainButton"
+            @click="Deposit"
+            :disabled="disableDeposit"
+          >
             stake
           </button>
           <div class="s-toggle">
@@ -216,7 +222,7 @@
             </button>
           </div>
         </div>
-        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -422,6 +428,7 @@ export default {
         .allowance(this.userAddress, geyserAddress)
         .call();
       let approval = true;
+      let self = this;
       if (BN(allowance).lt(this.bigDAmount)) {
         if (this.inf_approval)
           myAmount = BN(2).pow(BN(256)).minus(BN(1)).toString();
@@ -437,9 +444,11 @@ export default {
           })
           .on("error", () => {
             // if (error.message.includes("User denied transaction signature"))
+            approval = false;
             this.loading = false;
           })
           .catch((err) => {
+            approval = false;
             this.loading = false;
             console.log(err);
           });
@@ -578,7 +587,7 @@ export default {
   background-color: rgb(250, 82, 160);
 }
 .geyserMain,
-.geyserUser { 
+.geyserUser {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;

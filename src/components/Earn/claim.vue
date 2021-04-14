@@ -28,7 +28,15 @@
         </div>
       </div>
       <div class="headerPart poolClaim">
-        <span v-if="!eligible">
+        <span v-if="!userAddress">
+          <div class="minitext">Status:</div>
+          Connect
+        </span>
+        <span v-else-if="!address">
+          <div class="minitext">Status:</div>
+          ←
+        </span>
+        <span v-else-if="!eligible">
           <div class="minitext">Status:</div>
           Not Eligible
         </span>
