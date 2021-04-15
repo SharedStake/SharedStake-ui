@@ -76,7 +76,7 @@ export default {
           "https://info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
       },
       {
-        name: "vEth2 - Eth",
+        name: "vEth2 - wEth",
         explanation: "on saddle",
         pic: "tokens/saddle.svg",
         token: vEth2_saddle,

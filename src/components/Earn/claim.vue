@@ -72,7 +72,7 @@ export default {
     isClaimed: false,
     txs: [],
     available: 0,
-    eligible: true,
+    eligible: false,
     claim: {},
   }),
   watch: {
