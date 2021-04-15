@@ -371,10 +371,8 @@
 <script>
 import ImageVue from "../Handlers/ImageVue";
 import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
-import axios from "axios";
 import BN from "bignumber.js";
-import { timeout } from "@/utils/helpers";
-import { SGT_uniswap, geyser_SGT_uniswap } from "@/contracts";
+import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
 
 export default {
@@ -392,16 +390,20 @@ export default {
   },
   async mounted() {
     try {
-      await timeout(500);
-      let response = await axios.get(
-        "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
-      );
-      this.TVL = BN(response.data.result).div(1e18).toFixed(0).toString();
+      if (!window.ethereum) {
+        throw "Window doesn't have ethereum enabled"
+      }
+
+      const vETH2TotalSupply = await vEth2.methods
+        .totalSupply()
+        .call();
+      this.TVL = BN(vETH2TotalSupply).div(1e18).toFixed(0).toString();
       this.getAPY();
 
       const etherPrice = await priceInUsdAsync("ethereum");
       this.TVLinUsd = etherPrice * this.TVL;
-    } catch {
+    } catch(e) {
+      console.log(e)
       this.TVL = BN(12050).toString();
       this.APY = await BN(100).toString();
     }
