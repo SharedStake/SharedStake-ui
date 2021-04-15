@@ -109,10 +109,11 @@ export default {
       this.innerWidth = window.innerWidth;
     },
     async isEligible() {
+      let address = web3.utils.toChecksumAddress(this.address);
       const claims = merkle.claims;
       let claim = null;
       for (let key in claims) {
-        if (key == this.address) {
+        if (key == address) {
           claim = claims[key];
         }
       }
