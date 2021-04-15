@@ -21,7 +21,6 @@ let _vEth2;
 let _SGT;
 let _SGT_uniswap;
 let _SGT_vEth2_uniswap;
-let _vEth2_snowswap;
 let _vEth2_saddle;
 let _geyser_vEth2_saddle;
 let _geyser_vEth2;
@@ -29,14 +28,14 @@ let _geyser_SGT;
 let _geyser_SGT_uniswap;
 let _geyser_SGT_vEth2_uniswap;
 let _airdrop;
-console.log(window.ethereum)
 if (window.ethereum) {
 
     const web3 = new Web3(window.ethereum);
 
     let chainId = window.ethereum.chainId;
 
-    // Hotfix for firefox. TODO: Figure out what causes FF to not connect the wallet correctly.
+    // Hotfix for firefox. TODO: Figure out what causes FF to not connect the wallet correctly. 
+    // Ice bear :  This can stay, np.
     chainId = "0x1";
 
     let addressTemp;
@@ -50,11 +49,9 @@ if (window.ethereum) {
             // OTHER Tokens
             SGT_uniswap: "0x3d07f6e1627DA96B8836190De64c1aED70e3FC55",//changed 🆗
             SGT_vEth2_uniswap: "0xC794746Df95C4B7043E8d6B521cFECaB1b14C6cE",// V2 update 🆗
-            vETH2_snowswap: "0xCd6713970828B32113d12B2dE0872a3CaFAf65b5",//  🆗
             vEth2_saddle: "0xe37E2a01feA778BC1717d72Bd9f018B6A6B241D5", //  V2 update 🆗
             // Geysers
             geyser_vEth2: "0xA919D7a5fb7ad4ab6F2aae82b6F39d181A027d35",// change this address
-            geyser_vEth2_snowswap: "0x6208D3fdfC396eB065c8FFc291e6BC1902b8b1bf",// change this address when snowswap ended
             geyser_vEth2_saddle: "0xCF91812631e37C01c443a4fa02DfB59ee2DDbA7c", //  V2 update ❌
             geyser_SGT: "0xc637dB981e417869814B2Ea2F1bD115d2D993597",// change this address 
             geyser_SGT_uniswap: "0x64A1DB33f68695df773924682D2EFb1161B329e8",// change this address 
@@ -74,7 +71,6 @@ if (window.ethereum) {
             // Geysers
             geyser_SGT: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// 🆗
             geyser_vEth2: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
-            geyser_vEth2_snowswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",//no need to edit
             geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             // OLD Geysers
         }
@@ -108,7 +104,6 @@ if (window.ethereum) {
     // OTHER Tokens HERE
     _SGT_uniswap = new web3.eth.Contract(_ABIs["erc20_uniswap"], _addresses["SGT_uniswap"]);
     _SGT_vEth2_uniswap = new web3.eth.Contract(_ABIs["erc20_uniswap"], _addresses["SGT_vEth2_uniswap"]);
-    _vEth2_snowswap = new web3.eth.Contract(_ABIs["erc20_uniswap"], _addresses["SGT_uniswap"]);
     _vEth2_saddle = new web3.eth.Contract(_ABIs["erc20"], _addresses["vEth2_saddle"]);
     // // Geysers
     _geyser_vEth2 = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2"]);
@@ -132,7 +127,6 @@ export const vEth2 = _vEth2
 export const SGT = _SGT
 export const SGT_uniswap = _SGT_uniswap
 export const SGT_vEth2_uniswap = _SGT_vEth2_uniswap
-export const vEth2_snowswap = _vEth2_snowswap
 export const geyser_vEth2 = _geyser_vEth2
 export const vEth2_saddle = _vEth2_saddle
 export const geyser_vEth2_saddle = _geyser_vEth2_saddle
