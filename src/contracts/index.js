@@ -52,13 +52,13 @@ if (window.ethereum) {
             vEth2_saddle: "0xe37E2a01feA778BC1717d72Bd9f018B6A6B241D5", //  V2 update 🆗
             // Geysers
             geyser_vEth2: "0xA919D7a5fb7ad4ab6F2aae82b6F39d181A027d35",// change this address
-            geyser_vEth2_saddle: "0xCF91812631e37C01c443a4fa02DfB59ee2DDbA7c", //  V2 update ❌
+            geyser_vEth2_saddle: "0xCF91812631e37C01c443a4fa02DfB59ee2DDbA7c", //  V2 update 
             geyser_SGT: "0xc637dB981e417869814B2Ea2F1bD115d2D993597",// change this address 
             geyser_SGT_uniswap: "0x64A1DB33f68695df773924682D2EFb1161B329e8",// change this address 
-            geyser_SGT_vEth2_uniswap: "0x53dc9D5deB3B7f5cD9A3E4D19A2beCda559D57Aa", //  V2 update ❌
+            geyser_SGT_vEth2_uniswap: "0x53dc9D5deB3B7f5cD9A3E4D19A2beCda559D57Aa", //  V2 update 
             // OLD Geysers
             // SGT airdrop
-            airdrop_distributor: "0x342eb0fc69c2e20e2ae6338579af572b81cdbdf8",
+            airdrop_distributor: "0x5d918012f56C7EF4c9b78fCA97c126ae13C0F639",
 
         }
     } else {
