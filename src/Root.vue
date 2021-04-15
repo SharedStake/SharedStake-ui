@@ -203,6 +203,14 @@
             <div class="footerGroupName">About</div>
             <span class="link footerLink">
               <a
+                href="https://www.certik.org/projects/sharedstake"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Audit
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
                 href="https://docs.sharedstake.org/faq."
                 target="_blank"
                 rel="noopener noreferrer"

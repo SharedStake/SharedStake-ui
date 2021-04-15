@@ -25,6 +25,10 @@ import {
   geyser_vEth2,
   geyser_SGT,
   geyser_SGT_uniswap,
+  vEth2_saddle,
+  geyser_vEth2_saddle,
+  SGT_vEth2_uniswap,
+  geyser_SGT_vEth2_uniswap,
 } from "@/contracts";
 import Claim from "./claim.vue";
 export default {
@@ -46,7 +50,7 @@ export default {
           "https://info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
       },
       {
-        name: "SGT LP",
+        name: "SGT - Eth",
         explanation: "on uniswap",
         pic: "tokens/SGT LP.png",
         token: SGT_uniswap,
@@ -57,6 +61,31 @@ export default {
         tokenPerSgt: 0,
         link:
           "https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
+      },
+      {
+        name: "SGT - vEth2",
+        explanation: "on uniswap",
+        pic: "tokens/SGT LP.png",
+        token: SGT_vEth2_uniswap,
+        geyser: geyser_SGT_vEth2_uniswap,
+        locked: BN(87500),
+        external: false,
+        active: true,
+        tokenPerSgt: 0,
+        link:
+          "https://info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
+      },
+      {
+        name: "vEth2 - Eth",
+        explanation: "on saddle",
+        pic: "tokens/saddle.svg",
+        token: vEth2_saddle,
+        geyser: geyser_vEth2_saddle,
+        locked: BN(24000),
+        external: false,
+        active: true,
+        tokenPerSgt: 0,
+        link: "https://saddle.exchange/#/deposit/veth2", //for inactive pools => change this to uniswap
       },
       {
         name: "vEth2",
@@ -70,19 +99,6 @@ export default {
         tokenPerSgt: 0,
         link: "https://www.sharedstake.org/stake", //for inactive pools
       },
-      // {
-      //   name: "vEth2 LP",
-      //   explanation: "on snowswap",
-      //   token: null,
-      //   pic: "tokens/vEth2 LP.png",
-      //   geyser: null,
-      //   locked: BN(1),
-      //   external: true,
-      //   active: false,
-      //   status:
-      //     "Check out snowswap to stake your eth2snow tokens with extra SGT rewards!", //for inactive pools
-      //   link: "https://snowswap.org/ethsnow/deposit", //for inactive pools
-      // },
     ],
   }),
   computed: {
@@ -111,13 +127,26 @@ export default {
         let Eth = reserves[1];
         let Sgt = reserves[0];
         tokenPerSgt = Eth / Sgt; //ok
-        this.pools[2].tokenPerSgt = tokenPerSgt;
+        this.pools[4].tokenPerSgt = tokenPerSgt; // vEth2 is assumed to be 1 eth => possible improvement = use saddle pool
+        this.pools[3].tokenPerSgt = tokenPerSgt; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
         // pool 2
         let totalSupply = await token.methods.totalSupply().call();
         tokenPerSgt = totalSupply / (Sgt * 2);
         this.pools[1].tokenPerSgt = tokenPerSgt;
       }
-      // no need for 3. pool
+      if (this.pools[2].active) {
+        //not if its goerli => testing ju1st sgt
+        let tokenPerSgt = 0;
+        let token = this.pools[2].token;
+        let reserves = await token.methods.getReserves().call();
+        let vEth2 = reserves[1];
+        let Sgt = reserves[0];
+        tokenPerSgt = vEth2 / Sgt; //ok
+        // pool 2
+        let totalSupply = await token.methods.totalSupply().call();
+        tokenPerSgt = totalSupply / (Sgt * 2);
+        this.pools[2].tokenPerSgt = tokenPerSgt;
+      }
     },
   },
 };

@@ -93,17 +93,16 @@
             {{ buttonText }}
           </span>
         </button>
-        <!-- <div class="notification" v-if="isDeposit">
-          *Checkout
+        <div class="notification" v-if="isDeposit">
           <a
-            href="https://snowswap.org/ethsnow/"
+            href="https://saddle.exchange/#/"
             target="_blank"
             rel="noopener noreferrer"
+            class="notification"
           >
-            snowswap</a
-          >
-          for better pricing↗
-        </div> -->
+            * Check out Saddle for better pricing ↗
+          </a>
+        </div>
         <div class="notification" v-if="!isDeposit">
           *Protocol fee refund is <span class="underline">currently</span>
           <a
