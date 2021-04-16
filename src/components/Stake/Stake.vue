@@ -94,13 +94,17 @@
           </span>
         </button>
         <div class="notification" v-if="isDeposit">
+          <!-- Insert here if you want notification for stake tab -->
+        </div>
+        <div class="notification" v-if="!isDeposit">
           <a
+            v-if="!enoughFundsInExitPool"
             href="https://saddle.exchange/#/"
             target="_blank"
             rel="noopener noreferrer"
             class="notification"
           >
-            * Check out Saddle for better pricing ↗
+          Check out Saddle if exit pool is low ↗
           </a>
         </div>
         <div class="notification" v-if="!isDeposit">
@@ -186,6 +190,9 @@ export default {
   },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
+    enoughFundsInExitPool() {
+      return this.BNamount.lt(this.contractBal) && this.BNamount.lt(this.remainingByFee)
+    }
   },
   methods: {
     updateGas(gas) {
