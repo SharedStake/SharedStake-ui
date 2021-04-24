@@ -404,7 +404,8 @@ export default {
           this.TVL = await this.fetchTvlWithWallet();
         } catch(e) {
           console.log(e)
-          this.TVL = BN(12050).toString();
+          const STATIC_TVL = 15900; // Updated 24th April 2021
+          this.TVL = BN(STATIC_TVL).toString();
         }
       } finally {
         this.setTvlInUsd(this.TVL);
