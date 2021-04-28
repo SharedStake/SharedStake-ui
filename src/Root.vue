@@ -322,7 +322,7 @@ export default {
   display: flex;
   flex-direction: row;
   -webkit-box-pack: justify;
-  justify-content: space-evenly;
+  justify-content: center;
   -webkit-box-align: center;
   align-items: center;
   box-sizing: border-box;
