@@ -37,28 +37,44 @@
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'socialmediaicons/Twitter.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue
+              :src="'socialmediaicons/Twitter.svg'"
+              :size="'30px'"
+              class="socialLogo"
+            />
           </a>
           <a
             href="https://discord.com/invite/VezkjY9udC"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'socialmediaicons/Discord.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue
+              :src="'socialmediaicons/Discord.svg'"
+              :size="'30px'"
+              class="socialLogo"
+            />
           </a>
           <a
             href="https://www.reddit.com/r/SharedStake/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'socialmediaicons/Reddit.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue
+              :src="'socialmediaicons/Reddit.svg'"
+              :size="'30px'"
+              class="socialLogo"
+            />
           </a>
           <a
             href="https://github.com/SharedStake"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ImageVue :src="'socialmediaicons/Git.svg'" :size="'30px'" class="socialLogo" />
+            <ImageVue
+              :src="'socialmediaicons/Git.svg'"
+              :size="'30px'"
+              class="socialLogo"
+            />
           </a>
         </div>
       </div>
@@ -352,16 +368,16 @@
         </a>
       </div>
     </div>
-    <div class=" flex_column" v-show="scrolled >= 1000">
+    <div class="flex_column" v-show="scrolled >= 1000">
       <!-- <div class="exp background2"> -->
-        <div class="exp Information" v-show="scrolled >= 1500">
-          <div class="InfoHeader centertext" v-show="scrolled >= 1500">
-            Subscribe for updates from the team
-          </div>
-          <div class="exp Info" v-show="scrolled >= 1500">      
-            <MailingListSubscribeForm />
-          </div>
+      <div class="exp Information" v-show="scrolled >= 1500">
+        <div class="InfoHeader centertext" v-show="scrolled >= 1500">
+          Subscribe for updates from the team
         </div>
+        <div class="exp Info" v-show="scrolled >= 1500">
+          <MailingListSubscribeForm />
+        </div>
+      </div>
       <!-- </div> -->
     </div>
     <div class="Container" v-show="scrolled <= 2900"></div>
@@ -378,7 +394,7 @@ import { SGT_uniswap, geyser_SGT_uniswap } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
 
 export default {
-  components: { 
+  components: {
     ImageVue,
     MailingListSubscribeForm,
   },

@@ -93,7 +93,7 @@ export default {
       {
         name: "vEth2",
         explanation: "validator ETH2",
-        pic: "vEth2.png",
+        pic: "vEth2_1.png",
         token: vEth2,
         geyser: geyser_vEth2,
         locked: BN(39000),

@@ -448,7 +448,7 @@ export default {
 
             let oldEarned = await this.pool.oldPool.methods.earned(user).call();
             this.oldEarned = BN(oldEarned);
-            if (oldEarned > 0)
+            if (oldEarned > 0) {
               this.$notify({
                 group: "foo",
                 type: "error",
@@ -458,6 +458,8 @@ export default {
                 duration: 10000,
                 position: "top right",
               });
+              this.$emit("toggle");
+            }
           }
 
           let now = Math.floor(Date.now() / 1000);
