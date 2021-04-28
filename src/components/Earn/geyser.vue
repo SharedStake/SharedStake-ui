@@ -222,8 +222,11 @@
             </button>
           </div>
           <div class="buttons" v-if="pool.oldPool">
-            <button class="mainButton" @click="ExitOldPool"
-            :disabled="!(oldStaked>0 || oldEarned>0 )">
+            <button
+              class="mainButton"
+              @click="ExitOldPool"
+              :disabled="!(oldStaked > 0 || oldEarned > 0)"
+            >
               EXIT from the old pool:
               {{
                 oldStaked == 0
@@ -445,6 +448,16 @@ export default {
 
             let oldEarned = await this.pool.oldPool.methods.earned(user).call();
             this.oldEarned = BN(oldEarned);
+            if (oldEarned > 0)
+              this.$notify({
+                group: "foo",
+                type: "error",
+                title: "Please exit from the old pool:",
+                text: this.pool.name,
+                max: 4,
+                duration: 10000,
+                position: "top right",
+              });
           }
 
           let now = Math.floor(Date.now() / 1000);
@@ -480,7 +493,7 @@ export default {
             notifyHandler(hash);
           })
           .once("confirmation", () => {
-            console.log("approved")
+            console.log("approved");
           })
           .on("error", (err) => {
             // if (error.message.includes("User denied transaction signature"))
@@ -513,7 +526,7 @@ export default {
       }
     },
     async Withdraw() {
-      let self=this;
+      let self = this;
       // to add tx watcher
       if (this.bigWAmount.eq(this.staked)) {
         await this.pool.geyser.methods
@@ -553,7 +566,7 @@ export default {
       }
     },
     async Harvest() {
-      let self=this;
+      let self = this;
       await this.pool.geyser.methods
         .getReward()
         .send({ from: this.userAddress })
@@ -572,7 +585,7 @@ export default {
         });
     },
     async ExitOldPool() {
-      let self=this;
+      let self = this;
       await this.pool.oldPool.methods
         .exit()
         .send({ from: this.userAddress })
