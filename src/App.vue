@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view />
+    <notifications group="foo" classes="my-notification" />
   </div>
 </template>
 
@@ -47,5 +48,34 @@ a {
   text-decoration: none;
   font-family: "Roboto";
   color: #fff;
+}
+.my-notification {
+  margin: 10px 5px 5px;
+  padding: 10px;
+  font-size: 14px;
+  color: #ffffff;
+
+  background: #44a4fc;
+  border-left: 5px solid #187fe7;
+}
+.my-notification.success {
+  background: #68cd86;
+  border-left-color: #42a85f;
+}
+
+.my-notification.warn {
+  background: #ffb648;
+  border-left-color: #f48a06;
+}
+
+.my-notification.error {
+  background: #e54d42;
+  border-left-color: #b82e24;
+}
+
+@media only screen and (max-width: 700px) {
+  .my-notification {
+    font-size: 10px;
+  }
 }
 </style>

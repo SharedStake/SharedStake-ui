@@ -29,6 +29,7 @@ import {
   geyser_vEth2_saddle,
   SGT_vEth2_uniswap,
   geyser_SGT_vEth2_uniswap,
+  oldPools,
 } from "@/contracts";
 import Claim from "./claim.vue";
 export default {
@@ -42,10 +43,11 @@ export default {
         explanation: "SharedStake Governance",
         token: SGT,
         geyser: geyser_SGT,
-        locked: BN(50000),
+        locked: BN(39000),
         external: false,
         active: true,
         tokenPerSgt: 1,
+        oldPool: oldPools["geyser_SGT"],
         link:
           "https://info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
       },
@@ -55,10 +57,11 @@ export default {
         pic: "tokens/SGT LP.png",
         token: SGT_uniswap,
         geyser: geyser_SGT_uniswap,
-        locked: BN(75000),
+        locked: BN(90000),
         external: false,
         active: true,
         tokenPerSgt: 0,
+        oldPool: oldPools["geyser_SGT_uniswap"],
         link:
           "https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
       },
@@ -90,13 +93,15 @@ export default {
       {
         name: "vEth2",
         explanation: "validator ETH2",
-        pic: "vEth2.png",
+        pic: "vEth2_1.png",
         token: vEth2,
         geyser: geyser_vEth2,
-        locked: BN(75000),
+        locked: BN(39000),
         external: false,
         active: true,
         tokenPerSgt: 0,
+        oldPool: oldPools["geyser_vEth2"],
+
         link: "https://www.sharedstake.org/stake", //for inactive pools
       },
     ],

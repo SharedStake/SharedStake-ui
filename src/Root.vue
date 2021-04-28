@@ -36,6 +36,14 @@
         </span>
         <span class="link">
           <a
+            href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Stats
+          </a>
+        </span>
+        <span class="link">
+          <a
             href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078"
             target="_blank"
             rel="noopener noreferrer"
@@ -109,6 +117,14 @@
           target="_blank"
           rel="noopener noreferrer"
           >Docs
+        </a>
+      </span>
+      <span class="link">
+        <a
+          href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Stats
         </a>
       </span>
       <span class="link">
@@ -306,7 +322,7 @@ export default {
   display: flex;
   flex-direction: row;
   -webkit-box-pack: justify;
-  justify-content: center;
+  justify-content: space-evenly;
   -webkit-box-align: center;
   align-items: center;
   box-sizing: border-box;
@@ -418,7 +434,7 @@ export default {
   margin-right: calc(2.5rem * var(--tw-space-x-reverse));
   margin-left: calc(2.5rem * (1 - var(--tw-space-x-reverse)));
   color: rgb(255, 255, 255);
-  opacity: 0.5;
+  opacity: 0.67;
   padding: 15px 0px;
   border-radius: 0.5rem;
   font-weight: 400;

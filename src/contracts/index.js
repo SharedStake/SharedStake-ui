@@ -28,6 +28,12 @@ let _geyser_SGT;
 let _geyser_SGT_uniswap;
 let _geyser_SGT_vEth2_uniswap;
 let _airdrop;
+
+
+let _geyser_vEth2_old;
+let _geyser_SGT_old;
+let _geyser_SGT_uniswap_old;
+
 if (window.ethereum) {
 
     const web3 = new Web3(window.ethereum);
@@ -42,21 +48,25 @@ if (window.ethereum) {
 
     if (chainId == "0x1") {
         addressTemp = {
-            validator: "0xbca3b7b87dcb15f0efa66136bc0e4684a3e5da4d",
+            validator: "0xbca3b7b87dcb15f0efa66136bc0e4684a3e5da4d",//🆗
             // Protocol Tokens
             vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
-            SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078", //changed 🆗
+            SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078",  
             // OTHER Tokens
-            SGT_uniswap: "0x3d07f6e1627DA96B8836190De64c1aED70e3FC55",//changed 🆗
-            SGT_vEth2_uniswap: "0xC794746Df95C4B7043E8d6B521cFECaB1b14C6cE",// V2 update 🆗
-            vEth2_saddle: "0xe37E2a01feA778BC1717d72Bd9f018B6A6B241D5", //  V2 update 🆗
+            SGT_uniswap: "0x3d07f6e1627DA96B8836190De64c1aED70e3FC55",
+            SGT_vEth2_uniswap: "0xC794746Df95C4B7043E8d6B521cFECaB1b14C6cE",
+            vEth2_saddle: "0xe37E2a01feA778BC1717d72Bd9f018B6A6B241D5", 
             // Geysers
-            geyser_vEth2: "0xA919D7a5fb7ad4ab6F2aae82b6F39d181A027d35",// change this address
-            geyser_vEth2_saddle: "0xCF91812631e37C01c443a4fa02DfB59ee2DDbA7c", //  V2 update 
-            geyser_SGT: "0xc637dB981e417869814B2Ea2F1bD115d2D993597",// change this address 
-            geyser_SGT_uniswap: "0x64A1DB33f68695df773924682D2EFb1161B329e8",// change this address 
-            geyser_SGT_vEth2_uniswap: "0x53dc9D5deB3B7f5cD9A3E4D19A2beCda559D57Aa", //  V2 update 
+            geyser_vEth2: "0x2b228842b97ab8a1f3dcd216ec5d553ada957915",// change this address
+            geyser_vEth2_saddle: "0xCF91812631e37C01c443a4fa02DfB59ee2DDbA7c", 
+            geyser_SGT: "0x3FD816A5943a77FA10DE73B44d891676bD818C9C",// change this address 
+            geyser_SGT_uniswap: "0x77d03ecC4d6a15C320dd3849973aA3a599cBB07F",// change this address 
+            geyser_SGT_vEth2_uniswap: "0x53dc9D5deB3B7f5cD9A3E4D19A2beCda559D57Aa", 
             // OLD Geysers
+            geyser_vEth2_old: "0xA919D7a5fb7ad4ab6F2aae82b6F39d181A027d35",
+            geyser_SGT_old: "0xc637dB981e417869814B2Ea2F1bD115d2D993597",
+            geyser_SGT_uniswap_old: "0x64A1DB33f68695df773924682D2EFb1161B329e8",
+
             // SGT airdrop
             airdrop_distributor: "0x5d918012f56C7EF4c9b78fCA97c126ae13C0F639",
 
@@ -64,12 +74,12 @@ if (window.ethereum) {
     } else {
         //Goerli = WHO CARES ANYMORE?
         addressTemp = {
-            validator: "0xF7930fA4cddbf00Ea495f9A522010734580909f8",// 🆗
+            validator: "0xF7930fA4cddbf00Ea495f9A522010734580909f8",// 
             // Protocol Tokens
-            vEth2: "0x64A0ED7f89d9F6de790F7d77022017be9Dcb405A",// 🆗
-            SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 🆗
+            vEth2: "0x64A0ED7f89d9F6de790F7d77022017be9Dcb405A",// 
+            SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
             // Geysers
-            geyser_SGT: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// 🆗
+            geyser_SGT: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// 
             geyser_vEth2: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             // OLD Geysers
@@ -114,6 +124,9 @@ if (window.ethereum) {
 
 
     // OLD Geysers HERE
+    _geyser_vEth2_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2_old"]);
+    _geyser_SGT_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_old"]);
+    _geyser_SGT_uniswap_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_uniswap_old"]);
 
     //Airdrop
     _airdrop = new web3.eth.Contract(_ABIs["airdrop_distributor"], _addresses["airdrop_distributor"]);
@@ -134,3 +147,9 @@ export const geyser_SGT = _geyser_SGT
 export const geyser_SGT_uniswap = _geyser_SGT_uniswap
 export const geyser_SGT_vEth2_uniswap = _geyser_SGT_vEth2_uniswap
 export const airdrop = _airdrop
+
+export const oldPools ={
+    geyser_SGT:_geyser_SGT_old,
+    geyser_SGT_uniswap:_geyser_SGT_uniswap_old,
+    geyser_vEth2:_geyser_vEth2_old,
+}

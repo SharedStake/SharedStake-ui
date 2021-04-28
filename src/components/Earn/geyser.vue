@@ -221,6 +221,37 @@
               claim rewards
             </button>
           </div>
+          <div class="buttons" v-if="pool.oldPool">
+            <button
+              class="mainButton"
+              @click="ExitOldPool"
+              :disabled="!(oldStaked > 0 || oldEarned > 0)"
+            >
+              EXIT from the old pool:
+              {{
+                oldStaked == 0
+                  ? 0
+                  : oldStaked.eq(0)
+                  ? oldStaked
+                  : oldStaked
+                      .div(10 ** decimals)
+                      .toFixed(1)
+                      .toString()
+              }}
+              Tokens +
+              {{
+                oldEarned == 0
+                  ? 0
+                  : oldEarned.eq(0)
+                  ? 0
+                  : oldEarned
+                      .div(10 ** 18)
+                      .toFixed(3)
+                      .toString()
+              }}
+              SGT
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -254,6 +285,8 @@ export default {
     WAmount: 0,
     bigWAmount: BN(0),
     inf_approval: false,
+    oldStaked: 0,
+    oldEarned: 0,
   }),
   created: function () {
     this.innerWidth = window.innerWidth;
@@ -401,10 +434,33 @@ export default {
           this.balance = BN(balance);
           let staked = await this.pool.geyser.methods.balanceOf(user).call();
           this.staked = BN(staked);
+
           let earned = await this.pool.geyser.methods.earned(user).call();
           this.earned = BN(earned);
           let totalStaked = await this.pool.geyser.methods.totalSupply().call();
           this.totalStaked = BN(totalStaked);
+
+          if (this.pool.oldPool) {
+            let oldStaked = await this.pool.oldPool.methods
+              .balanceOf(user)
+              .call();
+            this.oldStaked = BN(oldStaked);
+
+            let oldEarned = await this.pool.oldPool.methods.earned(user).call();
+            this.oldEarned = BN(oldEarned);
+            if (oldEarned > 0) {
+              this.$notify({
+                group: "foo",
+                type: "error",
+                title: "Please exit from the old pool:",
+                text: this.pool.name,
+                max: 4,
+                duration: 10000,
+                position: "top right",
+              });
+              this.$emit("toggle");
+            }
+          }
 
           let now = Math.floor(Date.now() / 1000);
           let until = await this.pool.geyser.methods.periodFinish().call();
@@ -439,20 +495,18 @@ export default {
             notifyHandler(hash);
           })
           .once("confirmation", () => {
-            this.loading = false;
-            self.mounted();
+            console.log("approved");
           })
-          .on("error", () => {
+          .on("error", (err) => {
             // if (error.message.includes("User denied transaction signature"))
             approval = false;
-            this.loading = false;
+            console.log(err);
           })
           .catch((err) => {
             approval = false;
-            this.loading = false;
             console.log(err);
           });
-        await timeout(4000);
+        await timeout(6000);
       }
       if (approval) {
         await this.pool.geyser.methods
@@ -462,20 +516,19 @@ export default {
             notifyHandler(hash);
           })
           .once("confirmation", () => {
-            this.loading = false;
             self.mounted();
           })
-          .on("error", () => {
+          .on("error", (err) => {
             // if (error.message.includes("User denied transaction signature"))
-            this.loading = false;
+            console.log(err);
           })
           .catch((err) => {
-            this.loading = false;
             console.log(err);
           });
       }
     },
     async Withdraw() {
+      let self = this;
       // to add tx watcher
       if (this.bigWAmount.eq(this.staked)) {
         await this.pool.geyser.methods
@@ -485,15 +538,13 @@ export default {
             notifyHandler(hash);
           })
           .once("confirmation", () => {
-            this.loading = false;
             self.mounted();
           })
-          .on("error", () => {
+          .on("error", (err) => {
             // if (error.message.includes("User denied transaction signature"))
-            this.loading = false;
+            console.log(err);
           })
           .catch((err) => {
-            this.loading = false;
             console.log(err);
           });
       } else {
@@ -505,20 +556,19 @@ export default {
             notifyHandler(hash);
           })
           .once("confirmation", () => {
-            this.loading = false;
             self.mounted();
           })
-          .on("error", () => {
+          .on("error", (err) => {
             // if (error.message.includes("User denied transaction signature"))
-            this.loading = false;
+            console.log(err);
           })
           .catch((err) => {
-            this.loading = false;
             console.log(err);
           });
       }
     },
     async Harvest() {
+      let self = this;
       await this.pool.geyser.methods
         .getReward()
         .send({ from: this.userAddress })
@@ -526,15 +576,31 @@ export default {
           notifyHandler(hash);
         })
         .once("confirmation", () => {
-          this.loading = false;
+          self.mounted();
+        })
+        .on("error", (err) => {
+          // if (error.message.includes("User denied transaction signature"))
+          console.log(err);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async ExitOldPool() {
+      let self = this;
+      await this.pool.oldPool.methods
+        .exit()
+        .send({ from: this.userAddress })
+        .on("transactionHash", function (hash) {
+          notifyHandler(hash);
+        })
+        .once("confirmation", () => {
           self.mounted();
         })
         .on("error", () => {
           // if (error.message.includes("User denied transaction signature"))
-          this.loading = false;
         })
         .catch((err) => {
-          this.loading = false;
           console.log(err);
         });
     },

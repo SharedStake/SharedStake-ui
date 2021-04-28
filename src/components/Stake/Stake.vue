@@ -94,9 +94,6 @@
           </span>
         </button>
         <div class="notification" v-if="isDeposit">
-          <!-- Insert here if you want notification for stake tab -->
-        </div>
-        <div class="notification" v-if="!isDeposit">
           <a
             v-if="!enoughFundsInExitPool"
             href="https://saddle.exchange/#/"
@@ -104,10 +101,21 @@
             rel="noopener noreferrer"
             class="notification"
           >
-          Check out Saddle if exit pool is low ↗
+            Check out Saddle for a better pricing ↗
           </a>
         </div>
-        <div class="notification" v-if="!isDeposit">
+        <div class="notification" v-else>
+          <a
+            v-if="!enoughFundsInExitPool"
+            href="https://saddle.exchange/#/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="notification"
+          >
+            Check out Saddle if exit pool is low ↗
+          </a>
+        </div>
+        <!-- <div class="notification" v-if="!isDeposit">
           *Protocol fee refund is <span class="underline">currently</span>
           <a
             href="https://snapshot.page/#/sharedstake.eth/proposal/QmdGJMwRHtTSFVsxufj7TKPK8G1zqwBbk8YuHfrqbWEsGd"
@@ -116,7 +124,7 @@
           >
             disabled↗</a
           >
-        </div>
+        </div> -->
       </div>
       <div class="navbar">
         <span id="gas">Gas</span>
@@ -191,8 +199,11 @@ export default {
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
     enoughFundsInExitPool() {
-      return this.BNamount.lt(this.contractBal) && this.BNamount.lt(this.remainingByFee)
-    }
+      return (
+        this.BNamount.lt(this.contractBal) &&
+        this.BNamount.lt(this.remainingByFee)
+      );
+    },
   },
   methods: {
     updateGas(gas) {
