@@ -163,20 +163,28 @@
           <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
           <div class="footerGroup">
             <div class="footerGroupName">Community</div>
-            <span class="link footerLink">
+            <!-- <span class="link footerLink">
               <a
                 href="https://twitter.com/SharedStake"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Twitter
               </a></span
-            >
+            > -->
             <span class="link footerLink">
               <a
                 href="https://discord.com/invite/VezkjY9udC"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Discord
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
+                href="https://sharedstakedao.medium.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Medium
               </a></span
             >
             <span class="link footerLink">

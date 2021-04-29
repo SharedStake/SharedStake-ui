@@ -32,7 +32,7 @@
             STAKE
             <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
           </router-link>
-          <a
+          <!-- <a
             href="https://twitter.com/SharedStake"
             target="_blank"
             rel="noopener noreferrer"
@@ -42,7 +42,7 @@
               :size="'30px'"
               class="socialLogo"
             />
-          </a>
+          </a> -->
           <a
             href="https://discord.com/invite/VezkjY9udC"
             target="_blank"
@@ -72,6 +72,17 @@
           >
             <ImageVue
               :src="'socialmediaicons/Git.svg'"
+              :size="'30px'"
+              class="socialLogo"
+            />
+          </a>
+          <a
+            href="https://sharedstakedao.medium.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/Medium.svg'"
               :size="'30px'"
               class="socialLogo"
             />
