@@ -76,6 +76,17 @@
               class="socialLogo"
             />
           </a>
+          <a
+            href="https://sharedstakedao.medium.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/Medium.svg'"
+              :size="'30px'"
+              class="socialLogo"
+            />
+          </a>
         </div>
       </div>
     </div>

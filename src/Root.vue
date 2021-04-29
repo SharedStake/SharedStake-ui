@@ -181,6 +181,14 @@
             >
             <span class="link footerLink">
               <a
+                href="https://sharedstakedao.medium.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Medium
+              </a></span
+            >
+            <span class="link footerLink">
+              <a
                 href="https://www.reddit.com/r/SharedStake/"
                 target="_blank"
                 rel="noopener noreferrer"
