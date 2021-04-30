@@ -32,6 +32,8 @@ import {
   oldPools,
 } from "@/contracts";
 import Claim from "./claim.vue";
+import { vEth2Price } from "@/utils/veth2.js";
+
 export default {
   components: { geyser, Claim },
   data: () => ({
@@ -129,10 +131,13 @@ export default {
         let ethOnUniswapLP = uniswapEthSgtReserves[1];
 
         const ethPerSgtFromUniswap = ethOnUniswapLP / sgtOnUniswapLP;
+        //get vEth2 price from saddle pool
+        let vEth2Pr = await vEth2Price();
+        vEth2Pr = vEth2Pr.dividedBy(1e18).toFixed(2).toString();
 
-        this.pools[4].tokenPerSgt = ethPerSgtFromUniswap; // vEth2 is assumed to be 1 eth => possible improvement = use saddle pool
+        this.pools[4].tokenPerSgt = ethPerSgtFromUniswap * vEth2Pr;
         this.pools[3].tokenPerSgt = ethPerSgtFromUniswap; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
-        
+
         let totalSupply = await token.methods.totalSupply().call();
 
         const uniswapEthSgtLpTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2); // Approximation
@@ -142,7 +147,7 @@ export default {
         let token = SGT_vEth2_uniswap;
         let reserves = await token.methods.getReserves().call();
         let sgtOnUniswapLP = reserves[0];
-        
+
         // pool 2
         let totalSupply = await token.methods.totalSupply().call();
         const unsiwapvEth2SgtLPTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2);
