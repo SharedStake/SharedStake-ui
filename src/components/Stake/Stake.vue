@@ -101,7 +101,7 @@
             rel="noopener noreferrer"
             class="notification"
           >
-            Check out Saddle for a better pricing ↗
+            Check out Saddle Pool ↗
           </a>
         </div>
         <div class="notification" v-else>
@@ -166,6 +166,7 @@ import { validator, vEth2 } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
 import StakeGauge from "./StakeGauge";
+import { vEth2Price } from "@/utils/veth2.js";
 
 export default {
   components: { ImageVue, StakeGauge },
@@ -188,6 +189,7 @@ export default {
     loading: true,
     adminFee: 0,
     contractBal: 0,
+    vEth2Price: BN(0),
   }),
   mounted: async function () {
     this.gas = await getCurrentGasPrices();
@@ -312,7 +314,7 @@ export default {
         this.EthBal = BN(amount);
         let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
         this.vEth2Bal = BN(veth2);
-        // this.vEth2Bal = BN(1e20); //delete this line
+
         if (this.isDeposit) {
           this.balance = BN(amount).dividedBy(1e18).toFixed(6);
           this.otherBalance = BN(veth2).dividedBy(1e18).toFixed(6);
@@ -329,6 +331,7 @@ export default {
         );
         this.contractBal = BN(contractBal);
         this.amountCheck(true);
+        this.vEth2Price = await vEth2Price();
         this.loading = false;
       } catch (err) {
         this.buttonText = "Connect to wallet ↗";
@@ -353,7 +356,6 @@ export default {
         this.buttonText = "Amount is too big";
         return;
       }
-
       if (this.Damount[this.Damount.length - 1] === ".") {
         this.validInput = false;
         this.buttonText = "waiting...";
@@ -370,6 +372,14 @@ export default {
         : this.vEth2Bal.gte(this.BNamount);
       if (!this.validInput) {
         this.buttonText = "Insufficient balance";
+        return;
+      }
+      if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
+        this.validInput = false;
+        let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
+        this.buttonText = `Use the Saddle Pool for ${discount
+          .toFixed(0)
+          .toString()}% discount  !`;
         return;
       }
       if (this.BNamount.gt(this.contractBal) && !this.isDeposit) {
@@ -674,7 +684,8 @@ export default {
 }
 .notification {
   width: 90%;
-  padding: 5%;
+  padding: 0 5% 5% 5%;
+  text-align: center;
   color: tomato;
   font-size: 16px;
 }
