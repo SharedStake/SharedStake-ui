@@ -37,6 +37,8 @@ export default {
   data: () => ({
     chosen: null,
     pools: [
+      // Note that order of these pools affects functionality in mounted-lifetime method.
+      // TODO: Make these order agnostic by maybe maping the pools in mounted() with pool name.
       {
         name: "SGT",
         pic: "tokens/logo-red.svg",
@@ -120,37 +122,31 @@ export default {
   },
   methods: {
     async mounted() {
-      // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
-      // 100* (sgtprice/tokenprice)*locked/staked
-      // tokenPerSgt=sgtprice/tokenprice
       if (this.pools[1].active) {
-        //not if its goerli => testing ju1st sgt
-        let tokenPerSgt = 0;
-        // pool1
-        let token = this.pools[1].token;
-        let reserves = await token.methods.getReserves().call();
-        let Eth = reserves[1];
-        let Sgt = reserves[0];
-        tokenPerSgt = Eth / Sgt; //ok
-        this.pools[4].tokenPerSgt = tokenPerSgt; // vEth2 is assumed to be 1 eth => possible improvement = use saddle pool
-        this.pools[3].tokenPerSgt = tokenPerSgt; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
-        // pool 2
+        let token = SGT_uniswap;
+        let uniswapEthSgtReserves = await token.methods.getReserves().call();
+        let sgtOnUniswapLP = uniswapEthSgtReserves[0];
+        let ethOnUniswapLP = uniswapEthSgtReserves[1];
+
+        const ethPerSgtFromUniswap = ethOnUniswapLP / sgtOnUniswapLP;
+
+        this.pools[4].tokenPerSgt = ethPerSgtFromUniswap; // vEth2 is assumed to be 1 eth => possible improvement = use saddle pool
+        this.pools[3].tokenPerSgt = ethPerSgtFromUniswap; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
+        
         let totalSupply = await token.methods.totalSupply().call();
-        tokenPerSgt = totalSupply / (Sgt * 2);
-        this.pools[1].tokenPerSgt = tokenPerSgt;
+
+        const uniswapEthSgtLpTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2); // Approximation
+        this.pools[1].tokenPerSgt = uniswapEthSgtLpTokenPerSgt;
       }
       if (this.pools[2].active) {
-        //not if its goerli => testing ju1st sgt
-        let tokenPerSgt = 0;
-        let token = this.pools[2].token;
+        let token = SGT_vEth2_uniswap;
         let reserves = await token.methods.getReserves().call();
-        let vEth2 = reserves[1];
-        let Sgt = reserves[0];
-        tokenPerSgt = vEth2 / Sgt; //ok
+        let sgtOnUniswapLP = reserves[0];
+        
         // pool 2
         let totalSupply = await token.methods.totalSupply().call();
-        tokenPerSgt = totalSupply / (Sgt * 2);
-        this.pools[2].tokenPerSgt = tokenPerSgt;
+        const unsiwapvEth2SgtLPTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2);
+        this.pools[2].tokenPerSgt = unsiwapvEth2SgtLPTokenPerSgt;
       }
     },
   },

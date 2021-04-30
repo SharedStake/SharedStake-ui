@@ -334,16 +334,17 @@ export default {
       return disable;
     },
     apy: function () {
-      // apy = 100* ( sgtprice* locked amount / (token price * staked amount))=
-      // 100* (sgtprice/tokenprice)*locked/staked
-      // tokenPerSgt=sgtprice/tokenprice
-      // then go yearly
-      return (
-        100 *
-        this.pool.tokenPerSgt *
-        ((this.locked * 1e18) / this.totalStaked) *
-        (360 / this.stakedSchedule)
-      );
+      const pooledTokenPerSgt = this.pool.tokenPerSgt;
+      const rewardsLeftForEmissionPeriod = this.locked * 1e18;
+      const tokensInPool = this.totalStaked;
+      const daysLeftOfEmissionPeriod = this.stakedSchedule;
+
+      const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
+      const percentageYieldForPool = rewardsLeftForEmissionPeriod / totalSgtAmountInPool * 100;
+
+      const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
+
+      return percentageYieldForPool * annualCoefficient;
     },
   },
   watch: {
