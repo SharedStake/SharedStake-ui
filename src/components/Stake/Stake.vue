@@ -453,9 +453,9 @@ export default {
       if (val) {
         if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
           let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
-          this.buttonText = `Use the Saddle Pool for ${discount
+          this.buttonText = `Use the Saddle pool to receive ${discount
             .toFixed(0)
-            .toString()}% discount  !`;
+            .toString()}% more!`;
           return;
         }
         if (this.isDeposit) this.buttonText = "Stake";
