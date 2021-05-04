@@ -379,6 +379,10 @@
         </a>
       </div>
     </div>
+    <div v-show="scrolled > 3800">
+      <Partners />
+    </div>
+    <div class="Container" v-show="scrolled <= 3800"></div>
     <div class="flex_column" v-show="scrolled >= 1000">
       <!-- <div class="exp background2"> -->
       <div class="exp Information" v-show="scrolled >= 1500">
@@ -391,10 +395,6 @@
       </div>
       <!-- </div> -->
     </div>
-    <div v-show="scrolled > 3800">
-      <Partners />
-    </div>
-    <div class="Container" v-show="scrolled <= 3800"></div>
   </div>
 </template>
 
