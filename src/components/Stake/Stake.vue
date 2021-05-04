@@ -374,14 +374,6 @@ export default {
         this.buttonText = "Insufficient balance";
         return;
       }
-      if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
-        this.validInput = false;
-        let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
-        this.buttonText = `Use the Saddle Pool for ${discount
-          .toFixed(0)
-          .toString()}% discount  !`;
-        return;
-      }
       if (this.BNamount.gt(this.contractBal) && !this.isDeposit) {
         this.validInput = false;
         this.buttonText = "Not enough funds in Exit Pool";
