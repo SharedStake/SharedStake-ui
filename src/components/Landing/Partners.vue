@@ -36,10 +36,10 @@ export default {
           key: 2
         },
         {
-          name: "Chainlink",
-          imageUrl: "chainlink.png",
-          text: "Price oracle partner for SharedStake.",
-          link: "https://chain.link/",
+          name: "Saddle",
+          imageUrl: "saddle.png",
+          text: "vETH2 liquidity pool provider.",
+          link: "https://saddle.finance",
           key: 3
         },
         {
