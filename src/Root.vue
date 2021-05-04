@@ -148,13 +148,12 @@
         </p>
         <p>
           While we have made reasonable efforts to ensure the security and
-          functionality of the SharedStake platform, nothing approaching the
-          rigor of a formal audit has been conducted at this time and the
-          front-end is actively being tested.
+          functionality of the SharedStake platform, including a formal audit by Certik,
+          we are constanly working on the front-end. Please inform us on Discord
+          if you are experiencing any bugs or odd behaviour on the UI.
         </p>
         <p>
-          We strongly advise caution to anyone who chooses to use the current
-          experimental version.
+          We strongly advise caution to anyone who chooses to use the current version.
         </p>
         <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
