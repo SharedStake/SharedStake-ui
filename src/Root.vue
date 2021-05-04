@@ -142,9 +142,8 @@
     <div class="footer">
       <div class="disclaimer">
         <p>
-          Please note that this is a Beta version of the SharedStake protocol.
-          The platform, its software, and all content found on it are provided
-          on an “as is” and “as available” basis.
+          Please note that SharedStake protocol, its software, and all content found on it
+          are provided on an “as is” and “as available” basis.
         </p>
         <p>
           While we have made reasonable efforts to ensure the security and
