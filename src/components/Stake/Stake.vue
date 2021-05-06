@@ -167,7 +167,7 @@ import { validator, vEth2 } from "@/contracts";
 import ImageVue from "../Handlers/ImageVue";
 import StakeGauge from "./StakeGauge";
 import { vEth2Price } from "@/utils/veth2.js";
-
+import Swal from "sweetalert2";
 export default {
   components: { ImageVue, StakeGauge },
   data: () => ({
@@ -256,6 +256,25 @@ export default {
       if (this.isDeposit) {
         this.loading = true;
         let myamount = this.BNamount.toString();
+        let wantSaddle = false;
+        if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
+          let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
+          wantSaddle = await Swal.fire({
+            text: `Use the Saddle Pool for ${discount
+              .toFixed(0)
+              .toString()}% discount!`,
+            background: "#181818",
+            confirmButtonText: "Use Saddle",
+            showDenyButton: true,
+            denyButtonText: "Continue",
+            denyButtonColor: "#888",
+          });
+        }
+        if (wantSaddle.isConfirmed) {
+          window.open("https://saddle.exchange/#/", "_blank");
+          this.loading = false;
+          return;
+        }
         await validator.methods
           .deposit()
           .send({
@@ -443,13 +462,6 @@ export default {
         }
       }
       if (val) {
-        if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
-          let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
-          this.buttonText = `Use the Saddle pool to receive ${discount
-            .toFixed(0)
-            .toString()}% more!`;
-          return;
-        }
         if (this.isDeposit) this.buttonText = "Stake";
         else this.buttonText = "Unstake";
       }
