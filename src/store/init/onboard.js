@@ -61,7 +61,7 @@ const onboard = Onboard({
         wallet: (wallet) => {
             console.log(`wallet switched to: ${wallet.name}`);
             let W3 = window.web3 = new Web3(wallet.provider)
-            console.log(window.web3)
+            // console.log(window.web3)
             store.commit('setWeb3', W3);
             store.commit('setWallet', wallet.name);
             localStorage.setItem("selectedWallet", wallet.name);

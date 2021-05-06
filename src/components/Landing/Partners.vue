@@ -3,12 +3,14 @@
     <div class="header">Partners</div>
     <div class="partner-container">
       <PartnerItem
-        :class="partners.length == 4 ? 'partner-item-quad' : 'partner-item'" 
-        v-for="partner in partners" :key="partner.key"
-        :name="partner.name" 
-        :text="partner.text" 
+        :class="partners.length == 4 ? 'partner-item-quad' : 'partner-item'"
+        v-for="partner in partners"
+        :key="partner.key"
+        :name="partner.name"
+        :text="partner.text"
         :imageUrl="partner.imageUrl"
-        :link="partner.link" />
+        :link="partner.link"
+      />
     </div>
   </div>
 </template>
@@ -25,34 +27,36 @@ export default {
           name: "UniSwap",
           imageUrl: "uniswap.png",
           text: "SGT liquidity pools are on UniSwap.",
-          link: "https://info.uniswap.org/pair/0x3d07f6e1627DA96B8836190De64c1aED70e3FC55/",
-          key: 1
+          link:
+            "https://v2.info.uniswap.org/pair/0x3d07f6e1627DA96B8836190De64c1aED70e3FC55/",
+          key: 1,
         },
         {
           name: "Ruler",
           imageUrl: "ruler.png",
           text: "Use Ruler to get loans using vETH2 as collateral!",
           link: "https://rulerprotocol.com/",
-          key: 2
+          key: 2,
         },
         {
           name: "Saddle",
           imageUrl: "saddle.png",
           text: "vETH2 liquidity pool provider.",
           link: "https://saddle.finance",
-          key: 3
+          key: 3,
         },
         {
           name: "Defi Pulse",
           imageUrl: "defipulse.png",
-          text: "The latest analytics, rankings, and resources for DeFi applications & protocols.",
+          text:
+            "The latest analytics, rankings, and resources for DeFi applications & protocols.",
           link: "https://defipulse.com/",
-          key: 4
+          key: 4,
         },
       ],
-    }
-  }
-}
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -87,7 +91,7 @@ export default {
 
 .partner-item-quad {
   margin-bottom: 3vh;
-  width: 35%
+  width: 35%;
 }
 
 @media only screen and (max-width: 1024px) {
@@ -120,5 +124,4 @@ export default {
     opacity: 1;
   }
 }
-
 </style>
