@@ -43,9 +43,8 @@
           </a>
         </span>
         <span class="link">
-          <!-- href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078" -->
           <a
-            href="https://app.1inch.io/#/1/swap/ETH/SGT"
+            href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078&use=V2"
             target="_blank"
             rel="noopener noreferrer"
             >Buy SGT ${{ sgtPrice }}
@@ -129,9 +128,8 @@
         </a>
       </span>
       <span class="link">
-        <!-- href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078" -->
         <a
-          href="https://app.1inch.io/#/1/swap/ETH/SGT"
+          href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078&use=V2"
           target="_blank"
           rel="noopener noreferrer"
           >Buy SGT ${{ sgtPrice }}
