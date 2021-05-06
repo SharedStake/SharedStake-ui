@@ -8,7 +8,7 @@ import Notifications from 'vue-notification'
 import VueEllipseProgress from 'vue-ellipse-progress';
 
 Vue.config.productionTip = false
- Vue.use(Notifications)
+Vue.use(Notifications)
 Vue.use(VueEllipseProgress, "vep");// you can define a name and use the plugin like <vep/>
 
 new Vue({
