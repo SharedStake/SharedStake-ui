@@ -53,7 +53,7 @@ export default {
         tokenPerSgt: 1,
         oldPool: oldPools["geyser_SGT"],
         link:
-          "https://info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
+          "https://v2.info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
       },
       {
         name: "SGT - Eth",
@@ -67,7 +67,7 @@ export default {
         tokenPerSgt: 0,
         oldPool: oldPools["geyser_SGT_uniswap"],
         link:
-          "https://info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
+          "https://v2.info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
       },
       {
         name: "SGT - vEth2",
@@ -80,7 +80,7 @@ export default {
         active: true,
         tokenPerSgt: 0,
         link:
-          "https://info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
+          "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
       },
       {
         name: "vEth2 - wEth",
