@@ -98,7 +98,7 @@
       <div class="StatsExp">Financial optimization at its finest.</div>
       <div class="StatsExp">
         Better rewards, improved user experience, and more DeFi compatibility
-        than any other Staking-as-a-Service model on the market.
+        than any other Staking-as-a-Service model on the market. 
       </div>
       <div class="StatsContent">
         <div class="Stat">
