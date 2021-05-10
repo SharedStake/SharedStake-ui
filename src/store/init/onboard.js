@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import Onboard from "bnc-onboard";
+import Onboard from '@gnosis.pm/safe-apps-onboard'
 import store from '../index'
 
 // const FORTMATIC_KEY = "Your Fortmatic key here"
