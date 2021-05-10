@@ -1,0 +1,11 @@
+{
+    "short_name": "SharedStake",
+    "name": "Shared Stake",
+    "description": "Sharedstake.org provides a defi compatible ETH2 staking derivative and managed validators",
+    "providedBy": {"name": "Shared stake", "url": "https://sharedstake.org"},
+    "iconPath": "./public/logo.svg",
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
+}
