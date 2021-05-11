@@ -61,6 +61,13 @@ export default {
           link: "https://gnosis.io/",
           key: 5,
         },
+        {
+          name: "Immunefi",
+          imageUrl: "immunefi.png",
+          text: "DeFi's leading bug bounty platform.",
+          link: "https://immunefi.com/",
+          key: 6,
+        },
       ],
     };
   },
