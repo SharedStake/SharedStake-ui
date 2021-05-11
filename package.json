@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@gnosis.pm/safe-apps-onboard": "^0.3.0",
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
     "bnc-notify": "^1.5.1",
