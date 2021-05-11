@@ -26,7 +26,7 @@ export default {
         {
           name: "UniSwap",
           imageUrl: "uniswap.png",
-          text: "SGT and vEth2 liquidity pools are on UniSwap.",
+          text: "SGT and vETH2 liquidity pools are on UniSwap.",
           link:
             "https://v2.info.uniswap.org/pair/0x3d07f6e1627DA96B8836190De64c1aED70e3FC55/",
           key: 1,
