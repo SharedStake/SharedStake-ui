@@ -98,7 +98,7 @@
       <div class="StatsExp">Financial optimization at its finest.</div>
       <div class="StatsExp">
         Better rewards, improved user experience, and more DeFi compatibility
-        than any other Staking-as-a-Service model on the market. 
+        than any other Staking-as-a-Service model on the market.
       </div>
       <div class="StatsContent">
         <div class="Stat">
@@ -195,7 +195,7 @@
     </div>
     <div
       class="Container flex_column"
-      v-show="scrolled >= 2000"
+      v-show="scrolled >= 2500"
       :style="{ paddingBottom: '5rem' }"
     >
       <div class="flex_row vEth2PanelHeader">
@@ -276,7 +276,31 @@
         >
       </div>
     </div>
-    <div class="exp roadMap" v-show="scrolled > 2700">
+    <div v-show="scrolled > 3800">
+      <Partners />
+    </div>
+    <div
+      class="BadgeContainer flex_column"
+      v-show="scrolled >= 4400"
+      :style="{ paddingBottom: '5rem' }"
+    >
+      <div class="StatsHeader">Audit</div>
+      <div class="flex_column">
+        <a
+          href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="certikLogo"
+        >
+          <ImageVue
+            :src="'certik-foundation-logo-white.png'"
+            :size="'400px'"
+            class="certikLogo"
+          />
+        </a>
+      </div>
+    </div>
+    <div class="exp roadMap" v-show="scrolled > 4700">
       <div class="mainBox">
         <div class="exp titleBox"><div class="X">Roadmap</div></div>
         <div class="main">
@@ -363,38 +387,19 @@
         </div>
       </div>
     </div>
-    <div
-      class="BadgeContainer flex_column"
-      v-show="scrolled >= 2900"
-      :style="{ paddingBottom: '5rem' }"
-    >
-      <div class="StatsHeader">Audit</div>
-      <div>
-        <a
-          href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" />
-        </a>
-      </div>
-    </div>
-    <div v-show="scrolled > 3800">
-      <Partners />
-    </div>
-    <div class="Container" v-show="scrolled <= 3800"></div>
-    <div class="flex_column" v-show="scrolled >= 1000">
+    <div class="flex_column" v-show="scrolled >= 5500">
       <!-- <div class="exp background2"> -->
-      <div class="exp Information" v-show="scrolled >= 1500">
-        <div class="InfoHeader centertext" v-show="scrolled >= 1500">
+      <div class="exp Information" v-show="scrolled >= 5500">
+        <div class="InfoHeader centertext" v-show="scrolled >= 5500">
           Subscribe for updates from the team
         </div>
-        <div class="exp Info" v-show="scrolled >= 1500">
+        <div class="exp Info" v-show="scrolled >= 5500">
           <MailingListSubscribeForm />
         </div>
       </div>
       <!-- </div> -->
     </div>
+    <div class="Container" v-show="scrolled <= 5500"></div>
   </div>
 </template>
 
@@ -429,13 +434,13 @@ export default {
     async setupTvl() {
       try {
         this.TVL = await this.fetchTvlFromEtherscan();
-      } catch(e) {
-        console.log(e)
-        
+      } catch (e) {
+        console.log(e);
+
         try {
           this.TVL = await this.fetchTvlWithWallet();
-        } catch(e) {
-          console.log(e)
+        } catch (e) {
+          console.log(e);
           const STATIC_TVL = 15900; // Updated 24th April 2021
           this.TVL = BN(STATIC_TVL).toString();
         }
@@ -445,9 +450,9 @@ export default {
     },
     async setupApy() {
       try {
-        this.getAPY();  
-      } catch(e) {
-        console.log(e)
+        this.getAPY();
+      } catch (e) {
+        console.log(e);
         this.APY = await BN(100).toString();
       }
     },
@@ -494,19 +499,17 @@ export default {
     },
     async fetchTvlWithWallet() {
       if (!window.ethereum) {
-        throw "Window doesn't have ethereum enabled"
+        throw "Window doesn't have ethereum enabled";
       }
 
-      const vETH2TotalSupply = await vEth2.methods
-        .totalSupply()
-        .call();
+      const vETH2TotalSupply = await vEth2.methods.totalSupply().call();
 
       return BN(vETH2TotalSupply).div(1e18).toFixed(0).toString();
     },
     async setTvlInUsd(tvlInETH) {
       const etherPrice = await priceInUsdAsync("ethereum");
       this.TVLinUsd = etherPrice * tvlInETH;
-    }
+    },
   },
 };
 </script>
@@ -1110,6 +1113,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       ".";
   }
 }
+
 @media only screen and (max-width: 770px) {
   .second {
     grid-template-columns: 1fr;
@@ -1129,6 +1133,10 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "harvest"
       "harvestExp";
     padding-bottom: 15vh;
+  }
+  .certikLogo {
+    max-width: 80%;
+    text-align: center;
   }
 }
 @media only screen and (max-width: 375px) {

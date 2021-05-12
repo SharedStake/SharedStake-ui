@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="header">Partners</div>
+    <div class="header"></div>
     <div class="partner-container">
       <PartnerItem
         :class="partners.length == 4 ? 'partner-item-quad' : 'partner-item'"
@@ -26,7 +26,7 @@ export default {
         {
           name: "UniSwap",
           imageUrl: "uniswap.png",
-          text: "SGT liquidity pools are on UniSwap.",
+          text: "SGT and vETH2 liquidity pools are on UniSwap.",
           link:
             "https://v2.info.uniswap.org/pair/0x3d07f6e1627DA96B8836190De64c1aED70e3FC55/",
           key: 1,
@@ -52,6 +52,21 @@ export default {
             "The latest analytics, rankings, and resources for DeFi applications & protocols.",
           link: "https://defipulse.com/",
           key: 4,
+        },
+        {
+          name: "Gnosis",
+          imageUrl: "gnosis.svg",
+          text:
+            "The most trusted platform to manage digital assets on Ethereum.",
+          link: "https://gnosis.io/",
+          key: 5,
+        },
+        {
+          name: "Immunefi",
+          imageUrl: "immunefi.png",
+          text: "DeFi's leading bug bounty platform.",
+          link: "https://immunefi.com/",
+          key: 6,
         },
       ],
     };

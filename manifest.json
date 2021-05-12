@@ -1,0 +1,14 @@
+{
+    "short_name": "SharedStake",
+    "name": "SharedStake",
+    "description": "Sharedstake allows users to stake any amount of Ether to Ethereum-2 while keeping their staked amount valuable and liquid.",
+    "providedBy": {
+        "name": "SharedStake",
+        "url": "https://sharedstake.org"
+    },
+    "iconPath": "./public/logo.svg",
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#0F1013",
+    "background_color": "#ffffff"
+}

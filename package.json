@@ -8,10 +8,12 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@gnosis.pm/safe-apps-onboard": "^0.3.0",
+    "@gnosis.pm/safe-apps-sdk": "^2.3.0",
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
     "bnc-notify": "^1.5.1",
-    "bnc-onboard": "^1.20.0",
+    "bnc-onboard": "^1.25.0",
     "core-js": "^3.6.5",
     "sweetalert2": "^10.16.7",
     "three": "^0.126.1",
@@ -25,7 +27,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-service": "^4.5.13",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",

@@ -1,20 +1,16 @@
 <template>
   <div class="partner">
-    <ImageVue :src="imageUrl" size="256px" />
+    <ImageVue :src="imageUrl" size="128px" />
     <div class="header">{{ name }}</div>
     <div class="partner-text">{{ text }}</div>
-    <a 
-      class="link"
-      :href="link"
-      target="_blank"
-      rel="noopener noreferrer">
+    <a class="link" :href="link" target="_blank" rel="noopener noreferrer">
       <ImageVue :src="'down.svg'" :size="'30px'" />
     </a>
   </div>
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue"
+import ImageVue from "../Handlers/ImageVue";
 
 export default {
   components: { ImageVue },
@@ -23,8 +19,8 @@ export default {
     imageUrl: String,
     text: String,
     link: String,
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -51,5 +47,4 @@ export default {
   text-align: center;
   min-height: 40px;
 }
-
 </style>
