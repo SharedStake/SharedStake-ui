@@ -9,6 +9,6 @@
     "iconPath": "./public/logo.svg",
     "start_url": ".",
     "display": "standalone",
-    "theme_color": "#000000",
+    "theme_color": "#0F1013",
     "background_color": "#ffffff"
 }
