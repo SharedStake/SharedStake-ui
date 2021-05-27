@@ -248,6 +248,13 @@
                 >Risks
               </a></span
             >
+            <span class="link footerLink">
+              <a
+                href="/privacy"
+                rel="noopener noreferrer"
+                >Privacy Policy
+              </a></span
+            >
           </div>
         </div>
       </div>
