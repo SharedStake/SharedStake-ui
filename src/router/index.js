@@ -9,6 +9,7 @@ const Stake = () => import("../components/Stake/Stake.vue")
 const Earn = () => import("../components/Earn/Earn.vue")
 const Dashboard = () => import("../components/Dashboard/Dashboard.vue")
 const PrivacyPolicy = () => import("../components/Privacy/PrivacyPolicy.vue")
+const FAQ = () => import("../components/FAQ/FAQ.vue")
 // const Root = () => import("../components/Root/Root.vue")
 // const Info = () => import("../components/Info/Info.vue")
 // const Dao = () => import("../components/Dao/Dao.vue")
@@ -47,6 +48,11 @@ let routes = [{
         path: "/privacy",
         name: "Privacy Policy",
         component: PrivacyPolicy,
+    },
+    {
+        path: "/faq",
+        name: "FAQ",
+        component: FAQ,
     }
     ]
 },
