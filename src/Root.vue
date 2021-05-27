@@ -234,12 +234,11 @@
             >
             <span class="link footerLink">
               <a
-                href="https://docs.sharedstake.org/faq."
-                target="_blank"
+                href="/FAQ"
                 rel="noopener noreferrer"
                 >FAQ
-              </a></span
-            >
+              </a>
+            </span>
             <span class="link footerLink">
               <a
                 href="https://docs.sharedstake.org/risks"
@@ -253,8 +252,8 @@
                 href="/privacy"
                 rel="noopener noreferrer"
                 >Privacy Policy
-              </a></span
-            >
+              </a>
+            </span>
           </div>
         </div>
       </div>
