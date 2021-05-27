@@ -159,7 +159,7 @@
       </div>
       <div class="flex_row LogoContainer">
         <div class="footerLinks">
-          <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
+          <ImageVue :src="'logo-white.svg'" :size="'100px'" class="FooterLogo" />
           <div class="footerGroup">
             <div class="footerGroupName">Community</div>
             <!-- <span class="link footerLink">
