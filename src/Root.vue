@@ -159,7 +159,7 @@
       </div>
       <div class="flex_row LogoContainer">
         <div class="footerLinks">
-          <ImageVue :src="'logo-white.svg'" :size="'80px'" class="FooterLogo" />
+          <ImageVue :src="'logo-white.svg'" :size="'100px'" class="FooterLogo" />
           <div class="footerGroup">
             <div class="footerGroupName">Community</div>
             <!-- <span class="link footerLink">
@@ -234,12 +234,11 @@
             >
             <span class="link footerLink">
               <a
-                href="https://docs.sharedstake.org/faq."
-                target="_blank"
+                href="/FAQ"
                 rel="noopener noreferrer"
                 >FAQ
-              </a></span
-            >
+              </a>
+            </span>
             <span class="link footerLink">
               <a
                 href="https://docs.sharedstake.org/risks"
@@ -248,6 +247,13 @@
                 >Risks
               </a></span
             >
+            <span class="link footerLink">
+              <a
+                href="/privacy"
+                rel="noopener noreferrer"
+                >Privacy Policy
+              </a>
+            </span>
           </div>
         </div>
       </div>
