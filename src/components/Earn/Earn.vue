@@ -9,6 +9,14 @@
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
+      <newGeyser
+        class="geyser"
+        v-for="pool in newPools"
+        :pool="pool"
+        v-bind:key="pool.name"
+        :chosen="chosen === pool.name"
+        @toggle="chosen = chosen == pool.name ? null : pool.name"
+      />
       <Claim />
     </div>
   </div>
@@ -18,6 +26,7 @@
 import BN from "bignumber.js";
 import { mapGetters } from "vuex";
 import geyser from "./geyser.vue";
+import newGeyser from "./geyserV2.vue";
 import {
   SGT,
   vEth2,
@@ -35,7 +44,7 @@ import Claim from "./claim.vue";
 import { vEth2Price } from "@/utils/veth2.js";
 
 export default {
-  components: { geyser, Claim },
+  components: { geyser, Claim, newGeyser },
   data: () => ({
     chosen: null,
     pools: [
@@ -83,18 +92,6 @@ export default {
           "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
       },
       {
-        name: "vEth2 - wEth",
-        explanation: "on saddle",
-        pic: "tokens/saddle.svg",
-        token: vEth2_saddle,
-        geyser: geyser_vEth2_saddle,
-        locked: BN(24000),
-        external: false,
-        active: true,
-        tokenPerSgt: 0,
-        link: "https://saddle.exchange/#/deposit/veth2", //for inactive pools => change this to uniswap
-      },
-      {
         name: "vEth2",
         explanation: "validator ETH2",
         pic: "vEth2_1.png",
@@ -107,6 +104,21 @@ export default {
         oldPool: oldPools["geyser_vEth2"],
 
         link: "https://www.sharedstake.org/stake", //for inactive pools
+      },
+    ],
+    newPools: [
+      {
+        name: "vEth2 - wEth",
+        explanation: "on saddle",
+        pic: "tokens/saddle.svg",
+        token: vEth2_saddle,
+        geyser: geyser_vEth2_saddle,
+        locked: BN(24000),
+        external: false,
+        active: true,
+        tokenPerSgt: 0,
+        oldPool: oldPools["geyser_vEth2_saddle"],
+        link: "https://saddle.exchange/#/deposit/veth2", //for inactive pools => change this to uniswap
       },
     ],
   }),
@@ -135,8 +147,8 @@ export default {
         let vEth2Pr = await vEth2Price();
         vEth2Pr = vEth2Pr.dividedBy(1e18).toFixed(2).toString();
 
-        this.pools[4].tokenPerSgt = ethPerSgtFromUniswap * vEth2Pr;
-        this.pools[3].tokenPerSgt = ethPerSgtFromUniswap; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
+        this.pools[3].tokenPerSgt = ethPerSgtFromUniswap * vEth2Pr;
+        this.newPools[0].tokenPerSgt = ethPerSgtFromUniswap; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
 
         let totalSupply = await token.methods.totalSupply().call();
 
