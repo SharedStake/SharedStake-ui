@@ -207,11 +207,18 @@
           </div>
           <div class="buttons">
             <button
-              class="mainButton"
+              class="mainButton half"
               @click="Withdraw"
               :disabled="disableWithdraw"
             >
               unstake
+            </button>
+            <button
+              class="mainButton half pink"
+              @click="ClaimRewards"
+              :disabled="disableHarvest"
+            >
+              claim rewards
             </button>
           </div>
           <div class="buttons" v-if="pool.oldPool">
@@ -548,6 +555,25 @@ export default {
           console.log(err);
         });
       // }
+    },
+    async ClaimRewards() {
+      let self = this;
+      let zero = BN(0).toString();
+      await this.pool.geyser.methods
+        .withdraw(0, zero)
+        .send({ from: this.userAddress })
+        .on("transactionHash", function (hash) {
+          notifyHandler(hash);
+        })
+        .once("confirmation", () => {
+          self.mounted();
+        })
+        .on("error", (err) => {
+          console.log(err);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     async Harvest() {
       let self = this;
