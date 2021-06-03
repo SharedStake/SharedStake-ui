@@ -118,7 +118,7 @@ export default {
         active: true,
         tokenPerSgt: 0,
         oldPool: oldPools["geyser_vEth2_saddle"],
-        link: "https://saddle.exchange/#/deposit/veth2", //for inactive pools => change this to uniswap
+        link: "https://saddle.exchange/#/pools/veth2/deposit", //for inactive pools => change this to uniswap
       },
     ],
   }),
