@@ -1,35 +1,17 @@
 <template>
   <div class="dashboard">
     <div class="Stats grid-container">
+      <obj
+        v-for="object in objects"
+        v-bind:key="object.class"
+        :class="object.class"
+        :head="object.head"
+        :stat="object.stat"
+        :input="object.input"
+        :type="object.type"
+      />
       <Header class="header" />
-      <obj
-        class="totalStaked"
-        :head="'Total Staked Ether'"
-        :stat="20340"
-        :graph="'mama'"
-      />
-      <obj
-        class="exitPool"
-        :head="'Exit Pool Liquidity'"
-        :stat="3634"
-        :graph="'mama'"
-      />
-      <obj
-        class="invested"
-        :head="'Pools you invested'"
-        :stat="3"
-        :graph="'mama'"
-      />
-      <obj class="stakers" :head="'Total Stakers'" :stat="5703" :growth="2" />
       <PoP class="PoP" />
-      <obj class="SGT" :head="'SGT price'" :stat="50" :growth="36.84" />
-      <obj
-        class="protocols"
-        :head="'Supported Protocols'"
-        :stat="6"
-        :growth="1"
-      />
-      <obj class="pools" :head="'vEth2 Pools'" :stat="8" :growth="2" />
       <vETH2 class="vEth2" />
     </div>
   </div>
@@ -42,10 +24,70 @@ import PoP from "./PoP.vue";
 import vETH2 from "./vETH2.vue";
 export default {
   components: { obj, Header, PoP, vETH2 },
+  data: () => ({
+    objects: [
+      {
+        class: "totalStaked",
+        head: "Total Staked Ether",
+        type: "graph",
+        stat: "16000",
+        input: [16000, 16000, 16000, 16000, 16000, 16000, 16000],
+      },
+      {
+        class: "exitPool",
+        head: "Exit Pool Liquidity",
+        stat: "0",
+        type: "graph",
+        input: [0, 0, 0, 0, 0, 0, 0],
+      },
+      {
+        class: "stakers",
+        head: "Stakers",
+        type: "growth",
+        stat: "5703",
+        input: 300,
+      },
+      {
+        class: "SGT",
+        head: "SGT price",
+        stat: 50,
+        type: "growth",
+        input: -36.84,
+      },
+      {
+        class: "pools",
+        head: "vEth2 Price",
+        type: "growth",
+        stat: 2500,
+        input: -36.84,
+      },
+      {
+        class: "protocols",
+        head: "Supported Protocols",
+        stat: 6,
+        type: "explanation",
+        input: [
+          "Saddle",
+          "Curve",
+          "Uniswap",
+          "SushiSwap",
+          "SharedStake",
+          "Ruler",
+        ],
+      },
+      {
+        class: "invested",
+        head: "Pools you invested",
+        type: "explanation",
+        stat: 3,
+        input: ["Saddle-wETH", "SharedStake", "Uniswap-SGT"],
+      },
+    ],
+  }),
 };
 </script>
 
-<style>
+<style scoped>
 .dashboard {
   z-index: 1;
   width: 100%;
@@ -73,9 +115,9 @@ export default {
   gap: 10px 10px;
   grid-template-areas:
     "header header header header"
-    "totalStaked exitPool invested stakers"
-    "vEth2 vEth2 protocols PoP"
-    "vEth2 vEth2 pools SGT";
+    "totalStaked exitPool stakers PoP"
+    "vEth2 vEth2 pools SGT"
+    "vEth2 vEth2 protocols invested ";
 }
 .header {
   grid-area: header;

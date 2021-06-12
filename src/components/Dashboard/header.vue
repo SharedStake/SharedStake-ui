@@ -21,6 +21,6 @@ export default {};
   width: calc(100% - 20px);
   display: flex;
   align-items: center;
-  font-size: 40px;
+  font-size: 42px;
 }
 </style>
