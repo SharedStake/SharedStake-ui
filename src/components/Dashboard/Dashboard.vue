@@ -47,14 +47,14 @@ export default {
         head: "Total Staked Ether",
         type: "graph",
         stat: "16000",
-        input: [16000, 16000, 16000, 16000, 16000, 16000, 16000],
+        input: [25000, 19000, 12000, 13500, 15000, 16000, 16000],
       },
       {
         class: "exitPool",
         head: "Exit Pool Liquidity",
         stat: "0",
         type: "graph",
-        input: [0, 0, 0, 0, 0, 0, 0],
+        input: [9000, 3000, 4000, 2000, 1000, 500, 0],
       },
       {
         class: "stakers",
@@ -164,5 +164,25 @@ export default {
 }
 .totalStaked {
   grid-area: totalStaked;
+}
+@media only screen and (max-width: 900px) {
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 3fr 3fr 3fr;
+    gap: 10px 10px;
+    grid-template-areas:
+      "header "
+      "totalStaked"
+      "exitPool"
+      "stakers"
+      "PoP"
+      "vEth2"
+      "vEth2"
+      "SGT"
+      "pools"
+      "protocols"
+      "invested";
+  }
 }
 </style>

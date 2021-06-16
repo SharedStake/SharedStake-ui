@@ -135,4 +135,18 @@ span {
 .cont {
   background: #889293;
 }
+@media only screen and (max-width: 900px) {
+  .stat {
+    font-size: 120px;
+  }
+  .extra {
+    font-size: 50px;
+  }
+  .apy {
+    font-size: 50px;
+  }
+  .staked {
+    font-size: 30px;
+  }
+}
 </style>
