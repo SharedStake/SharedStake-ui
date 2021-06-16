@@ -11,13 +11,21 @@
         :options="options"
         :series="series"
       ></apexchart>
-      <div v-else-if="type == 'growth' && input > 0" class="growth positive">
+      <div
+        v-else-if="(type == 'growth' || type == 'percentage') && input > 0"
+        class="growth positive"
+      >
         <ImageVue :src="'up-arrow.svg'" :size="'40px'" />
         {{ input }}
+        <span v-if="type == 'percentage'">%</span>
       </div>
-      <div v-else-if="type == 'growth'" class="growth negative">
+      <div
+        v-else-if="type == 'growth' || type == 'percentage'"
+        class="growth negative"
+      >
         <ImageVue :src="'down-arrow.svg'" :size="'40px'" />
         {{ input * -1 }}
+        <span v-if="type == 'percentage'">%</span>
       </div>
       <div v-else-if="type == 'explanation'">
         <div v-for="el in input" v-bind:key="el" class="flex_row explanation">

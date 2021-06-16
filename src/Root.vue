@@ -159,7 +159,11 @@
       </div>
       <div class="flex_row LogoContainer">
         <div class="footerLinks">
-          <ImageVue :src="'logo-white.svg'" :size="'100px'" class="FooterLogo" />
+          <ImageVue
+            :src="'logo-white.svg'"
+            :size="'100px'"
+            class="FooterLogo"
+          />
           <div class="footerGroup">
             <div class="footerGroupName">Community</div>
             <!-- <span class="link footerLink">
@@ -233,11 +237,7 @@
               </a></span
             >
             <span class="link footerLink">
-              <a
-                href="/FAQ"
-                rel="noopener noreferrer"
-                >FAQ
-              </a>
+              <a href="/FAQ" rel="noopener noreferrer">FAQ </a>
             </span>
             <span class="link footerLink">
               <a
@@ -248,11 +248,7 @@
               </a></span
             >
             <span class="link footerLink">
-              <a
-                href="/privacy"
-                rel="noopener noreferrer"
-                >Privacy Policy
-              </a>
+              <a href="/privacy" rel="noopener noreferrer">Privacy Policy </a>
             </span>
           </div>
         </div>
@@ -316,7 +312,8 @@ export default {
     },
     async setSgtPrice() {
       const sgtCoinId = "sharedstake-governance-token";
-      this.sgtPrice = await priceInUsdAsync(sgtCoinId);
+      let sgtPrice = await priceInUsdAsync(sgtCoinId);
+      this.sgtPrice = sgtPrice.price;
     },
   },
 };

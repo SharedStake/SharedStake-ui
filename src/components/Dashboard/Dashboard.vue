@@ -22,7 +22,23 @@ import Header from "./header.vue";
 import obj from "./obj.vue";
 import PoP from "./PoP.vue";
 import vETH2 from "./vETH2.vue";
+import { priceInUsdAsync } from "@/utils/coingecko";
 export default {
+  mounted: async function () {
+    const sgtCoinId = "sharedstake-governance-token";
+    let coin = this.objects[3];
+    let price = await priceInUsdAsync(sgtCoinId);
+    coin.stat = price.price.toFixed(2);
+    coin.input = price.change;
+    this.objects[3] = coin;
+
+    const ethId = "ethereum";
+    coin = this.objects[4];
+    price = await priceInUsdAsync(ethId);
+    coin.stat = price.price.toFixed(0);
+    coin.input = price.change;
+    this.objects[4] = coin;
+  },
   components: { obj, Header, PoP, vETH2 },
   data: () => ({
     objects: [
@@ -44,22 +60,22 @@ export default {
         class: "stakers",
         head: "Stakers",
         type: "growth",
-        stat: "5703",
-        input: 300,
+        stat: "2743",
+        input: 30,
       },
       {
         class: "SGT",
         head: "SGT price",
         stat: 50,
-        type: "growth",
-        input: -36.84,
+        type: "percentage",
+        input: 1,
       },
       {
         class: "pools",
         head: "vEth2 Price",
-        type: "growth",
+        type: "percentage",
         stat: 2500,
-        input: -36.84,
+        input: 1,
       },
       {
         class: "protocols",
