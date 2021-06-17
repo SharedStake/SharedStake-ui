@@ -12,18 +12,26 @@
           <div class="main">SharedStake</div>
         </div>
       </router-link>
-      <div class="links" v-show="windowWidth > 900">
+      <div class="links" v-show="windowWidth >= 1100">
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
         <router-link class="link" to="/dashboard"> Dashboard </router-link>
       </div>
-      <div class="links" v-show="windowWidth > 900">
+      <div class="links" v-show="windowWidth >= 1100">
         <span class="link">
           <a
             href="https://snapshot.page/#/sharedstake.eth"
             target="_blank"
             rel="noopener noreferrer"
             >DAO
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://forum.sharedstake.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Forum
           </a>
         </span>
         <span class="link">
@@ -62,7 +70,7 @@
       <div
         @click="showSidebar = !showSidebar"
         class="showers"
-        v-show="windowWidth < 900"
+        v-show="windowWidth < 1100"
       >
         <svg
           viewBox="0 0 32 2"
@@ -81,7 +89,7 @@
         </svg>
       </div>
     </div>
-    <div class="sidebar" v-show="windowWidth < 900 && showSidebar">
+    <div class="sidebar" v-show="windowWidth < 1100 && showSidebar">
       <span class="link" v-bind:style="{ opacity: 1 }">
         <div v-if="userAddress" class="ConnectButton" @click="Connect">
           {{ userAddress.slice(0, 12) }}
@@ -109,6 +117,14 @@
           target="_blank"
           rel="noopener noreferrer"
           >DAO
+        </a>
+      </span>
+      <span class="link">
+        <a
+          href="https://forum.sharedstake.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Forum
         </a>
       </span>
       <span class="link">
@@ -178,6 +194,14 @@
                 >Discord
               </a></span
             >
+            <span class="link footerLink">
+              <a
+                href="https://forum.sharedstake.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Forum
+              </a>
+            </span>
             <span class="link footerLink">
               <a
                 href="https://sharedstakedao.medium.com/"
@@ -562,7 +586,7 @@ export default {
 .icebear {
   padding: 0 10px;
 }
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1100px) {
   .footer {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 0.3fr 1fr 1fr 0.4fr;
