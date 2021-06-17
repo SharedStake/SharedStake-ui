@@ -28,6 +28,14 @@
         </span>
         <span class="link">
           <a
+            href="https://forum.sharedstake.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Forum
+          </a>
+        </span>
+        <span class="link">
+          <a
             href="https://docs.sharedstake.org/"
             target="_blank"
             rel="noopener noreferrer"
@@ -113,6 +121,14 @@
       </span>
       <span class="link">
         <a
+          href="https://forum.sharedstake.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Forum
+        </a>
+      </span>
+      <span class="link">
+        <a
           href="https://docs.sharedstake.org/"
           target="_blank"
           rel="noopener noreferrer"
@@ -178,6 +194,14 @@
                 >Discord
               </a></span
             >
+            <span class="link footerLink">
+              <a
+                href="https://forum.sharedstake.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Forum
+              </a>
+            </span>
             <span class="link footerLink">
               <a
                 href="https://sharedstakedao.medium.com/"
