@@ -3,7 +3,7 @@
     <div class="Earn">
       <div style="margin-top: 10px">
         <div class="notification">
-            SharedStake suffered a rug pull on 23th of June 2021. Please read 
+            SharedStake suffered a rug pull on 23rd of June 2021. Please read 
           <a
             href="https://sharedstake.medium.com/post-mortem-of-the-sharedstake-incident-4625eeacc61f"
             target="_blank"
