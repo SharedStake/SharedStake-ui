@@ -81,8 +81,9 @@
         </div>
         <button
           class="StakeButton"
+          disabled="buttonText == 'Stake'"
           :class="{
-            switch_active: buttonText == 'Stake' || buttonText == 'Unstake',
+            switch_active: buttonText == 'Unstake',
           }"
           @click="onSubmit"
         >
@@ -195,6 +196,22 @@ export default {
     this.gas = await getCurrentGasPrices();
     this.chosenGas = this.gas.medium;
     this.loading = false;
+
+    await Swal.fire({
+      title: "<span style='color:tomato'>Please note!<span>",
+      html: `SharedStake suffered a rug pull on 23th of June 2021. Please read 
+          <a
+            href="https://sharedstake.medium.com/post-mortem-of-the-sharedstake-incident-4625eeacc61f"
+            target="_blank"
+            rel="noopener noreferrer"
+            class=""
+          >
+            the post-mortem ↗
+          </a> and proceed with extreme care.`,
+      background: "#181818",
+      showCancelButton: false,
+      showConfirmButton: false
+    });
 
     await this.mounted();
   },
