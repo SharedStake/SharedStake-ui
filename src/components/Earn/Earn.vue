@@ -1,6 +1,19 @@
 <template>
   <div class="EarnWrapper">
     <div class="Earn">
+      <div style="margin-top: 10px">
+        <div class="notification">
+            SharedStake suffered a rug pull on 23th of June 2021. Please read 
+          <a
+            href="https://sharedstake.medium.com/post-mortem-of-the-sharedstake-incident-4625eeacc61f"
+            target="_blank"
+            rel="noopener noreferrer"
+            class=""
+          >
+            the post-mortem ↗
+          </a> and proceed with extreme care.
+        </div>
+      </div>
       <geyser
         class="geyser"
         v-for="pool in pools"
@@ -191,5 +204,14 @@ span {
 .logo {
   color: rgb(250, 82, 160);
   font-size: 22px;
+}
+
+.notification {
+  width: 90%;
+  margin-top: 50px;
+  padding: 0;
+  text-align: center;
+  color: tomato;
+  font-size: 24px;
 }
 </style>
