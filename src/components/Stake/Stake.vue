@@ -199,7 +199,7 @@ export default {
 
     await Swal.fire({
       title: "<span style='color:tomato'>Please note!<span>",
-      html: `SharedStake suffered a rug pull on 23th of June 2021. Please read 
+      html: `SharedStake suffered a rug pull on 23rd of June 2021. Please read 
           <a
             href="https://sharedstake.medium.com/post-mortem-of-the-sharedstake-incident-4625eeacc61f"
             target="_blank"
