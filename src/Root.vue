@@ -28,14 +28,6 @@
         </span>
         <span class="link">
           <a
-            href="https://forum.sharedstake.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Forum
-          </a>
-        </span>
-        <span class="link">
-          <a
             href="https://docs.sharedstake.org/"
             target="_blank"
             rel="noopener noreferrer"
@@ -121,14 +113,6 @@
       </span>
       <span class="link">
         <a
-          href="https://forum.sharedstake.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Forum
-        </a>
-      </span>
-      <span class="link">
-        <a
           href="https://docs.sharedstake.org/"
           target="_blank"
           rel="noopener noreferrer"
@@ -178,14 +162,14 @@
           <ImageVue :src="'logo-white.svg'" :size="'100px'" class="FooterLogo" />
           <div class="footerGroup">
             <div class="footerGroupName">Community</div>
-            <!-- <span class="link footerLink">
+            <span class="link footerLink">
               <a
-                href="https://twitter.com/SharedStake"
+                href="https://twitter.com/ChimeraDefi"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Twitter
               </a></span
-            > -->
+            >
             <span class="link footerLink">
               <a
                 href="https://discord.com/invite/VezkjY9udC"
@@ -196,28 +180,20 @@
             >
             <span class="link footerLink">
               <a
-                href="https://forum.sharedstake.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Forum
-              </a>
-            </span>
-            <span class="link footerLink">
-              <a
-                href="https://sharedstakedao.medium.com/"
+                href="https://medium.com/@chimera_defi"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Medium
               </a></span
             >
-            <span class="link footerLink">
+            <!-- <span class="link footerLink">
               <a
                 href="https://www.reddit.com/r/SharedStake/"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Reddit
-              </a></span
-            >
+              </a></span 
+            > -->
           </div>
           <div class="footerGroup">
             <div class="footerGroupName">Developers</div>
@@ -239,12 +215,12 @@
             >
             <span class="link footerLink">
               <a
-                href="https://sips.sharedstake.org/"
+                href="https://snapshot.page/#/sharedstake.eth"
                 target="_blank"
                 rel="noopener noreferrer"
                 >SIPs
-              </a></span
-            >
+              </a>
+            </span>
           </div>
           <div class="footerGroup">
             <div class="footerGroupName">About</div>

@@ -7,7 +7,7 @@ import store from '../index'
 // const SQUARELINK_KEY = "Your Squarelink key here"
 const INFURA_KEY = "623c40ea76b44f068428108587d37f4e"
 const APP_URL = "https://www.sharedstake.org/"
-const CONTACT_EMAIL = "sharedstake@gmail.com"
+const CONTACT_EMAIL = "chimera_defi@protonmail.com"
 const RPC_URL = "https://mainnet.infura.io/v3/623c40ea76b44f068428108587d37f4e"
 const APP_NAME = "SharedStake"
 

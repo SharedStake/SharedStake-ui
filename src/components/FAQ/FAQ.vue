@@ -42,15 +42,10 @@
     <div>Staking SGT rewards you with additional SGT tokens, an added benefit to holding SGT other than governance, and price exposure to SharedStake as a project. </div>
 
     <h2>How can I help spread the word about ShareStake?</h2>
-    <div>Follow us on Twitter, Discord and the SharedStake Governance Forum (SGF). Please help us by following, liking and resharing our news updates.</div>
+    <div>Follow us on Twitter, Discord. Please help us by following, liking and resharing our news updates.</div>
     
-    <div class="link-container"><a href="https://twitter.com/SharedStakeDAO">Twitter</a></div>
-    <div class="link-container"><a href="https://forum.sharedstake.org/c/community-outreach/">Forum</a></div>
+    <div class="link-container"><a href="https://twitter.com/ChimeraDefi">Twitter</a></div>
     <div class="link-container"><a href="https://discord.com/invite/VezkjY9udC">Discord</a></div>
-    <div class="link-container"><a href="https://www.instagram.com/sharedstakeofficial/">Instagram</a></div>
-    <div class="link-container"><a href="https://www.facebook.com/SharedStake">Facebook</a></div>
-    <div class="link-container"><a href="https://www.facebook.com/groups/stakehouse/">Facebook - SteakHouse</a></div>
-    <div class="link-container"><a href="https://www.facebook.com/groups/sgttokentalk/">Facebook - SGT Token Talk</a></div>
     
 
     <h2>How can I be sure my investments will be safe from hackers?</h2>
@@ -63,11 +58,10 @@
     <div>There are many ways to participate in SharedStake, including making improvements to our protocol. We are always on the lookout for Solidity developers. However, users may also participate in SGT by engaging in governance on the Forum or Discord, or resharing our Twitter posts and participating in contests. There are many ways to engage SharedStake and shape its future. </div>
 
     <h2>Where do I go to vote for proposals and discuss governance?</h2>
-    <div>SIP discussions are held on our forum: <a href="https://forum.sharedstake.org/">https://forum.sharedstake.org/</a></div>
     <div>SIP voting is held on Snapshot: <a href="https://snapshot.org/#/sharedstake.eth">https://snapshot.org/#/sharedstake.eth</a></div>
 
     <h2>Are there any open positions with SharedStake?</h2>
-    <div>We are always on the look out for Solidity developers and other talent within the DeFi space. If you are interested in working with us, please check out Community Outreach in our Forum: <a href="https://forum.sharedstake.org/c/community-outreach/">https://forum.sharedstake.org/c/community-outreach/</a></div>
+    <div>We are always on the look out for Solidity developers and other talent within the DeFi space. If you are interested in working with us, please reach out on our discord</div>
 
     <h2>Where can I find video walkthroughs on how to use the protocol and partner protocols?</h2>
     <div>Check out our <a href="https://www.youtube.com/channel/UCm_VXKxb9I9KY6-wqD17sfw">YouTube</a>!</div>
