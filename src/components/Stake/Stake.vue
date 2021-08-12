@@ -199,15 +199,15 @@ export default {
 
     await Swal.fire({
       title: "<span style='color:tomato'>Please note!<span>",
-      html: `SharedStake suffered a rug pull on 23th of June 2021. Please read 
+      html: `SharedStake suffered an insider exploit on 23th of June 2021. Please read 
           <a
-            href="https://sharedstake.medium.com/post-mortem-of-the-sharedstake-incident-4625eeacc61f"
+            href="https://medium.com/@chimera_defi/sgt-rugpull-post-mortem-634a527940e0"
             target="_blank"
             rel="noopener noreferrer"
             class=""
           >
             the post-mortem ↗
-          </a> and proceed with extreme care.`,
+          </a> and proceed with extreme care. Deposits will be disabled till protcol upgrades land. But liquid vETH2 representing staked Ether can be purchased via 1inch. `,
       background: "#181818",
       showCancelButton: false,
       showConfirmButton: false

@@ -3,15 +3,15 @@
     <div class="Earn">
       <div style="margin-top: 10px">
         <div class="notification">
-            SharedStake suffered a rug pull on 23th of June 2021. Please read 
+            SharedStake suffered an insider exploit on 23th of June 2021. Please read 
           <a
-            href="https://sharedstake.medium.com/post-mortem-of-the-sharedstake-incident-4625eeacc61f"
+            href="https://medium.com/@chimera_defi/sgt-rugpull-post-mortem-634a527940e0"
             target="_blank"
             rel="noopener noreferrer"
             class=""
           >
             the post-mortem ↗
-          </a> and proceed with extreme care.
+          </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
         </div>
       </div>
       <geyser

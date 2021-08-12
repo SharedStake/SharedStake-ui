@@ -27,8 +27,7 @@
         to support additional on-chain contract interactions.
       </div>
       <div class="StatsExp">
-        The Dashboard is currently under construction and is scheduled to be
-        active in May 2021.
+        The Dashboard is currently under construction. 
       </div>
       <div class="StatsExp">Let your stake marinate and come back soon!</div>
       <div class="LearnButton">
