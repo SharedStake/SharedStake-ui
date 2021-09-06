@@ -44,7 +44,7 @@
         </span>
         <span class="link">
           <a
-            href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078&use=V2"
+            href="https://www.dextools.io/app/ether/pair-explorer/0x41bfba56b9ba48d0a83775d89c247180617266bc"
             target="_blank"
             rel="noopener noreferrer"
             >Buy SGT ${{ sgtPrice }}
@@ -266,6 +266,7 @@
 import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
+import Swal from "sweetalert2";
 
 export default {
   components: { ImageVue },
@@ -279,10 +280,20 @@ export default {
       sgtPrice: null,
     };
   },
-  mounted() {
+  mounted: async function() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
-    this.setSgtPrice();
+    await this.setSgtPrice();
+
+    await Swal.fire({
+      title: "<span style='color:tomato'>Please note!<span>",
+      html: `SharedStake has a new governance token! Please migrate from the old token. <a href="https://medium.com/@chimera_defi/sharedstake-governance-v2-tutorial-3c791c9bf9a9" target="_blank">Read the migration tutorial here</a> \n
+      And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>`,
+      background: "#181818",
+      showCancelButton: false,
+      showConfirmButton: true
+    });
+
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);

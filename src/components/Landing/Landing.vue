@@ -88,6 +88,14 @@
             />
           </a>
         </div>
+        <div class="social">
+          <button
+            v-on:click="migratePopup"
+            class="StakeButton"
+          >
+            MIGRATE
+          </button>
+        </div>
       </div>
     </div>
     <div class="downSign glow" v-show="scrolled >= 0">
@@ -426,6 +434,7 @@ import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
+import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -468,6 +477,16 @@ export default {
         this.setTvlInUsd(this.TVL);
       }
     },
+    async migratePopup() {
+      await Swal.fire({
+        title: "<span style='color:tomato'>Please note!<span>",
+        html: `SharedStake has a new governance token! Please migrate from the old token. <a href="https://medium.com/@chimera_defi/sharedstake-governance-v2-tutorial-3c791c9bf9a9" target="_blank">Read the migration tutorial here</a> \n
+        And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>`,
+        background: "#181818",
+        showCancelButton: false,
+        showConfirmButton: true
+      });
+    },
     async getValidatorInfo() {
       let results = [];
       let reqUrl = 'https://beaconcha.in/api/v1/validator/';
@@ -496,6 +515,7 @@ export default {
       this.validatorVirtualPrice = BN(totalBal/effectiveBal).toFixed(4).toString();
       this.validatorTotalBalance = BN(totalBal).div(1e9).toFixed(0).toString();
       this.profit = BN(totalBal - effectiveBal).div(1e9).toFixed(2).toString();
+      console.log(`Fetch success: validatorVirtualPrice ${this.validatorVirtualPrice} | validatorTotalBalance: ${this.validatorTotalBalance} | profit: ${this.profit}`)
     },
     async setupApy() {
       try {
@@ -506,6 +526,8 @@ export default {
       }
     },
     async getAPY() {
+      // Temporary till defi mining starts again
+      this.APY = 5;
       try {
         let token = SGT_uniswap;
         let tokenGeyser = geyser_SGT_uniswap;
@@ -532,7 +554,7 @@ export default {
                 ((locked * 1e18) / totalStaked) *
                 (360 / stakedSchedule)
             )
-          ).toString() + "%";
+          ).toString();
         this.APY = APY;
         return await Promise.resolve(APY);
       } catch {
@@ -687,7 +709,7 @@ export default {
   border-radius: 10px;
   text-align: center;
   width: 142px;
-  max-height: 25px;
+  /* max-height: 25px; */
   transition: transform 0.5s ease-out;
   cursor: pointer;
   z-index: 3;
