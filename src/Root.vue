@@ -44,7 +44,7 @@
         </span>
         <span class="link">
           <a
-            href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078&use=V2"
+            href="https://www.dextools.io/app/ether/pair-explorer/0x41bfba56b9ba48d0a83775d89c247180617266bc"
             target="_blank"
             rel="noopener noreferrer"
             >Buy SGT ${{ sgtPrice }}
