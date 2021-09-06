@@ -88,6 +88,14 @@
             />
           </a>
         </div>
+        <div class="social">
+          <button
+            v-on:click="migratePopup"
+            class="StakeButton"
+          >
+            MIGRATE
+          </button>
+        </div>
       </div>
     </div>
     <div class="downSign glow" v-show="scrolled >= 0">
@@ -426,6 +434,7 @@ import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
+import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -467,6 +476,16 @@ export default {
       } finally {
         this.setTvlInUsd(this.TVL);
       }
+    },
+    async migratePopup() {
+      await Swal.fire({
+        title: "<span style='color:tomato'>Please note!<span>",
+        html: `SharedStake has a new governance token! Please migrate from the old token. <a href="https://medium.com/@chimera_defi/sharedstake-governance-v2-tutorial-3c791c9bf9a9" target="_blank">Read the migration tutorial here</a> \n
+        And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>`,
+        background: "#181818",
+        showCancelButton: false,
+        showConfirmButton: true
+      });
     },
     async getValidatorInfo() {
       let results = [];
@@ -690,7 +709,7 @@ export default {
   border-radius: 10px;
   text-align: center;
   width: 142px;
-  max-height: 25px;
+  /* max-height: 25px; */
   transition: transform 0.5s ease-out;
   cursor: pointer;
   z-index: 3;

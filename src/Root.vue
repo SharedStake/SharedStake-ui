@@ -266,6 +266,7 @@
 import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
+import Swal from "sweetalert2";
 
 export default {
   components: { ImageVue },
@@ -279,10 +280,20 @@ export default {
       sgtPrice: null,
     };
   },
-  mounted() {
+  mounted: async function() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
-    this.setSgtPrice();
+    await this.setSgtPrice();
+
+    await Swal.fire({
+      title: "<span style='color:tomato'>Please note!<span>",
+      html: `SharedStake has a new governance token! Please migrate from the old token. <a href="https://medium.com/@chimera_defi/sharedstake-governance-v2-tutorial-3c791c9bf9a9" target="_blank">Read the migration tutorial here</a> \n
+      And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>`,
+      background: "#181818",
+      showCancelButton: false,
+      showConfirmButton: true
+    });
+
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);
