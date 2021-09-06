@@ -496,6 +496,7 @@ export default {
       this.validatorVirtualPrice = BN(totalBal/effectiveBal).toFixed(4).toString();
       this.validatorTotalBalance = BN(totalBal).div(1e9).toFixed(0).toString();
       this.profit = BN(totalBal - effectiveBal).div(1e9).toFixed(2).toString();
+      console.log(`Fetch success: validatorVirtualPrice ${this.validatorVirtualPrice} | validatorTotalBalance: ${this.validatorTotalBalance} | profit: ${this.profit}`)
     },
     async setupApy() {
       try {
@@ -506,6 +507,8 @@ export default {
       }
     },
     async getAPY() {
+      // Temporary till defi mining starts again
+      this.APY = 5;
       try {
         let token = SGT_uniswap;
         let tokenGeyser = geyser_SGT_uniswap;
@@ -532,7 +535,7 @@ export default {
                 ((locked * 1e18) / totalStaked) *
                 (360 / stakedSchedule)
             )
-          ).toString() + "%";
+          ).toString();
         this.APY = APY;
         return await Promise.resolve(APY);
       } catch {
