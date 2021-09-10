@@ -435,6 +435,7 @@ import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Swal from "sweetalert2";
+import { notifyHandler } from "@/utils/common";
 
 export default {
   components: {
@@ -481,11 +482,77 @@ export default {
       await Swal.fire({
         title: "<span style='color:tomato'>Please note!<span>",
         html: `SharedStake has a new governance token! Please migrate from the old token. <a href="https://medium.com/@chimera_defi/sharedstake-governance-v2-tutorial-3c791c9bf9a9" target="_blank">Read the migration tutorial here</a> \n
-        And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>`,
+        And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>
+        \n    You can apply to be on the allowlist via Discord otherwise you will initially recieve 10% and unlock the rest in 5 days. `,
         background: "#181818",
         showCancelButton: false,
         showConfirmButton: true
       });
+    },
+    async migrate() {
+        let userInfo = await this.migrator.lockedSwaps(this.userAddress).call();
+        let amt = userInfo[0];
+        let startTime = userInfo[1];
+
+        if (amt > 0) {
+          let start = new Date(startTime * 1000);
+          let end = start + (5*24*60*100);
+          let cur = Math.round(new Date().getTime());
+          if (cur > end) {
+            await this.releaseTokens();
+          } else {
+            await this.migratePopup();
+          }
+        } else {
+          await this.approveAndMigrate();
+        }
+        await this.migratePopup();
+    },
+    async approveAndMigrate() {
+      let inf_approval = BN(2).pow(BN(256)).minus(BN(1)).toString();
+      let approval = true;
+
+      await this.token.methods
+        .approve(this.migrator._address, inf_approval)
+        .send({ from: this.userAddress })
+        .on("transactionHash", function (hash) {
+          notifyHandler(hash);
+        })
+        .once("confirmation", () => {
+          console.log("approved");
+        })
+        .on("error", (err) => {
+          // if (error.message.includes("User denied transaction signature"))
+          approval = false;
+          console.log(err);
+        })
+        .catch((err) => {
+          approval = false;
+          console.log(err);
+        });
+
+        if (!approval) return;
+        let balance = await this.token.methods.balanceOf(this.userAddress).call();
+        this.migrator.migrate(balance)
+          .send({ from: this.userAddress })
+          .on("transactionHash", function (hash) {
+            notifyHandler(hash);
+          })
+          .on("error", () => {
+            // if (error.message.includes("User denied transaction signature"))
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+    },
+    async releaseTokens() {
+        // convert to js
+      await this.migrator.methods
+        .releaseTokens()
+        .send({ from: this.userAddress })
+        .on("transactionHash", function (hash) {
+          notifyHandler(hash);
+        })
     },
     async getValidatorInfo() {
       let results = [];
