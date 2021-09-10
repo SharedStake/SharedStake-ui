@@ -12,8 +12,17 @@
             the post-mortem ↗
           </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
         </div> -->
+        <migrator />
         <div class="notification">
-          For new farming pools please use <a href="https://vfat.tools/sgt" target="_blank" rel="noopener noreferrer"> vfat.tools/sgt</a> and please withdraw remaining funds from the following old pools
+          For new farming pools please use
+          <a
+            href="https://vfat.tools/sgt"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            vfat.tools/sgt</a
+          >
+          and please withdraw remaining funds from the following old pools
         </div>
       </div>
       <geyser
@@ -42,6 +51,7 @@ import BN from "bignumber.js";
 import { mapGetters } from "vuex";
 import geyser from "./geyser.vue";
 import newGeyser from "./geyserV2.vue";
+import migrator from "./migrate.vue";
 import {
   SGT,
   vEth2,
@@ -59,7 +69,7 @@ import Claim from "./claim.vue";
 import { vEth2Price } from "@/utils/veth2.js";
 
 export default {
-  components: { geyser, Claim, newGeyser },
+  components: { geyser, Claim, newGeyser, migrator },
   data: () => ({
     chosen: null,
     pools: [
@@ -76,8 +86,7 @@ export default {
         active: true,
         tokenPerSgt: 1,
         oldPool: oldPools["geyser_SGT"],
-        link:
-          "https://v2.info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
+        link: "https://v2.info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
       },
       {
         name: "SGT - Eth",
@@ -90,8 +99,7 @@ export default {
         active: true,
         tokenPerSgt: 0,
         oldPool: oldPools["geyser_SGT_uniswap"],
-        link:
-          "https://v2.info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
+        link: "https://v2.info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
       },
       {
         name: "SGT - vEth2",
@@ -103,8 +111,7 @@ export default {
         external: false,
         active: true,
         tokenPerSgt: 0,
-        link:
-          "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
+        link: "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
       },
       {
         name: "vEth2",

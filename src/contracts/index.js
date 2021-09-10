@@ -14,6 +14,7 @@ import geyserABI from './abis/geyser.json'
 import geyserABI_new from './abis/geyserV2.json'
 import sgtABI from './abis/erc20.json' //change this
 import airdrop_distributor from './abis/distributor.json' //change this
+import migratorABI from './abis/migrator.json' 
 
 let _addresses;
 let _ABIs;
@@ -35,6 +36,10 @@ let _geyser_vEth2_old;
 let _geyser_SGT_old;
 let _geyser_SGT_uniswap_old;
 let _geyser_vEth2_saddle_old;
+
+// V2 changes
+let _migrator;
+
 
 if (window.ethereum) {
 
@@ -72,7 +77,9 @@ if (window.ethereum) {
 
             // SGT airdrop
             airdrop_distributor: "0x5d918012f56C7EF4c9b78fCA97c126ae13C0F639",
-
+            
+            //V2
+            migrator:"0x9615460582Efa2a9b1d8D21e7E02afE43A415E13",
         }
     } else {
         //Goerli = WHO CARES ANYMORE?
@@ -103,7 +110,8 @@ if (window.ethereum) {
         erc20,
         erc20_uniswap,
         airdrop_distributor,
-        geyser_new: geyserABI_new //use this one for 
+        geyser_new: geyserABI_new, //use this one for 
+        migrator:migratorABI,
     }
 
     /************************************* CONTRACTS ****************************************/
@@ -136,6 +144,8 @@ if (window.ethereum) {
     //Airdrop
     _airdrop = new web3.eth.Contract(_ABIs["airdrop_distributor"], _addresses["airdrop_distributor"]);
 
+    //Migrator
+    _migrator=new web3.eth.Contract(_ABIs["migrator"], _addresses["migrator"]);
     /*********************************** DELETE USELESS INFO *******************************/
 }
 export const addresses = _addresses
@@ -151,7 +161,8 @@ export const geyser_vEth2_saddle = _geyser_vEth2_saddle
 export const geyser_SGT = _geyser_SGT
 export const geyser_SGT_uniswap = _geyser_SGT_uniswap
 export const geyser_SGT_vEth2_uniswap = _geyser_SGT_vEth2_uniswap
-export const airdrop = _airdrop
+export const airdrop = _airdrop;
+export const migrator = _migrator;
 
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
