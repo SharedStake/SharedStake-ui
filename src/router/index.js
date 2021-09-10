@@ -7,6 +7,7 @@ import VueRouter from "vue-router";
 
 const Stake = () => import("../components/Stake/Stake.vue")
 const Earn = () => import("../components/Earn/Earn.vue")
+const OldPools = () => import("../components/OldPools/Earn.vue")
 const Dashboard = () => import("../components/Dashboard/Dashboard.vue")
 const PrivacyPolicy = () => import("../components/Privacy/PrivacyPolicy.vue")
 const FAQ = () => import("../components/FAQ/FAQ.vue")
@@ -38,6 +39,11 @@ let routes = [{
         path: "/earn",
         name: "Earn",
         component: Earn,
+    },
+    {
+        path: "/oldpools",
+        name: "OldPools",
+        component: OldPools,
     },
     {
         path: "/dashboard",

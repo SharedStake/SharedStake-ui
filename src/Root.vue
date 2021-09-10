@@ -15,6 +15,7 @@
       <div class="links" v-show="windowWidth >= 1100">
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
+        <router-link class="link" to="/oldpools"> v1 Pools </router-link>
         <router-link class="link" to="/dashboard"> Dashboard </router-link>
       </div>
       <div class="links" v-show="windowWidth >= 1100">
@@ -98,6 +99,13 @@
       </router-link>
       <router-link
         class="link"
+        to="/oldpools"
+        @click.native="showSidebar = false"
+      >
+        V1 Pools
+      </router-link>
+      <router-link
+        class="link"
         to="/dashboard"
         @click.native="showSidebar = false"
       >
@@ -159,7 +167,11 @@
       </div>
       <div class="flex_row LogoContainer">
         <div class="footerLinks">
-          <ImageVue :src="'logo-white.svg'" :size="'100px'" class="FooterLogo" />
+          <ImageVue
+            :src="'logo-white.svg'"
+            :size="'100px'"
+            class="FooterLogo"
+          />
           <div class="footerGroup">
             <div class="footerGroupName">Community</div>
             <span class="link footerLink">
@@ -233,11 +245,7 @@
               </a></span
             >
             <span class="link footerLink">
-              <a
-                href="/FAQ"
-                rel="noopener noreferrer"
-                >FAQ
-              </a>
+              <a href="/FAQ" rel="noopener noreferrer">FAQ </a>
             </span>
             <span class="link footerLink">
               <a
@@ -248,11 +256,7 @@
               </a></span
             >
             <span class="link footerLink">
-              <a
-                href="/privacy"
-                rel="noopener noreferrer"
-                >Privacy Policy
-              </a>
+              <a href="/privacy" rel="noopener noreferrer">Privacy Policy </a>
             </span>
           </div>
         </div>
@@ -280,7 +284,7 @@ export default {
       sgtPrice: null,
     };
   },
-  mounted: async function() {
+  mounted: async function () {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
     await this.setSgtPrice();
@@ -291,9 +295,8 @@ export default {
       And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>`,
       background: "#181818",
       showCancelButton: false,
-      showConfirmButton: true
+      showConfirmButton: true,
     });
-
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);
