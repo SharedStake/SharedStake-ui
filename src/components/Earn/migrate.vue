@@ -77,14 +77,14 @@
         <button
           v-else-if="remaining_time <= 0 && sentAmount > 0"
           class="mainButton"
-          @click="Claim"
+          @click="Release"
         >
           Release!
         </button>
         <span v-else>
           <div class="minitext">Waiting for:</div>
           {{ remaining_time }}
-          <div class="minitext">seconds</div>
+          <div class="minitext">seconds.</div>
         </span>
       </div>
     </div>

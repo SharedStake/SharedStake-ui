@@ -89,13 +89,7 @@
           </a>
         </div>
         <div class="social">
-          <router-link
-            class="StakeButton"
-            v-show="windowWidth <= 500"
-            to="/stake"
-          >
-            MIGRATE
-          </router-link>
+          <router-link class="StakeButton" to="/earn"> MIGRATE </router-link>
         </div>
       </div>
     </div>
