@@ -12,6 +12,7 @@
             the post-mortem ↗
           </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
         </div> -->
+        <migrator />
         <div class="notification">
           For new farming pools please use
           <a
@@ -24,7 +25,6 @@
           and please withdraw remaining funds from the following old pools
         </div>
       </div>
-      <migrator />
       <geyser
         class="geyser"
         v-for="pool in pools"

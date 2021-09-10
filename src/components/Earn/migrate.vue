@@ -38,17 +38,13 @@
           <div class="minitext">Status:</div>
           Connect!
         </span>
-        <!-- <span v-else-if="!address">
-          <div class="minitext">Status:</div>
-          ←
-        </span> -->
-        <span v-else-if="available == 0">
+      </div>
+      <div v-if="userAddress" class="headerPart poolButton">
+        <span v-if="available == 0">
           <div class="minitext">Status:</div>
           No balance
         </span>
-      </div>
-      <div v-if="userAddress" class="headerPart poolButton">
-        <button v-if="approval" disabled class="mainButton disabled">
+        <button v-else-if="approval" disabled class="mainButton disabled">
           Waiting...
         </button>
         <button
@@ -122,7 +118,9 @@ export default {
         .call();
       this.approved = _approved;
       let balance = await SGT.methods.balanceOf(this.userAddress).call();
-      this.available = BN(balance).dividedBy(1e18).toFixed(3).toString();
+      if (balance == 0) {
+        this.available = 0;
+      } else this.available = BN(balance).dividedBy(1e18).toFixed(3).toString();
       this.balance = BN(balance);
     },
     async Approve() {
@@ -171,6 +169,7 @@ export default {
           that.approval = false;
           console.log(err);
         });
+      this.isEligible();
     },
   },
 };
