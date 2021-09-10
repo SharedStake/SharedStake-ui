@@ -8,7 +8,7 @@
       />
       <div class="headerPart poolName">
         Migrate to V2!
-        <div class="minitext">Claim veSGT</div>
+        <div class="minitext">Claim SGTv2</div>
       </div>
       <!-- <div class="headerPart poolAddress">
         <div class="minitext">Address:</div>
@@ -57,6 +57,37 @@
         <button v-else class="mainButton" @click="Approve">Approve</button>
       </div>
     </div>
+    <div class="outline" />
+    <div class="geyserChooser">
+      <div class="headerPart poolName">
+        Migrated Funds:
+        <div class="minitext">Claimable SGTv2</div>
+      </div>
+      <div class="headerPart poolAddress">
+        <span>
+          <div class="minitext">Pending:</div>
+          {{ sentAmount }}
+        </span>
+      </div>
+      <div v-if="userAddress" class="headerPart poolButton">
+        <span v-if="sentAmount == 0">
+          <div class="minitext">Status:</div>
+          No funds migrated yet.
+        </span>
+        <button
+          v-else-if="remaining_time <= 0 && sentAmount > 0"
+          class="mainButton"
+          @click="Release"
+        >
+          Release!
+        </button>
+        <span v-else>
+          <div class="minitext">Waiting for:</div>
+          {{ remaining_time }}
+          <div class="minitext">seconds.</div>
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -64,6 +95,7 @@
 import { migrator, SGT } from "@/contracts";
 import { mapGetters } from "vuex";
 import ImageVue from "../Handlers/ImageVue";
+// import { timeout } from "@/utils/helpers";
 // import web3 from "web3";
 import { notifyHandler } from "@/utils/common";
 import BN from "bignumber.js";
@@ -75,9 +107,12 @@ export default {
     innerWidth: 0,
     txs: [],
     approval: false, // are we approving atm?
+    releasing: false,
     available: 0,
     approved: 0,
     balance: 0,
+    sentAmount: 0,
+    startTime: 0,
   }),
   watch: {
     async userAddress() {
@@ -104,6 +139,13 @@ export default {
   },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
+    remaining_time() {
+      console.log(this.startTime, Date.now());
+      return (
+        (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /
+        1000
+      ).toFixed(0);
+    },
   },
   methods: {
     async mounted() {
@@ -122,6 +164,17 @@ export default {
         this.available = 0;
       } else this.available = BN(balance).dividedBy(1e18).toFixed(3).toString();
       this.balance = BN(balance);
+
+      let userInfo = await migrator.methods
+        .lockedSwaps(this.userAddress)
+        .call();
+      let amount = userInfo[0];
+      if (amount == 0) {
+        this.sentAmount = 0;
+      } else this.sentAmount = BN(amount).dividedBy(1e18).toFixed(3).toString();
+
+      let startTime = userInfo[1];
+      this.startTime = startTime;
     },
     async Approve() {
       let that = this;
@@ -171,11 +224,39 @@ export default {
         });
       this.isEligible();
     },
+    async Release() {
+      let that = this;
+      await migrator.methods
+        .releaseTokens()
+        .send({ from: this.userAddress, gas: 200000 })
+        .on("transactionHash", function (hash) {
+          notifyHandler(hash);
+          that.releasing = true;
+        })
+        .once("confirmation", () => {
+          that.approval = false;
+          console.log("approved");
+        })
+        .on("error", (err) => {
+          // if (error.message.includes("User denied transaction signature"))
+          that.releasing = false;
+          console.log(err);
+        })
+        .catch((err) => {
+          that.releasing = false;
+          console.log(err);
+        });
+      this.isEligible();
+    },
   },
 };
 </script>
 
 <style scoped>
+.outline {
+  width: 100%;
+  border: 1px rgb(250, 82, 160) solid;
+}
 .geyserwrapper {
   position: relative;
   transition: transform 0.2s ease-in-out;
