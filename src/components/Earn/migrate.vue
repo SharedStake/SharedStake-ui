@@ -126,7 +126,7 @@ export default {
     async Approve() {
       let that = this;
       await SGT.methods
-        .approve(migrator.options.address, this.balance)
+        .approve(migrator.options.address, this.balance.toString())
         .send({ from: this.userAddress, gas: 100000 })
         .on("transactionHash", function (hash) {
           notifyHandler(hash);
@@ -150,7 +150,7 @@ export default {
     async Claim() {
       let that = this;
       await migrator.methods
-        .migrate(this.balance)
+        .migrate(this.balance.toString())
         .send({ from: this.userAddress, gas: 200000 })
         .on("transactionHash", function (hash) {
           notifyHandler(hash);
