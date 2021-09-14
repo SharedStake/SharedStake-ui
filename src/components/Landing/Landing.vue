@@ -54,6 +54,18 @@
               class="socialLogo"
             />
           </a>
+
+          <a
+            href="https://t.me/SharedStakeFinance"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/TG.svg'"
+              :size="'30px'"
+              class="socialLogo"
+            />
+          </a>
           <!-- <a
             href="https://www.reddit.com/r/SharedStake/"
             target="_blank"
