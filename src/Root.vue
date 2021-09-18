@@ -44,7 +44,7 @@
         </span>
         <span class="link">
           <a
-            href="https://www.dextools.io/app/ether/pair-explorer/0x41bfba56b9ba48d0a83775d89c247180617266bc"
+            href="https://app.sushi.com/swap?outputCurrency=0x24c19f7101c1731b85f1127eaa0407732e36ecdd"
             target="_blank"
             rel="noopener noreferrer"
             >Buy SGT ${{ sgtPrice }}
