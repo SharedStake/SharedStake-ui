@@ -163,6 +163,26 @@
           <div class="NumDetail">Redemption price of 1 vETH2 at merge</div>
         </div>
       </div>
+
+      <div class="StatsContent">
+        <div class="Stat">
+          <div class="Num">{{ validatorsOnline }}</div>
+          <div class="NumExp">Validators online</div>
+          <div class="NumDetail">SharedStake validator current status</div>
+        </div>
+
+        <div class="Stat">
+          <div class="Num">{{ validatorsSlashed }}</div>
+          <div class="NumExp">Validators slashed</div>
+          <div class="NumDetail">SharedStake validator that have been slashed</div>
+        </div>
+
+        <div class="Stat">
+          <div class="Num">{{ validatorApr }}%</div>
+          <div class="NumExp">Validator APR</div>
+          <div class="NumDetail">Validator APR based on avg activation epoch of <a href='https://beaconscan.com/epoch/25205' target='_blank'>25205</a>.</div>
+        </div>
+      </div>
     </div>
     <div class="Container" v-show="scrolled >= 1000">
       <div class="exp background2" />
@@ -459,9 +479,12 @@ export default {
       TVL: 16000,
       TVLinUsd: 0,
       APY: "",
-      validatorTotalBalance: 16443,
-      validatorVirtualPrice: 1.0277,
-      profit: 443,
+      validatorTotalBalance: 16543,
+      validatorVirtualPrice: 1.0377,
+      validatorsSlashed: 0,
+      validatorApr: 6,
+      validatorsOnline: 500,
+      profit: 543,
       indices: [
         "91086",
         "99502",
@@ -1020,12 +1043,22 @@ export default {
       }
       await getAllValidatorInfo(this.indices);
 
+      let startTime = 1616502743000;
+      let elapsed = Date.now() - startTime;
+      let msInYr = (1000*60*60*24*365);
+
       let totalBal = 0;
       let effectiveBal = 0;
+      let status = 0;
+      let slashed = 0;
       results.forEach((validator) => {
         totalBal += validator.balance;
         effectiveBal += validator.effectivebalance;
+        if (validator.status == 'active_online') status++;
+        if (validator.slashed) slashed++;
       });
+      this.validatorsSlashed = slashed;
+      this.validatorsOnline = status;
       this.validatorVirtualPrice = BN(totalBal / effectiveBal)
         .toFixed(4)
         .toString();
@@ -1034,6 +1067,8 @@ export default {
         .div(1e9)
         .toFixed(2)
         .toString();
+      this.validatorApr = (((this.profit/elapsed) * msInYr)/this.TVL) * 100;
+      this.validatorApr = this.validatorApr.toFixed(2);
       console.log(
         `Fetch success: validatorVirtualPrice ${this.validatorVirtualPrice} | validatorTotalBalance: ${this.validatorTotalBalance} | profit: ${this.profit}`
       );
