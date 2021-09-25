@@ -15,7 +15,7 @@
       <div class="links" v-show="windowWidth >= 1100">
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
-        <router-link class="link" to="/dashboard"> Dashboard </router-link>
+        <!-- <router-link class="link" to="/dashboard"> Dashboard </router-link> -->
       </div>
       <div class="links" v-show="windowWidth >= 1100">
         <span class="link">
@@ -40,6 +40,14 @@
             target="_blank"
             rel="noopener noreferrer"
             >Stats
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://sharedtools.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Get veSGT
           </a>
         </span>
         <span class="link">
@@ -96,13 +104,13 @@
       <router-link class="link" to="/earn" @click.native="showSidebar = false">
         Earn
       </router-link>
-      <router-link
+      <!-- <router-link
         class="link"
         to="/dashboard"
         @click.native="showSidebar = false"
       >
         Dashboard
-      </router-link>
+      </router-link> -->
       <span class="link">
         <a
           href="https://snapshot.page/#/sharedstake.eth"
@@ -125,6 +133,14 @@
           target="_blank"
           rel="noopener noreferrer"
           >Stats
+        </a>
+      </span>
+      <span class="link">
+        <a
+          href="https://sharedtools.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Get veSGT
         </a>
       </span>
       <span class="link">
