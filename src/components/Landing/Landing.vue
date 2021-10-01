@@ -44,7 +44,7 @@
             />
           </a>
           <a
-            href="https://discord.gg/WekpVF5m"
+            href="https://discord.gg/C9GhCv86My"
             target="_blank"
             rel="noopener noreferrer"
           >
