@@ -188,7 +188,7 @@
             >
             <span class="link footerLink">
               <a
-                href="https://discord.com/invite/VezkjY9udC"
+                href="https://discord.gg/WekpVF5m"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Discord
