@@ -97,23 +97,23 @@
         <div class="notification" v-if="isDeposit">
           <a
             v-if="!enoughFundsInExitPool"
-            href="https://saddle.exchange/#/"
+            href="https://curve.fi/factory/49"
             target="_blank"
             rel="noopener noreferrer"
             class="notification"
           >
-            Check out Saddle Pool ↗
+            Buy on Curve Pool ↗
           </a>
         </div>
         <div class="notification" v-else>
           <a
             v-if="!enoughFundsInExitPool"
-            href="https://saddle.exchange/#/"
+            href="https://curve.fi/factory/49"
             target="_blank"
             rel="noopener noreferrer"
             class="notification"
           >
-            Check out Saddle if exit pool is low ↗
+            Check out Curve if exit pool is low ↗
           </a>
         </div>
         <!-- <div class="notification" v-if="!isDeposit">

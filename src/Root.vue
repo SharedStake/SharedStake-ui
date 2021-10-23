@@ -52,6 +52,14 @@
         </span>
         <span class="link">
           <a
+            href="https://curve.fi/factory/49"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Get CRV-vETH2-LP
+          </a>
+        </span>
+        <span class="link">
+          <a
             href="https://app.sushi.com/swap?outputCurrency=0x24c19f7101c1731b85f1127eaa0407732e36ecdd"
             target="_blank"
             rel="noopener noreferrer"
@@ -141,6 +149,14 @@
           target="_blank"
           rel="noopener noreferrer"
           >Get veSGT
+        </a>
+      </span>
+      <span class="link">
+        <a
+          href="https://curve.fi/factory/49"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Get CRV-vETH2-LP
         </a>
       </span>
       <span class="link">
