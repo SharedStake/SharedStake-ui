@@ -204,7 +204,7 @@
             >
             <span class="link footerLink">
               <a
-                href="https://discord.com/invite/VezkjY9udC"
+                href="https://discord.gg/C9GhCv86My"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Discord
