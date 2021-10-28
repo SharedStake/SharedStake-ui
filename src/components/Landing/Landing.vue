@@ -137,6 +137,7 @@
           <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
         </div>
       </div>
+
       <div class="Stat">
         <div class="Num">99.9%</div>
         <div class="NumExp">Uptime</div>
@@ -176,13 +177,18 @@
           <div class="NumExp">Validators slashed</div>
           <div class="NumDetail">SharedStake validator that have been slashed</div>
         </div>
-
         <div class="Stat">
           <div class="Num">{{ validatorApr }}%</div>
           <div class="NumExp">Validator APR</div>
           <div class="NumDetail">Validator APR based on avg activation epoch of <a href='https://beaconscan.com/epoch/25205' target='_blank'>25205</a>.</div>
         </div>
       </div>
+
+        <div class="Stat">
+          <div class="Num">{{ vpPostFees }}</div>
+          <div class="NumExp">Virtual Price post fees </div>
+          <div class="NumDetail">vETH2 redemption price at merge post fees based on <a href='https://snapshot.org/#/sharedstake.eth/proposal/QmQBWBsAucwB7vtxMhYmsn7nQ1J3VWvGD3knrdQP3knjou' target='_blank'>SIP-22</a>.</div>
+        </div>
     </div>
     <div class="Container" v-show="scrolled >= 1000">
       <div class="exp background2" />
@@ -483,6 +489,7 @@ export default {
       validatorVirtualPrice: 1.0377,
       validatorsSlashed: 0,
       validatorApr: 6,
+      vpPostFees: 1.03,
       validatorsOnline: 500,
       profit: 543,
       indices: [
@@ -1069,6 +1076,8 @@ export default {
         .toString();
       this.validatorApr = (((this.profit/elapsed) * msInYr)/this.TVL) * 100;
       this.validatorApr = this.validatorApr.toFixed(2);
+      this.vpPostFees = (this.validatorVirtualPrice - ((this.validatorVirtualPrice - 1)*0.2));
+      this.vpPostFees = this.vpPostFees.toFixed(4);
       console.log(
         `Fetch success: validatorVirtualPrice ${this.validatorVirtualPrice} | validatorTotalBalance: ${this.validatorTotalBalance} | profit: ${this.profit}`
       );
