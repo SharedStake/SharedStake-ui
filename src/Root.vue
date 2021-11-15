@@ -28,7 +28,7 @@
         </span>
         <span class="link">
           <a
-            href="https://docs.sharedstake.org/"
+            href="https://chimera-1.gitbook.io/sharedstake-v2/"
             target="_blank"
             rel="noopener noreferrer"
             >Docs
