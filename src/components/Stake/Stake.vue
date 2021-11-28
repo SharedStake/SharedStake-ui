@@ -81,7 +81,6 @@
         </div>
         <button
           class="StakeButton"
-          disabled="buttonText == 'Stake'"
           :class="{
             switch_active: buttonText == 'Unstake',
           }"
@@ -199,7 +198,7 @@ export default {
 
     await Swal.fire({
       title: "<span style='color:tomato'>Please note!<span>",
-      html: `Deposits will be disabled till protcol upgrades land with a preset ETH1 withdrawal address. But liquid vETH2 representing staked Ether can be purchased via 1inch. `,
+      html: `We recommend purchasing vETH2 on curve as its cheaper`,
       background: "#181818",
       showCancelButton: false,
       showConfirmButton: false
@@ -265,25 +264,25 @@ export default {
       if (this.isDeposit) {
         this.loading = true;
         let myamount = this.BNamount.toString();
-        let wantSaddle = false;
+        // let wantSaddle = false;
         if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
-          let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
-          wantSaddle = await Swal.fire({
-            text: `Use the Saddle Pool for ${discount
-              .toFixed(0)
-              .toString()}% discount!`,
-            background: "#181818",
-            confirmButtonText: "Use Saddle",
-            showDenyButton: true,
-            denyButtonText: "Continue",
-            denyButtonColor: "#888",
-          });
+          // let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
+          // wantSaddle = await Swal.fire({
+          //   text: `Use the Saddle Pool for ${discount
+          //     .toFixed(0)
+          //     .toString()}% discount!`,
+          //   background: "#181818",
+          //   confirmButtonText: "Use Saddle",
+          //   showDenyButton: true,
+          //   denyButtonText: "Continue",
+          //   denyButtonColor: "#888",
+          // });
         }
-        if (wantSaddle.isConfirmed) {
-          window.open("https://saddle.exchange/#/", "_blank");
-          this.loading = false;
-          return;
-        }
+        // if (wantSaddle.isConfirmed) {
+        //   window.open("https://saddle.exchange/#/", "_blank");
+        //   this.loading = false;
+        //   return;
+        // }
         await validator.methods
           .deposit()
           .send({
