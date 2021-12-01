@@ -16,6 +16,13 @@
         <div class="notification">
           For new farming pools please use
           <a
+            href="https://app.multifarm.fi/farms/ETH_Sharedstake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Multifarm.fi</a
+          > or
+          <a
             href="https://vfat.tools/sgt"
             target="_blank"
             rel="noopener noreferrer"
