@@ -15,6 +15,11 @@
       <div class="links" v-show="windowWidth >= 1100">
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
+
+      <router-link class="link" to="#Stats">Stats</router-link>
+      <span class="link">
+        <a onclick="goto('stats')">Stats</a>
+      </span>
         <!-- <router-link class="link" to="/dashboard"> Dashboard </router-link> -->
       </div>
       <div class="links" v-show="windowWidth >= 1100">
@@ -39,7 +44,7 @@
             href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
             target="_blank"
             rel="noopener noreferrer"
-            >Stats
+            >Dune
           </a>
         </span>
         <span class="link">
@@ -119,6 +124,12 @@
       >
         Dashboard
       </router-link> -->
+
+      <router-link class="link" to="#Stats" @click.native="showSidebar = false">
+        <a href="#Stats">
+          Stats
+        </a>
+      </router-link>
       <span class="link">
         <a
           href="https://snapshot.page/#/sharedstake.eth"
@@ -140,7 +151,7 @@
           href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
           target="_blank"
           rel="noopener noreferrer"
-          >Stats
+          >Dune
         </a>
       </span>
       <span class="link">
@@ -336,6 +347,13 @@ export default {
       showConfirmButton: true
     });
 
+  },
+
+  goto(refName) {
+    var element = this.$refs[refName];
+    var top = element.offsetTop;
+
+    window.scrollTo(0, top);
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);

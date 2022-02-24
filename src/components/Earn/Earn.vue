@@ -12,9 +12,9 @@
             the post-mortem ↗
           </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
         </div> -->
-        <migrator />
+        <!-- <migrator /> -->
         <div class="notification">
-          For new farming pools please use
+          For new farming pools you can also use
           <a
             href="https://app.multifarm.fi/farms/ETH_Sharedstake"
             target="_blank"
@@ -32,17 +32,18 @@
           and please withdraw remaining funds from the following old pools
         </div>
       </div>
-      <geyser
+      <newGeyser
         class="geyser"
-        v-for="pool in pools"
+        v-for="pool in newPools"
         :pool="pool"
         v-bind:key="pool.name"
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
-      <newGeyser
-        class="geyser"
-        v-for="pool in newPools"
+      <div class="notification"> Old farms - please withdraw ASAP </div>
+      <geyser
+        class="geyser geyser-old"
+        v-for="pool in pools"
         :pool="pool"
         v-bind:key="pool.name"
         :chosen="chosen === pool.name"
@@ -58,7 +59,7 @@ import BN from "bignumber.js";
 import { mapGetters } from "vuex";
 import geyser from "./geyser.vue";
 import newGeyser from "./geyserV2.vue";
-import migrator from "./migrate.vue";
+// import migrator from "./migrate.vue";
 import {
   SGT,
   vEth2,
@@ -66,17 +67,19 @@ import {
   geyser_vEth2,
   geyser_SGT,
   geyser_SGT_uniswap,
-  vEth2_saddle,
-  geyser_vEth2_saddle,
   SGT_vEth2_uniswap,
   geyser_SGT_vEth2_uniswap,
+  SGT_sushiswap,
+  masterchef,
+  veSGT,
+  vETH2_CRV,
   oldPools,
 } from "@/contracts";
 import Claim from "./claim.vue";
 import { vEth2Price } from "@/utils/veth2.js";
 
 export default {
-  components: { geyser, Claim, newGeyser, migrator },
+  components: { geyser, Claim, newGeyser },
   data: () => ({
     chosen: null,
     pools: [
@@ -137,18 +140,55 @@ export default {
     ],
     newPools: [
       {
-        name: "vEth2 - wEth",
-        explanation: "on saddle",
-        pic: "tokens/saddle.svg",
-        token: vEth2_saddle,
-        geyser: geyser_vEth2_saddle,
-        locked: BN(24000),
+        name: "SGT - Eth",
+        explanation: "on Sushiswap",
+        pic: "tokens/sushi.png",
+        token: SGT_sushiswap,
+        geyser: masterchef,
+        locked: BN(90000),
         external: false,
         active: true,
         tokenPerSgt: 0,
-        oldPool: oldPools["geyser_vEth2_saddle"],
-        link: "https://saddle.exchange/#/pools/veth2/deposit", //for inactive pools => change this to uniswap
+        link: "https://app.sushi.com/add/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD", //for inactive pools => change this to uniswap
       },
+      {
+        name: "veSGT",
+        explanation: "Vote Escrowed SGT",
+        pic: "tokens/logo-red.svg",
+        token: veSGT,
+        geyser: masterchef,
+        locked: BN(90000),
+        external: false,
+        active: true,
+        tokenPerSgt: 0,
+        link: "https://sharedtools.org", //for inactive pools => change this to uniswap
+      },
+
+      {
+        name: "vETH2-ETH",
+        explanation: "on Curve",
+        pic: "tokens/crv.png",
+        token: vETH2_CRV,
+        geyser: masterchef,
+        locked: BN(90000),
+        external: false,
+        active: true,
+        tokenPerSgt: 0,
+        link: "https://curve.fi/factory/49",
+      },
+      // {
+      //   name: "vEth2 - wEth",
+      //   explanation: "on saddle",
+      //   pic: "tokens/saddle.svg",
+      //   token: vEth2_saddle,
+      //   geyser: geyser_vEth2_saddle,
+      //   locked: BN(24000),
+      //   external: false,
+      //   active: true,
+      //   tokenPerSgt: 0,
+      //   oldPool: oldPools["geyser_vEth2_saddle"],
+      //   link: "https://saddle.exchange/#/pools/veth2/deposit", //for inactive pools => change this to uniswap
+      // },
     ],
   }),
   computed: {

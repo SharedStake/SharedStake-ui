@@ -13,7 +13,7 @@
           target="_blank"
           rel="noopener noreferrer"
         >
-          {{ pool.name }}
+          {{ pool.name }} - withdraw asap
           <span class="minitext" style="font-weight: 700"> ↗</span>
           <div class="minitext">{{ pool.explanation }}</div>
         </a>
@@ -21,13 +21,14 @@
       <div class="headerPart poolGrowth">
         <div class="minitext">Yearly Growth:</div>
         <div class="yearlyGrowth">
-          {{
+          0
+          <!-- {{
             apy == 0 || isNaN(apy)
               ? pool.external
                 ? "+150%"
                 : "Connect"
               : apy.toFixed(2) + "%"
-          }}
+          }} -->
         </div>
       </div>
       <div class="headerPart poolBalance">
@@ -651,7 +652,7 @@ export default {
   grid-template-rows: 1fr;
   gap: 0px 10px;
   color: #fff;
-  background-color: rgb(250, 82, 160);
+  background-color: rgb(245, 17, 17);
 }
 .geyserMain,
 .geyserUser {

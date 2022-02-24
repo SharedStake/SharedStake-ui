@@ -31,7 +31,6 @@ let _geyser_SGT_uniswap;
 let _geyser_SGT_vEth2_uniswap;
 let _airdrop;
 
-
 let _geyser_vEth2_old;
 let _geyser_SGT_old;
 let _geyser_SGT_uniswap_old;
@@ -39,7 +38,7 @@ let _geyser_vEth2_saddle_old;
 
 // V2 changes
 let _migrator;
-
+let createContract;
 
 if (window.ethereum) {
 
@@ -80,6 +79,10 @@ if (window.ethereum) {
             
             //V2
             migrator:"0x9615460582Efa2a9b1d8D21e7E02afE43A415E13",
+            SGT_sushiswap: '0x41bfba56b9ba48d0a83775d89c247180617266bc',
+            veSGT: '0x21b555305e9d65c8b8ae232e60fd806edc9c5d78',
+            vETH2_CRV: '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
+            masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412'
         }
     } else {
         //Goerli = WHO CARES ANYMORE?
@@ -146,8 +149,16 @@ if (window.ethereum) {
 
     //Migrator
     _migrator=new web3.eth.Contract(_ABIs["migrator"], _addresses["migrator"]);
+
+    // NEW farm
+
+    createContract = (abi, address) => {
+        return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
+    }
+    
     /*********************************** DELETE USELESS INFO *******************************/
 }
+
 export const addresses = _addresses
 export const ABIs = _ABIs
 export const validator = _validator
@@ -163,6 +174,10 @@ export const geyser_SGT_uniswap = _geyser_SGT_uniswap
 export const geyser_SGT_vEth2_uniswap = _geyser_SGT_vEth2_uniswap
 export const airdrop = _airdrop;
 export const migrator = _migrator;
+export const masterchef = createContract('geyser_new', 'masterchef');
+export const SGT_sushiswap = createContract('erc20_uniswap', 'SGT_sushiswap');
+export const veSGT = createContract('erc20', 'veSGT');
+export const vETH2_CRV = createContract('erc20', 'vETH2_CRV');
 
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
