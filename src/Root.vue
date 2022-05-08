@@ -73,7 +73,7 @@
         </span>
         <span class="link" v-bind:style="{ opacity: 1 }">
           <div v-if="userAddress" class="ConnectButton" @click="Connect">
-            {{ userAddress.slice(0, 12) }}
+            {{ udDomainName ? udDomainName.slice(0, 18) : userAddress.slice(0, 12) }}
           </div>
           <div v-else class="ConnectButton animatedButton" @click="Connect">
             Connect Wallet
@@ -105,7 +105,7 @@
     <div class="sidebar" v-show="windowWidth < 1100 && showSidebar">
       <span class="link" v-bind:style="{ opacity: 1 }">
         <div v-if="userAddress" class="ConnectButton" @click="Connect">
-          {{ userAddress.slice(0, 12) }}
+          {{ udDomainName ? udDomainName.slice(0, 12) : userAddress.slice(0, 12) }}
         </div>
         <div v-else class="ConnectButton animatedButton" @click="Connect">
           Connect Wallet
@@ -360,7 +360,7 @@ export default {
     window.removeEventListener("scroll", this.onScroll);
   },
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    ...mapGetters({ userAddress: "userAddress", udDomainName: "udDomainName" }),
   },
   methods: {
     ...mapActions(["setAddress"]),

@@ -1,6 +1,7 @@
 import Web3 from "web3";
 import Onboard from '@gnosis.pm/safe-apps-onboard'
 import store from '../index'
+import uauthOnboard from "./uauthOnboard"
 
 // const FORTMATIC_KEY = "Your Fortmatic key here"
 // const PORTIS_KEY = "Your Portis key here"
@@ -50,21 +51,42 @@ const wallets = [
     { walletName: "mykey", rpcUrl: RPC_URL },
     { walletName: "huobiwallet", rpcUrl: RPC_URL },
     { walletName: "hyperpay" },
-    { walletName: "wallet.io", rpcUrl: RPC_URL }
+    { walletName: "wallet.io", rpcUrl: RPC_URL },
+    uauthOnboard.module({
+        preferred: true,
+        walletconnect: {
+          infuraId: INFURA_KEY,
+        },
+    })
 ]
+
+async function initUAuth() {
+    const uauth = await uauthOnboard.getUAuth();
+    const { sub } = await uauth.user();
+    const domainName = sub || "";
+  
+    if (sub) {
+      localStorage.setItem("udDomainName", domainName);
+    }
+    return domainName;
+}
 
 const onboard = Onboard({
     dappId: "5f2bd7eb-6a4d-43d0-8569-8de42386cb2d",       // [String] The API key created by step one above
     networkId: 1,  // [Integer] The Ethereum network ID your Dapp uses.
     darkMode: true,
     subscriptions: {
-        wallet: (wallet) => {
+        wallet: async (wallet) => {
             console.log(`wallet switched to: ${wallet.name}`);
             let W3 = window.web3 = new Web3(wallet.provider)
             // console.log(window.web3)
             store.commit('setWeb3', W3);
             store.commit('setWallet', wallet.name);
             localStorage.setItem("selectedWallet", wallet.name);
+            if (wallet.name === "Unstoppable") {
+                const domainName = await initUAuth();
+                store.commit("setUdDomainName", domainName);
+            }
         },
         address: (account) => {
             store.commit('setAddress', account)
@@ -88,9 +110,32 @@ window.onboard = onboard;
 export async function changeWallets() {
     await onboard.walletReset();
     localStorage.removeItem("selectedWallet");
+    localStorage.removeItem("udDomainName");
     // let userSelectedWallet = await onboard.walletSelect();
     await onboard.walletSelect();
     await onboard.walletCheck();
 }
+
+async function autoConnectWallet() {
+    const previouslySelectedWallet = window.localStorage.getItem(
+      "selectedWallet"
+    );
+
+    if (previouslySelectedWallet != null) {
+      if (previouslySelectedWallet === "Unstoppable") {
+        await uauthOnboard
+          .getUAuth()
+          .then(async () => await onboard.walletSelect("Unstoppable"))
+          .catch(() => {
+            window.localStorage.removeItem("selectedWallet");
+            window.localStorage.removeItem("udDomainName");
+          });
+      } else {
+        await onboard.walletSelect(previouslySelectedWallet);
+      }
+    }
+}
+  
+autoConnectWallet();
 
 export default onboard;

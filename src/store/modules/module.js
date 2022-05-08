@@ -5,7 +5,9 @@ const state = {
     web3: null,
     walletname: null,
     network: null,
+    udDomainName: window.localStorage.getItem("udDomainName")
 };
+
 const networks = {
     0: "Olympic",
     1: "Mainnet",
@@ -25,6 +27,7 @@ const networks = {
 }
 
 const getters = {
+    udDomainName: (state) => state.udDomainName,
     userAddress: state => state.address,
     isAuth: state => { return state.address ? true : false },
     web3: state => state.web3,
@@ -50,6 +53,9 @@ const actions = {
     },
     setNetwork({ commit }, network) {
         commit('setNetwork', network);
+    },
+    setUdDomainName({ commit }, domainName) {
+        commit("setUdDomainName", domainName);
     }
 };
 
@@ -59,6 +65,9 @@ const mutations = {
     },
     removeAddress: (state) => {//remove address from local storage
         state.address = null;
+    },
+    setUdDomainName: (state, domainName) => {
+        state.udDomainName = domainName;
     },
     setWeb3: (state, newWeb3) => (state.web3 = newWeb3),
     setWallet: (state, wallet) => (state.walletname = wallet),
