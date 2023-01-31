@@ -16,16 +16,11 @@
         <router-link class="link" to="/stake"> Stake </router-link>
         <router-link class="link" to="/earn"> Earn </router-link>
 
-      <router-link class="link" to="#Stats">Stats</router-link>
-      <span class="link">
-        <a onclick="goto('stats')">Stats</a>
-      </span>
-        <!-- <router-link class="link" to="/dashboard"> Dashboard </router-link> -->
       </div>
       <div class="links" v-show="windowWidth >= 1100">
         <span class="link">
           <a
-            href="https://snapshot.page/#/sharedstake.eth"
+            href="https://snapshot.org/#/sharedstake.eth"
             target="_blank"
             rel="noopener noreferrer"
             >DAO
@@ -60,12 +55,12 @@
             href="https://curve.fi/factory/49"
             target="_blank"
             rel="noopener noreferrer"
-            >Get CRV-vETH2-LP
+            >Get vETH2 on Curve
           </a>
         </span>
         <span class="link">
           <a
-            href="https://app.sushi.com/swap?outputCurrency=0x24c19f7101c1731b85f1127eaa0407732e36ecdd"
+            href="https://swap.cow.fi/#/1/swap/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
             target="_blank"
             rel="noopener noreferrer"
             >Buy SGT ${{ sgtPrice }}
