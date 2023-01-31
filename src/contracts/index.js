@@ -38,7 +38,7 @@ let _geyser_vEth2_saddle_old;
 
 // V2 changes
 let _migrator;
-let createContract;
+let createContract = () => null;
 
 if (window.ethereum) {
 
@@ -155,7 +155,6 @@ if (window.ethereum) {
     createContract = (abi, address) => {
         return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
     }
-    
     /*********************************** DELETE USELESS INFO *******************************/
 }
 
