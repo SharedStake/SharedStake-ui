@@ -245,7 +245,7 @@
             >
             <span class="link footerLink">
               <a
-                href="https://docs.sharedstake.org/"
+                href="https://docs.sharedstake.finance/"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Documentation
