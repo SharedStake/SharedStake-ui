@@ -3,6 +3,7 @@ import App from './App.vue'
 
 import router from './router'
 import store from "./store"
+import '../public/assets/styles/main.css';
 
 import Notifications from 'vue-notification'
 import VueEllipseProgress from 'vue-ellipse-progress';

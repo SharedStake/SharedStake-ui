@@ -1,42 +1,37 @@
 <template>
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
-      <div class="LogoContainer">
+      <div class="LogoContainer lg:pl-24">
         <ImageVue
           :src="'logo-red.svg'"
           :size="windowWidth > 900 ? '180px' : '20vw'"
           class="Logo"
         />
       </div>
-      <div class="Explanation">
-        <div class="mainTitle">Simple Ethereum 2.0 Staking</div>
-        <div class="exp">
-          SharedStake is a decentralized Ethereum 2 staking solution that allows
-          users to stake any amount of Ether and earn additional yield on top of
-          their ETH2 rewards.
+      <div class="self-center p-4">
+        <div class="max-w-xl">
+          <h1 class="mainTitle mb-10 -mt-12">Simple Ethereum 2.0 Staking</h1>
+          <div class="exp">
+            SharedStake is a decentralized Ethereum 2 staking solution that allows
+            users to stake any amount of Ether and earn additional yield on top of
+            their ETH2 rewards.
+          </div>
         </div>
-        <router-link
-          :disabled='true'
-          class="StakeButton"
-          v-show="windowWidth <= 500"
-          to="/stake"
-        >
-          STAKE (Coming again soon!)
-          <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
-        </router-link>
-        <div class="social">
+        <div class="flex gap-6 items-center my-10">
           <router-link
-            class="StakeButton"
-            v-show="windowWidth > 500"
+            class="p-3 bg-brand-primary font-medium text-3xl rounded-full px-8 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
             to="/stake"
           >
-            STAKE (Coming again soon!)
-            <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
+            STAKE
           </router-link>
 
-        <div class="social">
-          <a class="StakeButton" href="https://app.passch.com/" target="_blank"> MINT NFT </a>
+          <a
+            class="whitespace-nowrap text-2xl font-medium rounded-full border-2 border-white hover:border-brand-primary transition-all hover:text-brand-primary p-3 px-5"
+            rel="noopener noreferrer nofollow" href="https://app.passch.com/" target="_blank">
+           MINT NFT
+          </a>
         </div>
+        <div class="flex gap-8 items-center ">
           <a
             href="https://twitter.com/ChimeraDefi"
             target="_blank"
@@ -44,7 +39,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Twitter.svg'"
-              :size="'30px'"
+              size="26px"
               class="socialLogo"
             />
           </a>
@@ -55,7 +50,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Discord.svg'"
-              :size="'30px'"
+              size="26px"
               class="socialLogo"
             />
           </a>
@@ -67,7 +62,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/TG.svg'"
-              :size="'30px'"
+              size="26px"
               class="socialLogo"
             />
           </a>
@@ -78,7 +73,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Reddit.svg'"
-              :size="'30px'"
+              size="26px"
               class="socialLogo"
             /> -->
           <!-- </a> -->
@@ -89,7 +84,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Git.svg'"
-              :size="'30px'"
+              size="26px"
               class="socialLogo"
             />
           </a>
@@ -100,7 +95,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Medium.svg'"
-              :size="'30px'"
+              size="26px"
               class="socialLogo"
             />
           </a>
@@ -1232,15 +1227,11 @@ export default {
 }
 
 .mainTitle {
-  margin: 4rem 0px 3rem;
   overflow-wrap: normal;
   max-width: 900px;
   font-size: 64px;
   font-weight: 300;
   line-height: 1.2;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 30px;
 }
 .exp {
   font-size: 21px;
@@ -1796,10 +1787,16 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     max-width: 80%;
     text-align: center;
   }
+
+  .mainTitle {
+    font-size: 46px;
+    line-height: 1.1;
+    margin-bottom: 32px;
+  }
 }
 @media only screen and (max-width: 375px) {
   .mainTitle {
-    font-size: 50px;
+    font-size: 36px;
   }
   .Num {
     font-size: 75px;
