@@ -9,6 +9,7 @@ const Stake = () => import("../components/Stake/Stake.vue")
 const Earn = () => import("../components/Earn/Earn.vue")
 const Dashboard = () => import("../components/Dashboard/Dashboard.vue")
 const PrivacyPolicy = () => import("../components/Privacy/PrivacyPolicy.vue")
+const TermsOfService = () => import("../components/TermsOfService/TermsOfService.vue")
 const FAQ = () => import("../components/FAQ/FAQ.vue")
 // const Root = () => import("../components/Root/Root.vue")
 // const Info = () => import("../components/Info/Info.vue")
@@ -48,6 +49,11 @@ let routes = [{
         path: "/privacy",
         name: "Privacy Policy",
         component: PrivacyPolicy,
+    },
+    {
+        path: "/terms",
+        name: "Terms of Service",
+        component: TermsOfService,
     },
     {
         path: "/faq",
@@ -120,6 +126,13 @@ const router = new VueRouter({
     mode: "history",
     base: "",
     routes,
+    scrollBehavior (to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+    }
 });
 
 export default router;

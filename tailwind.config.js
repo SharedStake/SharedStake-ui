@@ -9,6 +9,9 @@
         colors: {
           'brand-primary': '#e6007a',
           'brand-primary-light': '#e2539e'
+        },
+        screens: {
+          'md-large': '900px'
         }
        },
      },
