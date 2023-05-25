@@ -271,11 +271,10 @@
               </a></span
             >
             <span class="link footerLink">
-              <a
-                href="/FAQ"
-                rel="noopener noreferrer"
+              <router-link
+                to="/FAQ"
                 >FAQ
-              </a>
+            </router-link>
             </span>
             <span class="link footerLink">
               <a
@@ -286,11 +285,16 @@
               </a></span
             >
             <span class="link footerLink">
-              <a
-                href="/privacy"
-                rel="noopener noreferrer"
+              <router-link
+                to="/privacy"
                 >Privacy Policy
-              </a>
+            </router-link>
+            </span>
+            <span class="link footerLink">
+              <router-link
+                to="/terms"
+                >Terms of Service
+            </router-link>
             </span>
           </div>
         </div>
@@ -304,7 +308,6 @@
 import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
-import Swal from "sweetalert2";
 
 export default {
   components: { ImageVue },
@@ -318,30 +321,11 @@ export default {
       sgtPrice: null,
     };
   },
+
   mounted: async function() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
     await this.setSgtPrice();
-
-    let disclaimerTxt = '';
-
-    const addline = (txt) => disclaimerTxt += `<br><br> ${txt}`
-
-    addline(`You agree to the following terms and conditions:`)
-    addline(`this App = Sharedstake`)
-    addline(`I am not a citizen or resident of, or person subject to jurisdiction of, or located in, Cuba, Democratic People’s Republic of North Korea, Islamic Republic of Iran, Syria, the Crimea or Sevastopol, the People Republic of China (excluding Hong Kong, Macao and Taiwan), the United States of America (including its territories: American Samoa, Guam, Puerto Rico, the Northern Mariana Islands and the U.S. Virgin Islands), and shall not use or access this App while in any of the above territories.`)
-    addline(`I am not subject to any sanctions administered or enforced by any country, government or international authority, and that I am not acting in the interests of such persons.`)
-    addline(`I acknowledge that this app and related software are experimental, and that the use of experimental software may result in complete loss of my funds.`)
-    addline(`SharedStake has a new governance token! Please migrate from the old token. <a href="https://medium.com/@chimera_defi/sharedstake-governance-v2-tutorial-3c791c9bf9a9" target="_blank">Read the migration tutorial here</a> \n
-      And watch the how-to video <a href="https://twitter.com/ChimeraDefi/status/1434203273611804677?s=20" target="_blank"> on twitter here </a>`)
-    await Swal.fire({
-      title: "<span style='color:tomato'>Please note!<span>",
-      html: ` ${disclaimerTxt} `,
-      background: "#181818",
-      showCancelButton: false,
-      showConfirmButton: true
-    });
-
   },
 
   goto(refName) {
@@ -422,8 +406,6 @@ export default {
 .showers {
   width: max-content;
   min-width: 32px;
-  height: 32px;
-  padding-right: 32px;
   display: flex;
   align-self: center;
   flex-direction: column;
@@ -432,7 +414,7 @@ export default {
 }
 .shower {
   margin-bottom: 8px;
-  height: auto;
+  height: 2px;
   transform-origin: center;
   transition-duration: 250ms;
   transition-property: transform;
@@ -440,6 +422,9 @@ export default {
 }
 .cross1 {
   transform: rotate(45deg);
+  position: relative;
+  left: 1px;
+  top: 10px;
 }
 .cross2 {
   transform: rotate(-45deg);

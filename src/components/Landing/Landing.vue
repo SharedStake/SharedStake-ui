@@ -1,42 +1,37 @@
 <template>
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
-      <div class="LogoContainer">
+      <div class="LogoContainer lg:pl-24">
         <ImageVue
+        class="align-self-center justify-self-center"
           :src="'logo-red.svg'"
           :size="windowWidth > 900 ? '180px' : '20vw'"
-          class="Logo"
         />
       </div>
-      <div class="Explanation">
-        <div class="mainTitle">Simple Ethereum 2.0 Staking</div>
-        <div class="exp">
-          SharedStake is a decentralized Ethereum 2 staking solution that allows
-          users to stake any amount of Ether and earn additional yield on top of
-          their ETH2 rewards.
+      <div class="h-full p-4 flex flex-col justify-center">
+        <div class="md-large:max-w-xl text-center md-large:text-left mb-8">
+          <h1 class="mainTitle mb-6">Simple Ethereum 2.0 Staking</h1>
+          <div class="exp">
+            SharedStake is a decentralized Ethereum 2 staking solution that allows
+            users to stake any amount of Ether and earn additional yield on top of
+            their ETH2 rewards.
+          </div>
         </div>
-        <router-link
-          :disabled='true'
-          class="StakeButton"
-          v-show="windowWidth <= 500"
-          to="/stake"
-        >
-          STAKE (Coming again soon!)
-          <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
-        </router-link>
-        <div class="social">
+        <div class="flex gap-6 items-center mb-8 justify-center md-large:justify-start">
           <router-link
-            class="StakeButton"
-            v-show="windowWidth > 500"
+            class="bg-brand-primary font-semibold md:font-medium text-xl md:text-3xl rounded-full px-6 md:px-8 py-3 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
             to="/stake"
           >
-            STAKE (Coming again soon!)
-            <!-- <ImageVue :src="'link.svg'" :size="'15px'" class="glow" /> -->
+            STAKE
           </router-link>
 
-        <div class="social">
-          <a class="StakeButton" href="https://app.passch.com/" target="_blank"> MINT NFT </a>
+          <a
+            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
+            rel="noopener noreferrer nofollow" href="https://app.passch.com/" target="_blank">
+           MINT NFT
+          </a>
         </div>
+        <div class="flex gap-8 items-center justify-center md-large:justify-start">
           <a
             href="https://twitter.com/ChimeraDefi"
             target="_blank"
@@ -44,7 +39,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Twitter.svg'"
-              :size="'30px'"
+              size="24px"
               class="socialLogo"
             />
           </a>
@@ -55,7 +50,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Discord.svg'"
-              :size="'30px'"
+              size="24px"
               class="socialLogo"
             />
           </a>
@@ -67,7 +62,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/TG.svg'"
-              :size="'30px'"
+              size="24px"
               class="socialLogo"
             />
           </a>
@@ -78,7 +73,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Reddit.svg'"
-              :size="'30px'"
+              size="24px"
               class="socialLogo"
             /> -->
           <!-- </a> -->
@@ -89,7 +84,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Git.svg'"
-              :size="'30px'"
+              size="24px"
               class="socialLogo"
             />
           </a>
@@ -100,7 +95,7 @@
           >
             <ImageVue
               :src="'socialmediaicons/Medium.svg'"
-              :size="'30px'"
+              size="24px"
               class="socialLogo"
             />
           </a>
@@ -1209,15 +1204,12 @@ export default {
 }
 
 .first {
-  padding-top: 5rem;
+  padding-top: 10rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas: ". .";
-}
-.Logo {
-  padding: 0 145px 100px 0;
 }
 .Explanation {
   padding: 0 75px 200px 0;
@@ -1232,23 +1224,18 @@ export default {
 }
 
 .mainTitle {
-  margin: 4rem 0px 3rem;
   overflow-wrap: normal;
   max-width: 900px;
   font-size: 64px;
   font-weight: 300;
   line-height: 1.2;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 30px;
 }
 .exp {
   font-size: 21px;
   line-height: 31px;
   font-weight: 300;
   padding: 0px;
-  margin-bottom: 30px;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.9);
   /* text-align: justify; */
   text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
@@ -1271,12 +1258,13 @@ export default {
   filter: brightness(500%);
 }
 .LearnButton {
+  width: fit-content;
+  margin: 24px auto 0;
   font-size: 21px;
   padding: 0.5rem 1.5rem 0.5rem 1.5rem;
   border: 2px solid #fff;
   border-radius: 10px;
   text-align: center;
-  width: 142px;
   transition: transform 0.5s ease-out;
   cursor: pointer;
   z-index: 3;
@@ -1321,6 +1309,7 @@ export default {
 .second {
   width: 90%;
   height: 90%;
+  margin: auto;
   padding: 10% 5% 0 5%;
   display: grid;
   grid-template-columns: 1fr 0.2fr 1fr 0.2fr 1fr 0.2fr 1fr;
@@ -1796,10 +1785,16 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     max-width: 80%;
     text-align: center;
   }
+
+  .mainTitle {
+    font-size: 46px;
+    line-height: 1.1;
+    margin-bottom: 32px;
+  }
 }
 @media only screen and (max-width: 375px) {
   .mainTitle {
-    font-size: 50px;
+    font-size: 36px;
   }
   .Num {
     font-size: 75px;
