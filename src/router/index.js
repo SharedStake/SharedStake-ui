@@ -19,6 +19,8 @@ const FAQ = () => import("../components/FAQ/FAQ.vue")
 const Root = () => import("../Root.vue")
 const Landing = () => import("../components/Landing/Landing.vue")
 
+const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
+
 Vue.use(VueRouter);
 
 let routes = [{
@@ -59,8 +61,12 @@ let routes = [{
         path: "/faq",
         name: "FAQ",
         component: FAQ,
-    }
-    ]
+    },
+    {
+        path: "/withdraw",
+        name: "Withdraw",
+        component: Withdraw,
+    }]
 },
     // {
     //     path: "/roadmap",
