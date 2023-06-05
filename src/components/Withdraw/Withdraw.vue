@@ -1,10 +1,10 @@
 <template>
-  <div class="pt-40">
+  <div class="w-5/6 max-w-2xl pt-40 mx-auto">
     <section
-      class="w-5/6 max-w-2xl gap-4 p-6 mx-auto my-10 text-white bg-gray-800 shadow-md rounded-xl"
+      class="gap-4 p-6 my-10 text-white bg-gray-800 shadow-md rounded-xl"
     >
       <div class="flex flex-col items-center justify-center">
-        <header class="relative pb-3 mb-3 text-center border-b border-gray-700">
+        <header class="relative pb-3 mb-3 text-center">
           <h1 class="text-3xl font-semibold">
             Withdrawals
             <span
@@ -14,6 +14,23 @@
           </h1>
           <p class="text-sm text-gray-300">Goerli testnet withdrawals</p>
         </header>
+
+        <!-- Progress - show completed steps status -->
+        <div class="pb-3 mb-6 border-b border-gray-700">
+          <aside class="flex flex-wrap justify-center gap-3 md:gap-6">
+            <Step
+              title="Approve vETH2"
+              :completed="this.depositStage || this.withdrawStage"
+              step="1"
+            />
+            <Step
+              title="Deposit vETH2"
+              :completed="this.withdrawStage"
+              step="2"
+            />
+            <Step title="Withdraw ETH" :completed="false" step="3" />
+          </aside>
+        </div>
 
         <label v-if="depositStage">
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
@@ -40,9 +57,26 @@
             </button>
           </div>
         </label>
-        <div v-else-if="withdrawStage"></div>
+        <div v-else-if="withdrawStage" class="text-gray-200">
+          <!-- Show amount of user deposited veth2 -->
+          <p class="text-sm font-semibold text-gray-300">
+            You have deposited
+          </p>
+          <p class="relative text-center">
+            <span class="text-3xl font-semibold">{{
+              userDepositedVEth2
+                .div(10 ** 18)
+                .decimalPlaces(6)
+                .toString()
+            }}</span>
+            <span
+              class="absolute inline-block ml-1 text-sm transform bottom-3 right-1"
+              >vETH2</span
+            >
+          </p>
+        </div>
 
-        <div class="mt-6">
+        <div class="my-6">
           <p v-if="loading">
             Loading...
           </p>
@@ -84,6 +118,37 @@
           </template>
         </div>
       </div>
+
+      <div class="mt-10 text-white">
+        <h2 class="mb-4 text-2xl font-medium text-center">
+          Frequently Asked Questions
+        </h2>
+        <QuestionAnswer>
+          <template #question>
+            How do I withdraw my staked ETH?
+          </template>
+          <template #answer>
+            You can withdraw your staked ETH by following the steps:
+            <br />
+            <strong>Step 1:</strong> Approve vETH2
+            <br />
+            <strong>Step 2:</strong> Deposit vETH2
+            <br />
+            <strong>Step 3:</strong> Withdraw ETH
+          </template>
+        </QuestionAnswer>
+
+        <QuestionAnswer>
+          <template #question>
+            How long does it take to withdraw my ETH?
+          </template>
+          <template #answer>
+            It takes 7 days to withdraw your ETH. This is because the ETH you
+            staked is locked in the Ethereum 2.0 deposit contract for 7 days
+            before it can be withdrawn.
+          </template>
+        </QuestionAnswer>
+      </div>
     </section>
   </div>
 </template>
@@ -95,6 +160,8 @@ import {
   vEth2 as ABI_vEth2,
 } from "@/contracts";
 import { mapGetters } from "vuex";
+import Step from "@/components/Withdraw/Step.vue";
+import QuestionAnswer from "@/components/Withdraw/QuestionAnswer.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import SharedButton from "../Common/SharedButton.vue";
 import { notifyHandler } from "@/utils/common";
@@ -108,14 +175,14 @@ BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "Withdraw",
-  components: { ConnectButton, SharedButton },
+  components: { ConnectButton, SharedButton, Step, QuestionAnswer },
 
   data() {
     return {
       amount: 0,
       userVEth2Balance: BN(0),
       userApprovedVEth2: BN(0),
-      userDepositedVEth2: BN(0),
+      userDepositedVEth2: BN(12 * 10 ** 18),
       ethAvailableForWithdrawal: BN(0),
       loading: false,
       error: false,
@@ -157,10 +224,14 @@ export default {
       return hasApprovedToken && hasTokenBalance;
     },
 
+    userWalletIsConnected() {
+      return this.userConnectedWalletAddress;
+    },
+
     userCanRedeemEth() {
-      return true;
+      // return true;
       // @dev @todo - uncomment when new contract with userEntries is ready.
-      // return this.userDepositedVEth2.gt(0);
+      return this.userDepositedVEth2.gt(0);
     },
 
     contractHasEthAvailable() {
@@ -170,18 +241,30 @@ export default {
     amountFieldLowerThanMax() {
       return (
         this.amount &&
-        this.amount < this.userVEth2Balance.div(10 ** 18).toFixed(6)
+        this.amount <
+          this.userVEth2Balance
+            .div(10 ** 18)
+            .decimalPlaces(6)
+            .toString()
       );
     },
 
     approvalStage() {
-      return !this.userHasApprovedToken;
+      return this.userWalletIsConnected && !this.userHasApprovedToken;
     },
     depositStage() {
-      return !this.userCanRedeemEth && this.userCanRequestWithdrawal;
+      return (
+        this.userWalletIsConnected &&
+        !this.userCanRedeemEth &&
+        this.userCanRequestWithdrawal
+      );
     },
     withdrawStage() {
-      return this.userCanRedeemEth;
+      return this.userWalletIsConnected && this.userCanRedeemEth;
+    },
+
+    completedStepsCount() {
+      return this.approvalStage + this.depositStage + this.withdrawStage + 1;
     },
   },
 
@@ -287,7 +370,10 @@ export default {
     },
 
     handleFillMaxAmount() {
-      this.amount = this.userVEth2Balance.div(10 ** 18).toFixed(6);
+      this.amount = this.userVEth2Balance
+        .div(10 ** 18)
+        .decimalPlaces(6)
+        .toString();
     },
   },
 };
