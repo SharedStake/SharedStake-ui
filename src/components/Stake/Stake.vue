@@ -164,7 +164,7 @@ import { mapGetters } from "vuex";
 import { 
   // getCurrentGasPrices, 
   notifyHandler } from "@/utils/common";
-import { validator, vEth2 } from "@/contracts";
+import { validator, sgETH } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
 import StakeGauge from "./StakeGauge";
@@ -212,8 +212,7 @@ export default {
     ...mapGetters({ userAddress: "userAddress" }),
     enoughFundsInExitPool() {
       return (
-        this.BNamount.lt(this.contractBal) &&
-        this.BNamount.lt(this.remainingByFee)
+        this.BNamount.lt(this.contractBal)
       );
     },
   },
@@ -341,7 +340,7 @@ export default {
         let walletAddress = this.userAddress;
         let amount = await window.web3.eth.getBalance(walletAddress);
         this.EthBal = BN(amount);
-        let veth2 = await vEth2.methods.balanceOf(walletAddress).call();
+        let veth2 = await sgETH.methods.balanceOf(walletAddress).call();
         this.vEth2Bal = BN(veth2);
 
         if (this.isDeposit) {
@@ -402,12 +401,7 @@ export default {
         this.buttonText = "Insufficient balance";
         return;
       }
-      if (this.BNamount.gt(this.contractBal) && !this.isDeposit) {
-        this.validInput = false;
-        this.buttonText = "Not enough funds in Exit Pool";
-        return;
-      }
-      if (this.BNamount.gt(this.remainingByFee) && !this.isDeposit) {
+      if (!this.enoughFundsInExitPool && !this.isDeposit) {
         this.validInput = false;
         this.buttonText = "Not enough funds in Exit Pool";
         return;
