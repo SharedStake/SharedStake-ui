@@ -42,7 +42,10 @@
             <input
               :value="amount"
               class="max-w-xs ml-2 text-white bg-transparent border-none outline-none"
-              placeholder="type..."
+              :placeholder="this.userVEth2Balance
+                .div(10 ** 18)
+                .decimalPlaces(6)
+                .toString()"
               @input="amount = $event.target.value"
             />
             <span class="text-sm">
@@ -50,7 +53,7 @@
             </span>
             <button
               @click="handleFillMaxAmount"
-              v-if="amountFieldLowerThanMax"
+              v-if="true"
               class=" px-1 py-0.5 text-xs font-semibold bg-white rounded text-brand-primary"
             >
               max
@@ -123,6 +126,19 @@
         <h2 class="mb-4 text-2xl font-medium text-center">
           Frequently Asked Questions
         </h2>
+
+        <QuestionAnswer>
+          <template #question>
+            How much can be withdrawn right now?
+          </template>
+          <template #answer>
+            You can withdraw upto {{
+            ethAvailableForWithdrawal.div(10 ** 18)
+            .decimalPlaces(6)
+            .toString()}} ETH buffered in the contract right now.
+          </template>
+        </QuestionAnswer>
+
         <QuestionAnswer>
           <template #question>
             How do I withdraw my staked ETH?
@@ -182,7 +198,7 @@ export default {
       amount: 0,
       userVEth2Balance: BN(0),
       userApprovedVEth2: BN(0),
-      userDepositedVEth2: BN(12 * 10 ** 18),
+      userDepositedVEth2: BN(0),
       ethAvailableForWithdrawal: BN(0),
       loading: false,
       error: false,
@@ -215,7 +231,7 @@ export default {
     },
 
     userHasApprovedToken() {
-      return this.userApprovedVEth2.gt(0);
+      return this.userApprovedVEth2.gt(this.userVEth2Balance);
     },
 
     userCanRequestWithdrawal() {
@@ -348,6 +364,7 @@ export default {
         .call();
       this.userVEth2Balance = BN(userVeth2Balance);
       console.log("userVeth2Balance", userVeth2Balance);
+      return userVeth2Balance;
     },
 
     async getEthAvailableForWithdrawal() {
