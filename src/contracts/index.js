@@ -93,7 +93,7 @@ if (window.ethereum) {
         }
     } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0xF7930fA4cddbf00Ea495f9A522010734580909f8",// 
+            validator: "0x62a4f18E1c42c63c6D02668A714eaD7323eF5CE0",// 
             // Protocol Tokens
             vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
@@ -103,7 +103,8 @@ if (window.ethereum) {
             geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             
             // New withdrawals contract.
-            withdrawals: "0x4db116ad5CCA33Ba5D2956dbA80d56F27B6B2455"
+            withdrawals: "0x0f779f0c7d0c8b9cD6e23e62D9aE51ED39aa256a",
+            rollover: "0x17b9Ee3963a58c82d64Aa9fdaCce261257834623"
         }
     }
 

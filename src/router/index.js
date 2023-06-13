@@ -20,6 +20,7 @@ const Root = () => import("../Root.vue")
 const Landing = () => import("../components/Landing/Landing.vue")
 
 const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
+const Rollover = () => import("../components/Withdraw/Rollover.vue")
 
 Vue.use(VueRouter);
 
@@ -66,6 +67,11 @@ let routes = [{
         path: "/withdraw",
         name: "Withdraw",
         component: Withdraw,
+    },
+    {
+        path: "/rollover",
+        name: "Rollover",
+        component: Rollover,
     }]
 },
     // {
