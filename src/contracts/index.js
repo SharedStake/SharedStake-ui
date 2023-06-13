@@ -18,6 +18,8 @@ import migratorABI from './abis/migrator.json'
 
 // https://github.com/chimera-defi/SharedDeposit/blob/main/data/abi/Withdrawals.json
 import withdrawalsABI from './abis/withdrawals.json'
+import rolloversABI from './abis/rollovers.json'
+import sgETHABI from './abis/sgETH.json'
 
 let _addresses;
 let _ABIs;
@@ -104,7 +106,9 @@ if (window.ethereum) {
             
             // New withdrawals contract.
             withdrawals: "0x0f779f0c7d0c8b9cD6e23e62D9aE51ED39aa256a",
-            rollover: "0x17b9Ee3963a58c82d64Aa9fdaCce261257834623"
+            rollovers: "0x17b9Ee3963a58c82d64Aa9fdaCce261257834623",
+
+            sgETH: "0xd0f593aeB7E22B1038edC398aA53A56B38435de9"
         }
     }
 
@@ -124,7 +128,9 @@ if (window.ethereum) {
         airdrop_distributor,
         geyser_new: geyserABI_new, //use this one for 
         migrator:migratorABI,
-        withdrawals: withdrawalsABI
+        withdrawals: withdrawalsABI,
+        rollovers: rolloversABI,
+        sgETH: sgETHABI
     }
 
     /************************************* CONTRACTS ****************************************/
@@ -188,6 +194,8 @@ export const SGT_sushiswap = createContract('erc20_uniswap', 'SGT_sushiswap');
 export const veSGT = createContract('erc20', 'veSGT');
 export const vETH2_CRV = createContract('erc20', 'vETH2_CRV');
 export const withdrawals = createContract('withdrawals', 'withdrawals');
+export const rollovers = createContract("rollovers", "rollovers");
+export const sgETH = createContract('sgETH', 'sgETH');
 
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
