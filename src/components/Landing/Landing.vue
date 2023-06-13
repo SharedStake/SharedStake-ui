@@ -2,11 +2,8 @@
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
       <div class="LogoContainer lg:pl-24">
-        <ImageVue
-        class="align-self-center justify-self-center"
-          :src="'logo-red.svg'"
-          :size="windowWidth > 900 ? '180px' : '20vw'"
-        />
+        <ImageVue class="align-self-center justify-self-center" :src="'logo-red.svg'"
+          :size="windowWidth > 900 ? '180px' : '20vw'" />
       </div>
       <div class="h-full p-4 flex flex-col justify-center">
         <div class="md-large:max-w-xl text-center md-large:text-left mb-8">
@@ -20,51 +17,41 @@
         <div class="flex gap-6 items-center mb-8 justify-center md-large:justify-start">
           <router-link
             class="bg-brand-primary font-semibold md:font-medium text-xl md:text-3xl rounded-full px-6 md:px-8 py-3 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
-            to="/stake"
-          >
+            to="/stake">
             STAKE
           </router-link>
-
-          <a
-            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
+          <a class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
             rel="noopener noreferrer nofollow" href="https://app.passch.com/" target="_blank">
-           MINT NFT
+            MINT NFT
           </a>
         </div>
+        <div class="flex items-center justify-center md-large:justify-start">
+          <p class="exp">
+            vETH2 Redemptions
+          </p>
+        </div>
+        <div class="flex gap-8 items-center mb-8 justify-center md-large:justify-start">
+          <router-link
+            class="bg-brand-primary font-semibold md:font-medium text-xl md:text-3xl rounded-full px-6 md:px-8 py-3 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
+            to="/withdraw">
+            Withdraw
+          </router-link>
+          <router-link
+            class="bg-brand-primary font-semibold md:font-medium text-xl md:text-3xl rounded-full px-6 md:px-8 py-3 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
+            to="/rollover">
+            Rollover
+          </router-link>
+        </div>
         <div class="flex gap-8 items-center justify-center md-large:justify-start">
-          <a
-            href="https://twitter.com/ChimeraDefi"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Twitter.svg'"
-              size="24px"
-              class="socialLogo"
-            />
+          <a href="https://twitter.com/ChimeraDefi" target="_blank" rel="noopener noreferrer">
+            <ImageVue :src="'socialmediaicons/Twitter.svg'" size="24px" class="socialLogo" />
           </a>
-          <a
-            href="https://discord.gg/C9GhCv86My"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Discord.svg'"
-              size="24px"
-              class="socialLogo"
-            />
+          <a href="https://discord.gg/C9GhCv86My" target="_blank" rel="noopener noreferrer">
+            <ImageVue :src="'socialmediaicons/Discord.svg'" size="24px" class="socialLogo" />
           </a>
 
-          <a
-            href="https://t.me/SharedStakeFinance"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/TG.svg'"
-              size="24px"
-              class="socialLogo"
-            />
+          <a href="https://t.me/SharedStakeFinance" target="_blank" rel="noopener noreferrer">
+            <ImageVue :src="'socialmediaicons/TG.svg'" size="24px" class="socialLogo" />
           </a>
           <!-- <a
             href="https://www.reddit.com/r/SharedStake/"
@@ -77,27 +64,11 @@
               class="socialLogo"
             /> -->
           <!-- </a> -->
-          <a
-            href="https://github.com/SharedStake"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Git.svg'"
-              size="24px"
-              class="socialLogo"
-            />
+          <a href="https://github.com/SharedStake" target="_blank" rel="noopener noreferrer">
+            <ImageVue :src="'socialmediaicons/Git.svg'" size="24px" class="socialLogo" />
           </a>
-          <a
-            href="https://medium.com/@chimera_defi"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Medium.svg'"
-              size="24px"
-              class="socialLogo"
-            />
+          <a href="https://medium.com/@chimera_defi" target="_blank" rel="noopener noreferrer">
+            <ImageVue :src="'socialmediaicons/Medium.svg'" size="24px" class="socialLogo" />
           </a>
         </div>
       </div>
@@ -131,18 +102,19 @@
           </div>
         </div>
 
-          <div class="Stat">
-            <div class="Num">{{ validatorApr }}%</div>
-            <div class="NumExp">Validator APR</div>
-            <div class="NumDetail">Validator APR based on avg activation epoch of <a href='https://beaconscan.com/epoch/25205' target='_blank'>25205</a>.</div>
-          </div>
+        <div class="Stat">
+          <div class="Num">{{ validatorApr }}%</div>
+          <div class="NumExp">Validator APR</div>
+          <div class="NumDetail">Validator APR based on avg activation epoch of <a
+              href='https://beaconscan.com/epoch/25205' target='_blank'>25205</a>.</div>
+        </div>
         <!-- <div class="Stat">
           <div class="Num">{{ APY }}%</div>
           <div class="NumExp">Current APY</div>
           <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
         </div> -->
       </div>
-<!-- 
+      <!-- 
       <div class="Stat">
         <div class="Num">99.9%</div>
         <div class="NumExp">Uptime</div>
@@ -188,7 +160,9 @@
           <div class="Stat">
             <div class="Num">{{ vpPostFees }}</div>
             <div class="NumExp">Virtual Price post fees </div>
-            <div class="NumDetail">vETH2 redemption price at merge post fees based on <a href='https://snapshot.org/#/sharedstake.eth/proposal/QmQBWBsAucwB7vtxMhYmsn7nQ1J3VWvGD3knrdQP3knjou' target='_blank'>SIP-22</a>.</div>
+            <div class="NumDetail">vETH2 redemption price at merge post fees based on <a
+                href='https://snapshot.org/#/sharedstake.eth/proposal/QmQBWBsAucwB7vtxMhYmsn7nQ1J3VWvGD3knrdQP3knjou'
+                target='_blank'>SIP-22</a>.</div>
           </div>
           <div class="Stat">
             <div class="Num">{{ elapsed }}</div>
@@ -208,27 +182,15 @@
         <div class="X Eth">
           <ImageVue :src="'eth.png'" :size="'90px'" />
         </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next1"
-        />
+        <ImageVue :src="windowWidth > 900 ? 'next.svg' : 'down.svg'" :size="'15px'" class="X next1" />
         <div class="X vEth2">
           <ImageVue :src="'vEth2.png'" :size="'163px'" />
         </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next2"
-        />
+        <ImageVue :src="windowWidth > 900 ? 'next.svg' : 'down.svg'" :size="'15px'" class="X next2" />
         <div class="X reward">
           <ImageVue :src="'Reward.png'" :size="'127px'" />
         </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next3"
-        />
+        <ImageVue :src="windowWidth > 900 ? 'next.svg' : 'down.svg'" :size="'15px'" class="X next3" />
         <div class="X harvest">
           <ImageVue :src="'Harvest.png'" :size="'92px'" />
         </div>
@@ -256,22 +218,14 @@
             incentivized further with SGT, the SharedStake Governance Token.
           </div>
           <div class="LearnButton">
-            <a
-              href="https://chimera-1.gitbook.io/sharedstake-v2/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://chimera-1.gitbook.io/sharedstake-v2/" target="_blank" rel="noopener noreferrer">
               Learn More
             </a>
           </div>
         </div>
       </div>
     </div>
-    <div
-      class="Container flex_column"
-      v-show="scrolled >= 2500"
-      :style="{ paddingBottom: '5rem' }"
-    >
+    <div class="Container flex_column" v-show="scrolled >= 2500" :style="{ paddingBottom: '5rem' }">
       <div class="flex_row vEth2PanelHeader">
         <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
         <div class="StatsHeader">vEth2</div>
@@ -289,11 +243,7 @@
             Ethereum2 profit distribution will start with the Eth2 launch so
             until then, track your Eth2 profits in the SharedStake Dashboard.
           </div>
-          <ImageVue
-            :src="'discount.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
+          <ImageVue :src="'discount.svg'" :size="'70px'" class="exp ICON reverse" />
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">DeFi Compatible</div>
@@ -305,11 +255,7 @@
             stability is derived from its peg to Ether's value, practically
             eliminating concerns with Impermanent Loss.
           </div>
-          <ImageVue
-            :src="'diamond.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
+          <ImageVue :src="'diamond.svg'" :size="'70px'" class="exp ICON reverse" />
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">Incentivized Staking</div>
@@ -319,11 +265,7 @@
             with SGT, used as a Proof of Participation token within the
             SharedStake Protocol.
           </div>
-          <ImageVue
-            :src="'dowload.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
+          <ImageVue :src="'dowload.svg'" :size="'70px'" class="exp ICON reverse" />
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">Built-in Exit Pool</div>
@@ -333,50 +275,31 @@
             SharedStakers can un-stake their Ether at anytime by burning their
             vEth2 through the staking contract, subject to the pooled amount.
           </div>
-          <ImageVue
-            :src="'balance.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
+          <ImageVue :src="'balance.svg'" :size="'70px'" class="exp ICON reverse" />
         </div>
       </div>
       <div class="LearnButton">
-        <a
-          href="https://sips.sharedstake.org/SIPS/sip-3.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn More</a
-        >
+        <a href="https://sips.sharedstake.org/SIPS/sip-3.html" target="_blank" rel="noopener noreferrer">
+          Learn More</a>
       </div>
     </div>
     <div v-show="scrolled > 3800">
       <Partners />
     </div>
-    <div
-      class="BadgeContainer flex_column"
-      v-show="scrolled >= 4400"
-      :style="{ paddingBottom: '5rem' }"
-    >
+    <div class="BadgeContainer flex_column" v-show="scrolled >= 4400" :style="{ paddingBottom: '5rem' }">
       <div class="StatsHeader">Audit</div>
       <div class="flex_column">
-        <a
-          href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="certikLogo"
-        >
-          <ImageVue
-            :src="'certik-foundation-logo-white.png'"
-            :size="'400px'"
-            class="certikLogo"
-          />
+        <a href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
+          target="_blank" rel="noopener noreferrer" class="certikLogo">
+          <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" class="certikLogo" />
         </a>
       </div>
     </div>
     <div class="exp roadMap" v-show="scrolled > 4700">
       <div class="mainBox">
-        <div class="exp titleBox"><div class="X">Roadmap</div></div>
+        <div class="exp titleBox">
+          <div class="X">Roadmap</div>
+        </div>
         <div class="main">
           <div class="mainCon">
             <div class="list">
@@ -1011,14 +934,14 @@ export default {
   async mounted() {
     this.setupTvl();
     if (!this.isMobile()) {
-    this.setupApy();
-    this.getValidatorInfo();
+      this.setupApy();
+      this.getValidatorInfo();
     }
   },
   methods: {
     isMobile() {
       // https://stackoverflow.com/questions/48515023/display-different-vuejs-components-for-mobile-browsers
-      if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         return true || (window.ethereum); // mobile browsers will load if eth rpc available. 
       } else {
         return false
@@ -1029,14 +952,14 @@ export default {
         this.TVL = await this.fetchTvlFromEtherscan();
       } catch (e) {
         console.log(e);
-          const STATIC_TVL = 17688; // Updated 1 feb 2023
+        const STATIC_TVL = 17688; // Updated 1 feb 2023
 
         if (!this.isMobile()) {
           try {
             this.TVL = await this.fetchTvlWithWallet();
           } catch (e) {
-          console.log(e);
-          this.TVL = BN(STATIC_TVL).toString();
+            console.log(e);
+            this.TVL = BN(STATIC_TVL).toString();
           }
         } else {
           this.TVL = BN(STATIC_TVL).toString();
@@ -1068,7 +991,7 @@ export default {
 
       let startTime = 1616502743000;
       let elapsed = Date.now() - startTime;
-      let msInYr = (1000*60*60*24*365);
+      let msInYr = (1000 * 60 * 60 * 24 * 365);
 
       let totalBal = 0;
       let effectiveBal = 0;
@@ -1090,9 +1013,9 @@ export default {
         .div(1e9)
         .toFixed(2)
         .toString();
-      this.validatorApr = (((this.profit/elapsed) * msInYr)/this.TVL) * 100;
+      this.validatorApr = (((this.profit / elapsed) * msInYr) / this.TVL) * 100;
       this.validatorApr = this.validatorApr.toFixed(2);
-      this.vpPostFees = (this.validatorVirtualPrice - ((this.validatorVirtualPrice - 1)*0.2));
+      this.vpPostFees = (this.validatorVirtualPrice - ((this.validatorVirtualPrice - 1) * 0.2));
       this.vpPostFees = this.vpPostFees.toFixed(4);
       this.elapsed = (12 * elapsed / msInYr).toFixed(2);
 
@@ -1132,9 +1055,9 @@ export default {
         let APY = Math.round(
           BN(
             100 *
-              tokenPerSgt *
-              ((locked * 1e18) / totalStaked) *
-              (360 / stakedSchedule)
+            tokenPerSgt *
+            ((locked * 1e18) / totalStaked) *
+            (360 / stakedSchedule)
           )
         ).toString();
         this.APY = APY;
@@ -1184,6 +1107,7 @@ export default {
   color: #fff;
   z-index: 1;
 }
+
 .LogoContainer {
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
@@ -1211,6 +1135,7 @@ export default {
   gap: 0px 0px;
   grid-template-areas: ". .";
 }
+
 .Explanation {
   padding: 0 75px 200px 0;
   animation: TextEnter 0.4s ease-out backwards;
@@ -1230,6 +1155,7 @@ export default {
   font-weight: 300;
   line-height: 1.2;
 }
+
 .exp {
   font-size: 21px;
   line-height: 31px;
@@ -1241,6 +1167,7 @@ export default {
   animation: TextEnter 0.6s ease-out backwards 0.2s;
   z-index: 1;
 }
+
 .social {
   display: flex;
   flex-direction: row;
@@ -1249,14 +1176,17 @@ export default {
   animation: TextEnter 0.8s ease-out backwards;
   margin-top: 30px;
 }
+
 .socialLogo {
   filter: brightness(300%);
   transition: filter 0.5s ease-out;
   cursor: pointer;
 }
+
 .socialLogo:hover {
   filter: brightness(500%);
 }
+
 .LearnButton {
   width: fit-content;
   margin: 24px auto 0;
@@ -1270,10 +1200,12 @@ export default {
   z-index: 3;
   grid-area: Button;
 }
+
 .LearnButton:hover,
 .StakeButton:hover {
   transform: scale(0.98);
 }
+
 .StakeButton {
   font-size: 21px;
   font-weight: 500;
@@ -1290,6 +1222,7 @@ export default {
   z-index: 3;
   grid-area: Button;
 }
+
 .background2 {
   background-image: url(bg-2.png);
   position: absolute;
@@ -1300,12 +1233,11 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  mask-image: radial-gradient(
-    circle,
-    rgba(0, 0, 0, 1) 20%,
-    rgba(0, 0, 0, 0.4) 60%
-  );
+  mask-image: radial-gradient(circle,
+      rgba(0, 0, 0, 1) 20%,
+      rgba(0, 0, 0, 0.4) 60%);
 }
+
 .second {
   width: 90%;
   height: 90%;
@@ -1322,6 +1254,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .Information {
   margin-top: 2.5vh;
   padding: 5vh;
@@ -1337,6 +1270,7 @@ export default {
   -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
   box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469);
 }
+
 .InfoHeader {
   font-size: 34px;
   font-weight: 300;
@@ -1346,22 +1280,26 @@ export default {
   grid-area: Header;
   align-self: center;
 }
+
 .Info {
   margin-bottom: 10px;
   font-size: 16px;
   grid-area: Info;
 }
+
 .ICON {
   grid-area: Icon;
   align-self: center;
   justify-self: end;
 }
+
 .Information,
 .X {
   justify-self: center;
   align-self: center;
   z-index: 10;
 }
+
 .Exp {
   max-width: 200px;
   font-size: 16px;
@@ -1375,15 +1313,18 @@ export default {
   /* text-align: justify; */
   text-justify: inter-word;
 }
+
 .EthExp,
 .Eth {
   grid-area: Eth;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.4s forwards;
 }
+
 .EthExp {
   grid-area: EthExp;
 }
+
 .vEth2Exp,
 .vEth2 {
   grid-area: vEth2;
@@ -1391,37 +1332,45 @@ export default {
   animation: LogoEnter 0.5s ease-out 0.6s forwards;
   filter: brightness(200%);
 }
+
 .vEth2Exp {
   grid-area: vEth2Exp;
 }
+
 .rewardExp,
 .reward {
   grid-area: reward;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.8s forwards;
 }
+
 .rewardExp {
   grid-area: rewardExp;
 }
+
 .harvestExp,
 .harvest {
   grid-area: harvest;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 1s forwards;
 }
+
 .harvestExp {
   grid-area: harvestExp;
 }
+
 .next1 {
   grid-area: next1;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.5s forwards;
 }
+
 .next2 {
   grid-area: next2;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.7s forwards;
 }
+
 .next3 {
   grid-area: next3;
   opacity: 0;
@@ -1439,6 +1388,7 @@ export default {
   color: #fff;
   justify-content: space-between;
 }
+
 .StatsHeader {
   color: rgb(255, 255, 255);
   -webkit-box-align: center;
@@ -1451,6 +1401,7 @@ export default {
   animation: TextEnter 0.4s ease-out backwards;
   text-align: center;
 }
+
 .StatsExp {
   max-width: 800px;
   text-align: center;
@@ -1462,6 +1413,7 @@ export default {
   color: rgba(255, 255, 255, 0.75);
   animation: TextEnter 0.4s ease-out backwards 0.2s;
 }
+
 .StatsContent {
   display: flex;
   width: calc(100% - 60px);
@@ -1472,6 +1424,7 @@ export default {
   padding: 120px 0px;
   animation: TextEnter 0.4s ease-out backwards 0.4s;
 }
+
 .Stat {
   display: flex;
   flex-direction: column;
@@ -1479,23 +1432,27 @@ export default {
   align-items: flex-start;
   padding: 0 30px 0 0;
 }
+
 .Num {
   font-size: 97px;
   line-height: 100px;
   font-weight: 400;
 }
+
 .NumExp {
   font-weight: 300;
   font-size: 17px;
   line-height: 23px;
   margin-bottom: 6px;
 }
+
 .NumDetail {
   font-weight: 300;
   font-size: 14px;
   line-height: 19px;
   color: rgb(143, 143, 143);
 }
+
 .background3 {
   background-image: url(bg-3.png);
   position: absolute;
@@ -1505,11 +1462,9 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  mask-image: radial-gradient(
-    circle,
-    rgba(0, 0, 0, 1) 30%,
-    rgba(0, 0, 0, 0.5) 100%
-  );
+  mask-image: radial-gradient(circle,
+      rgba(0, 0, 0, 1) 30%,
+      rgba(0, 0, 0, 0.5) 100%);
 }
 
 .vEth2PanelHeader {
@@ -1534,6 +1489,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .Bubble {
   min-height: calc(77%);
   font-size: 1.2rem;
@@ -1552,9 +1508,11 @@ export default {
     "Header Icon"
     "Info Info ";
 }
+
 .mb30 {
   margin-bottom: 30px;
 }
+
 .roadMap {
   padding-top: 2rem;
   padding-bottom: 5rem;
@@ -1562,6 +1520,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 .mainBox {
   padding-bottom: 1.13rem;
   width: 80%;
@@ -1589,6 +1548,7 @@ export default {
   width: -moz-max-content;
   width: max-content;
 }
+
 .curve {
   width: 100%;
   background-image: url(curve.png);
@@ -1602,11 +1562,13 @@ export default {
   top: 0;
   overflow: hidden;
 }
+
 .mainCon .curve canvas {
   position: absolute;
   left: 0;
   top: 0;
 }
+
 .mainCon .list {
   display: -webkit-flex;
   display: -moz-box;
@@ -1617,8 +1579,10 @@ export default {
   top: 0;
   padding-left: 0.1rem;
 }
+
 .mainCon .list .item {
-  width: 260px; /**HERE */
+  width: 260px;
+  /**HERE */
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   -webkit-flex: none;
@@ -1626,12 +1590,14 @@ export default {
   -ms-flex: none;
   flex: none;
 }
+
 .mainCon .list .item .date {
   font-size: 17px;
   color: #e6007a;
   line-height: 1.43em;
   padding-bottom: 0.3rem;
 }
+
 .mainCon .list .item .text {
   font-size: 12px;
   color: #ffffff;
@@ -1639,6 +1605,7 @@ export default {
   width: 60%;
   padding-bottom: 20px;
 }
+
 .mainCon .list.next {
   padding-left: 5rem;
 }
@@ -1654,20 +1621,25 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 .centertext {
   text-align: center;
 }
+
 .glow {
   filter: brightness(300%);
 }
+
 .reverse {
   filter: invert(1);
 }
+
 .DropShadow {
   filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
 }
+
 @keyframes LogoEnter {
   from {
     transform: translate3d(-2rem, 0, 0);
     opacity: 0;
   }
+
   to {
     transform: translate3d(0, 0, 0);
     opacity: 1;
@@ -1683,6 +1655,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
   }
 }
+
 @keyframes TextEnter {
   from {
     transform: translate3d(0, 2rem, 0);
@@ -1710,11 +1683,13 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     justify-content: center;
     align-items: center;
   }
+
   .Logo {
     padding: 0;
     max-width: 145px;
     min-width: 100px;
   }
+
   .LogoContainer {
     background: transparent;
     background-repeat: no-repeat;
@@ -1725,24 +1700,30 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     justify-content: center;
     align-items: center;
   }
+
   .mainTitle {
     margin: 0 auto;
   }
+
   .Explanation {
     padding: 0 23px 100px 23px;
     animation: TextEnter 0.4s ease-out backwards;
   }
+
   .StatsContent {
     flex-direction: column;
     align-items: center;
     padding: 0px;
   }
+
   .StatsHeader {
     font-size: 42px;
   }
+
   .Stat {
     margin: 30px 0 50px 0;
   }
+
   .Num {
     font-size: 92px;
   }
@@ -1751,6 +1732,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     padding: 15px 15px 15px 0;
     font-size: 25px;
   }
+
   .third {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
@@ -1781,6 +1763,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "harvestExp";
     padding-bottom: 15vh;
   }
+
   .certikLogo {
     max-width: 80%;
     text-align: center;
@@ -1792,10 +1775,12 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     margin-bottom: 32px;
   }
 }
+
 @media only screen and (max-width: 375px) {
   .mainTitle {
     font-size: 36px;
   }
+
   .Num {
     font-size: 75px;
   }
