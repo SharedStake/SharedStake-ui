@@ -231,7 +231,7 @@ export default {
     },
 
     userHasApprovedToken() {
-      return this.userApprovedVEth2.gt(this.userVEth2Balance);
+      return this.userApprovedVEth2.gte(this.userVEth2Balance);
     },
 
     userCanRequestWithdrawal() {
@@ -297,6 +297,7 @@ export default {
         .once("confirmation", () => {
           this.error = false;
           notifyNotification("Approval successful", "success");
+          self.mounted();
         })
         .on("error", () => {
           this.error = true;
@@ -319,6 +320,8 @@ export default {
         .once("confirmation", () => {
           this.error = false;
           notifyNotification("Deposit successful", "success");
+          console.log('confirmed');
+          self.mounted();
         })
         .on("error", () => {
           this.error = true;
@@ -338,6 +341,7 @@ export default {
         .once("confirmation", () => {
           this.error = false;
           notifyNotification("Withdrawal successful", "success");
+          self.mounted();
         })
         .on("error", () => {
           this.error = true;
