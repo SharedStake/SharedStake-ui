@@ -38,7 +38,7 @@
                 value=""
                 v-model="Damount"
               />
-              <div class="ant-col">{{ isDeposit ? " ETH" : "vETH2" }}</div>
+              <div class="ant-col">{{ isDeposit ? " ETH" : "sgETH" }}</div>
             </div>
             <div class="balance" id="balance" @click="onMAX">
               wallet: {{ balance }}
@@ -64,13 +64,13 @@
                 spellcheck="false"
                 :value="
                   isDeposit
-                    ? (Damount / (32 + 0.1)) * 32
+                    ? (Damount / (32)) * 32
                     : (Damount / 32) * (32 + adminFee)
                 "
                 readonly
               />
               <div class="ant-col">
-                {{ isDeposit ? " vETH2" : " ETH" }}
+                {{ isDeposit ? " sgETH " : " ETH" }}
               </div>
             </div>
             <div class="balance" id="balance" @click="onMAX">
@@ -93,7 +93,7 @@
             {{ buttonText }}
           </span>
         </button>
-        <div class="notification" v-if="isDeposit">
+        <!-- <div class="notification" v-if="isDeposit">
           <a
             v-if="!enoughFundsInExitPool"
             href="https://curve.fi/factory/49"
@@ -114,7 +114,7 @@
           >
             Check out Curve if exit pool is low ↗
           </a>
-        </div>
+        </div> -->
         <!-- <div class="notification" v-if="!isDeposit">
           *Protocol fee refund is <span class="underline">currently</span>
           <a
@@ -161,13 +161,15 @@ BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 import { mapGetters } from "vuex";
 
-import { getCurrentGasPrices, notifyHandler } from "@/utils/common";
+import { 
+  // getCurrentGasPrices, 
+  notifyHandler } from "@/utils/common";
 import { validator, vEth2 } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
 import StakeGauge from "./StakeGauge";
-import { vEth2Price } from "@/utils/veth2.js";
-import Swal from "sweetalert2";
+// import { vEth2Price } from "@/utils/veth2.js";
+// import Swal from "sweetalert2";
 export default {
   components: { ImageVue, StakeGauge },
   data: () => ({
@@ -192,17 +194,17 @@ export default {
     vEth2Price: BN(0),
   }),
   mounted: async function () {
-    this.gas = await getCurrentGasPrices();
-    this.chosenGas = this.gas.medium;
+    // this.gas = await getCurrentGasPrices();
+    // this.chosenGas = this.gas.medium;
     this.loading = false;
 
-    await Swal.fire({
-      title: "<span style='color:tomato'>Please note!<span>",
-      html: `We recommend purchasing vETH2 on curve as its cheaper`,
-      background: "#181818",
-      showCancelButton: false,
-      showConfirmButton: false
-    });
+    // await Swal.fire({
+    //   title: "<span style='color:tomato'>Please note!<span>",
+    //   html: `We recommend purchasing vETH2 on curve as its cheaper`,
+    //   background: "#181818",
+    //   showCancelButton: false,
+    //   showConfirmButton: false
+    // });
 
     await this.mounted();
   },
@@ -265,7 +267,7 @@ export default {
         this.loading = true;
         let myamount = this.BNamount.toString();
         // let wantSaddle = false;
-        if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
+        // if (this.isDeposit && this.vEth2Price.gt(BN(1.02).times(BN(1e18)))) {
           // let discount = this.vEth2Price.minus(1e18).dividedBy(1e18).times(100);
           // wantSaddle = await Swal.fire({
           //   text: `Use the Saddle Pool for ${discount
@@ -277,7 +279,7 @@ export default {
           //   denyButtonText: "Continue",
           //   denyButtonColor: "#888",
           // });
-        }
+        // }
         // if (wantSaddle.isConfirmed) {
         //   window.open("https://saddle.exchange/#/", "_blank");
         //   this.loading = false;
@@ -357,12 +359,12 @@ export default {
           window.web3.utils.toChecksumAddress(validator._address)
         );
         this.contractBal = BN(contractBal);
-        this.amountCheck(true);
-        this.vEth2Price = await vEth2Price();
+        // this.vEth2Price = await vEth2Price();
         this.loading = false;
+        this.amountCheck(true);
       } catch (err) {
         this.buttonText = "Connect to wallet ↗";
-        console.log(err);
+        console.log("Error mounting", err);
       }
     },
     amountCheck(init) {
@@ -370,7 +372,6 @@ export default {
       if (this.userAddress == null) {
         this.validInput = false;
         this.buttonText = "Connect to wallet ↗";
-        console.log("ss");
         return;
       }
       if (this.remaining.eq(0) && this.isDeposit) {

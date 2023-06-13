@@ -16,6 +16,11 @@ import sgtABI from './abis/erc20.json' //change this
 import airdrop_distributor from './abis/distributor.json' //change this
 import migratorABI from './abis/migrator.json' 
 
+// https://github.com/chimera-defi/SharedDeposit/blob/main/data/abi/Withdrawals.json
+import withdrawalsABI from './abis/withdrawals.json'
+import rolloversABI from './abis/rollovers.json'
+import sgETHABI from './abis/sgETH.json'
+
 let _addresses;
 let _ABIs;
 let _validator;
@@ -40,19 +45,23 @@ let _geyser_vEth2_saddle_old;
 let _migrator;
 let createContract = () => null;
 
+const chainIdGoerli = "0x5";
+const chainIdMainnet = "0x1";
+
+const CHAIN_IDS = {
+    GOERLI: chainIdGoerli,
+    MAINNET: chainIdMainnet
+};
+
 if (window.ethereum) {
 
     const web3 = new Web3(window.ethereum);
 
+    // @TODO: Figure out what causes FF to not connect the wallet correctly. 
     let chainId = window.ethereum.chainId;
-
-    // Hotfix for firefox. TODO: Figure out what causes FF to not connect the wallet correctly. 
-    // Ice bear :  This can stay, np.
-    chainId = "0x1";
-
     let addressTemp;
 
-    if (chainId == "0x1") {
+    if (chainId == CHAIN_IDS.MAINNET) {
         addressTemp = {
             validator: "0xbca3b7b87dcb15f0efa66136bc0e4684a3e5da4d",//🆗
             // Protocol Tokens
@@ -84,18 +93,22 @@ if (window.ethereum) {
             vETH2_CRV: '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
             masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412'
         }
-    } else {
-        //Goerli = WHO CARES ANYMORE?
+    } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0xF7930fA4cddbf00Ea495f9A522010734580909f8",// 
+            validator: "0x62a4f18E1c42c63c6D02668A714eaD7323eF5CE0",// 
             // Protocol Tokens
-            vEth2: "0x64A0ED7f89d9F6de790F7d77022017be9Dcb405A",// 
+            vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
             // Geysers
             geyser_SGT: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// 
             geyser_vEth2: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
-            // OLD Geysers
+            
+            // New withdrawals contract.
+            withdrawals: "0x0f779f0c7d0c8b9cD6e23e62D9aE51ED39aa256a",
+            rollovers: "0x17b9Ee3963a58c82d64Aa9fdaCce261257834623",
+
+            sgETH: "0xd0f593aeB7E22B1038edC398aA53A56B38435de9"
         }
     }
 
@@ -115,6 +128,9 @@ if (window.ethereum) {
         airdrop_distributor,
         geyser_new: geyserABI_new, //use this one for 
         migrator:migratorABI,
+        withdrawals: withdrawalsABI,
+        rollovers: rolloversABI,
+        sgETH: sgETHABI
     }
 
     /************************************* CONTRACTS ****************************************/
@@ -177,6 +193,9 @@ export const masterchef = createContract('geyser_new', 'masterchef');
 export const SGT_sushiswap = createContract('erc20_uniswap', 'SGT_sushiswap');
 export const veSGT = createContract('erc20', 'veSGT');
 export const vETH2_CRV = createContract('erc20', 'vETH2_CRV');
+export const withdrawals = createContract('withdrawals', 'withdrawals');
+export const rollovers = createContract("rollovers", "rollovers");
+export const sgETH = createContract('sgETH', 'sgETH');
 
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
