@@ -7,18 +7,6 @@
 
         <QuestionAnswer>
           <template #question>
-            How much can be withdrawn right now?
-          </template>
-          <template #answer>
-            You can withdraw upto {{
-            ethAvailableForWithdrawal.div(10 ** 18)
-            .decimalPlaces(6)
-            .toString()}} ETH buffered in the contract right now.
-          </template>
-        </QuestionAnswer>
-
-        <QuestionAnswer>
-          <template #question>
             How do I withdraw my staked ETH?
           </template>
           <template #answer>
@@ -29,6 +17,20 @@
             <strong>Step 2:</strong> Deposit vETH2
             <br />
             <strong>Step 3:</strong> Withdraw
+            <br />
+            <strong>Note: You must deposit vETH2 first. ETH or tokens will then be buffered into the contract based on demand</strong>
+          </template>
+        </QuestionAnswer>
+
+        <QuestionAnswer>
+          <template #question>
+            How much can be withdrawn right now?
+          </template>
+          <template #answer>
+            You can withdraw upto {{
+            ethAvailableForWithdrawal.div(10 ** 18)
+            .decimalPlaces(6)
+            .toString()}} ETH buffered in the contract right now.
           </template>
         </QuestionAnswer>
 

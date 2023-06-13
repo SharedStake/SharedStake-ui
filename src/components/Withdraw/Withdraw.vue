@@ -25,7 +25,6 @@ export default {
   },
   methods: {
     async getEthAvailableForWithdrawal() {
-      // console log withdrawal contract's ETH balance
       const amt = await window.web3.eth.getBalance(
         ABI_withdrawals.options.address
       );

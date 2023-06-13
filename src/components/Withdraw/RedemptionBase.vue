@@ -4,7 +4,7 @@
       <div class="flex flex-col items-center justify-center">
         <header class="relative pb-3 mb-3 text-center">
           <h1 class="text-3xl font-semibold">
-            {{this.title}}
+            {{ this.title }}
             <span
               class="absolute p-1 px-3 ml-1 text-xs text-gray-200 align-top rounded-full opacity-95 left-full -top-1 bg-brand-primary">Beta</span>
           </h1>
@@ -18,7 +18,7 @@
           <aside class="flex flex-wrap justify-center gap-3 md:gap-6">
             <Step title="Approve vETH2" :completed="this.depositStage || this.withdrawStage" step="1" />
             <Step title="Deposit vETH2" :completed="this.withdrawStage" step="2" />
-            <Step title="Withdraw ETH" :completed="false" step="3" />
+            <Step title="Redeem" :completed="false" step="3" />
           </aside>
         </div>
 
@@ -121,7 +121,7 @@ BN.config({ EXPONENTIAL_AT: 100 });
 export default {
   name: "RedemptionBase",
   components: { ConnectButton, SharedButton, Step, WithdrawalsFAQ },
-  props: ["ABI","title","descr","getEthAvailableForWithdrawal","ethAvailableForWithdrawal"],
+  props: ["ABI", "title", "descr", "getEthAvailableForWithdrawal", "ethAvailableForWithdrawal"],
 
   data() {
     return {

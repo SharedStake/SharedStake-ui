@@ -1,9 +1,10 @@
 <template>
-  <RedemptionBase :ABI="ABI" :title="title" :descr="descr" :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal" />
+  <RedemptionBase :ABI="ABI" :title="title" :descr="descr" :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
+    :ethAvailableForWithdrawal="ethAvailableForWithdrawal" />
 </template>
 
 <script>
-import { rollover as ABI_Rollover } from "@/contracts";
+import { rollovers as ABI_Rollover, sgETH as ABI_sgETH } from "@/contracts";
 import BN from "bignumber.js";
 import { mapGetters } from "vuex";
 import RedemptionBase from './RedemptionBase.vue';
@@ -26,8 +27,8 @@ export default {
   },
   methods: {
     async getEthAvailableForRollovers() {
-      let amt = await ABI_Rollover.methods
-        .balanceOf(this.userConnectedWalletAddress)
+      let amt = await ABI_sgETH.methods
+        .balanceOf(ABI_Rollover.options.address)
         .call();
       this.ethAvailableForWithdrawal = BN(amt);
       console.log("ethAvailableForWithdrawal", amt);
