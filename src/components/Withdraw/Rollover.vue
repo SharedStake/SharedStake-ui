@@ -31,7 +31,6 @@ export default {
         .balanceOf(ABI_Rollover.options.address)
         .call();
       this.ethAvailableForWithdrawal = BN(amt);
-      console.log("ethAvailableForWithdrawal", amt);
     },
   }
 }
