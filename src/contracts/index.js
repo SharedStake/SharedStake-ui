@@ -95,7 +95,7 @@ if (window.ethereum) {
         }
     } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0x1973C9531AC95d2D465D06F13D8D751890673168",// 
+            validator: "0xb5ae9d51858436c23dca94370a38ff495a54873b",// 
             // Protocol Tokens
             vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
@@ -203,3 +203,4 @@ export const oldPools = {
     geyser_vEth2: _geyser_vEth2_old,
     geyser_vEth2_saddle: _geyser_vEth2_saddle_old
 }
+0xaa93EF92Ef8663902BeE679B9B8bFB60c966d50C
