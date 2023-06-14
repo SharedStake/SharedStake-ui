@@ -62,7 +62,7 @@
 
         <div class="my-6">
           <p v-if="loading">
-            Loading...
+            <ImageVue :src="'loading.svg'" :size="'45px'" />
           </p>
 
           <ConnectButton v-else-if="!userConnectedWalletAddress" />
@@ -73,9 +73,7 @@
               ETH.
             </p>
 
-            <SharedButton v-else-if="stage == 'approvalStage'" @click="handleApproveVEth2">
-              <span>Approve vETH2</span>
-            </SharedButton>
+            <ApprovalButton v-else-if="stage == 'approvalStage'" :ABI_token="this.ABI_vEth2" :ABI="ABI" :amount="this.amount" :userApprovedVEth2="this.userApprovedVEth2" :getUserApprovedVEth2="getUserApprovedVEth2" :wrapTx="wrapTx"/>
 
             <SharedButton v-else-if="stage == 'depositStage'" @click="handleDepositVEth2">
               <span>Request withdrawal</span>
@@ -94,7 +92,7 @@
         </div>
       </div>
 
-      <WithdrawalsFAQ :ethAvailableForWithdrawal="ethAvailableForWithdrawal" />
+      <WithdrawalsFAQ :ethAvailableForWithdrawal="ethAvailableForWithdrawal" :veth2Bal="contractVeth2Bal" />
     </section>
   </div>
 </template>
@@ -108,9 +106,11 @@ import { mapGetters } from "vuex";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import SharedButton from "../Common/SharedButton.vue";
+import ApprovalButton from "../Common/ApproveButton.vue";
 import { notifyHandler } from "@/utils/common";
 import { notifyNotification } from "../../utils/common";
 import WithdrawalsFAQ from './WithdrawalsFAQ.vue';
+import ImageVue from "../Handlers/ImageVue.vue";
 
 // Max unit is the maximum value that can be represented in Solidity
 // const MAX_UNIT = 2 ** 256 - 1;
@@ -120,7 +120,7 @@ BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "RedemptionBase",
-  components: { ConnectButton, SharedButton, Step, WithdrawalsFAQ },
+  components: { ImageVue, ConnectButton, SharedButton, Step, WithdrawalsFAQ, ApprovalButton },
   props: ["ABI", "title", "descr", "getEthAvailableForWithdrawal", "ethAvailableForWithdrawal"],
 
   data() {
@@ -129,8 +129,10 @@ export default {
       userVEth2Balance: BN(0),
       userApprovedVEth2: BN(0),
       userDepositedVEth2: BN(0),
+      contractVeth2Bal: BN(0),
       loading: false,
       error: false,
+      ABI_vEth2: ABI_vEth2
     };
   },
 
@@ -145,6 +147,7 @@ export default {
           await this.getUserApprovedVEth2();
           await this.getEthAvailableForWithdrawal();
           await this.getUserDepositedVEth2();
+          await this.getContractVeth2Queue();
           this.loading = false;
         }
       },
@@ -224,7 +227,7 @@ export default {
   },
 
   methods: {
-    async wrapTx(abiCall, argsArr) {
+    async wrapTx(abiCall, argsArr, cb = () => {}) {
       this.loading = true;
 
       await abiCall(...argsArr)
@@ -235,8 +238,9 @@ export default {
         .once("confirmation", async () => {
           this.error = false;
           notifyNotification("Tx successful", "success");
-          await this.getUserApprovedVEth2(); // update state to trigger next step
-          await this.getUserDepositedVEth2();
+          // await this.getUserApprovedVEth2(); // update state to trigger next step
+          // await this.getUserDepositedVEth2();
+          await cb();
           console.log("tx confirmed: state: ", this.stage);
         })
         .on("error", () => {
@@ -249,26 +253,25 @@ export default {
           this.loading = false;
         });
     },
-
-    async handleApproveVEth2() {
-      await this.wrapTx(
-        ABI_vEth2.methods.approve,
-        [this.ABI.options.address, this.userVEth2Balance]
-      )
-    },
     async handleDepositVEth2() {
       await this.wrapTx(
         this.ABI.methods.deposit,
-        [window.web3.utils.toWei(this.amount, "ether")]
+        [window.web3.utils.toWei(this.amount, "ether")],
+        this.getUserDepositedVEth2
       )
     },
     async handleWithdrawEth() {
       await this.wrapTx(
-        this.ABI.methods.redeem, []
+        this.ABI.methods.redeem, [],
+        async () => {
+          await this.getUserApprovedVEth2(); // update state to trigger next step
+          await this.getUserDepositedVEth2();
+        }
       )
     },
 
     async getUserApprovedVEth2() {
+      // return this.userApprovedVEth2;
       let userApprovedVEth2 = await ABI_vEth2.methods
         .allowance(
           this.userConnectedWalletAddress,
@@ -289,13 +292,17 @@ export default {
     },
 
     async getUserDepositedVEth2() {
-      // @dev @todo - uncomment when new contract with userEntries is ready.
       let userDepositedVEth2 = await this.ABI.methods
         .userEntries(this.userConnectedWalletAddress)
         .call();
       this.userDepositedVEth2 = BN(userDepositedVEth2);
       console.log("userDepositedVEth2", userDepositedVEth2);
       return this.userDepositedVEth2;
+    },
+
+    async getContractVeth2Queue() {
+      let bal = await ABI_vEth2.methods.balanceOf(this.ABI.options.address).call();
+      this.contractVeth2Bal = BN(bal);
     },
 
     handleFillMaxAmount() {
