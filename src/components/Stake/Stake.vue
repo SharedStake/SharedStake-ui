@@ -79,6 +79,8 @@
             <div :class="isDeposit ? 'background3' : 'background2'" />
           </div>
         </div>
+        <!-- <ApprovalButton v-if="!isDeposit" :ABI_token="sgETH" :ABI="validator" :amount="this.Damount" :userApprovedVEth2="this.userApprovedVEth2" :getUserApprovedVEth2="this.getUserApprovedsgEth"/> -->
+
         <button
           class="StakeButton"
           :class="{
@@ -168,6 +170,8 @@ import { validator, sgETH } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
 import StakeGauge from "./StakeGauge";
+// import ApprovalButton from "../Common/ApproveButton.vue";
+
 // import { vEth2Price } from "@/utils/veth2.js";
 // import Swal from "sweetalert2";
 export default {
@@ -179,6 +183,7 @@ export default {
     isDeposit: true,
     EthBal: BN(0),
     vEth2Bal: BN(0),
+    userApprovedVEth2: BN(0),
     balance: 0,
     otherBalance: 0,
     gas: { low: 90, medium: 130, high: 180 },
@@ -192,6 +197,8 @@ export default {
     adminFee: 0,
     contractBal: 0,
     vEth2Price: BN(0),
+    sgETH: sgETH,
+    validator: validator
   }),
   mounted: async function () {
     // this.gas = await getCurrentGasPrices();
@@ -409,6 +416,17 @@ export default {
       if (this.validInput) {
         this.buttonText = this.isDeposit ? "Stake" : "Unstake";
       }
+    },
+    async getUserApprovedsgEth() {
+      // return this.userApprovedVEth2;
+      let userApprovedVEth2 = await sgETH.methods
+        .allowance(
+          this.userConnectedWalletAddress,
+          validator.options.address
+        )
+        .call();
+      this.userApprovedVEth2 = BN(userApprovedVEth2);
+      console.log("userApprovedVEth2", userApprovedVEth2);
     },
   },
   watch: {
