@@ -30,7 +30,6 @@ export default {
       );
 
       this.ethAvailableForWithdrawal = BN(amt);
-      console.log("ethAvailableForWithdrawal", amt);
     },
   }
 }

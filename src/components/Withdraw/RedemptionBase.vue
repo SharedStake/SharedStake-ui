@@ -132,6 +132,7 @@ export default {
       contractVeth2Bal: BN(0),
       loading: false,
       error: false,
+      dev: false, // change to true for log 
       ABI_vEth2: ABI_vEth2
     };
   },
@@ -146,6 +147,7 @@ export default {
           await this.getUserTokenBalance();
           await this.getUserApprovedVEth2();
           await this.getEthAvailableForWithdrawal();
+          if (this.dev) console.log("ethAvailableForWithdrawal: ", this.ethAvailableForWithdrawal);
           await this.getUserDepositedVEth2();
           await this.getContractVeth2Queue();
           this.loading = false;
@@ -219,7 +221,7 @@ export default {
         depositStage: this.depositStage,
         withdrawStage: this.withdrawStage
       }
-      console.log("State :", state);
+      if (this.dev) console.log("State :", state);
       if (state.withdrawStage) return 'withdrawStage';
       if (state.depositStage && !state.approvalStage) return "depositStage";
       return "approvalStage";
@@ -241,7 +243,7 @@ export default {
           // await this.getUserApprovedVEth2(); // update state to trigger next step
           // await this.getUserDepositedVEth2();
           await cb();
-          console.log("tx confirmed: state: ", this.stage);
+          if (this.dev) console.log("tx confirmed: state: ", this.stage);
         })
         .on("error", () => {
           this.error = true;
@@ -279,7 +281,7 @@ export default {
         )
         .call();
       this.userApprovedVEth2 = BN(userApprovedVEth2);
-      console.log("userApprovedVEth2", userApprovedVEth2);
+      if (this.dev) console.log("userApprovedVEth2", userApprovedVEth2);
     },
 
     async getUserTokenBalance() {
@@ -287,7 +289,7 @@ export default {
         .balanceOf(this.userConnectedWalletAddress)
         .call();
       this.userVEth2Balance = BN(userVeth2Balance);
-      console.log("userVeth2Balance", userVeth2Balance);
+      if (this.dev) console.log("userVeth2Balance", userVeth2Balance);
       return userVeth2Balance;
     },
 
@@ -296,7 +298,7 @@ export default {
         .userEntries(this.userConnectedWalletAddress)
         .call();
       this.userDepositedVEth2 = BN(userDepositedVEth2);
-      console.log("userDepositedVEth2", userDepositedVEth2);
+      if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2);
       return this.userDepositedVEth2;
     },
 
