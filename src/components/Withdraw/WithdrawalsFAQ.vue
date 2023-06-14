@@ -24,6 +24,18 @@
 
         <QuestionAnswer>
           <template #question>
+            How much vETH2 is staked in this contract?
+          </template>
+          <template #answer>
+            There is {{
+            veth2Bal.div(10 ** 18)
+            .decimalPlaces(6)
+            .toString()}} vETH2 queued here. 
+          </template>
+        </QuestionAnswer>
+
+        <QuestionAnswer>
+          <template #question>
             How much can be withdrawn right now?
           </template>
           <template #answer>
@@ -52,6 +64,6 @@ import QuestionAnswer from "@/components/Withdraw/QuestionAnswer.vue";
 export default {
   name: 'WithdrawalsFAQ',
   components: {QuestionAnswer},
-  props: ['ethAvailableForWithdrawal'],
+  props: ['ethAvailableForWithdrawal', 'veth2Bal'],
 }
 </script>

@@ -115,13 +115,13 @@ export default {
       // We can calculate the amount of ETH depositted to contract
       // as sharesMinted * validatorPrice / validatorStake.
       const stakePerValidator = 32;
-      const ethDepositedToContract =
+      let ethDepositedToContract =
         (currentValidatorShares * validatorPrice) / stakePerValidator;
       
       const v1 = stakePerValidator * 500;
-
+      ethDepositedToContract += v1;
       // To 2 decimal accuracy and cast it to number
-      return +ethDepositedToContract.toFixed(2) + v1.toFixed(2);
+      return +ethDepositedToContract.toFixed(2);
     }
   }
 };
