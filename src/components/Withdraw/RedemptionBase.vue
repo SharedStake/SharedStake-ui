@@ -33,13 +33,38 @@
               :completed="this.withdrawStage"
               step="2"
             />
-            <Step title="Redeem" :completed="false" step="3" />
+            <Step
+              :title="`Redeem ${outputTokenName}`"
+              :completed="completed"
+              step="3"
+            />
           </aside>
         </div>
 
-        <label v-if="stage == 'depositStage' || stage == 'approvalStage'">
+        <div
+          v-if="completed"
+          class="p-4 px-6 text-center bg-gray-700 border border-green-400 rounded-lg shadow-md"
+        >
+          <h2 class="mb-2 text-xl font-semibold">
+            You've successfully converted vETH2 into {{ outputTokenName }}.
+          </h2>
+          <p
+            class="inline-block mx-auto mb-4 text-sm font-semibold text-gray-300 border-b border-gray-600"
+          >
+            Next steps
+          </p>
+          <div class="flex justify-center gap-6">
+            <SharedLink to="/stake">
+              Stake ETH
+            </SharedLink>
+            <SharedLink to="/stake">
+              Wrap sgETH
+            </SharedLink>
+          </div>
+        </div>
+        <label v-else-if="stage == 'depositStage' || stage == 'approvalStage'">
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
-            How much would you like to withdraw?
+            How much vETH2 would you like to redeem for {{ outputTokenName }}?
           </p>
           <div
             class="relative flex items-center gap-1 p-2 text-xl border border-gray-200 rounded-xl"
@@ -92,7 +117,8 @@
           </p>
         </div>
 
-        <div class="my-6">
+        <!-- Action buttons -->
+        <div class="my-6" v-if="!completed">
           <p v-if="loading">
             <ImageVue :src="'loading.svg'" :size="'45px'" />
           </p>
@@ -105,7 +131,7 @@
               class="mt-2 text-sm font-semibold text-gray-200"
             >
               You need to have vETH2 tokens in your wallet in order to withdraw
-              ETH.
+              {{ outputTokenName }}.
             </p>
 
             <ApprovalButton
@@ -157,6 +183,7 @@ import BN from "bignumber.js";
 import { vEth2 as ABI_vEth2 } from "@/contracts";
 import { mapGetters } from "vuex";
 import Step from "@/components/Withdraw/Step.vue";
+import SharedLink from "../Common/SharedLink.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import SharedButton from "../Common/SharedButton.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
@@ -175,6 +202,7 @@ export default {
   name: "RedemptionBase",
   components: {
     ImageVue,
+    SharedLink,
     ConnectButton,
     SharedButton,
     Step,
@@ -187,6 +215,7 @@ export default {
     "descr",
     "getEthAvailableForWithdrawal",
     "ethAvailableForWithdrawal",
+    "outputTokenName",
   ],
 
   data() {
@@ -200,6 +229,7 @@ export default {
       error: false,
       dev: false, // change to true for log
       ABI_vEth2: ABI_vEth2,
+      completed: false, // Full process completed (in one session)
     };
   },
 
@@ -341,6 +371,7 @@ export default {
     },
     async handleWithdrawEth() {
       await this.wrapTx(this.ABI.methods.redeem, [], async () => {
+        this.completed = true; // Mark as completed in the UI - will reset on navigation.
         await this.getUserApprovedVEth2(); // update state to trigger next step
         await this.getUserDepositedVEth2();
       });

@@ -5,6 +5,7 @@
     :descr="descr"
     :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
     :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
+    outputTokenName="ETH"
   />
 </template>
 
