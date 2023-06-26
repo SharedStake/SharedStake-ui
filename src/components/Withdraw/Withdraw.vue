@@ -1,13 +1,19 @@
 <template>
-  <RedemptionBase :ABI="ABI" :title="title" :descr="descr" :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
-    :ethAvailableForWithdrawal="ethAvailableForWithdrawal" />
+  <RedemptionBase
+    :ABI="ABI"
+    :title="title"
+    :descr="descr"
+    :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
+    :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
+    outputTokenName="ETH"
+  />
 </template>
 
 <script>
 import { withdrawals as ABI_withdrawals } from "@/contracts";
 import BN from "bignumber.js";
 import { mapGetters } from "vuex";
-import RedemptionBase from './RedemptionBase.vue';
+import RedemptionBase from "./RedemptionBase.vue";
 
 export default {
   name: "Withdraw",
@@ -17,8 +23,8 @@ export default {
       ABI: ABI_withdrawals,
       title: "Withdraw",
       descr: "Goerli testnet withdrawals - Redeem vETH2 for ETH",
-      ethAvailableForWithdrawal: BN(0)
-    }
+      ethAvailableForWithdrawal: BN(0),
+    };
   },
   computed: {
     ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
@@ -31,7 +37,6 @@ export default {
 
       this.ethAvailableForWithdrawal = BN(amt);
     },
-  }
-}
-
+  },
+};
 </script>
