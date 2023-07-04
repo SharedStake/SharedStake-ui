@@ -79,7 +79,7 @@
             <div :class="isDeposit ? 'background3' : 'background2'" />
           </div>
         </div>
-        <!-- <ApprovalButton v-if="!isDeposit" :ABI_token="sgETH" :ABI="validator" :amount="this.Damount" :userApprovedVEth2="this.userApprovedVEth2" :getUserApprovedVEth2="this.getUserApprovedsgEth"/> -->
+        <ApprovalButton v-if="!isDeposit && get_wsgETH" :ABI_token="sgETH" :ABI="validator" :amount="this.Damount" :userApprovedVEth2="this.userApprovedVEth2" :getUserApprovedVEth2="this.getUserApprovedsgEth"/>
 
         <button
           class="StakeButton"
@@ -95,6 +95,8 @@
             {{ buttonText }}
           </span>
         </button>
+
+        
         <!-- <div class="notification" v-if="isDeposit">
           <a
             v-if="!enoughFundsInExitPool"
@@ -127,6 +129,18 @@
             disabled↗</a
           >
         </div> -->
+      </div>
+
+      <div class="navbar s-toggle">
+        <span id="gas">
+            <input
+              id="get-wsgETH"
+              type="checkbox"
+              name="get-wsgETH"
+              v-model="get_wsgETH"
+            />
+            <label for="get-wsgETH">Get Wrapped SgETH (interest bearing)</label>
+        </span>
       </div>
       <div class="navbar">
         <span id="gas">Gas</span>
@@ -170,17 +184,18 @@ import { validator, sgETH } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
 import StakeGauge from "./StakeGauge";
-// import ApprovalButton from "../Common/ApproveButton.vue";
+import ApprovalButton from "../Common/ApproveButton.vue";
 
 // import { vEth2Price } from "@/utils/veth2.js";
 // import Swal from "sweetalert2";
 export default {
-  components: { ImageVue, StakeGauge },
+  components: { ImageVue, StakeGauge, ApprovalButton },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),
     Damount: "",
     isDeposit: true,
+    get_wsgETH: true,
     EthBal: BN(0),
     vEth2Bal: BN(0),
     userApprovedVEth2: BN(0),
@@ -265,10 +280,27 @@ export default {
     toggleMode() {
       this.isDeposit = !this.isDeposit;
     },
+    async handleTx(tx) {
+      await tx
+        .on("transactionHash", function (hash) {
+          notifyHandler(hash);
+        })
+        .once("confirmation", () => {
+          this.loading = false;
+          self.mounted();
+        })
+        .on("error", () => {
+          // if (error.message.includes("User denied transaction signature"))
+          this.loading = false;
+        })
+        .catch((err) => {
+          this.loading = false;
+          console.log(err);
+        })
+    },
     async onSubmit() {
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake")) return;
       let walletAddress = this.userAddress;
-      let self = this;
       if (this.isDeposit) {
         this.loading = true;
         let myamount = this.BNamount.toString();
@@ -291,54 +323,40 @@ export default {
         //   this.loading = false;
         //   return;
         // }
-        await validator.methods
-          .deposit()
-          .send({
-            from: walletAddress,
-            value: myamount,
-            gas: 200000,
-            gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
-          })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            this.loading = false;
-            self.mounted();
-          })
-          .on("error", () => {
-            // if (error.message.includes("User denied transaction signature"))
-            this.loading = false;
-          })
-          .catch((err) => {
-            this.loading = false;
-            console.log(err);
-          });
+        let wrapTx = async (abiCall, args = []) => {
+          await this.handleTx(abiCall(...args)
+            .send({
+              from: walletAddress,
+              value: myamount,
+              gas: 200000,
+              gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
+            }))
+        }
+        if (this.get_wsgETH) {
+          await wrapTx(validator.methods.depositAndStake)
+        } else {
+          await wrapTx(validator.methods.deposit)
+        }
+
       } else {
         //unstake
         let myamount = this.BNamount.toString();
         this.loading = true;
-        await validator.methods
-          .withdraw(myamount)
-          .send({
-            from: walletAddress,
-            gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
-          })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            this.loading = false;
-            self.mounted();
-          })
-          .on("error", () => {
-            // if (error.message.includes("User denied transaction signature"))
-            this.loading = false;
-          })
-          .catch((err) => {
-            this.loading = false;
-            console.log(err);
-          });
+
+        let withdrawTxWrap = async (abiCall, args) => {
+          await this.handleTx(abiCall(...args)
+            .send({
+              from: walletAddress,
+              gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString(),
+            })
+          )
+        }
+        
+        if (this.get_wsgETH) {
+          await withdrawTxWrap(validator.methods.unstakeAndWithdraw, [myamount, walletAddress])
+        } else {
+          await withdrawTxWrap(validator.methods.withdraw, [myamount])
+        }
       }
     },
     async mounted() {
