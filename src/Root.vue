@@ -193,6 +193,9 @@
           We strongly advise caution to anyone who chooses to use the current
           version.
         </p>
+        <p>
+          By using the SharedStake software you agree to not hold SharedStake or it's operators liable for any losses
+        </p>
         <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
       <div class="flex_row LogoContainer">
