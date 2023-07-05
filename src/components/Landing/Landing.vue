@@ -25,22 +25,12 @@
             MINT NFT
           </a>
         </div>
+
+
         <div class="flex items-center justify-center md-large:justify-start">
           <p class="text-l mb-6">
-            vETH2 Redemptions
+            Join the conversation!
           </p>
-        </div>
-        <div class="flex gap-8 items-center mb-8 justify-center md-large:justify-start">
-          <router-link
-            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
-            to="/rollover">
-            Rollover
-          </router-link>
-          <router-link
-            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
-            to="/withdraw">
-            Withdraw
-          </router-link>
         </div>
         <div class="flex gap-8 items-center justify-center md-large:justify-start">
           <a href="https://twitter.com/ChimeraDefi" target="_blank" rel="noopener noreferrer">
@@ -70,6 +60,24 @@
           <a href="https://medium.com/@chimera_defi" target="_blank" rel="noopener noreferrer">
             <ImageVue :src="'socialmediaicons/Medium.svg'" size="24px" class="socialLogo" />
           </a>
+        </div>
+
+        <div class="flex items-center justify-center md-large:justify-start">
+          <p class="text-l mb-6">
+            vETH2 Redemptions
+          </p>
+        </div>
+        <div class="flex gap-8 items-center mb-8 justify-center md-large:justify-start">
+          <router-link
+            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
+            to="/rollover">
+            Rollover
+          </router-link>
+          <router-link
+            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
+            to="/withdraw">
+            Withdraw
+          </router-link>
         </div>
       </div>
     </div>
