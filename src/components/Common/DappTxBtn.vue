@@ -10,8 +10,8 @@
   </span>
 </template>
 
-<script>
 
+<script>
 import { mapGetters } from "vuex";
 import SharedButton from "./SharedButton.vue";
 import { notifyHandler, notifyNotification, getCurrentGasPrices } from "@/utils/common";
@@ -55,17 +55,17 @@ export default {
       }
     },
   },
+
   methods: {
     async execTx() {
       this.loading = true;
       let args = this.click();
-      console.log(args)
       await this.wrapTx(args.abiCall, args.argsArr, args.senderObj, args.cb);
     },
+  
     async wrapTx(abiCall = () => {}, argsArr = [], senderObj = {}, cb = () => { }) {
       this.loading = true;
       let cid = await window.web3.eth.getChainId();
-      console.log(('exec tx', senderObj))
       await abiCall(...argsArr)
         .send({
           // type: 2, // todo : fix gas pricing

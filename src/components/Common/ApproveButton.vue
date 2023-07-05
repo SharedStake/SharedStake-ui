@@ -1,17 +1,13 @@
 <template>
   <span>
-  <dapp-tx-btn 
-    v-if="autoHide ? !enoughApproved : true"
-    :click="genProps"
-    :cb="wrappedCb"
-  >
-    <span>Approve</span>
-  </dapp-tx-btn>
-</span>
+    <dapp-tx-btn v-if="autoHide ? !enoughApproved : true" :click="genProps" :cb="wrappedCb">
+      <span>Approve</span>
+    </dapp-tx-btn>
+  </span>
 </template>
 
-<script>
 
+<script>
 import { mapGetters } from "vuex";
 import DappTxBtn from "../Common/DappTxBtn.vue";
 
@@ -24,7 +20,7 @@ export default {
   props: ["ABI_spender", "ABI_token", "amount", "cb", "autoHide"],
   components: { DappTxBtn },
   data() {
-  return {
+    return {
       userApproved: BN(0)
     }
   },
@@ -53,6 +49,7 @@ export default {
       return window.web3.utils.toWei(this.amount?.toString(), "ether");
     },
   },
+
   methods: {
     genProps() {
       return {
@@ -61,6 +58,7 @@ export default {
         cb: this.wrappedCb
       }
     },
+
     async wrappedCb() {
       await this.getApproved();
       await this.cb();
