@@ -50,14 +50,14 @@
             >Get veSGT
           </a>
         </span>
-        <span class="link">
+        <!-- <span class="link">
           <a
             href="https://curve.fi/factory/49"
             target="_blank"
             rel="noopener noreferrer"
             >Get vETH2 on Curve
           </a>
-        </span>
+        </span> -->
         <span class="link">
           <a
             href="https://swap.cow.fi/#/1/swap/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD"

@@ -165,18 +165,19 @@ export const geyser_SGT_uniswap_old = createContract("geyser", "geyser_SGT_unisw
 export const geyser_vEth2_saddle_old = createContract("geyser", "geyser_vEth2_saddle_old");
 
     //Airdrop
-export const airdrop = createContract("airdrop_distributor", "airdrop_distributor");
+export const airdrop = createContractDefault("airdrop_distributor");
 
     //Migrator
-export const migrator=createContract("migrator", "migrator");
+export const migrator = createContractDefault("migrator");
 
 export const masterchef = createContract('geyser_new', 'masterchef');
 export const SGT_sushiswap = createContract('erc20_uniswap', 'SGT_sushiswap');
 export const veSGT = createContract('erc20', 'veSGT');
 export const vETH2_CRV = createContract('erc20', 'vETH2_CRV');
-export const withdrawals = createContract('withdrawals', 'withdrawals');
-export const rollovers = createContract("rollovers", "rollovers");
-export const sgETH = createContract('sgETH', 'sgETH');
+
+export const withdrawals = createContractDefault('withdrawals');
+export const rollovers = createContractDefault("rollovers");
+export const sgETH = createContractDefault('sgETH');
 export const wsgETH = createContract("sgETH", "wsgETH"); // re-use sgeth abi as we just need approve
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
