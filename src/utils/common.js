@@ -35,9 +35,10 @@ export const notify = Notify({
     darkMode: true,
     desktopPosition: "topRight",
 });
-export function notifyHandler(hash, network = '') {
+
+export function notifyHandler(hash) {
     let { emitter } = notify.hash(hash);
-    let chain = network == '5' ? 'goerli.' : '';
+    let chain = window.ethereum.chainId == '0x5' ? 'goerli.' : '';
     emitter.on("all", (transaction) => ({
         onclick: () =>
             window.open(

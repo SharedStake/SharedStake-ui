@@ -22,19 +22,6 @@ import rolloversABI from './abis/rollovers.json'
 import sgETHABI from './abis/sgETH.json'
 
 let _addresses;
-let _ABIs;
-let _validator;
-let _vEth2;
-let _SGT;
-let _SGT_uniswap;
-let _SGT_vEth2_uniswap;
-let _vEth2_saddle;
-let _geyser_vEth2_saddle;
-let _geyser_vEth2;
-let _geyser_SGT;
-let _geyser_SGT_uniswap;
-let _geyser_SGT_vEth2_uniswap;
-let _airdrop;
 
 let _geyser_vEth2_old;
 let _geyser_SGT_old;
@@ -42,8 +29,9 @@ let _geyser_SGT_uniswap_old;
 let _geyser_vEth2_saddle_old;
 
 // V2 changes
-let _migrator;
-let createContract = () => null;
+let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue")
+let createContract = () => connErr();
+let createContractDefault = () => connErr();
 
 const chainIdGoerli = "0x5";
 const chainIdMainnet = "0x1";
@@ -52,6 +40,22 @@ const CHAIN_IDS = {
     GOERLI: chainIdGoerli,
     MAINNET: chainIdMainnet
 };
+
+
+let _ABIs = {
+    validator: sharedStake,
+    vEth2: vEth2Token,
+    SGT: sgtABI, //change this and abi
+    geyser: geyserABI,
+    erc20,
+    erc20_uniswap,
+    airdrop_distributor,
+    geyser_new: geyserABI_new, //use this one for 
+    migrator:migratorABI,
+    withdrawals: withdrawalsABI,
+    rollovers: rolloversABI,
+    sgETH: sgETHABI
+}
 
 if (window.ethereum) {
 
@@ -119,77 +123,53 @@ if (window.ethereum) {
         _addresses[x] = web3.utils.toChecksumAddress(_addresses[x])
     }
 
-    _ABIs = {
-        validator: sharedStake,
-        vEth2: vEth2Token,
-        SGT: sgtABI, //change this and abi
-        geyser: geyserABI,
-        erc20,
-        erc20_uniswap,
-        airdrop_distributor,
-        geyser_new: geyserABI_new, //use this one for 
-        migrator:migratorABI,
-        withdrawals: withdrawalsABI,
-        rollovers: rolloversABI,
-        sgETH: sgETHABI
+    // Utils
+
+
+    createContract = (abi, address) => {
+        if (_addresses[address] && _ABIs[abi]) {
+            return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
+        }
+        connErr();
     }
+    createContractDefault = (name) => createContract(name, name)
 
     /************************************* CONTRACTS ****************************************/
 
-    // VALIDATOR
-    _validator = new web3.eth.Contract(_ABIs["validator"], _addresses["validator"]);
-
-    // Protocol Tokens
-    _vEth2 = new web3.eth.Contract(_ABIs["vEth2"], _addresses["vEth2"]);
-    _SGT = new web3.eth.Contract(_ABIs["SGT"], _addresses["SGT"]);
-
-    // OTHER Tokens HERE
-    _SGT_uniswap = new web3.eth.Contract(_ABIs["erc20_uniswap"], _addresses["SGT_uniswap"]);
-    _SGT_vEth2_uniswap = new web3.eth.Contract(_ABIs["erc20_uniswap"], _addresses["SGT_vEth2_uniswap"]);
-    _vEth2_saddle = new web3.eth.Contract(_ABIs["erc20"], _addresses["vEth2_saddle"]);
-    // // Geysers
-    _geyser_vEth2 = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2"]);
-    _geyser_SGT = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT"]);
-    _geyser_SGT_uniswap = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_uniswap"]);
-    _geyser_SGT_vEth2_uniswap = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_vEth2_uniswap"]);
-    _geyser_vEth2_saddle = new web3.eth.Contract(_ABIs["geyser_new"], _addresses["geyser_vEth2_saddle"]);
-
-
-    // OLD Geysers HERE
-    _geyser_vEth2_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2_old"]);
-    _geyser_SGT_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_old"]);
-    _geyser_SGT_uniswap_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_uniswap_old"]);
-    _geyser_vEth2_saddle_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2_saddle_old"]);
-
-    //Airdrop
-    _airdrop = new web3.eth.Contract(_ABIs["airdrop_distributor"], _addresses["airdrop_distributor"]);
-
-    //Migrator
-    _migrator=new web3.eth.Contract(_ABIs["migrator"], _addresses["migrator"]);
-
-    // NEW farm
-
-    createContract = (abi, address) => {
-        return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
-    }
-    /*********************************** DELETE USELESS INFO *******************************/
 }
 
 export const addresses = _addresses
 export const ABIs = _ABIs
-export const validator = _validator
-export const vEth2 = _vEth2
-export const SGT = _SGT
-export const SGT_uniswap = _SGT_uniswap
-export const SGT_vEth2_uniswap = _SGT_vEth2_uniswap
-export const geyser_vEth2 = _geyser_vEth2
-export const vEth2_saddle = _vEth2_saddle
-export const geyser_vEth2_saddle = _geyser_vEth2_saddle
-export const geyser_SGT = _geyser_SGT
-export const geyser_SGT_uniswap = _geyser_SGT_uniswap
-export const geyser_SGT_vEth2_uniswap = _geyser_SGT_vEth2_uniswap
-export const airdrop = _airdrop;
-export const migrator = _migrator;
+
+
+export const validator = createContractDefault('validator');
+export const vEth2 = createContractDefault('vEth2');
+export const SGT = createContractDefault('SGT');
+
+    // OTHER Tokens HERE
+export const SGT_uniswap = createContract("erc20_uniswap", "SGT_uniswap");
+export const SGT_vEth2_uniswap = createContract("erc20_uniswap", "SGT_vEth2_uniswap");
+export const vEth2_saddle = createContract("erc20", "vEth2_saddle");
+    // // Geysers
+export const geyser_vEth2 = createContract("geyser", "geyser_vEth2");
+export const geyser_SGT = createContract("geyser", "geyser_SGT");
+export const geyser_SGT_uniswap = createContract("geyser", "geyser_SGT_uniswap");
+export const geyser_SGT_vEth2_uniswap = createContract("geyser", "geyser_SGT_vEth2_uniswap");
+export const geyser_vEth2_saddle = createContract("geyser_new", "geyser_vEth2_saddle");
+
+
+    // OLD Geysers HERE
+export const geyser_vEth2_old = createContract("geyser", "geyser_vEth2_old");
+export const geyser_SGT_old = createContract("geyser", "geyser_SGT_old");
+export const geyser_SGT_uniswap_old = createContract("geyser", "geyser_SGT_uniswap_old");
+export const geyser_vEth2_saddle_old = createContract("geyser", "geyser_vEth2_saddle_old");
+
+    //Airdrop
+export const airdrop = createContract("airdrop_distributor", "airdrop_distributor");
+
+    //Migrator
+export const migrator=createContract("migrator", "migrator");
+
 export const masterchef = createContract('geyser_new', 'masterchef');
 export const SGT_sushiswap = createContract('erc20_uniswap', 'SGT_sushiswap');
 export const veSGT = createContract('erc20', 'veSGT');
