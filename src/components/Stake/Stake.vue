@@ -23,7 +23,7 @@
                 value=""
                 v-model="Damount"
               />
-              <div class="ant-col">{{ isDeposit ? " ETH" : "sgETH" }}</div>
+              <div class="ant-col">{{ isDeposit ? " ETH" : (get_wsgETH ? 'wsgETH' : "sgETH") }}</div>
             </div>
             <div class="balance" id="balance" @click="onMAX">
               wallet: {{ balance }}
@@ -55,7 +55,7 @@
                 readonly
               />
               <div class="ant-col">
-                {{ isDeposit ? " sgETH " : " ETH" }}
+                {{ isDeposit ? (get_wsgETH ? 'wsgETH' : "sgETH") : "ETH"}}
               </div>
             </div>
             <div class="balance" id="balance" @click="onMAX">
@@ -222,7 +222,6 @@ export default {
       );
     },
     enoughApproved() {
-      console.log('checked me',this.userApprovedwsgETH.gte(this.BNamount))
       return this.userApprovedwsgETH.gte(this.BNamount)
     },
 
