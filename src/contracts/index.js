@@ -204,4 +204,3 @@ export const oldPools = {
     geyser_vEth2: _geyser_vEth2_old,
     geyser_vEth2_saddle: _geyser_vEth2_saddle_old
 }
-0xaa93EF92Ef8663902BeE679B9B8bFB60c966d50C
