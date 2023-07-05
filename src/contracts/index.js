@@ -108,7 +108,8 @@ if (window.ethereum) {
             withdrawals: "0xd70201Ea40c12cFE6Bf69Dc9A2ca9FB14bb8DB0b",
             rollovers: "0xaa93EF92Ef8663902BeE679B9B8bFB60c966d50C",
 
-            sgETH: "0x453B459249F82ba3f369651aD485Fa11C6F082F8"
+            sgETH: "0x453B459249F82ba3f369651aD485Fa11C6F082F8",
+            wsgETH: "0xbFA813C3266Af70A5Ddc15d9253655281e2bCd23"
         }
     }
 
@@ -196,7 +197,7 @@ export const vETH2_CRV = createContract('erc20', 'vETH2_CRV');
 export const withdrawals = createContract('withdrawals', 'withdrawals');
 export const rollovers = createContract("rollovers", "rollovers");
 export const sgETH = createContract('sgETH', 'sgETH');
-
+export const wsgETH = createContract("sgETH", "wsgETH"); // re-use sgeth abi as we just need approve
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
     geyser_SGT_uniswap: _geyser_SGT_uniswap_old,

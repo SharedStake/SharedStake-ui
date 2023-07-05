@@ -1,7 +1,7 @@
 <template>
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
-      <div class="LogoContainer lg:pl-24">
+      <div class="LogoContainer">
         <ImageVue class="align-self-center justify-self-center" :src="'logo-red.svg'"
           :size="windowWidth > 900 ? '180px' : '20vw'" />
       </div>
@@ -26,20 +26,20 @@
           </a>
         </div>
         <div class="flex items-center justify-center md-large:justify-start">
-          <p class="exp">
+          <p class="text-l mb-6">
             vETH2 Redemptions
           </p>
         </div>
         <div class="flex gap-8 items-center mb-8 justify-center md-large:justify-start">
           <router-link
-            class="bg-brand-primary font-semibold md:font-medium text-xl md:text-3xl rounded-full px-6 md:px-8 py-3 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
-            to="/withdraw">
-            Withdraw
-          </router-link>
-          <router-link
-            class="bg-brand-primary font-semibold md:font-medium text-xl md:text-3xl rounded-full px-6 md:px-8 py-3 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
+            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
             to="/rollover">
             Rollover
+          </router-link>
+          <router-link
+            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
+            to="/withdraw">
+            Withdraw
           </router-link>
         </div>
         <div class="flex gap-8 items-center justify-center md-large:justify-start">
@@ -304,23 +304,23 @@
           <div class="mainCon">
             <div class="list">
               <div class="item">
-                <div class="date">2021 Q1</div>
-                <div class="text">Protocol Launch &amp; SGT Airdrop</div>
+                <div class="date">2020 Q4</div>
+                <div class="text">Protocol Launch</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q1</div>
-                <div class="text">Smart Contract Security Audit by Certik</div>
+                <div class="text">Smart Contract Security Audit by Certik  &amp; SGT Airdrop</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q2</div>
-                <div class="text">1000 Validators Created</div>
+                <div class="text">500 Validators Created</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q3</div>
-                <div class="text">Leveraged Eth2 Staking with Aave</div>
+                <div class="text">Leveraged Eth2 Staking with Ruler</div>
               </div>
 
               <div class="item">
@@ -350,10 +350,10 @@
               <div class="item">
                 <div class="date">2021 Q2</div>
                 <div class="text">
-                  First Incentivized Pools for vEth2 on Curve & Shell
+                  First Incentivized Pools for vEth2 on Saddle
                 </div>
               </div>
-              <div class="item">
+              <!-- <div class="item">
                 <div class="date">2021 Q2</div>
                 <div class="text">DeFi Support with Barbecue.js</div>
               </div>
@@ -368,7 +368,7 @@
                 <div class="text">
                   Staked Ether in Use on Multiple Blockchains
                 </div>
-              </div>
+              </div> -->
               <div class="item">
                 <div class="date">2023</div>
                 <div class="text">Ethereum2 Deployed</div>

@@ -1,14 +1,16 @@
 <template>
   <div class="gauge" v-show="showGauge">
     <div class="explanation">
-      <div class="title">SharedStaked vEth2</div>
+      <div class="title">SharedStaked SGEth</div>
       <div class="content">
         Total of {{ ethDeposited }}ETH has been staked to SharedStake so far.
         <br />
         {{ contractEtherLimit }}ETH is required (for
         {{ numOfValidators }} validators).<br />
         When ETH is deposited into the SharedDeposit contract, a
-        Validator-Share-ETH2 token (vETH2) is minted. Redeemable for the
+        Validator-Share-ETH2 / SharedStake Governed Ether token (SGEth) is minted. 
+        SGEth is then optionally wrapped into wsgETH to earn interest from validators.  
+        Redeemable for the
         deposited ETH.
       </div>
     </div>

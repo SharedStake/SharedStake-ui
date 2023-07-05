@@ -1,24 +1,9 @@
 <template>
   <div class="flex_column stake">
     <div class="staker">
-      <div class="chooser">
-        <div class="navbar">
-          <button
-            class="switch"
-            :class="{ switch_active: isDeposit }"
-            @click="isDeposit = true"
-          >
-            <span>Stake</span>
-          </button>
-          <button
-            class="switch"
-            :class="{ switch_active: !isDeposit }"
-            @click="isDeposit = false"
-          >
-            <span>Unstake</span>
-          </button>
-        </div>
-      </div>
+
+      <Chooser :routes="[{ text: 'Stake', cb: chooseCb}, { text: 'Unstake', cb: chooseCb }]" :currentActive="0"/>
+
       <div class="stakePage">
         <div class="sPElement input">
           <div class="inputBody">
@@ -79,7 +64,20 @@
             <div :class="isDeposit ? 'background3' : 'background2'" />
           </div>
         </div>
-        <ApprovalButton v-if="!isDeposit && get_wsgETH" :ABI_token="sgETH" :ABI="validator" :amount="this.Damount" :userApprovedVEth2="this.userApprovedVEth2" :getUserApprovedVEth2="this.getUserApprovedsgEth"/>
+
+      <div class="navbar s-toggle">
+        <span id="gas">
+            <input
+              id="get-wsgETH"
+              type="checkbox"
+              name="get-wsgETH"
+              v-model="get_wsgETH"
+            />
+            <label for="get-wsgETH">{{ isDeposit ? 'Get' : 'Use' }} Wrapped SgETH (interest bearing)</label>
+        </span>
+      </div>
+
+        <ApprovalButton v-if="!isDeposit && get_wsgETH && this.Damount > this.userApprovedwsgETH && this.enoughFundsInExitPool" :ABI_token="wsgETH" :ABI_spender="validator" :amount="this.Damount" :cb="this.getUserApprovedwsgEth" :autoHide="true"/>
 
         <button
           class="StakeButton"
@@ -131,40 +129,23 @@
         </div> -->
       </div>
 
-      <div class="navbar s-toggle">
-        <span id="gas">
-            <input
-              id="get-wsgETH"
-              type="checkbox"
-              name="get-wsgETH"
-              v-model="get_wsgETH"
-            />
-            <label for="get-wsgETH">Get Wrapped SgETH (interest bearing)</label>
-        </span>
-      </div>
       <div class="navbar">
         <span id="gas">Gas</span>
-        <button
-          class="switch"
-          :class="{ switch_active: chosenGas == gas.low }"
-          @click="updateGas(gas.low)"
-        >
-          <span>{{ gas.low.toFixed(0) }}</span>
-        </button>
-        <button
-          class="switch"
-          :class="{ switch_active: chosenGas == gas.medium }"
-          @click="updateGas(gas.medium)"
-        >
-          <span>{{ gas.medium.toFixed(0) }}</span>
-        </button>
-        <button
-          class="switch"
-          :class="{ switch_active: chosenGas == gas.high }"
-          @click="updateGas(gas.high)"
-        >
-          <span>{{ gas.high.toFixed(0) }}</span>
-        </button>
+
+        <Chooser 
+          :routes="[{ 
+            text: gas.low.toFixed(0), 
+            cb: updateGasCb, 
+            }, {
+            text: gas.medium.toFixed(0), 
+            cb: updateGasCb,
+            }, {
+            text: gas.high.toFixed(0), 
+            cb: updateGasCb,
+          }]" 
+          :currentActive="0"
+        />
+
       </div>
     </div>
     <StakeGauge class="gauge" />
@@ -180,16 +161,17 @@ import { mapGetters } from "vuex";
 import { 
   // getCurrentGasPrices, 
   notifyHandler } from "@/utils/common";
-import { validator, sgETH } from "@/contracts";
+import { validator, sgETH, wsgETH } from "@/contracts";
 
 import ImageVue from "../Handlers/ImageVue";
 import StakeGauge from "./StakeGauge";
 import ApprovalButton from "../Common/ApproveButton.vue";
+import Chooser from "../Common/Chooser.vue";
 
 // import { vEth2Price } from "@/utils/veth2.js";
 // import Swal from "sweetalert2";
 export default {
-  components: { ImageVue, StakeGauge, ApprovalButton },
+  components: { ImageVue, StakeGauge, ApprovalButton, Chooser },
   data: () => ({
     buttonText: "Enter an amount",
     BNamount: BN(0),
@@ -199,21 +181,25 @@ export default {
     EthBal: BN(0),
     vEth2Bal: BN(0),
     userApprovedVEth2: BN(0),
+    userApprovedwsgETH: BN(0),
     balance: 0,
     otherBalance: 0,
-    gas: { low: 90, medium: 130, high: 180 },
+    gas: { low: 20, medium: 90, high: 180 },
     validInput: true,
     txs: [],
     maxValShares: 0,
     remaining: BN(0),
     remainingByFee: BN(0),
-    chosenGas: 130,
+    chosenGas: 20,
     loading: true,
     adminFee: 0,
     contractBal: 0,
     vEth2Price: BN(0),
     sgETH: sgETH,
-    validator: validator
+    validator: validator,
+    wsgETH: wsgETH,
+    // routes: [{ text: 'Stake', cb: this.chooseCb}, { text: 'Unstake', cb: this.chooseCb }]
+
   }),
   mounted: async function () {
     // this.gas = await getCurrentGasPrices();
@@ -234,11 +220,17 @@ export default {
     ...mapGetters({ userAddress: "userAddress" }),
     enoughFundsInExitPool() {
       return (
-        this.BNamount.lt(this.contractBal)
+        this.BNamount.lte(this.contractBal)
       );
     },
   },
   methods: {
+    chooseCb(index) {
+      this.isDeposit = index > 0 ? false : true;
+    },
+    updateGasCb(index, routes) {
+      this.updateGas(parseInt(routes[index].text));
+    },
     updateGas(gas) {
       this.chosenGas = gas;
       this.amountCheck(true);
@@ -290,7 +282,6 @@ export default {
           self.mounted();
         })
         .on("error", () => {
-          // if (error.message.includes("User denied transaction signature"))
           this.loading = false;
         })
         .catch((err) => {
@@ -435,16 +426,15 @@ export default {
         this.buttonText = this.isDeposit ? "Stake" : "Unstake";
       }
     },
-    async getUserApprovedsgEth() {
+    async getUserApprovedwsgEth() {
       // return this.userApprovedVEth2;
-      let userApprovedVEth2 = await sgETH.methods
+      let userApproved = await wsgETH.methods
         .allowance(
           this.userConnectedWalletAddress,
           validator.options.address
         )
         .call();
-      this.userApprovedVEth2 = BN(userApprovedVEth2);
-      console.log("userApprovedVEth2", userApprovedVEth2);
+      this.userApprovedwsgETH = BN(userApproved);
     },
   },
   watch: {
@@ -568,30 +558,6 @@ export default {
   width: 100%;
   color: #fff;
 }
-.switch {
-  height: 40px;
-  padding: 0 20px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border-color: transparent;
-  color: #fff;
-  border-radius: 100px;
-  line-height: 24px;
-  box-sizing: border-box;
-  white-space: nowrap;
-  text-align: center;
-  border: 1px solid transparent;
-  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-  user-select: none;
-  touch-action: manipulation;
-  background: transparent;
-}
-
 .stakePage {
   width: calc(100% - 20px);
   padding: 10px;
