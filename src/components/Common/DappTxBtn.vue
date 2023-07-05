@@ -65,7 +65,6 @@ export default {
   
     async wrapTx(abiCall = () => {}, argsArr = [], senderObj = {}, cb = () => { }) {
       this.loading = true;
-      let cid = await window.web3.eth.getChainId();
       await abiCall(...argsArr)
         .send({
           // type: 2, // todo : fix gas pricing
@@ -75,7 +74,7 @@ export default {
           ...senderObj
         })
         .on("transactionHash", function (hash) {
-          notifyHandler(hash, cid);
+          notifyHandler(hash);
         })
         .once("confirmation", async () => {
           this.error = false;
