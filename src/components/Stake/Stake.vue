@@ -198,6 +198,7 @@ export default {
     sgETH: sgETH,
     validator: validator,
     wsgETH: wsgETH,
+    userWSGETHBal: BN(0)
   }),
   mounted: async function () {
     // this.gas = await getCurrentGasPrices();
@@ -227,8 +228,9 @@ export default {
 
   },
   methods: {
-    chooseCb(index) {
+    async chooseCb(index) {
       this.isDeposit = index > 0 ? false : true;
+      await this.mounted()
     },
     updateGasCb(index, routes) {
       this.updateGas(parseInt(routes[index].text));
@@ -374,7 +376,7 @@ export default {
         ? this.EthBal.minus(BN(this.chosenGas * 200000 * 1000000000)).gte(
             this.BNamount
           )
-        : this.vEth2Bal.gte(this.BNamount);
+        : this.get_wsgETH ? BN(this.userWSGETHBal).gte(this.BNamount) : this.vEth2Bal.gte(this.BNamount);
       if (!this.validInput) {
         this.buttonText = "Insufficient balance";
         return;
@@ -394,6 +396,7 @@ export default {
           this.userAddress
         )
         .call();
+        this.userWSGETHBal = bal;
         return bal;
     },
     async getUserApprovedwsgEth() {

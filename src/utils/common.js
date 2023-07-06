@@ -10,16 +10,16 @@ export const getCurrentGasPrices = async () => {
     // let response = await axios.get('https://ethgasstation.info/api/ethgasAPI.json?');
     // console.log('getCurrentGasPrices', response);
     // if (!response || response.status !== 200) {
-        return {
-            low: 20,
-            medium: 80,
-            high: 200,
-            tip: {
-                low: 0.1,
-                medium: 1,
-                high: 2
-            }
+    return {
+        low: 2,
+        medium: 30,
+        high: 200,
+        tip: {
+            low: 0.1,
+            medium: 1,
+            high: 2
         }
+    }
     // }
     // return {
     //     low: response.data.data.slow / 1e9,
@@ -45,7 +45,7 @@ export function notifyHandler(hash) {
                 `https://${chain}etherscan.io/tx/${transaction.hash}`,
                 "_blank",
                 "noopener norefferer"
-            ) && 
+            ) &&
             console.log("notify handler tx", transaction),
     }));
 }

@@ -99,7 +99,7 @@ if (window.ethereum) {
         }
     } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0x5464Eb94ECf019d5b05099A89dB302cF7ac3e863",// 
+            validator: "0x5d03e8d58A58244DB0ad5D4CEc7DC7737F2F37a3",// 
             // Protocol Tokens
             vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 

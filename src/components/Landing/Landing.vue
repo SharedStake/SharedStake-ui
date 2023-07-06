@@ -33,9 +33,6 @@
           </p>
         </div>
         <div class="flex gap-8 items-center justify-center md-large:justify-start">
-          <a href="https://twitter.com/ChimeraDefi" target="_blank" rel="noopener noreferrer">
-            <ImageVue :src="'socialmediaicons/Twitter.svg'" size="24px" class="socialLogo" />
-          </a>
           <a href="https://discord.gg/C9GhCv86My" target="_blank" rel="noopener noreferrer">
             <ImageVue :src="'socialmediaicons/Discord.svg'" size="24px" class="socialLogo" />
           </a>
@@ -59,6 +56,9 @@
           </a>
           <a href="https://medium.com/@chimera_defi" target="_blank" rel="noopener noreferrer">
             <ImageVue :src="'socialmediaicons/Medium.svg'" size="24px" class="socialLogo" />
+          </a>          
+          <a href="https://twitter.com/ChimeraDefi" target="_blank" rel="noopener noreferrer">
+            <ImageVue :src="'socialmediaicons/Twitter.svg'" size="24px" class="socialLogo" />
           </a>
         </div>
 
