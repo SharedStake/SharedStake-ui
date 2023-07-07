@@ -30,10 +30,6 @@ let _geyser_SGT_uniswap_old;
 let _geyser_vEth2_saddle_old;
 
 // V2 changes
-let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue")
-let createContract = () => connErr();
-let createContractDefault = () => connErr();
-
 const chainIdGoerli = "0x5";
 const chainIdMainnet = "0x1";
 
@@ -59,13 +55,26 @@ let _ABIs = {
     wsgETH: wsgETHABI
 }
 
-if (window.ethereum) {
+let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue")
+let createContract = () => connErr();
+let createContractDefault = () => connErr();
 
+let isValidChain = (cid) =>  cid == CHAIN_IDS.MAINNET || cid == CHAIN_IDS.GOERLI;
+    // makes sure all addresses are checksumed
+let checksumAddresses = (_addresses, web3) => {
+    for (const x in _addresses) {
+        _addresses[x] = web3.utils.toChecksumAddress(_addresses[x]);
+    }
+    return _addresses;
+}
+
+
+if (window.ethereum) {
     const web3 = new Web3(window.ethereum);
 
     // @TODO: Figure out what causes FF to not connect the wallet correctly. 
     let chainId = window.ethereum.chainId;
-    let addressTemp;
+    let addressTemp = {};
 
     if (chainId == CHAIN_IDS.MAINNET) {
         addressTemp = {
@@ -119,22 +128,23 @@ if (window.ethereum) {
         }
     }
 
-    _addresses = addressTemp;
-    // makes sure all addresses are checksumed
-    for (const x in _addresses) {
-        _addresses[x] = web3.utils.toChecksumAddress(_addresses[x])
-    }
+    if (isValidChain(chainId)) {
 
-    // Utils
+        _addresses = checksumAddresses(addressTemp, web3);
 
-
-    createContract = (abi, address) => {
-        if (_addresses[address] && _ABIs[abi]) {
-            return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
+        // Utils
+        createContract = (abi, address) => {
+            if (
+                _addresses && _ABIs &&
+                _addresses[address] && _ABIs[abi]
+            ) {
+                return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
+            }
+            return connErr();
         }
-        connErr();
+        createContractDefault = (name) => createContract(name, name)
     }
-    createContractDefault = (name) => createContract(name, name)
+
 
     /************************************* CONTRACTS ****************************************/
 
