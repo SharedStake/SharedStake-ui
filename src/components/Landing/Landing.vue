@@ -28,11 +28,11 @@
 
 
         <div class="flex items-center justify-center md-large:justify-start">
-          <p class="text-l mb-6">
+          <p class="text-l mb-8 gap-8">
             Join the conversation!
           </p>
         </div>
-        <div class="flex gap-8 items-center justify-center md-large:justify-start">
+        <div class="flex gap-8 mb-8 items-center justify-center md-large:justify-start">
           <a href="https://discord.gg/C9GhCv86My" target="_blank" rel="noopener noreferrer">
             <ImageVue :src="'socialmediaicons/Discord.svg'" size="24px" class="socialLogo" />
           </a>
