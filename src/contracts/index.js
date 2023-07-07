@@ -22,7 +22,7 @@ import rolloversABI from './abis/rollovers.json'
 import sgETHABI from './abis/sgETH.json'
 import wsgETHABI from './abis/wsgETH.json'
 
-let _addresses;
+let _addresses = {};
 
 let _geyser_vEth2_old;
 let _geyser_SGT_old;
