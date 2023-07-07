@@ -58,9 +58,8 @@ let _ABIs = {
 let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue")
 let createContract = () => connErr();
 let createContractDefault = () => connErr();
-
 let isValidChain = (cid) =>  cid == CHAIN_IDS.MAINNET || cid == CHAIN_IDS.GOERLI;
-    // makes sure all addresses are checksumed
+// makes sure all addresses are checksumed
 let checksumAddresses = (_addresses, web3) => {
     for (const x in _addresses) {
         _addresses[x] = web3.utils.toChecksumAddress(_addresses[x]);
@@ -110,7 +109,7 @@ if (window.ethereum) {
         }
     } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0x711c07cbfb82d5cB6Eb665350237C25c302f4A13",// 
+            validator: "0x4659c07C199bd373e768b6D800223C5A5367cC56",// 
             // Protocol Tokens
             vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 

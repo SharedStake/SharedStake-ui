@@ -49,7 +49,7 @@
                 spellcheck="false"
                 :value="
                   isDeposit
-                    ? (Damount / (32)) * 32
+                    ? get_wsgETH ? ethTowsgETH : (Damount / (32)) * 32
                     : get_wsgETH ? willGet : (Damount / 32) * (32 + adminFee)
                 "
                 readonly
@@ -227,7 +227,13 @@ export default {
       return this.userApprovedwsgETH.gte(this.BNamount)
     },
     willGet() {
+      if (this.BNamount.eq(0)) return 0;
       let c =  this.BNamount.multipliedBy(this.wsgETHRedemptionPrice.dividedBy(1e18)).dividedBy(1e18).toFixed(6);
+      return c;
+    },
+    ethTowsgETH() {
+      if (this.BNamount.eq(0)) return 0;
+      let c =  this.BNamount.multipliedBy(1e18).dividedBy(this.wsgETHRedemptionPrice).dividedBy(1e18).toFixed(6);
       return c;
     }
 
