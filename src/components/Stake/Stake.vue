@@ -50,7 +50,7 @@
                 :value="
                   isDeposit
                     ? (Damount / (32)) * 32
-                    : (Damount / 32) * (32 + adminFee)
+                    : get_wsgETH ? willGet : (Damount / 32) * (32 + adminFee)
                 "
                 readonly
               />
@@ -198,7 +198,8 @@ export default {
     sgETH: sgETH,
     validator: validator,
     wsgETH: wsgETH,
-    userWSGETHBal: BN(0)
+    userWSGETHBal: BN(0),
+    wsgETHRedemptionPrice: BN(0)
   }),
   mounted: async function () {
     // this.gas = await getCurrentGasPrices();
@@ -225,6 +226,10 @@ export default {
     enoughApproved() {
       return this.userApprovedwsgETH.gte(this.BNamount)
     },
+    willGet() {
+      let c =  this.BNamount.multipliedBy(this.wsgETHRedemptionPrice.dividedBy(1e18)).dividedBy(1e18).toFixed(6);
+      return c;
+    }
 
   },
   methods: {
@@ -338,6 +343,7 @@ export default {
         );
         this.contractBal = BN(contractBal);
         await this.getUserApprovedwsgEth();
+        await this.getWsgETHRedemption();
         // this.vEth2Price = await vEth2Price();
         this.loading = false;
         this.amountCheck(true);
@@ -398,6 +404,10 @@ export default {
         .call();
         this.userWSGETHBal = bal;
         return bal;
+    },
+    async getWsgETHRedemption() {
+      let vp = await wsgETH.methods.pricePerShare().call();
+      this.wsgETHRedemptionPrice = BN(vp);
     },
     async getUserApprovedwsgEth() {
       let userApproved = await wsgETH.methods

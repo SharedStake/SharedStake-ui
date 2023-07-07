@@ -20,6 +20,7 @@ import migratorABI from './abis/migrator.json'
 import withdrawalsABI from './abis/withdrawals.json'
 import rolloversABI from './abis/rollovers.json'
 import sgETHABI from './abis/sgETH.json'
+import wsgETHABI from './abis/wsgETH.json'
 
 let _addresses;
 
@@ -54,7 +55,8 @@ let _ABIs = {
     migrator:migratorABI,
     withdrawals: withdrawalsABI,
     rollovers: rolloversABI,
-    sgETH: sgETHABI
+    sgETH: sgETHABI,
+    wsgETH: wsgETHABI
 }
 
 if (window.ethereum) {
@@ -99,7 +101,7 @@ if (window.ethereum) {
         }
     } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0x5d03e8d58A58244DB0ad5D4CEc7DC7737F2F37a3",// 
+            validator: "0x711c07cbfb82d5cB6Eb665350237C25c302f4A13",// 
             // Protocol Tokens
             vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
@@ -178,7 +180,7 @@ export const vETH2_CRV = createContract('erc20', 'vETH2_CRV');
 export const withdrawals = createContractDefault('withdrawals');
 export const rollovers = createContractDefault("rollovers");
 export const sgETH = createContractDefault('sgETH');
-export const wsgETH = createContract("sgETH", "wsgETH"); // re-use sgeth abi as we just need approve
+export const wsgETH = createContractDefault("wsgETH");
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
     geyser_SGT_uniswap: _geyser_SGT_uniswap_old,
