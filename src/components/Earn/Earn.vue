@@ -13,8 +13,18 @@
           </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
         </div> -->
         <!-- <migrator /> -->
+        <div class="notification"> 
+          Checkout  
+          <a
+            href="https://bunni.pro/stake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            bunni.pro</a
+          > for new farming pools!
+        </div>
         <div class="notification">
-          For new farming pools you can also use
+          <!-- For new farming pools you can also use
           <a
             href="https://app.multifarm.fi/farms/ETH_Sharedstake"
             target="_blank"
@@ -29,7 +39,8 @@
           >
             vfat.tools/sgt</a
           >
-          and please withdraw remaining funds from the following old pools
+          and  -->
+          Please withdraw remaining funds from the following old pools
         </div>
       </div>
       <newGeyser

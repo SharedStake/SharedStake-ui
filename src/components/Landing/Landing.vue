@@ -1,7 +1,7 @@
 <template>
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
-      <div class="LogoContainer lg:pl-24">
+      <div class="LogoContainer">
         <ImageVue
           class="align-self-center justify-self-center"
           :src="'logo-red.svg'"
@@ -26,7 +26,6 @@
           >
             STAKE
           </router-link>
-
           <a
             class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
             rel="noopener noreferrer nofollow"
@@ -36,20 +35,15 @@
             MINT NFT
           </a>
         </div>
+
+        <div class="flex items-center justify-center md-large:justify-start">
+          <p class="gap-8 mb-8 text-l">
+            Join the conversation!
+          </p>
+        </div>
         <div
-          class="flex items-center justify-center gap-8 md-large:justify-start"
+          class="flex items-center justify-center gap-8 mb-8 md-large:justify-start"
         >
-          <a
-            href="https://twitter.com/ChimeraDefi"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Twitter.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
           <a
             href="https://discord.gg/C9GhCv86My"
             target="_blank"
@@ -106,6 +100,39 @@
               class="socialLogo"
             />
           </a>
+          <a
+            href="https://twitter.com/ChimeraDefi"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/Twitter.svg'"
+              size="24px"
+              class="socialLogo"
+            />
+          </a>
+        </div>
+
+        <div class="flex items-center justify-center md-large:justify-start">
+          <p class="mb-6 text-l">
+            vETH2 Redemptions
+          </p>
+        </div>
+        <div
+          class="flex items-center justify-center gap-8 mb-8 md-large:justify-start"
+        >
+          <router-link
+            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            to="/rollover"
+          >
+            Rollover
+          </router-link>
+          <router-link
+            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            to="/withdraw"
+          >
+            Withdraw
+          </router-link>
         </div>
       </div>
     </div>
@@ -382,28 +409,32 @@
     </div>
     <div class="exp roadMap" v-show="scrolled > 4700">
       <div class="mainBox">
-        <div class="exp titleBox"><div class="X">Roadmap</div></div>
+        <div class="exp titleBox">
+          <div class="X">Roadmap</div>
+        </div>
         <div class="main">
           <div class="mainCon">
             <div class="list">
               <div class="item">
-                <div class="date">2021 Q1</div>
-                <div class="text">Protocol Launch &amp; SGT Airdrop</div>
+                <div class="date">2020 Q4</div>
+                <div class="text">Protocol Launch</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q1</div>
-                <div class="text">Smart Contract Security Audit by Certik</div>
+                <div class="text">
+                  Smart Contract Security Audit by Certik &amp; SGT Airdrop
+                </div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q2</div>
-                <div class="text">1000 Validators Created</div>
+                <div class="text">500 Validators Created</div>
               </div>
 
               <div class="item">
                 <div class="date">2021 Q3</div>
-                <div class="text">Leveraged Eth2 Staking with Aave</div>
+                <div class="text">Leveraged Eth2 Staking with Ruler</div>
               </div>
 
               <div class="item">
@@ -433,10 +464,10 @@
               <div class="item">
                 <div class="date">2021 Q2</div>
                 <div class="text">
-                  First Incentivized Pools for vEth2 on Curve & Shell
+                  First Incentivized Pools for vEth2 on Saddle
                 </div>
               </div>
-              <div class="item">
+              <!-- <div class="item">
                 <div class="date">2021 Q2</div>
                 <div class="text">DeFi Support with Barbecue.js</div>
               </div>
@@ -451,7 +482,7 @@
                 <div class="text">
                   Staked Ether in Use on Multiple Blockchains
                 </div>
-              </div>
+              </div> -->
               <div class="item">
                 <div class="date">2023</div>
                 <div class="text">Ethereum2 Deployed</div>
@@ -1209,6 +1240,7 @@ export default {
   color: #fff;
   z-index: 1;
 }
+
 .LogoContainer {
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
@@ -1236,6 +1268,7 @@ export default {
   gap: 0px 0px;
   grid-template-areas: ". .";
 }
+
 .Explanation {
   padding: 0 75px 200px 0;
   animation: TextEnter 0.4s ease-out backwards;
@@ -1255,6 +1288,7 @@ export default {
   font-weight: 300;
   line-height: 1.2;
 }
+
 .exp {
   font-size: 21px;
   line-height: 31px;
@@ -1266,6 +1300,7 @@ export default {
   animation: TextEnter 0.6s ease-out backwards 0.2s;
   z-index: 1;
 }
+
 .social {
   display: flex;
   flex-direction: row;
@@ -1274,14 +1309,17 @@ export default {
   animation: TextEnter 0.8s ease-out backwards;
   margin-top: 30px;
 }
+
 .socialLogo {
   filter: brightness(300%);
   transition: filter 0.5s ease-out;
   cursor: pointer;
 }
+
 .socialLogo:hover {
   filter: brightness(500%);
 }
+
 .LearnButton {
   width: fit-content;
   margin: 24px auto 0;
@@ -1295,10 +1333,12 @@ export default {
   z-index: 3;
   grid-area: Button;
 }
+
 .LearnButton:hover,
 .StakeButton:hover {
   transform: scale(0.98);
 }
+
 .StakeButton {
   font-size: 21px;
   font-weight: 500;
@@ -1315,6 +1355,7 @@ export default {
   z-index: 3;
   grid-area: Button;
 }
+
 .background2 {
   background-image: url(bg-2.png);
   position: absolute;
@@ -1331,6 +1372,7 @@ export default {
     rgba(0, 0, 0, 0.4) 60%
   );
 }
+
 .second {
   width: 90%;
   height: 90%;
@@ -1347,6 +1389,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .Information {
   margin-top: 2.5vh;
   padding: 5vh;
@@ -1362,6 +1405,7 @@ export default {
   -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
   box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469);
 }
+
 .InfoHeader {
   font-size: 34px;
   font-weight: 300;
@@ -1371,22 +1415,26 @@ export default {
   grid-area: Header;
   align-self: center;
 }
+
 .Info {
   margin-bottom: 10px;
   font-size: 16px;
   grid-area: Info;
 }
+
 .ICON {
   grid-area: Icon;
   align-self: center;
   justify-self: end;
 }
+
 .Information,
 .X {
   justify-self: center;
   align-self: center;
   z-index: 10;
 }
+
 .Exp {
   max-width: 200px;
   font-size: 16px;
@@ -1400,15 +1448,18 @@ export default {
   /* text-align: justify; */
   text-justify: inter-word;
 }
+
 .EthExp,
 .Eth {
   grid-area: Eth;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.4s forwards;
 }
+
 .EthExp {
   grid-area: EthExp;
 }
+
 .vEth2Exp,
 .vEth2 {
   grid-area: vEth2;
@@ -1416,37 +1467,45 @@ export default {
   animation: LogoEnter 0.5s ease-out 0.6s forwards;
   filter: brightness(200%);
 }
+
 .vEth2Exp {
   grid-area: vEth2Exp;
 }
+
 .rewardExp,
 .reward {
   grid-area: reward;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.8s forwards;
 }
+
 .rewardExp {
   grid-area: rewardExp;
 }
+
 .harvestExp,
 .harvest {
   grid-area: harvest;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 1s forwards;
 }
+
 .harvestExp {
   grid-area: harvestExp;
 }
+
 .next1 {
   grid-area: next1;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.5s forwards;
 }
+
 .next2 {
   grid-area: next2;
   opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.7s forwards;
 }
+
 .next3 {
   grid-area: next3;
   opacity: 0;
@@ -1464,6 +1523,7 @@ export default {
   color: #fff;
   justify-content: space-between;
 }
+
 .StatsHeader {
   color: rgb(255, 255, 255);
   -webkit-box-align: center;
@@ -1476,6 +1536,7 @@ export default {
   animation: TextEnter 0.4s ease-out backwards;
   text-align: center;
 }
+
 .StatsExp {
   max-width: 800px;
   text-align: center;
@@ -1487,6 +1548,7 @@ export default {
   color: rgba(255, 255, 255, 0.75);
   animation: TextEnter 0.4s ease-out backwards 0.2s;
 }
+
 .StatsContent {
   display: flex;
   width: calc(100% - 60px);
@@ -1497,6 +1559,7 @@ export default {
   padding: 120px 0px;
   animation: TextEnter 0.4s ease-out backwards 0.4s;
 }
+
 .Stat {
   display: flex;
   height: 100%;
@@ -1508,6 +1571,7 @@ export default {
   text-align: center;
   flex-basis: 1/3;
 }
+
 .Num {
   font-size: 64px;
   line-height: 1.125;
@@ -1529,6 +1593,7 @@ export default {
   font-size: 14px;
   color: rgb(143, 143, 143);
 }
+
 .background3 {
   background-image: url(bg-3.png);
   position: absolute;
@@ -1567,6 +1632,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .Bubble {
   min-height: calc(77%);
   font-size: 1.2rem;
@@ -1585,9 +1651,11 @@ export default {
     "Header Icon"
     "Info Info ";
 }
+
 .mb30 {
   margin-bottom: 30px;
 }
+
 .roadMap {
   padding-top: 2rem;
   padding-bottom: 5rem;
@@ -1595,6 +1663,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 .mainBox {
   padding-bottom: 1.13rem;
   width: 80%;
@@ -1622,6 +1691,7 @@ export default {
   width: -moz-max-content;
   width: max-content;
 }
+
 .curve {
   width: 100%;
   background-image: url(curve.png);
@@ -1635,11 +1705,13 @@ export default {
   top: 0;
   overflow: hidden;
 }
+
 .mainCon .curve canvas {
   position: absolute;
   left: 0;
   top: 0;
 }
+
 .mainCon .list {
   display: -webkit-flex;
   display: -moz-box;
@@ -1650,8 +1722,10 @@ export default {
   top: 0;
   padding-left: 0.1rem;
 }
+
 .mainCon .list .item {
-  width: 260px; /**HERE */
+  width: 260px;
+  /**HERE */
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   -webkit-flex: none;
@@ -1659,12 +1733,14 @@ export default {
   -ms-flex: none;
   flex: none;
 }
+
 .mainCon .list .item .date {
   font-size: 17px;
   color: #e6007a;
   line-height: 1.43em;
   padding-bottom: 0.3rem;
 }
+
 .mainCon .list .item .text {
   font-size: 12px;
   color: #ffffff;
@@ -1672,6 +1748,7 @@ export default {
   width: 60%;
   padding-bottom: 20px;
 }
+
 .mainCon .list.next {
   padding-left: 5rem;
 }
@@ -1687,20 +1764,25 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 .centertext {
   text-align: center;
 }
+
 .glow {
   filter: brightness(300%);
 }
+
 .reverse {
   filter: invert(1);
 }
+
 .DropShadow {
   filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
 }
+
 @keyframes LogoEnter {
   from {
     transform: translate3d(-2rem, 0, 0);
     opacity: 0;
   }
+
   to {
     transform: translate3d(0, 0, 0);
     opacity: 1;
@@ -1716,6 +1798,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
   }
 }
+
 @keyframes TextEnter {
   from {
     transform: translate3d(0, 2rem, 0);
@@ -1743,11 +1826,13 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     justify-content: center;
     align-items: center;
   }
+
   .Logo {
     padding: 0;
     max-width: 145px;
     min-width: 100px;
   }
+
   .LogoContainer {
     background: transparent;
     background-repeat: no-repeat;
@@ -1758,18 +1843,22 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     justify-content: center;
     align-items: center;
   }
+
   .mainTitle {
     margin: 0 auto;
   }
+
   .Explanation {
     padding: 0 23px 100px 23px;
     animation: TextEnter 0.4s ease-out backwards;
   }
+
   .StatsContent {
     flex-direction: column;
     align-items: center;
     padding: 0px;
   }
+
   .StatsHeader {
     font-size: 42px;
   }
@@ -1777,6 +1866,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     padding: 15px 15px 15px 0;
     font-size: 25px;
   }
+
   .third {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
@@ -1807,6 +1897,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "harvestExp";
     padding-bottom: 15vh;
   }
+
   .certikLogo {
     max-width: 80%;
     text-align: center;
@@ -1818,6 +1909,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     margin-bottom: 32px;
   }
 }
+
 @media only screen and (max-width: 375px) {
   .mainTitle {
     font-size: 36px;
