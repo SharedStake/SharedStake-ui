@@ -2,43 +2,70 @@
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
       <div class="LogoContainer">
-        <ImageVue class="align-self-center justify-self-center" :src="'logo-red.svg'"
-          :size="windowWidth > 900 ? '180px' : '20vw'" />
+        <ImageVue
+          class="align-self-center justify-self-center"
+          :src="'logo-red.svg'"
+          :size="windowWidth > 900 ? '180px' : '20vw'"
+        />
       </div>
-      <div class="h-full p-4 flex flex-col justify-center">
-        <div class="md-large:max-w-xl text-center md-large:text-left mb-8">
-          <h1 class="mainTitle mb-6">Simple Ethereum 2.0 Staking</h1>
+      <div class="flex flex-col justify-center h-full p-4">
+        <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
+          <h1 class="mb-6 mainTitle">Simple Ethereum 2.0 Staking</h1>
           <div class="exp">
-            SharedStake is a decentralized Ethereum 2 staking solution that allows
-            users to stake any amount of Ether and earn additional yield on top of
-            their ETH2 rewards.
+            SharedStake is a decentralized Ethereum 2 staking solution that
+            allows users to stake any amount of Ether and earn additional yield
+            on top of their ETH2 rewards.
           </div>
         </div>
-        <div class="flex gap-6 items-center mb-8 justify-center md-large:justify-start">
+        <div
+          class="flex items-center justify-center gap-6 mb-8 md-large:justify-start"
+        >
           <router-link
-            class="bg-brand-primary font-semibold md:font-medium text-xl md:text-3xl rounded-full px-6 md:px-8 py-3 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary border-2 border-transparent transition-all whitespace-nowrap"
-            to="/stake">
+            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-brand-primary md:font-medium md:text-3xl md:px-8 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary whitespace-nowrap"
+            to="/stake"
+          >
             STAKE
           </router-link>
-          <a class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
-            rel="noopener noreferrer nofollow" href="https://app.passch.com/" target="_blank">
+          <a
+            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            rel="noopener noreferrer nofollow"
+            href="https://app.passch.com/"
+            target="_blank"
+          >
             MINT NFT
           </a>
         </div>
 
-
         <div class="flex items-center justify-center md-large:justify-start">
-          <p class="text-l mb-8 gap-8">
+          <p class="gap-8 mb-8 text-l">
             Join the conversation!
           </p>
         </div>
-        <div class="flex gap-8 mb-8 items-center justify-center md-large:justify-start">
-          <a href="https://discord.gg/C9GhCv86My" target="_blank" rel="noopener noreferrer">
-            <ImageVue :src="'socialmediaicons/Discord.svg'" size="24px" class="socialLogo" />
+        <div
+          class="flex items-center justify-center gap-8 mb-8 md-large:justify-start"
+        >
+          <a
+            href="https://discord.gg/C9GhCv86My"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/Discord.svg'"
+              size="24px"
+              class="socialLogo"
+            />
           </a>
 
-          <a href="https://t.me/SharedStakeFinance" target="_blank" rel="noopener noreferrer">
-            <ImageVue :src="'socialmediaicons/TG.svg'" size="24px" class="socialLogo" />
+          <a
+            href="https://t.me/SharedStakeFinance"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/TG.svg'"
+              size="24px"
+              class="socialLogo"
+            />
           </a>
           <!-- <a
             href="https://www.reddit.com/r/SharedStake/"
@@ -51,31 +78,59 @@
               class="socialLogo"
             /> -->
           <!-- </a> -->
-          <a href="https://github.com/SharedStake" target="_blank" rel="noopener noreferrer">
-            <ImageVue :src="'socialmediaicons/Git.svg'" size="24px" class="socialLogo" />
+          <a
+            href="https://github.com/SharedStake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/Git.svg'"
+              size="24px"
+              class="socialLogo"
+            />
           </a>
-          <a href="https://medium.com/@chimera_defi" target="_blank" rel="noopener noreferrer">
-            <ImageVue :src="'socialmediaicons/Medium.svg'" size="24px" class="socialLogo" />
-          </a>          
-          <a href="https://twitter.com/ChimeraDefi" target="_blank" rel="noopener noreferrer">
-            <ImageVue :src="'socialmediaicons/Twitter.svg'" size="24px" class="socialLogo" />
+          <a
+            href="https://medium.com/@chimera_defi"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/Medium.svg'"
+              size="24px"
+              class="socialLogo"
+            />
+          </a>
+          <a
+            href="https://twitter.com/ChimeraDefi"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ImageVue
+              :src="'socialmediaicons/Twitter.svg'"
+              size="24px"
+              class="socialLogo"
+            />
           </a>
         </div>
 
         <div class="flex items-center justify-center md-large:justify-start">
-          <p class="text-l mb-6">
+          <p class="mb-6 text-l">
             vETH2 Redemptions
           </p>
         </div>
-        <div class="flex gap-8 items-center mb-8 justify-center md-large:justify-start">
+        <div
+          class="flex items-center justify-center gap-8 mb-8 md-large:justify-start"
+        >
           <router-link
-            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
-            to="/rollover">
+            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            to="/rollover"
+          >
             Rollover
           </router-link>
           <router-link
-            class="whitespace-nowrap text-xl md:text-2xl font-medium rounded-full border border-white hover:border-brand-primary transition-all hover:text-brand-primary px-6 md:px-8 py-3"
-            to="/withdraw">
+            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            to="/withdraw"
+          >
             Withdraw
           </router-link>
         </div>
@@ -93,7 +148,9 @@
       </div>
 
       <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
-      <div class="StatsContent">
+      <div
+        class="grid items-center justify-center gap-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3"
+      >
         <div class="Stat">
           <div class="Num">{{ TVL }}</div>
           <div class="NumExp">Ether Staked with SharedStake</div>
@@ -109,27 +166,17 @@
             }}! Liquid & Incentivised
           </div>
         </div>
-
         <div class="Stat">
           <div class="Num">{{ validatorApr }}%</div>
           <div class="NumExp">Validator APR</div>
-          <div class="NumDetail">Validator APR based on avg activation epoch of <a
-              href='https://beaconscan.com/epoch/25205' target='_blank'>25205</a>.</div>
+          <div class="NumDetail">
+            Validator APR based on avg activation epoch of
+            <a href="https://beaconscan.com/epoch/25205" target="_blank"
+              >25205</a
+            >.
+          </div>
         </div>
-        <!-- <div class="Stat">
-          <div class="Num">{{ APY }}%</div>
-          <div class="NumExp">Current APY</div>
-          <div class="NumDetail">Most Profitable Eth2 Staking Solution</div>
-        </div> -->
-      </div>
-      <!-- 
-      <div class="Stat">
-        <div class="Num">99.9%</div>
-        <div class="NumExp">Uptime</div>
-        <div class="NumDetail">Industry leading cloud infrastructure</div>
-      </div> -->
-      <div v-if="!isMobile()">
-        <div class="StatsContent">
+        <template v-if="!isMobile()">
           <div class="Stat">
             <div class="Num">{{ validatorTotalBalance }}</div>
             <div class="NumExp">Total Validator Balance</div>
@@ -144,9 +191,6 @@
               ETH Profits generated by SharedStake validators
             </div>
           </div>
-        </div>
-
-        <div class="StatsContent">
           <div class="Stat">
             <div class="Num">{{ validatorsOnline }}</div>
             <div class="NumExp">Validators online</div>
@@ -156,10 +200,11 @@
           <div class="Stat">
             <div class="Num">{{ validatorsSlashed }}</div>
             <div class="NumExp">Validators slashed</div>
-            <div class="NumDetail">SharedStake validator that have been slashed</div>
+            <div class="NumDetail">
+              SharedStake validator that have been slashed
+            </div>
           </div>
-        </div>
-        <div class="StatsContent">
+
           <div class="Stat">
             <div class="Num">{{ validatorVirtualPrice }}</div>
             <div class="NumExp">Virtual price</div>
@@ -167,22 +212,28 @@
           </div>
           <div class="Stat">
             <div class="Num">{{ vpPostFees }}</div>
-            <div class="NumExp">Virtual Price post fees </div>
-            <div class="NumDetail">vETH2 redemption price at merge post fees based on <a
-                href='https://snapshot.org/#/sharedstake.eth/proposal/QmQBWBsAucwB7vtxMhYmsn7nQ1J3VWvGD3knrdQP3knjou'
-                target='_blank'>SIP-22</a>.</div>
+            <div class="NumExp">Virtual Price post fees</div>
+            <div class="NumDetail">
+              vETH2 redemption price at merge post fees based on
+              <a
+                href="https://snapshot.org/#/sharedstake.eth/proposal/QmQBWBsAucwB7vtxMhYmsn7nQ1J3VWvGD3knrdQP3knjou"
+                target="_blank"
+                >SIP-22</a
+              >.
+            </div>
           </div>
           <div class="Stat">
             <div class="Num">{{ elapsed }}</div>
-            <div class="NumExp">Total uptime (months) </div>
+            <div class="NumExp">Total uptime (months)</div>
             <div class="NumDetail">Uptime so far at SharedStake in months</div>
           </div>
-        </div>
+        </template>
       </div>
-      <div v-else>
-        <p> More detailed dashboard available on desktops with an ETH RPC provider </p>
+      <div v-if="isMobile()">
+        <p class="text-center">
+          More detailed dashboard available on desktops with an ETH RPC provider
+        </p>
       </div>
-
     </div>
     <div class="Container" v-show="scrolled >= 1000">
       <div class="exp background2" />
@@ -190,15 +241,27 @@
         <div class="X Eth">
           <ImageVue :src="'eth.png'" :size="'90px'" />
         </div>
-        <ImageVue :src="windowWidth > 900 ? 'next.svg' : 'down.svg'" :size="'15px'" class="X next1" />
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next1"
+        />
         <div class="X vEth2">
           <ImageVue :src="'vEth2.png'" :size="'163px'" />
         </div>
-        <ImageVue :src="windowWidth > 900 ? 'next.svg' : 'down.svg'" :size="'15px'" class="X next2" />
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next2"
+        />
         <div class="X reward">
           <ImageVue :src="'Reward.png'" :size="'127px'" />
         </div>
-        <ImageVue :src="windowWidth > 900 ? 'next.svg' : 'down.svg'" :size="'15px'" class="X next3" />
+        <ImageVue
+          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
+          :size="'15px'"
+          class="X next3"
+        />
         <div class="X harvest">
           <ImageVue :src="'Harvest.png'" :size="'92px'" />
         </div>
@@ -226,14 +289,22 @@
             incentivized further with SGT, the SharedStake Governance Token.
           </div>
           <div class="LearnButton">
-            <a href="https://chimera-1.gitbook.io/sharedstake-v2/" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://chimera-1.gitbook.io/sharedstake-v2/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Learn More
             </a>
           </div>
         </div>
       </div>
     </div>
-    <div class="Container flex_column" v-show="scrolled >= 2500" :style="{ paddingBottom: '5rem' }">
+    <div
+      class="Container flex_column"
+      v-show="scrolled >= 2500"
+      :style="{ paddingBottom: '5rem' }"
+    >
       <div class="flex_row vEth2PanelHeader">
         <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
         <div class="StatsHeader">vEth2</div>
@@ -251,7 +322,11 @@
             Ethereum2 profit distribution will start with the Eth2 launch so
             until then, track your Eth2 profits in the SharedStake Dashboard.
           </div>
-          <ImageVue :src="'discount.svg'" :size="'70px'" class="exp ICON reverse" />
+          <ImageVue
+            :src="'discount.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">DeFi Compatible</div>
@@ -263,7 +338,11 @@
             stability is derived from its peg to Ether's value, practically
             eliminating concerns with Impermanent Loss.
           </div>
-          <ImageVue :src="'diamond.svg'" :size="'70px'" class="exp ICON reverse" />
+          <ImageVue
+            :src="'diamond.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">Incentivized Staking</div>
@@ -273,7 +352,11 @@
             with SGT, used as a Proof of Participation token within the
             SharedStake Protocol.
           </div>
-          <ImageVue :src="'dowload.svg'" :size="'70px'" class="exp ICON reverse" />
+          <ImageVue
+            :src="'dowload.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
         </div>
         <div class="Bubble">
           <div class="exp InfoHeader">Built-in Exit Pool</div>
@@ -283,23 +366,44 @@
             SharedStakers can un-stake their Ether at anytime by burning their
             vEth2 through the staking contract, subject to the pooled amount.
           </div>
-          <ImageVue :src="'balance.svg'" :size="'70px'" class="exp ICON reverse" />
+          <ImageVue
+            :src="'balance.svg'"
+            :size="'70px'"
+            class="exp ICON reverse"
+          />
         </div>
       </div>
       <div class="LearnButton">
-        <a href="https://sips.sharedstake.org/SIPS/sip-3.html" target="_blank" rel="noopener noreferrer">
-          Learn More</a>
+        <a
+          href="https://sips.sharedstake.org/SIPS/sip-3.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn More</a
+        >
       </div>
     </div>
     <div v-show="scrolled > 3800">
       <Partners />
     </div>
-    <div class="BadgeContainer flex_column" v-show="scrolled >= 4400" :style="{ paddingBottom: '5rem' }">
+    <div
+      class="BadgeContainer flex_column"
+      v-show="scrolled >= 4400"
+      :style="{ paddingBottom: '5rem' }"
+    >
       <div class="StatsHeader">Audit</div>
       <div class="flex_column">
-        <a href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
-          target="_blank" rel="noopener noreferrer" class="certikLogo">
-          <ImageVue :src="'certik-foundation-logo-white.png'" :size="'400px'" class="certikLogo" />
+        <a
+          href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="certikLogo"
+        >
+          <ImageVue
+            :src="'certik-foundation-logo-white.png'"
+            :size="'400px'"
+            class="certikLogo"
+          />
         </a>
       </div>
     </div>
@@ -318,7 +422,9 @@
 
               <div class="item">
                 <div class="date">2021 Q1</div>
-                <div class="text">Smart Contract Security Audit by Certik  &amp; SGT Airdrop</div>
+                <div class="text">
+                  Smart Contract Security Audit by Certik &amp; SGT Airdrop
+                </div>
               </div>
 
               <div class="item">
@@ -949,10 +1055,14 @@ export default {
   methods: {
     isMobile() {
       // https://stackoverflow.com/questions/48515023/display-different-vuejs-components-for-mobile-browsers
-      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        return true || (window.ethereum); // mobile browsers will load if eth rpc available. 
+      if (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        )
+      ) {
+        return true || window.ethereum; // mobile browsers will load if eth rpc available.
       } else {
-        return false
+        return false;
       }
     },
     async setupTvl() {
@@ -999,7 +1109,7 @@ export default {
 
       let startTime = 1616502743000;
       let elapsed = Date.now() - startTime;
-      let msInYr = (1000 * 60 * 60 * 24 * 365);
+      let msInYr = 1000 * 60 * 60 * 24 * 365;
 
       let totalBal = 0;
       let effectiveBal = 0;
@@ -1008,7 +1118,7 @@ export default {
       results.forEach((validator) => {
         totalBal += validator.balance;
         effectiveBal += validator.effectivebalance;
-        if (validator.status == 'active_online') status++;
+        if (validator.status == "active_online") status++;
         if (validator.slashed) slashed++;
       });
       this.validatorsSlashed = slashed;
@@ -1016,16 +1126,20 @@ export default {
       this.validatorVirtualPrice = BN(totalBal / effectiveBal)
         .toFixed(4)
         .toString();
-      this.validatorTotalBalance = BN(totalBal).div(1e9).toFixed(0).toString();
+      this.validatorTotalBalance = BN(totalBal)
+        .div(1e9)
+        .toFixed(0)
+        .toString();
       this.profit = BN(totalBal - effectiveBal)
         .div(1e9)
         .toFixed(2)
         .toString();
       this.validatorApr = (((this.profit / elapsed) * msInYr) / this.TVL) * 100;
       this.validatorApr = this.validatorApr.toFixed(2);
-      this.vpPostFees = (this.validatorVirtualPrice - ((this.validatorVirtualPrice - 1) * 0.2));
+      this.vpPostFees =
+        this.validatorVirtualPrice - (this.validatorVirtualPrice - 1) * 0.2;
       this.vpPostFees = this.vpPostFees.toFixed(4);
-      this.elapsed = (12 * elapsed / msInYr).toFixed(2);
+      this.elapsed = ((12 * elapsed) / msInYr).toFixed(2);
 
       console.log(
         `Fetch success: validatorVirtualPrice ${this.validatorVirtualPrice} | validatorTotalBalance: ${this.validatorTotalBalance} | profit: ${this.profit}`
@@ -1057,15 +1171,20 @@ export default {
         let stakedSchedule = remDays;
         let duration = await tokenGeyser.methods.rewardsDuration().call(); //in second
         let remRewards = BN(remDays).times(
-          BN(75000).div(BN(duration).div(60).div(60).div(24))
+          BN(75000).div(
+            BN(duration)
+              .div(60)
+              .div(60)
+              .div(24)
+          )
         );
         let locked = BN(remRewards);
         let APY = Math.round(
           BN(
             100 *
-            tokenPerSgt *
-            ((locked * 1e18) / totalStaked) *
-            (360 / stakedSchedule)
+              tokenPerSgt *
+              ((locked * 1e18) / totalStaked) *
+              (360 / stakedSchedule)
           )
         ).toString();
         this.APY = APY;
@@ -1079,7 +1198,10 @@ export default {
       let response = await axios.get(
         "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
       );
-      return BN(response.data.result).div(1e18).toFixed(0).toString();
+      return BN(response.data.result)
+        .div(1e18)
+        .toFixed(0)
+        .toString();
     },
     async fetchTvlWithWallet() {
       if (!window.ethereum) {
@@ -1088,7 +1210,10 @@ export default {
 
       const vETH2TotalSupply = await vEth2.methods.totalSupply().call();
 
-      return BN(vETH2TotalSupply).div(1e18).toFixed(0).toString();
+      return BN(vETH2TotalSupply)
+        .div(1e18)
+        .toFixed(0)
+        .toString();
     },
     async setTvlInUsd(tvlInETH) {
       const etherPrice = await priceInUsdAsync("ethereum");
@@ -1241,9 +1366,11 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  mask-image: radial-gradient(circle,
-      rgba(0, 0, 0, 1) 20%,
-      rgba(0, 0, 0, 0.4) 60%);
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 0.4) 60%
+  );
 }
 
 .second {
@@ -1435,29 +1562,35 @@ export default {
 
 .Stat {
   display: flex;
+  height: 100%;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 0 30px 0 0;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  gap: 0.5rem;
+  border-radius: 2rem;
+  text-align: center;
+  flex-basis: 1/3;
 }
 
 .Num {
-  font-size: 97px;
-  line-height: 100px;
-  font-weight: 400;
+  font-size: 64px;
+  line-height: 1.125;
+  font-weight: 600;
+}
+.Num:after {
+  content: "";
+  @apply bg-brand-primary h-1 w-16 block mx-auto my-1;
 }
 
 .NumExp {
   font-weight: 300;
-  font-size: 17px;
-  line-height: 23px;
-  margin-bottom: 6px;
+  font-size: 21px;
+  line-height: 1.25;
 }
 
 .NumDetail {
   font-weight: 300;
   font-size: 14px;
-  line-height: 19px;
   color: rgb(143, 143, 143);
 }
 
@@ -1470,9 +1603,11 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  mask-image: radial-gradient(circle,
-      rgba(0, 0, 0, 1) 30%,
-      rgba(0, 0, 0, 0.5) 100%);
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
 }
 
 .vEth2PanelHeader {
@@ -1727,15 +1862,6 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   .StatsHeader {
     font-size: 42px;
   }
-
-  .Stat {
-    margin: 30px 0 50px 0;
-  }
-
-  .Num {
-    font-size: 92px;
-  }
-
   .InfoHeader {
     padding: 15px 15px 15px 0;
     font-size: 25px;
@@ -1787,10 +1913,6 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 @media only screen and (max-width: 375px) {
   .mainTitle {
     font-size: 36px;
-  }
-
-  .Num {
-    font-size: 75px;
   }
 }
 </style>
