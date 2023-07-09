@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="btn-connect"
+    class="text-lg btn-connect"
     :class="{ 'btn-animated': !userAddress }"
     @click="handleConnect"
   >
