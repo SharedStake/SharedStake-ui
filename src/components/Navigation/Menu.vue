@@ -6,6 +6,9 @@
         <DropdownArrow />
       </DropdownItemRouter>
       <DropdownGroup>
+        <DropdownItemRouter to="/stake">
+          Stake
+        </DropdownItemRouter>
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
@@ -19,10 +22,7 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemAnchor
-        href="https://chimera-1.gitbook.io/sharedstake-v2/"
-        class="px-6"
-      >
+      <DropdownItemAnchor href="https://chimera-1.gitbook.io/sharedstake-v2/" class="px-6">
         Learn
         <DropdownArrow />
       </DropdownItemAnchor>
@@ -33,9 +33,7 @@
         <DropdownItemAnchor href="https://snapshot.org/#/sharedstake.eth">
           DAO
         </DropdownItemAnchor>
-        <DropdownItemAnchor
-          href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
-        >
+        <DropdownItemAnchor href="https://duneanalytics.com/sushi2000/shared-stake-metrics">
           Dune Dashboard
         </DropdownItemAnchor>
         <DropdownItemAnchor href="https://sharedtools.org">
@@ -48,22 +46,17 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemAnchor
-        class="px-6"
-        href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
-      >
+      <DropdownItemAnchor class="px-6"
+        href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD">
         Buy $SGT <span class="font-normal">{{ formattedSgtPrice }}</span>
         <DropdownArrow />
       </DropdownItemAnchor>
       <DropdownGroup>
         <DropdownItemAnchor
-          href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
-        >
+          href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD">
           Buy on Uniswap
         </DropdownItemAnchor>
-        <DropdownItemAnchor
-          href="https://swap.cow.fi/#/1/swap/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
-        >
+        <DropdownItemAnchor href="https://swap.cow.fi/#/1/swap/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD">
           Buy on Cowswap
         </DropdownItemAnchor>
       </DropdownGroup>
