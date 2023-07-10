@@ -1,20 +1,29 @@
 <template>
   <div class="gauge" v-show="showGauge">
-    <div class="explanation mt-5">
-      <div class="title">SharedStaked vEth2</div>
-      <div class="content flex flex-col gap-1">
+   <div class="explanation  mt-5">
+      <div class="title">SharedStaked SGEth</div>
+      <div class="content flex flex-col gap-3">
         <p>
           - A total of {{ ethDeposited }}ETH has been staked to SharedStake to
           date.
         </p>
-        <p />
-        - {{ contractEtherLimit }}ETH is required (for
-        {{ numOfValidators }} validators).
-        <p />
+
+        <p>
+          - {{ contractEtherLimit }}ETH is required (for
+          {{ numOfValidators }} validators).
+        </p>
+
         <p>
           - When ETH is deposited into the SharedDeposit contract, a
-          Validator-Share-ETH2 token (vETH2) is minted.
+          Validator-Share-ETH2 / SharedStake Governed Ether token (SGEth) is
+          minted.
         </p>
+
+        <p>
+          - SGEth is then optionally wrapped into wsgETH to earn interest from
+          validators.
+        </p>
+
         <p>
           - Redeemable for the deposited ETH.
         </p>
@@ -134,9 +143,11 @@ export default {
       // We can calculate the amount of ETH depositted to contract
       // as sharesMinted * validatorPrice / validatorStake.
       const stakePerValidator = 32;
-      const ethDepositedToContract =
+      let ethDepositedToContract =
         (currentValidatorShares * validatorPrice) / stakePerValidator;
-
+      
+      const v1 = stakePerValidator * 500;
+      ethDepositedToContract += v1;
       // To 2 decimal accuracy and cast it to number
       return +ethDepositedToContract.toFixed(2);
     },
