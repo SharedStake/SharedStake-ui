@@ -17,7 +17,14 @@
         <!-- Desktop menu -->
         <template v-if="windowWidth >= 960">
           <Menu :sgtPrice="sgtPrice" />
-          <ConnectButton />
+        <span class="link" v-bind:style="{ opacity: 1 }">
+          <div v-if="userAddress" class="ConnectButton" @click="Connect">
+            {{ userAddress.slice(0, 12) }}
+          </div>
+          <div v-else class="ConnectButton animatedButton" @click="Connect">
+            Connect Wallet
+          </div>
+        </span>
         </template>
 
         <!-- Burger menu -->
@@ -247,10 +254,10 @@ import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
-import ConnectButton from "./components/Common/ConnectButton.vue";
+// import ConnectButton from "./components/Common/ConnectButton.vue";
 
 export default {
-  components: { ImageVue, Menu, ConnectButton },
+  components: { ImageVue, Menu },
   data() {
     return {
       showNavbar: true,
