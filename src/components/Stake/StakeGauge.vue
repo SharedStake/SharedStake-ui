@@ -1,23 +1,34 @@
 <template>
   <div class="gauge" v-show="showGauge">
-    <div class="explanation">
+    <div class="explanation mt-5">
       <div class="title">SharedStaked vEth2</div>
-      <div class="content">
-        Total of {{ ethDeposited }}ETH has been staked to SharedStake so far.
-        <br />
-        {{ contractEtherLimit }}ETH is required (for
-        {{ numOfValidators }} validators).<br />
-        When ETH is deposited into the SharedDeposit contract, a
-        Validator-Share-ETH2 token (vETH2) is minted. Redeemable for the
-        deposited ETH.
+      <div class="content flex flex-col gap-1">
+        <p>
+          - A total of {{ ethDeposited }}ETH has been staked to SharedStake to
+          date.
+        </p>
+        <p />
+        - {{ contractEtherLimit }}ETH is required (for
+        {{ numOfValidators }} validators).
+        <p />
+        <p>
+          - When ETH is deposited into the SharedDeposit contract, a
+          Validator-Share-ETH2 token (vETH2) is minted.
+        </p>
+        <p>
+          - Redeemable for the deposited ETH.
+        </p>
       </div>
     </div>
     <vep
       :loading="loading"
       :progress="contractDepositRatio"
       :legend-value="ethDeposited"
-      :legendFormatter="({currentValue}) => new Intl.NumberFormat('en-US').format(currentValue)"
-      :size="180"
+      :legendFormatter="
+        ({ currentValue }) =>
+          new Intl.NumberFormat('en-US').format(currentValue)
+      "
+      :size="220"
       :thickness="5"
       :empty-thickness="3"
       color="rgb(37, 167, 219)"
@@ -25,31 +36,34 @@
       empty-color="#181818"
       empty-color-fill="#181818"
       lineMode="in"
-      animation="loop 700 1000"
-      fontSize="1.5rem"
+      animation="700 1000"
+      fontSize="1.4rem"
       font-color="white"
     >
-      <span slot="legend-value">
-        of {{ maxEthDepositOnContract.toLocaleString('en-US') }}
-        <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
-      </span>
-
-      <span slot="legend-caption">
-        <span class="blue">ETH staked</span>
-      </span>
+      <template v-slot:legend-value>
+        <span slot="legend-value" class="">
+          / {{ maxEthDepositOnContract.toLocaleString("en-US") }}
+        </span>
+      </template>
+      <template v-slot:legend-caption>
+        <div class="flex flex-row justify-center">
+          <img :src="EthLogo" alt="Ethereum logo" class=" h-7 pt-1" />
+          <p class="blue" slot="legend-caption">ETH Staked</p>
+        </div>
+      </template>
     </vep>
   </div>
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import EthLogo from "@/../public/images/tokens/eth-logo.png";
 import { validator } from "@/contracts";
 import BN from "bignumber.js";
+// import image from "/images/tokens/eth-logo.png"
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
-  components: { ImageVue },
   data: () => ({
     loading: true,
     ethDeposited: 0,
@@ -57,6 +71,7 @@ export default {
     contractEtherLimit: 0,
     numOfValidators: 0,
     showGauge: true,
+    EthLogo,
   }),
   computed: {
     contractDepositRatio() {
@@ -83,11 +98,15 @@ export default {
       let validatorPrice = await validator.methods.costPerValidator().call();
       this.numOfValidators = await validator.methods.numValidators().call();
 
-      maxValidatorShares = BN(maxValidatorShares).dividedBy(1e18).toFixed(2);
+      maxValidatorShares = BN(maxValidatorShares)
+        .dividedBy(1e18)
+        .toFixed(2);
       currentValidatorShares = BN(currentValidatorShares)
         .dividedBy(1e18)
         .toFixed(2);
-      validatorPrice = BN(validatorPrice).dividedBy(1e18).toFixed(2);
+      validatorPrice = BN(validatorPrice)
+        .dividedBy(1e18)
+        .toFixed(2);
 
       this.ethDeposited = this.calculateEthDepositted(
         currentValidatorShares,
@@ -120,11 +139,10 @@ export default {
 
       // To 2 decimal accuracy and cast it to number
       return +ethDepositedToContract.toFixed(2);
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .gauge {
