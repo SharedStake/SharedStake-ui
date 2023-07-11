@@ -24,6 +24,20 @@
 
         <QuestionAnswer>
           <template #question>
+            How much is vETH2 worth? (Redemption rate)
+          </template>
+          <template #answer>
+            The rate is 1.1 
+            i.e. 1 vETH2 = 1.1 ETH.
+            <p v-if="userBal > 0">
+            OR
+            {{ userBal.div(10 ** 18).decimalPlaces(6).toString() }} vETH2 = {{ userBal.div(1/1.1).div(10 ** 18).decimalPlaces(6).toString() }} ETH/sgETH
+            </p>
+          </template>
+        </QuestionAnswer>
+
+        <QuestionAnswer>
+          <template #question>
             How much vETH2 is staked in this contract?
           </template>
           <template #answer>
@@ -64,6 +78,6 @@ import QuestionAnswer from "@/components/Withdraw/QuestionAnswer.vue";
 export default {
   name: 'WithdrawalsFAQ',
   components: {QuestionAnswer},
-  props: ['ethAvailableForWithdrawal', 'veth2Bal'],
+  props: ['ethAvailableForWithdrawal', 'veth2Bal', 'userBal'],
 }
 </script>

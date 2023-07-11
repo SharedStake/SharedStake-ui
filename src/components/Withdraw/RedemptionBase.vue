@@ -121,7 +121,7 @@
         </div>
       </div>
 
-      <WithdrawalsFAQ :ethAvailableForWithdrawal="ethAvailableForWithdrawal" :veth2Bal="contractVeth2Bal" />
+      <WithdrawalsFAQ :ethAvailableForWithdrawal="ethAvailableForWithdrawal" :veth2Bal="contractVeth2Bal" :userBal="userVEth2Balance"/>
     </section>
   </div>
 </template>
@@ -169,7 +169,7 @@ export default {
 
   data() {
     return {
-      amount: 0,
+      amount: null, // start off as null to render placeholder in input field as a user balance hint
       userVEth2Balance: BN(0),
       userApprovedVEth2: BN(0),
       userDepositedVEth2: BN(0),
