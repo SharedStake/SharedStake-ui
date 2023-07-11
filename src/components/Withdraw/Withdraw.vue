@@ -5,7 +5,7 @@
     :descr="descr"
     :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
     :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
-    outputTokenName="ETH"
+    :outputTokenName="outputTokenName"
   />
 </template>
 
@@ -24,6 +24,7 @@ export default {
       title: "Withdraw",
       descr: "Goerli testnet withdrawals - Redeem vETH2 for ETH",
       ethAvailableForWithdrawal: BN(0),
+      outputTokenName: "ETH"
     };
   },
   computed: {

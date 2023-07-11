@@ -20,7 +20,7 @@
         <div class="pb-3 mb-6 border-b border-gray-700" v-if="userWalletIsConnected">
           <aside class="flex flex-wrap justify-center gap-3 md:gap-6">
             <Step title="Approve vETH2" :completed="this.depositStage || this.withdrawStage" step="1" />
-            <Step title="Deposit vETH2" :completed="this.withdrawStage" step="2" />
+            <Step title="Deposit vETH2" :completed="this.withdrawStage || completed" step="2" />
             <Step :title="`Redeem ${outputTokenName}`" :completed="completed" step="3" />
           </aside>
         </div>
@@ -36,8 +36,13 @@
             <SharedLink to="/stake">
               Stake ETH
             </SharedLink>
-            <SharedLink to="/stake">
+            <SharedLink to="/wrap">
               Wrap sgETH
+            </SharedLink>
+            <SharedLink to="/rollover">
+              <span @click="completed = false">
+                Rollover/Withdraw more vETH2
+              </span>
             </SharedLink>
           </div>
         </div>
@@ -67,6 +72,12 @@
               max
             </button>
           </div>
+          <p class="text-sm font-semibold text-gray-300 mb-0.5">
+            Current vETH2 Balance: {{ parseBN(userVEth2Balance) }} 
+          </p>
+          <p class="text-sm font-semibold text-gray-300 mb-0.5">
+            Current {{outputTokenName}} Balance: {{ parseBN(outputTokenBalance) }} 
+          </p>
         </label>
 
         <div v-else-if="withdrawStage" class="text-gray-200">
@@ -78,6 +89,22 @@
             <span>
               <span class="text-3xl font-semibold">{{
                 userDepositedVEth2
+                  .div(10 ** 18)
+                  .decimalPlaces(6)
+                  .toString()
+              }}</span>
+              <span class="inline-block ml-1 text-sm transform bottom-3 right-1">vETH2</span>
+            </span>
+          </p>
+          <!-- Show amount user will get -->
+          <p class="text-sm font-semibold text-gray-300">
+            You will receive
+          </p>
+          <p class="relative text-center">
+            <span>
+              <span class="text-3xl font-semibold">{{
+                userDepositedVEth2
+                  .div(1/1.1)
                   .div(10 ** 18)
                   .decimalPlaces(6)
                   .toString()
@@ -128,7 +155,7 @@
 
 <script>
 import BN from "bignumber.js";
-import { vEth2 as ABI_vEth2 } from "@/contracts";
+import { vEth2 as ABI_vEth2, sgETH } from "@/contracts";
 import { mapGetters } from "vuex";
 import Step from "@/components/Withdraw/Step.vue";
 import SharedLink from "../Common/SharedLink.vue";
@@ -174,6 +201,7 @@ export default {
       userApprovedVEth2: BN(0),
       userDepositedVEth2: BN(0),
       contractVeth2Bal: BN(0),
+      outputTokenBalance: BN(0),
       loading: false,
       error: false,
       dev: false, // change to true for log
@@ -189,18 +217,12 @@ export default {
       async handler(address) {
         // log the amount of veth2 the user has deposited for withdrawal
         if (address) {
-          this.loading = true;
-          await this.getUserTokenBalance();
-          await this.getUserApprovedVEth2();
-          await this.getEthAvailableForWithdrawal();
+          await this.refreshBalances();
           if (this.dev)
             console.log(
               "ethAvailableForWithdrawal: ",
               this.ethAvailableForWithdrawal
             );
-          await this.getUserDepositedVEth2();
-          await this.getContractVeth2Queue();
-          this.loading = false;
         }
       },
     },
@@ -304,8 +326,7 @@ export default {
         argsArr: [],
         cb: async () => {
           this.completed = true; // Mark as completed in the UI - will reset on navigation.
-          await this.getUserApprovedVEth2(); // update state to trigger next step
-          await this.getUserDepositedVEth2();
+          await this.refreshBalances(); // update state to trigger next step
         }
       }
     },
@@ -343,6 +364,32 @@ export default {
         .balanceOf(this.ABI.options.address)
         .call();
       this.contractVeth2Bal = BN(bal);
+    },
+
+    async getOutputTokenBalance() {
+      let bal = await window.web3.eth.getBalance(this.userConnectedWalletAddress);
+      if (this.outputTokenName.toLowerCase() == 'sgeth') {
+        bal = await sgETH.methods
+          .balanceOf(this.userConnectedWalletAddress)
+          .call();
+      }
+      this.outputTokenBalance = BN(bal);
+    },
+
+    parseBN(n) {
+       return n.div(10 ** 18)
+                  .decimalPlaces(6)
+                  .toString()
+    },
+
+    async refreshBalances() {
+      await this.getOutputTokenBalance();
+      await this.getUserApprovedVEth2();
+      await this.getUserTokenBalance();
+
+      await this.getUserDepositedVEth2();
+      await this.getContractVeth2Queue();
+      await this.getEthAvailableForWithdrawal();
     },
 
     handleFillMaxAmount() {

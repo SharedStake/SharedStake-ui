@@ -5,7 +5,7 @@
     :descr="descr"
     :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
     :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
-    outputTokenName="sgETH"
+    :outputTokenName="outputTokenName"
   />
 </template>
 
@@ -25,6 +25,7 @@ export default {
       descr: "Goerlli testnet rollover - Redeem vETH2 for sgETH",
       getEthAvailableForWithdrawal: this.getEthAvailableForRollovers,
       ethAvailableForWithdrawal: BN(0),
+      outputTokenName: "sgETH"
     };
   },
   computed: {
