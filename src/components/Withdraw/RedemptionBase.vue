@@ -138,6 +138,7 @@
             <div class="text-center" v-else-if="stage == 'withdrawStage'">
               <p v-if="!contractHasEthAvailable" class="mb-2 text-sm font-medium text-gray-300">
                 The contract is replenishing its balance. <br />
+                It can take up to 2 weeks to exit a validator and buffer balances. <br />
                 Please check in again soon.
               </p>
               <dapp-tx-btn :disabled="!contractHasEthAvailable" :click="handleWithdrawEth">
@@ -254,6 +255,10 @@ export default {
       return this.userConnectedWalletAddress;
     },
 
+    contractCanFulfillOrder() {
+      return this.userCanRedeemEth && this.contractHasEthAvailable;
+    },
+
     userCanRedeemEth() {
       return this.userDepositedVEth2.gt(0);
     },
@@ -316,7 +321,7 @@ export default {
       return {
         abiCall: this.ABI.methods.deposit,
         argsArr: [window.web3.utils.toWei(this.amount, "ether")],
-        cb: this.getUserDepositedVEth2
+        cb: this.refreshBalances
       }
     },
 

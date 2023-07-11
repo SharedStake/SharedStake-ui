@@ -1,7 +1,7 @@
 <template>
   <span>
   <ConnectButton v-if="!userConnectedWalletAddress" />
-  <SharedButton v-else-if="!loading" @click="execTx">
+  <SharedButton v-else-if="!loading" @click="execTx" :disabled="disabled">
     <slot />
   </SharedButton>
   <p v-else-if="loading">
@@ -24,7 +24,7 @@ BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "DappTxBtn",
-  props: ["click", "cb", "chosenGas", "defaultGas"],
+  props: ["click", "cb", "chosenGas", "defaultGas", "disabled"],
   components: { SharedButton, ImageVue, ConnectButton },
   data() {
     return {
