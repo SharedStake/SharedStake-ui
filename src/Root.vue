@@ -63,6 +63,18 @@
       <router-link class="link" to="/stake" @click.native="showSidebar = false">
         Stake
       </router-link>
+      <router-link class="link" to="/wrap" @click.native="showSidebar = false">
+        Wrap
+      </router-link>
+      <router-link class="link" to="/unwrap" @click.native="showSidebar = false">
+        Unwrap
+      </router-link>
+      <router-link class="link" to="/rollover" @click.native="showSidebar = false">
+        Rollover
+      </router-link>
+      <router-link class="link" to="/withdraw" @click.native="showSidebar = false">
+        Withdraw
+      </router-link>
       <router-link class="link" to="/earn" @click.native="showSidebar = false">
         Earn
       </router-link>

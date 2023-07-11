@@ -12,11 +12,17 @@
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
-        <DropdownItemRouter to="/earn">
-          Earn
-        </DropdownItemRouter>
         <DropdownItemRouter to="/withdraw">
           Withdraw
+        </DropdownItemRouter>
+        <DropdownItemRouter to="/wrap">
+          Wrap
+        </DropdownItemRouter>
+        <DropdownItemRouter to="/unwrap">
+          Unwrap
+        </DropdownItemRouter>
+        <DropdownItemRouter to="/earn">
+          Earn
         </DropdownItemRouter>
       </DropdownGroup>
     </div>

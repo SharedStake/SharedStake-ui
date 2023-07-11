@@ -21,6 +21,8 @@ const Landing = () => import("../components/Landing/Landing.vue")
 
 const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
 const Rollover = () => import("../components/Withdraw/Rollover.vue")
+const Wrap = () => import("../components/Stake/Wrap.vue");
+const Unwrap = () => import("../components/Stake/Unwrap.vue");
 
 Vue.use(VueRouter);
 
@@ -72,6 +74,16 @@ let routes = [{
         path: "/rollover",
         name: "Rollover",
         component: Rollover,
+    },
+    {
+        path: "/wrap",
+        name: "Wrap",
+        component: Wrap,
+    },
+    {
+        path: "/unwrap",
+        name: "Unwrap",
+        component: Unwrap,
     }]
 },
     // {
