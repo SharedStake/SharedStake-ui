@@ -217,7 +217,7 @@ export default {
       return (
         this.userApprovedVEth2.gt(0) &&
         this.userApprovedVEth2.gte(
-          window.web3.utils.toWei(this.amount?.toString(), "ether")
+          window.web3.utils.toWei(this.amount?.toString() || '0', "ether")
         )
       );
     },
