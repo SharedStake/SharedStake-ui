@@ -1,25 +1,25 @@
 <template>
   <button
     type="button"
-    class="text-lg btn-connect"
+    class="text-lg text-white btn-connect"
     :class="{ 'btn-animated': !userAddress }"
     @click="handleConnect"
   >
-    <span v-if="userAddress">
+    <template v-if="userAddress">
       {{ userAddress.slice(0, 4) + "..." + userAddress.slice(-4) }}
-    </span>
-    <span v-else>
+    </template>
+    <template v-else>
       Connect Wallet
-    </span>
+    </template>
   </button>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapState(["userAddress"]),
+    ...mapGetters({ userAddress: "userAddress" }),
   },
 
   methods: {
