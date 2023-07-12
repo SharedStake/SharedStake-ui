@@ -17,14 +17,7 @@
         <!-- Desktop menu -->
         <template v-if="windowWidth >= 960">
           <Menu :sgtPrice="sgtPrice" />
-        <span class="link" v-bind:style="{ opacity: 1 }">
-          <div v-if="userAddress" class="ConnectButton" @click="Connect">
-            {{ userAddress.slice(0, 12) }}
-          </div>
-          <div v-else class="ConnectButton animatedButton" @click="Connect">
-            Connect Wallet
-          </div>
-        </span>
+          <ConnectButton />
         </template>
 
         <!-- Burger menu -->
@@ -52,27 +45,33 @@
       </div>
     </div>
     <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
-      <span class="link" v-bind:style="{ opacity: 1 }">
-        <div v-if="userAddress" class="ConnectButton" @click="Connect">
-          {{ userAddress.slice(0, 12) }}
-        </div>
-        <div v-else class="ConnectButton animatedButton" @click="Connect">
-          Connect Wallet
-        </div>
-      </span>
+      <ConnectButton />
+
       <router-link class="link" to="/stake" @click.native="showSidebar = false">
         Stake
       </router-link>
       <router-link class="link" to="/wrap" @click.native="showSidebar = false">
         Wrap
       </router-link>
-      <router-link class="link" to="/unwrap" @click.native="showSidebar = false">
+      <router-link
+        class="link"
+        to="/unwrap"
+        @click.native="showSidebar = false"
+      >
         Unwrap
       </router-link>
-      <router-link class="link" to="/rollover" @click.native="showSidebar = false">
+      <router-link
+        class="link"
+        to="/rollover"
+        @click.native="showSidebar = false"
+      >
         Rollover
       </router-link>
-      <router-link class="link" to="/withdraw" @click.native="showSidebar = false">
+      <router-link
+        class="link"
+        to="/withdraw"
+        @click.native="showSidebar = false"
+      >
         Withdraw
       </router-link>
       <router-link class="link" to="/earn" @click.native="showSidebar = false">
@@ -266,10 +265,10 @@ import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
-// import ConnectButton from "./components/Common/ConnectButton.vue";
+import ConnectButton from "./components/Common/ConnectButton.vue";
 
 export default {
-  components: { ImageVue, Menu },
+  components: { ImageVue, Menu, ConnectButton },
   data() {
     return {
       showNavbar: true,
@@ -297,6 +296,18 @@ export default {
     window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("scroll", this.onScroll);
   },
+
+  watch: {
+    showSidebar(show) {
+      if (show) {
+        // Prevent scroll on document behind sidebar.
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    },
+  },
+
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
   },
@@ -414,9 +425,12 @@ export default {
 }
 .sidebar {
   position: fixed;
-  top: 84px;
+  top: 63px;
+  bottom: 0;
+  overflow-y: auto;
   width: 100%;
   padding: 1.5rem;
+  padding-top: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -429,6 +443,7 @@ export default {
   z-index: 99;
   background: rgb(15, 16, 19);
 }
+
 @keyframes SidebarUp {
   from {
     transform: translate3d(0, -100%, 0);
@@ -455,6 +470,12 @@ export default {
   cursor: pointer;
   transition: opacity 0.35s ease 0s;
 }
+
+.sidebar .link {
+  padding: 8px 0;
+  font-size: 14px;
+}
+
 .router-link-active,
 .link:hover {
   opacity: 1;
