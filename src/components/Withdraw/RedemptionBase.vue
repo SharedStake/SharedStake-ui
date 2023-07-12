@@ -1,10 +1,17 @@
 <template>
   <div class="w-5/6 max-w-2xl pt-40 mx-auto">
-    <section class="relative gap-4 p-6 my-10 text-white bg-gray-800 shadow-md rounded-xl">
+    <section
+      class="relative gap-4 p-6 my-10 text-white bg-gray-800 shadow-md rounded-xl"
+    >
       <span
-        class="absolute p-1 px-3 text-sm font-bold text-gray-200 transform -translate-x-1/2 rounded-full opacity-95 left-1/2 -top-3 bg-brand-primary">Beta</span>
+        class="absolute p-1 px-3 text-sm font-bold text-gray-200 transform -translate-x-1/2 rounded-full opacity-95 left-1/2 -top-3 bg-brand-primary"
+        >Beta</span
+      >
 
-      <Chooser :routes="this.routes" :currentActive="this.title == 'Rollover' ? 0 : 1" />
+      <Chooser
+        :routes="this.routes"
+        :currentActive="this.title == 'Rollover' ? 0 : 1"
+      />
 
       <div class="flex flex-col items-center justify-center">
         <header class="pb-3 my-4 text-center">
@@ -17,19 +24,39 @@
         </header>
 
         <!-- Progress - show completed steps status -->
-        <div class="pb-3 mb-6 border-b border-gray-700" v-if="userWalletIsConnected">
+        <div
+          class="pb-3 mb-6 border-b border-gray-700"
+          v-if="userWalletIsConnected"
+        >
           <aside class="flex flex-wrap justify-center gap-3 md:gap-6">
-            <Step title="Approve vETH2" :completed="this.depositStage || this.withdrawStage" step="1" />
-            <Step title="Deposit vETH2" :completed="this.withdrawStage || completed" step="2" />
-            <Step :title="`Redeem ${outputTokenName}`" :completed="completed" step="3" />
+            <Step
+              title="Approve vETH2"
+              :completed="this.depositStage || this.withdrawStage"
+              step="1"
+            />
+            <Step
+              title="Deposit vETH2"
+              :completed="this.withdrawStage || completed"
+              step="2"
+            />
+            <Step
+              :title="`Redeem ${outputTokenName}`"
+              :completed="completed"
+              step="3"
+            />
           </aside>
         </div>
 
-        <div v-if="completed" class="p-4 px-6 text-center bg-gray-700 border border-green-400 rounded-lg shadow-md">
+        <div
+          v-if="completed"
+          class="p-4 px-6 text-center bg-gray-700 border border-green-400 rounded-lg shadow-md"
+        >
           <h2 class="mb-2 text-xl font-semibold">
             You've successfully converted vETH2 into {{ outputTokenName }}.
           </h2>
-          <p class="inline-block mx-auto mb-4 text-sm font-semibold text-gray-300 border-b border-gray-600">
+          <p
+            class="inline-block mx-auto mb-4 text-sm font-semibold text-gray-300 border-b border-gray-600"
+          >
             Next steps
           </p>
           <div class="flex justify-center gap-6">
@@ -50,14 +77,18 @@
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
             How much vETH2 would you like to redeem for {{ outputTokenName }}?
           </p>
-          <div class="relative flex items-center gap-1 p-2 text-xl border border-gray-200 rounded-xl">
-            <input :value="amount" class="max-w-xs ml-2 text-white bg-transparent border-none outline-none" 
+          <div
+            class="relative flex items-center gap-1 p-2 text-xl border border-gray-200 rounded-xl"
+          >
+            <input
+              :value="amount"
+              class="max-w-xs ml-2 text-white bg-transparent border-none outline-none"
               :placeholder="
                 this.userVEth2Balance
                   .div(10 ** 18)
                   .decimalPlaces(6)
                   .toString()
-              " 
+              "
               @input="
                 amount = isNaN(parseFloat($event.target.value))
                   ? 0
@@ -67,16 +98,20 @@
             <span class="text-sm">
               vETH2
             </span>
-            <button @click="handleFillMaxAmount" v-if="true"
-              class=" px-1 py-0.5 text-xs font-semibold bg-white rounded text-brand-primary">
+            <button
+              @click="handleFillMaxAmount"
+              v-if="true"
+              class=" px-1 py-0.5 text-xs font-semibold bg-white rounded text-brand-primary"
+            >
               max
             </button>
           </div>
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
-            Current vETH2 Balance: {{ parseBN(userVEth2Balance) }} 
+            Current vETH2 Balance: {{ parseBN(userVEth2Balance) }}
           </p>
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
-            Current {{outputTokenName}} Balance: {{ parseBN(outputTokenBalance) }} 
+            Current {{ outputTokenName }} Balance:
+            {{ parseBN(outputTokenBalance) }}
           </p>
         </label>
 
@@ -93,7 +128,9 @@
                   .decimalPlaces(6)
                   .toString()
               }}</span>
-              <span class="inline-block ml-1 text-sm transform bottom-3 right-1">vETH2</span>
+              <span class="inline-block ml-1 text-sm transform bottom-3 right-1"
+                >vETH2</span
+              >
             </span>
           </p>
           <!-- Show amount user will get -->
@@ -104,12 +141,15 @@
             <span>
               <span class="text-3xl font-semibold">{{
                 userDepositedVEth2
-                  .div(1/1.1)
+                  .div(1 / 1.1)
                   .div(10 ** 18)
                   .decimalPlaces(6)
                   .toString()
               }}</span>
-              <span class="inline-block ml-1 text-sm transform bottom-3 right-1">vETH2</span>
+              <span
+                class="inline-block ml-1 text-sm transform bottom-3 right-1"
+                >{{ outputTokenName }}</span
+              >
             </span>
           </p>
         </div>
@@ -123,25 +163,43 @@
           <ConnectButton v-else-if="!userConnectedWalletAddress" />
 
           <template v-else>
-            <p v-if="!userHasTokenBalance" class="mt-2 text-sm font-semibold text-gray-200">
+            <p
+              v-if="!userHasTokenBalance"
+              class="mt-2 text-sm font-semibold text-gray-200"
+            >
               You need to have vETH2 tokens in your wallet in order to withdraw
               {{ outputTokenName }}.
             </p>
 
-            <ApprovalButton v-else-if="stage == 'approvalStage'" :ABI_token="this.ABI_vEth2" :ABI_spender="ABI"
-              :amount="this.amount" :cb="getUserApprovedVEth2" />
+            <ApprovalButton
+              v-else-if="stage == 'approvalStage'"
+              :ABI_token="this.ABI_vEth2"
+              :ABI_spender="ABI"
+              :amount="this.amount"
+              :cb="getUserApprovedVEth2"
+            />
 
-            <dapp-tx-btn v-else-if="stage == 'depositStage'" :click="handleDepositVEth2">
+            <dapp-tx-btn
+              v-else-if="stage == 'depositStage'"
+              :click="handleDepositVEth2"
+            >
               <span>Request {{ this.title.toLowerCase() }}</span>
             </dapp-tx-btn>
 
             <div class="text-center" v-else-if="stage == 'withdrawStage'">
-              <p v-if="!contractHasEthAvailable" class="mb-2 text-sm font-medium text-gray-300">
+              <p
+                v-if="!contractHasEthAvailable"
+                class="mb-2 text-sm font-medium text-gray-300"
+              >
                 The contract is replenishing its balance. <br />
-                It can take up to 2 weeks to exit a validator and buffer balances. <br />
+                It can take up to 2 weeks to exit a validator and buffer
+                balances. <br />
                 Please check in again soon.
               </p>
-              <dapp-tx-btn :disabled="!contractHasEthAvailable" :click="handleWithdrawEth">
+              <dapp-tx-btn
+                :disabled="!contractHasEthAvailable"
+                :click="handleWithdrawEth"
+              >
                 <span>Withdraw your {{ outputTokenName }}</span>
               </dapp-tx-btn>
             </div>
@@ -149,7 +207,11 @@
         </div>
       </div>
 
-      <WithdrawalsFAQ :ethAvailableForWithdrawal="ethAvailableForWithdrawal" :veth2Bal="contractVeth2Bal" :userBal="userVEth2Balance"/>
+      <WithdrawalsFAQ
+        :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
+        :veth2Bal="contractVeth2Bal"
+        :userBal="userVEth2Balance"
+      />
     </section>
   </div>
 </template>
@@ -184,7 +246,7 @@ export default {
     WithdrawalsFAQ,
     ApprovalButton,
     Chooser,
-    DappTxBtn
+    DappTxBtn,
   },
   props: [
     "ABI",
@@ -208,7 +270,10 @@ export default {
       dev: false, // change to true for log
       ABI_vEth2: ABI_vEth2,
       completed: false, // Full process completed (in one session)
-      routes: [{ text: 'Rollover', cb: this.routeClickCb }, { text: 'Withdraw', cb: this.routeClickCb }]
+      routes: [
+        { text: "Rollover", cb: this.routeClickCb },
+        { text: "Withdraw", cb: this.routeClickCb },
+      ],
     };
   },
 
@@ -240,7 +305,7 @@ export default {
       return (
         this.userApprovedVEth2.gt(0) &&
         this.userApprovedVEth2.gte(
-          window.web3.utils.toWei(this.amount?.toString() || '0', "ether")
+          window.web3.utils.toWei(this.amount?.toString() || "0", "ether")
         )
       );
     },
@@ -274,10 +339,10 @@ export default {
       return (
         this.amount &&
         this.amount <
-        this.userVEth2Balance
-          .div(10 ** 18)
-          .decimalPlaces(6)
-          .toString()
+          this.userVEth2Balance
+            .div(10 ** 18)
+            .decimalPlaces(6)
+            .toString()
       );
     },
     approvalStage() {
@@ -321,8 +386,8 @@ export default {
       return {
         abiCall: this.ABI.methods.deposit,
         argsArr: [window.web3.utils.toWei(this.amount, "ether")],
-        cb: this.refreshBalances
-      }
+        cb: this.refreshBalances,
+      };
     },
 
     handleWithdrawEth() {
@@ -332,8 +397,8 @@ export default {
         cb: async () => {
           this.completed = true; // Mark as completed in the UI - will reset on navigation.
           await this.refreshBalances(); // update state to trigger next step
-        }
-      }
+        },
+      };
     },
 
     async getUserApprovedVEth2() {
@@ -372,8 +437,10 @@ export default {
     },
 
     async getOutputTokenBalance() {
-      let bal = await window.web3.eth.getBalance(this.userConnectedWalletAddress);
-      if (this.outputTokenName.toLowerCase() == 'sgeth') {
+      let bal = await window.web3.eth.getBalance(
+        this.userConnectedWalletAddress
+      );
+      if (this.outputTokenName.toLowerCase() == "sgeth") {
         bal = await sgETH.methods
           .balanceOf(this.userConnectedWalletAddress)
           .call();
@@ -382,9 +449,10 @@ export default {
     },
 
     parseBN(n) {
-       return n.div(10 ** 18)
-                  .decimalPlaces(6)
-                  .toString()
+      return n
+        .div(10 ** 18)
+        .decimalPlaces(6)
+        .toString();
     },
 
     async refreshBalances() {
