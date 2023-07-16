@@ -229,6 +229,7 @@ import DappTxBtn from "../Common/DappTxBtn.vue";
 
 import WithdrawalsFAQ from "./WithdrawalsFAQ.vue";
 import ImageVue from "../Handlers/ImageVue.vue";
+import { toWei } from "../../utils/common";
 
 // Max unit is the maximum value that can be represented in Solidity
 // const MAX_UNIT = 2 ** 256 - 1;
@@ -304,9 +305,7 @@ export default {
     userHasApprovedToken() {
       return (
         this.userApprovedVEth2.gt(0) &&
-        this.userApprovedVEth2.gte(
-          window.web3.utils.toWei(this.amount?.toString() || "0", "ether")
-        )
+        this.userApprovedVEth2.gte(toWei(this.amount?.toString() || "0"))
       );
     },
 
@@ -385,7 +384,7 @@ export default {
     handleDepositVEth2() {
       return {
         abiCall: this.ABI.methods.deposit,
-        argsArr: [window.web3.utils.toWei(this.amount, "ether")],
+        argsArr: [toWei(this.amount)],
         cb: this.refreshBalances,
       };
     },
@@ -437,13 +436,16 @@ export default {
     },
 
     async getOutputTokenBalance() {
-      let bal = await window.web3.eth.getBalance(
-        this.userConnectedWalletAddress
-      );
+      let bal = 0;
       if (this.outputTokenName.toLowerCase() == "sgeth") {
         bal = await sgETH.methods
           .balanceOf(this.userConnectedWalletAddress)
           .call();
+      } else {
+        bal = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [this.userConnectedWalletAddress, "latest"],
+        });
       }
       this.outputTokenBalance = BN(bal);
     },

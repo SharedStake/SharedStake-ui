@@ -1,8 +1,13 @@
 <template>
   <div class="flex_column stake">
     <div class="staker">
-
-      <Chooser :routes="[{ text: 'Stake', cb: chooseCb}, { text: 'Unstake', cb: chooseCb }]" :currentActive="0"/>
+      <Chooser
+        :routes="[
+          { text: 'Stake', cb: chooseCb },
+          { text: 'Unstake', cb: chooseCb },
+        ]"
+        :currentActive="0"
+      />
 
       <div class="stakePage">
         <div class="sPElement input">
@@ -23,7 +28,9 @@
                 value=""
                 v-model="Damount"
               />
-              <div class="ant-col">{{ isDeposit ? " ETH" : (get_wsgETH ? 'wsgETH' : "sgETH") }}</div>
+              <div class="ant-col">
+                {{ isDeposit ? " ETH" : get_wsgETH ? "wsgETH" : "sgETH" }}
+              </div>
             </div>
             <div class="balance" id="balance" @click="onMAX">
               wallet: {{ balance }}
@@ -49,13 +56,17 @@
                 spellcheck="false"
                 :value="
                   isDeposit
-                    ? get_wsgETH ? ethTowsgETH : (Damount / (32)) * 32
-                    : get_wsgETH ? willGet : (Damount / 32) * (32 + adminFee)
+                    ? get_wsgETH
+                      ? ethTowsgETH
+                      : (Damount / 32) * 32
+                    : get_wsgETH
+                    ? willGet
+                    : (Damount / 32) * (32 + adminFee)
                 "
                 readonly
               />
               <div class="ant-col">
-                {{ isDeposit ? (get_wsgETH ? 'wsgETH' : "sgETH") : "ETH"}}
+                {{ isDeposit ? (get_wsgETH ? "wsgETH" : "sgETH") : "ETH" }}
               </div>
             </div>
             <div class="balance" id="balance" @click="onMAX">
@@ -67,46 +78,58 @@
 
         <div id="gas">
           <span id="gas">Gas</span>
-          <Chooser 
-            :routes="[{ 
-              text: gas.low.toFixed(0), 
-              cb: updateGasCb, 
-              }, {
-              text: gas.medium.toFixed(0), 
-              cb: updateGasCb,
-              }, {
-              text: gas.high.toFixed(0), 
-              cb: updateGasCb,
-            }]" 
+          <Chooser
+            :routes="[
+              {
+                text: gas.low.toFixed(0),
+                cb: updateGasCb,
+              },
+              {
+                text: gas.medium.toFixed(0),
+                cb: updateGasCb,
+              },
+              {
+                text: gas.high.toFixed(0),
+                cb: updateGasCb,
+              },
+            ]"
             :currentActive="0"
           />
-      </div>
-      <div class="navbar s-toggle">
-        <span id="gas">
+        </div>
+        <div class="navbar s-toggle">
+          <span id="gas">
             <input
               id="get-wsgETH"
               type="checkbox"
               name="get-wsgETH"
               v-model="get_wsgETH"
             />
-            <label for="get-wsgETH">{{ isDeposit ? 'Get' : 'Use' }} Wrapped SgETH (interest bearing)</label>
-        </span>
-      </div>
+            <label for="get-wsgETH"
+              >{{ isDeposit ? "Get" : "Use" }} Wrapped SgETH (interest
+              bearing)</label
+            >
+          </span>
+        </div>
 
-        <ApprovalButton 
-          v-if="!isDeposit && get_wsgETH && this.enoughFundsInExitPool && !this.enoughApproved"
+        <ApprovalButton
+          v-if="
+            !isDeposit &&
+              get_wsgETH &&
+              this.enoughFundsInExitPool &&
+              !this.enoughApproved
+          "
           :ABI_token="wsgETH"
           :ABI_spender="validator"
           :amount="this.Damount"
           :cb="this.getUserApprovedwsgEth"
           class="StakeButton"
         />
-        <dapp-tx-btn 
+        <dapp-tx-btn
           v-else
           class="StakeButton"
           :class="{
-              switch_active: buttonText == 'Unstake',
-            }"
+            switch_active: buttonText == 'Unstake',
+          }"
           :click="genSubmit"
         >
           <span>
@@ -114,7 +137,6 @@
           </span>
         </dapp-tx-btn>
 
-        
         <!-- <div class="notification" v-if="isDeposit">
           <a
             v-if="!enoughFundsInExitPool"
@@ -148,7 +170,6 @@
           >
         </div> -->
       </div>
-
     </div>
     <StakeGauge class="gauge" />
   </div>
@@ -167,6 +188,7 @@ import StakeGauge from "./StakeGauge";
 import ApprovalButton from "../Common/ApproveButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
+import { toChecksumAddress } from "../../utils/common";
 
 // import { vEth2Price } from "@/utils/veth2.js";
 // import Swal from "sweetalert2";
@@ -177,7 +199,7 @@ export default {
     BNamount: BN(0),
     Damount: "",
     isDeposit: true,
-    get_wsgETH: true,
+    get_wsgETH: false,
     EthBal: BN(0),
     vEth2Bal: BN(0),
     userApprovedVEth2: BN(0),
@@ -199,9 +221,9 @@ export default {
     validator: validator,
     wsgETH: wsgETH,
     userWSGETHBal: BN(0),
-    wsgETHRedemptionPrice: BN(0)
+    wsgETHRedemptionPrice: BN(0),
   }),
-  mounted: async function () {
+  mounted: async function() {
     // this.gas = await getCurrentGasPrices();
     // this.chosenGas = this.gas.medium;
     this.loading = false;
@@ -219,29 +241,33 @@ export default {
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
     enoughFundsInExitPool() {
-      return (
-        this.BNamount.lte(this.contractBal)
-      );
+      return this.BNamount.lte(this.contractBal);
     },
     enoughApproved() {
-      return this.userApprovedwsgETH.gte(this.BNamount)
+      return this.userApprovedwsgETH.gte(this.BNamount);
     },
     willGet() {
       if (this.BNamount.eq(0)) return 0;
-      let c =  this.BNamount.multipliedBy(this.wsgETHRedemptionPrice.dividedBy(1e18)).dividedBy(1e18).toFixed(6);
+      let c = this.BNamount.multipliedBy(
+        this.wsgETHRedemptionPrice.dividedBy(1e18)
+      )
+        .dividedBy(1e18)
+        .toFixed(6);
       return c;
     },
     ethTowsgETH() {
       if (this.BNamount.eq(0)) return 0;
-      let c =  this.BNamount.multipliedBy(1e18).dividedBy(this.wsgETHRedemptionPrice).dividedBy(1e18).toFixed(6);
+      let c = this.BNamount.multipliedBy(1e18)
+        .dividedBy(this.wsgETHRedemptionPrice)
+        .dividedBy(1e18)
+        .toFixed(6);
       return c;
-    }
-
+    },
   },
   methods: {
     async chooseCb(index) {
       this.isDeposit = index > 0 ? false : true;
-      await this.mounted()
+      await this.mounted();
     },
     updateGasCb(index, routes) {
       this.updateGas(parseInt(routes[index].text));
@@ -287,21 +313,24 @@ export default {
       this.isDeposit = !this.isDeposit;
     },
     genSubmit() {
-      if (!(this.buttonText == "Stake" || this.buttonText == "Unstake")) return {};
+      if (!(this.buttonText == "Stake" || this.buttonText == "Unstake"))
+        return {};
 
       let fn = validator.methods,
         senderObj = {
-          gasPrice: BN(this.chosenGas).multipliedBy(1000000000).toString()
+          gasPrice: BN(this.chosenGas)
+            .multipliedBy(1000000000)
+            .toString(),
         },
         args = [];
       if (!this.isDeposit) {
         if (this.get_wsgETH) {
-            fn = fn.unstakeAndWithdraw;
-            args = [this.BNamount.toString(), this.userAddress];
-          } else {
-            fn = fn.withdraw;
-            args = [this.BNamount.toString()];
-          }
+          fn = fn.unstakeAndWithdraw;
+          args = [this.BNamount.toString(), this.userAddress];
+        } else {
+          fn = fn.withdraw;
+          args = [this.BNamount.toString()];
+        }
       } else {
         senderObj.value = this.BNamount.toString();
         senderObj.gas = 200000;
@@ -318,35 +347,47 @@ export default {
         cb: async () => {
           this.loading = false;
           await this.mounted();
-        }
-      }
+        },
+      };
     },
 
     async mounted() {
       //balances
       try {
         let walletAddress = this.userAddress;
-        let amount = await window.web3.eth.getBalance(walletAddress);
+        let amount = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [walletAddress, "latest"],
+        });
+
         this.EthBal = BN(amount);
         let veth2 = await sgETH.methods.balanceOf(walletAddress).call();
         let wsgeth = await this.getUserWsgETHBalance();
         this.vEth2Bal = BN(veth2);
-        let _parse = (n) => BN(n).dividedBy(1e18).toFixed(6);
+        let _parse = (n) =>
+          BN(n)
+            .dividedBy(1e18)
+            .toFixed(6);
 
         if (this.isDeposit) {
           this.balance = _parse(amount);
           this.otherBalance = this.get_wsgETH ? _parse(wsgeth) : _parse(veth2);
         } else {
           this.balance = this.get_wsgETH ? _parse(wsgeth) : _parse(veth2);
-          this.otherBalance = BN(amount).dividedBy(1e18).toFixed(6);
+          this.otherBalance = BN(amount)
+            .dividedBy(1e18)
+            .toFixed(6);
         }
         let remaining = await validator.methods.remainingSpaceInEpoch().call();
         this.remaining = BN(remaining);
         let remainingByFee = await validator.methods.adminFeeTotal().call();
         this.remainingByFee = BN(remainingByFee).multipliedBy(320);
-        let contractBal = await window.web3.eth.getBalance(
-          window.web3.utils.toChecksumAddress(validator._address)
-        );
+
+        let contractBal = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [toChecksumAddress(validator._address), "latest"],
+        });
+
         this.contractBal = BN(contractBal);
         await this.getUserApprovedwsgEth();
         await this.getWsgETHRedemption();
@@ -388,7 +429,9 @@ export default {
         ? this.EthBal.minus(BN(this.chosenGas * 200000 * 1000000000)).gte(
             this.BNamount
           )
-        : this.get_wsgETH ? BN(this.userWSGETHBal).gte(this.BNamount) : this.vEth2Bal.gte(this.BNamount);
+        : this.get_wsgETH
+        ? BN(this.userWSGETHBal).gte(this.BNamount)
+        : this.vEth2Bal.gte(this.BNamount);
       if (!this.validInput) {
         this.buttonText = "Insufficient balance";
         return;
@@ -403,13 +446,9 @@ export default {
       }
     },
     async getUserWsgETHBalance() {
-      let bal = await wsgETH.methods
-        .balanceOf(
-          this.userAddress
-        )
-        .call();
-        this.userWSGETHBal = bal;
-        return bal;
+      let bal = await wsgETH.methods.balanceOf(this.userAddress).call();
+      this.userWSGETHBal = bal;
+      return bal;
     },
     async getWsgETHRedemption() {
       let vp = await wsgETH.methods.pricePerShare().call();
@@ -417,16 +456,13 @@ export default {
     },
     async getUserApprovedwsgEth() {
       let userApproved = await wsgETH.methods
-        .allowance(
-          this.userAddress,
-          validator.options.address
-        )
+        .allowance(this.userAddress, validator.options.address)
         .call();
       this.userApprovedwsgETH = BN(userApproved);
     },
   },
   watch: {
-    Damount: function (newValue, oldVal) {
+    Damount: function(newValue, oldVal) {
       if (newValue.length > 40) {
         this.Damount = oldVal;
         this.amountCheck();
@@ -463,7 +499,7 @@ export default {
     get_wsgETH: async function() {
       await this.mounted();
     },
-    isDeposit: function (val) {
+    isDeposit: function(val) {
       let balance = val ? this.EthBal : this.vEth2Bal;
       this.balance = balance.dividedBy(1e18).toFixed(6);
       let otherBalance = val ? this.vEth2Bal : this.EthBal;
@@ -471,7 +507,7 @@ export default {
       this.Damount = "";
       this.buttonText = "Enter an amount";
     },
-    validInput: function (val) {
+    validInput: function(val) {
       if (!val) {
         if (this.Damount == 0) {
           this.buttonText = "Enter an amount";
