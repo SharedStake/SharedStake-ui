@@ -527,6 +527,8 @@ export default {
     // MailingListSubscribeForm,
     Partners,
   },
+
+  
   props: ["scrolled", "windowWidth"],
   data() {
     return {
@@ -1050,6 +1052,12 @@ export default {
     if (!this.isMobile()) {
       this.setupApy();
       this.getValidatorInfo();
+    }
+    // add the referral address check
+    const referralAddress = this.$route.params.address;
+    if (referralAddress) {
+      // Saving in the local storage
+      localStorage.setItem('referralAddress', referralAddress);
     }
   },
   methods: {
