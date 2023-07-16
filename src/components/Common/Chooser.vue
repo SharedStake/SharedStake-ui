@@ -1,8 +1,13 @@
 <template>
   <div class="chooser">
     <div class="navbar">
-      <button v-for="(route, index) in this.routes" :key="route.id" class="switch"
-        :class="{ switch_active: activeRoute == index }" @click="onClick(index, route.cb)">
+      <button
+        v-for="(route, index) in this.routes"
+        :key="route.id"
+        class="switch"
+        :class="{ switch_active: activeRoute == index }"
+        @click="onClick(index, route.cb)"
+      >
         <span>{{ route.text }}</span>
       </button>
     </div>
@@ -11,14 +16,15 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { toWei } from "../../utils/common";
 export default {
   name: "Chooser",
   props: ["routes", "currentActive"],
   components: {},
   data() {
     return {
-      activeRoute: parseInt(this.currentActive)
-    }
+      activeRoute: parseInt(this.currentActive),
+    };
   },
 
   computed: {
@@ -29,7 +35,7 @@ export default {
     },
 
     ethAmt() {
-      return window.web3.utils.toWei(this.amount?.toString(), "ether");
+      return toWei(this.amount);
     },
   },
   methods: {
@@ -40,9 +46,9 @@ export default {
     async asyncOnClick(index, cb) {
       this.activeRoute = index;
       return await cb(index, this.routes);
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

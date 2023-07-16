@@ -24,7 +24,7 @@ export default {
       title: "Withdraw",
       descr: "Goerli testnet withdrawals - Redeem vETH2 for ETH",
       ethAvailableForWithdrawal: BN(0),
-      outputTokenName: "ETH"
+      outputTokenName: "ETH",
     };
   },
   computed: {
@@ -32,9 +32,10 @@ export default {
   },
   methods: {
     async getEthAvailableForWithdrawal() {
-      const amt = await window.web3.eth.getBalance(
-        ABI_withdrawals.options.address
-      );
+      const amt = await window.ethereum.request({
+        method: "eth_getBalance",
+        params: [ABI_withdrawals.options.address, "latest"],
+      });
 
       this.ethAvailableForWithdrawal = BN(amt);
     },

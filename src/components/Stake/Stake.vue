@@ -188,6 +188,7 @@ import StakeGauge from "./StakeGauge";
 import ApprovalButton from "../Common/ApproveButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
+import { toChecksumAddress } from "../../utils/common";
 
 // import { vEth2Price } from "@/utils/veth2.js";
 // import Swal from "sweetalert2";
@@ -354,7 +355,11 @@ export default {
       //balances
       try {
         let walletAddress = this.userAddress;
-        let amount = await window.web3.eth.getBalance(walletAddress);
+        let amount = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [walletAddress, "latest"],
+        });
+
         this.EthBal = BN(amount);
         let veth2 = await sgETH.methods.balanceOf(walletAddress).call();
         let wsgeth = await this.getUserWsgETHBalance();
@@ -377,9 +382,12 @@ export default {
         this.remaining = BN(remaining);
         let remainingByFee = await validator.methods.adminFeeTotal().call();
         this.remainingByFee = BN(remainingByFee).multipliedBy(320);
-        let contractBal = await window.web3.eth.getBalance(
-          window.web3.utils.toChecksumAddress(validator._address)
-        );
+
+        let contractBal = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [toChecksumAddress(validator._address), "latest"],
+        });
+
         this.contractBal = BN(contractBal);
         await this.getUserApprovedwsgEth();
         await this.getWsgETHRedemption();
