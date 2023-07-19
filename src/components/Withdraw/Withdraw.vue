@@ -22,7 +22,7 @@ export default {
     return {
       ABI: ABI_withdrawals,
       title: "Withdraw",
-      descr: "Goerli testnet withdrawals - Redeem vETH2 for ETH",
+      descr: "Withdrawals - Redeem vETH2 for ETH",
       ethAvailableForWithdrawal: BN(0),
       outputTokenName: "ETH",
     };
