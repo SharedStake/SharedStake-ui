@@ -199,7 +199,7 @@ export default {
     BNamount: BN(0),
     Damount: "",
     isDeposit: true,
-    get_wsgETH: false,
+    get_wsgETH: true, // should be true; default state is users get yield bearing staked eth and dont need to worry about staking sgETH
     EthBal: BN(0),
     vEth2Bal: BN(0),
     userApprovedVEth2: BN(0),
