@@ -1,125 +1,82 @@
 <template>
   <div class="Root">
     <div
-      :class="{
-        navbar: true,
-        'navbar--hidden': !showNavbar,
-      }"
+      :class="{ 'navbar--hidden': !showNavbar }"
+      class="fixed top-0 w-full p-3 navbar"
     >
-      <router-link to="/">
-        <div class="flex_row LogoContainer">
-          <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
-          <div class="main">SharedStake</div>
-        </div>
-      </router-link>
-      <div class="links" v-show="windowWidth >= 1100">
-        <router-link class="link" to="/stake"> Stake </router-link>
-        <router-link class="link" to="/earn"> Earn </router-link>
-
-      </div>
-      <div class="links" v-show="windowWidth >= 1100">
-        <span class="link">
-          <a
-            href="https://snapshot.org/#/sharedstake.eth"
-            target="_blank"
-            rel="noopener noreferrer"
-            >DAO
-          </a>
-        </span>
-        <span class="link">
-          <a
-            href="https://chimera-1.gitbook.io/sharedstake-v2/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Docs
-          </a>
-        </span>
-        <span class="link">
-          <a
-            href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Dune
-          </a>
-        </span>
-        <span class="link">
-          <a
-            href="https://sharedtools.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Get veSGT
-          </a>
-        </span>
-        <span class="link">
-          <a
-            href="https://curve.fi/factory/49"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Get vETH2 on Curve
-          </a>
-        </span>
-        <span class="link">
-          <a
-            href="https://swap.cow.fi/#/1/swap/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Buy SGT ${{ sgtPrice }}
-          </a>
-        </span>
-        <span class="link" v-bind:style="{ opacity: 1 }">
-          <div v-if="userAddress" class="ConnectButton" @click="Connect">
-            {{ userAddress.slice(0, 12) }}
-          </div>
-          <div v-else class="ConnectButton animatedButton" @click="Connect">
-            Connect Wallet
-          </div>
-        </span>
-      </div>
       <div
-        @click="showSidebar = !showSidebar"
-        class="showers"
-        v-show="windowWidth < 1100"
+        class="flex items-center justify-between gap-6 mx-auto max-w-content"
       >
-        <svg
-          viewBox="0 0 32 2"
-          fill="white"
-          class="shower"
-          :class="{ cross1: showSidebar }"
+        <router-link to="/">
+          <div class="flex_row LogoContainer">
+            <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
+            <div class="main">SharedStake</div>
+          </div>
+        </router-link>
+
+        <!-- Desktop menu -->
+        <template v-if="windowWidth >= 960">
+          <Menu :sgtPrice="sgtPrice" />
+          <ConnectButton />
+        </template>
+
+        <!-- Burger menu -->
+        <div
+          @click="showSidebar = !showSidebar"
+          class="showers"
+          v-show="windowWidth < 960"
         >
-          <path fill="currentColor" d="M0 0h32v2H0z"></path></svg
-        ><svg
-          viewBox="0 0 32 2"
-          fill="white"
-          class="shower"
-          :class="{ cross2: showSidebar }"
-        >
-          <path fill="currentColor" d="M0 0h32v2H0z"></path>
-        </svg>
+          <svg
+            viewBox="0 0 32 2"
+            fill="white"
+            class="shower"
+            :class="{ cross1: showSidebar }"
+          >
+            <path fill="currentColor" d="M0 0h32v2H0z"></path></svg
+          ><svg
+            viewBox="0 0 32 2"
+            fill="white"
+            class="shower"
+            :class="{ cross2: showSidebar }"
+          >
+            <path fill="currentColor" d="M0 0h32v2H0z"></path>
+          </svg>
+        </div>
       </div>
     </div>
-    <div class="sidebar" v-show="windowWidth < 1100 && showSidebar">
-      <span class="link" v-bind:style="{ opacity: 1 }">
-        <div v-if="userAddress" class="ConnectButton" @click="Connect">
-          {{ userAddress.slice(0, 12) }}
-        </div>
-        <div v-else class="ConnectButton animatedButton" @click="Connect">
-          Connect Wallet
-        </div>
-      </span>
+    <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
+      <ConnectButton />
+
       <router-link class="link" to="/stake" @click.native="showSidebar = false">
         Stake
+      </router-link>
+      <router-link class="link" to="/wrap" @click.native="showSidebar = false">
+        Wrap
+      </router-link>
+      <router-link
+        class="link"
+        to="/unwrap"
+        @click.native="showSidebar = false"
+      >
+        Unwrap
+      </router-link>
+      <router-link
+        class="link"
+        to="/rollover"
+        @click.native="showSidebar = false"
+      >
+        Rollover
+      </router-link>
+      <router-link
+        class="link"
+        to="/withdraw"
+        @click.native="showSidebar = false"
+      >
+        Withdraw
       </router-link>
       <router-link class="link" to="/earn" @click.native="showSidebar = false">
         Earn
       </router-link>
-      <!-- <router-link
-        class="link"
-        to="/dashboard"
-        @click.native="showSidebar = false"
-      >
-        Dashboard
-      </router-link> -->
-
       <router-link class="link" to="#Stats" @click.native="showSidebar = false">
         <a href="#Stats">
           Stats
@@ -167,7 +124,7 @@
       </span>
       <span class="link">
         <a
-          href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078&use=V2"
+          href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
           target="_blank"
           rel="noopener noreferrer"
           >Buy SGT ${{ sgtPrice }}
@@ -193,11 +150,19 @@
           We strongly advise caution to anyone who chooses to use the current
           version.
         </p>
+        <p>
+          By using the SharedStake software you agree to not hold SharedStake or
+          it's operators liable for any losses
+        </p>
         <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
       <div class="flex_row LogoContainer">
         <div class="footerLinks">
-          <ImageVue :src="'logo-white.svg'" :size="'100px'" class="FooterLogo" />
+          <ImageVue
+            :src="'logo-white.svg'"
+            :size="'100px'"
+            class="FooterLogo"
+          />
           <div class="footerGroup">
             <div class="footerGroupName">Community</div>
             <span class="link footerLink">
@@ -271,10 +236,7 @@
               </a></span
             >
             <span class="link footerLink">
-              <router-link
-                to="/FAQ"
-                >FAQ
-            </router-link>
+              <router-link to="/FAQ">FAQ </router-link>
             </span>
             <span class="link footerLink">
               <a
@@ -285,16 +247,10 @@
               </a></span
             >
             <span class="link footerLink">
-              <router-link
-                to="/privacy"
-                >Privacy Policy
-            </router-link>
+              <router-link to="/privacy">Privacy Policy </router-link>
             </span>
             <span class="link footerLink">
-              <router-link
-                to="/terms"
-                >Terms of Service
-            </router-link>
+              <router-link to="/terms">Terms of Service </router-link>
             </span>
           </div>
         </div>
@@ -308,9 +264,11 @@
 import ImageVue from "./components/Handlers/ImageVue";
 import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
+import Menu from "./components/Navigation/Menu.vue";
+import ConnectButton from "./components/Common/ConnectButton.vue";
 
 export default {
-  components: { ImageVue },
+  components: { ImageVue, Menu, ConnectButton },
   data() {
     return {
       showNavbar: true,
@@ -338,6 +296,18 @@ export default {
     window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("scroll", this.onScroll);
   },
+
+  watch: {
+    showSidebar(show) {
+      if (show) {
+        // Prevent scroll on document behind sidebar.
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    },
+  },
+
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
   },
@@ -382,18 +352,7 @@ export default {
   z-index: 100;
 }
 .navbar {
-  display: flex;
-  flex-direction: row;
-  -webkit-box-pack: justify;
-  justify-content: center;
-  -webkit-box-align: center;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 1.5rem;
-  width: 100%;
-  position: fixed;
-  top: -1px;
-  background: rgb(15, 16, 19);
+  background: #0f1013;
   color: rgb(255, 255, 255);
   transform: translate3d(0, 0, 0);
   transition: 0.5s all ease-out;
@@ -466,9 +425,12 @@ export default {
 }
 .sidebar {
   position: fixed;
-  top: 84px;
+  top: 63px;
+  bottom: 0;
+  overflow-y: auto;
   width: 100%;
   padding: 1.5rem;
+  padding-top: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -481,6 +443,7 @@ export default {
   z-index: 99;
   background: rgb(15, 16, 19);
 }
+
 @keyframes SidebarUp {
   from {
     transform: translate3d(0, -100%, 0);
@@ -507,6 +470,12 @@ export default {
   cursor: pointer;
   transition: opacity 0.35s ease 0s;
 }
+
+.sidebar .link {
+  padding: 8px 0;
+  font-size: 14px;
+}
+
 .router-link-active,
 .link:hover {
   opacity: 1;

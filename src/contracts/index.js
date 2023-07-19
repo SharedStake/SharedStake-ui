@@ -16,20 +16,13 @@ import sgtABI from './abis/erc20.json' //change this
 import airdrop_distributor from './abis/distributor.json' //change this
 import migratorABI from './abis/migrator.json' 
 
-let _addresses;
-let _ABIs;
-let _validator;
-let _vEth2;
-let _SGT;
-let _SGT_uniswap;
-let _SGT_vEth2_uniswap;
-let _vEth2_saddle;
-let _geyser_vEth2_saddle;
-let _geyser_vEth2;
-let _geyser_SGT;
-let _geyser_SGT_uniswap;
-let _geyser_SGT_vEth2_uniswap;
-let _airdrop;
+// https://github.com/chimera-defi/SharedDeposit/blob/main/data/abi/Withdrawals.json
+import withdrawalsABI from './abis/withdrawals.json'
+import rolloversABI from './abis/rollovers.json'
+import sgETHABI from './abis/sgETH.json'
+import wsgETHABI from './abis/wsgETH.json'
+
+let _addresses = {};
 
 let _geyser_vEth2_old;
 let _geyser_SGT_old;
@@ -37,24 +30,54 @@ let _geyser_SGT_uniswap_old;
 let _geyser_vEth2_saddle_old;
 
 // V2 changes
-let _migrator;
-let createContract = () => null;
+const chainIdGoerli = "0x5";
+const chainIdMainnet = "0x1";
+
+const CHAIN_IDS = {
+    GOERLI: chainIdGoerli,
+    MAINNET: chainIdMainnet
+};
+
+
+let _ABIs = {
+    validator: sharedStake,
+    vEth2: vEth2Token,
+    SGT: sgtABI, //change this and abi
+    geyser: geyserABI,
+    erc20,
+    erc20_uniswap,
+    airdrop_distributor,
+    geyser_new: geyserABI_new, //use this one for 
+    migrator:migratorABI,
+    withdrawals: withdrawalsABI,
+    rollovers: rolloversABI,
+    sgETH: sgETHABI,
+    wsgETH: wsgETHABI
+}
+
+let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue")
+let createContract = () => connErr();
+let createContractDefault = () => connErr();
+let isValidChain = (cid) =>  cid == CHAIN_IDS.MAINNET || cid == CHAIN_IDS.GOERLI;
+// makes sure all addresses are checksumed
+let checksumAddresses = (_addresses, web3) => {
+    for (const x in _addresses) {
+        _addresses[x] = web3.utils.toChecksumAddress(_addresses[x]);
+    }
+    return _addresses;
+}
+
 
 if (window.ethereum) {
-
     const web3 = new Web3(window.ethereum);
 
+    // @TODO: Figure out what causes FF to not connect the wallet correctly. 
     let chainId = window.ethereum.chainId;
+    let addressTemp = {};
 
-    // Hotfix for firefox. TODO: Figure out what causes FF to not connect the wallet correctly. 
-    // Ice bear :  This can stay, np.
-    chainId = "0x1";
-
-    let addressTemp;
-
-    if (chainId == "0x1") {
+    if (chainId == CHAIN_IDS.MAINNET) {
         addressTemp = {
-            validator: "0xbca3b7b87dcb15f0efa66136bc0e4684a3e5da4d",//🆗
+            validator: "0x85Bc06f4e3439d41f610a440Ba0FbE333736B310",//🆗
             // Protocol Tokens
             vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
             SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078",
@@ -82,102 +105,97 @@ if (window.ethereum) {
             SGT_sushiswap: '0x41bfba56b9ba48d0a83775d89c247180617266bc',
             veSGT: '0x21b555305e9d65c8b8ae232e60fd806edc9c5d78',
             vETH2_CRV: '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
-            masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412'
+            masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412',
+
+            // New contracts. shareddeposit v2
+            withdrawals: "0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4",
+            rollovers: "0x68a31dfD0c81A411C5adadc8A40225425777466C",
+
+            sgETH: "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
+            wsgETH: "0x31AA035313b1D2109e61Ee0E3662A86A8615fF1d"
         }
-    } else {
-        //Goerli = WHO CARES ANYMORE?
+    } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0xF7930fA4cddbf00Ea495f9A522010734580909f8",// 
+            validator: "0x3E95C4b7cd1D01d53B13DaceF38CbFF2ef651fA5",// 
             // Protocol Tokens
-            vEth2: "0x64A0ED7f89d9F6de790F7d77022017be9Dcb405A",// 
+            vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
             // Geysers
             geyser_SGT: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// 
             geyser_vEth2: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
-            // OLD Geysers
+            
+            // New withdrawals contract.
+            withdrawals: "0x36FE69187b7e74B78fbC757EDC1598320f82adf2",
+            rollovers: "0xF6e2B4a6bFd6f3446503d147762e8A8BEFEBC2B7",
+
+            sgETH: "0x571038a10C6A435A100a0188EA6cD4863c59430c",
+            wsgETH: "0x1DdFaF369A526139a315aD1E2e34E6C8cD7aF177"
         }
     }
 
-    _addresses = addressTemp;
-    // makes sure all addresses are checksumed
-    for (const x in _addresses) {
-        _addresses[x] = web3.utils.toChecksumAddress(_addresses[x])
+    if (isValidChain(chainId)) {
+        _addresses = checksumAddresses(addressTemp, web3);
+
+        // Utils
+        createContract = (abi, address) => {
+            if (
+                _addresses && _ABIs &&
+                _addresses[address] && _ABIs[abi]
+            ) {
+                return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
+            }
+            return connErr();
+        }
+        createContractDefault = (name) => createContract(name, name)
     }
 
-    _ABIs = {
-        validator: sharedStake,
-        vEth2: vEth2Token,
-        SGT: sgtABI, //change this and abi
-        geyser: geyserABI,
-        erc20,
-        erc20_uniswap,
-        airdrop_distributor,
-        geyser_new: geyserABI_new, //use this one for 
-        migrator:migratorABI,
-    }
 
     /************************************* CONTRACTS ****************************************/
 
-    // VALIDATOR
-    _validator = new web3.eth.Contract(_ABIs["validator"], _addresses["validator"]);
-
-    // Protocol Tokens
-    _vEth2 = new web3.eth.Contract(_ABIs["vEth2"], _addresses["vEth2"]);
-    _SGT = new web3.eth.Contract(_ABIs["SGT"], _addresses["SGT"]);
-
-    // OTHER Tokens HERE
-    _SGT_uniswap = new web3.eth.Contract(_ABIs["erc20_uniswap"], _addresses["SGT_uniswap"]);
-    _SGT_vEth2_uniswap = new web3.eth.Contract(_ABIs["erc20_uniswap"], _addresses["SGT_vEth2_uniswap"]);
-    _vEth2_saddle = new web3.eth.Contract(_ABIs["erc20"], _addresses["vEth2_saddle"]);
-    // // Geysers
-    _geyser_vEth2 = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2"]);
-    _geyser_SGT = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT"]);
-    _geyser_SGT_uniswap = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_uniswap"]);
-    _geyser_SGT_vEth2_uniswap = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_vEth2_uniswap"]);
-    _geyser_vEth2_saddle = new web3.eth.Contract(_ABIs["geyser_new"], _addresses["geyser_vEth2_saddle"]);
-
-
-    // OLD Geysers HERE
-    _geyser_vEth2_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2_old"]);
-    _geyser_SGT_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_old"]);
-    _geyser_SGT_uniswap_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_SGT_uniswap_old"]);
-    _geyser_vEth2_saddle_old = new web3.eth.Contract(_ABIs["geyser"], _addresses["geyser_vEth2_saddle_old"]);
-
-    //Airdrop
-    _airdrop = new web3.eth.Contract(_ABIs["airdrop_distributor"], _addresses["airdrop_distributor"]);
-
-    //Migrator
-    _migrator=new web3.eth.Contract(_ABIs["migrator"], _addresses["migrator"]);
-
-    // NEW farm
-
-    createContract = (abi, address) => {
-        return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
-    }
-    /*********************************** DELETE USELESS INFO *******************************/
 }
 
 export const addresses = _addresses
 export const ABIs = _ABIs
-export const validator = _validator
-export const vEth2 = _vEth2
-export const SGT = _SGT
-export const SGT_uniswap = _SGT_uniswap
-export const SGT_vEth2_uniswap = _SGT_vEth2_uniswap
-export const geyser_vEth2 = _geyser_vEth2
-export const vEth2_saddle = _vEth2_saddle
-export const geyser_vEth2_saddle = _geyser_vEth2_saddle
-export const geyser_SGT = _geyser_SGT
-export const geyser_SGT_uniswap = _geyser_SGT_uniswap
-export const geyser_SGT_vEth2_uniswap = _geyser_SGT_vEth2_uniswap
-export const airdrop = _airdrop;
-export const migrator = _migrator;
+
+
+export const validator = createContractDefault('validator');
+export const vEth2 = createContractDefault('vEth2');
+export const SGT = createContractDefault('SGT');
+
+    // OTHER Tokens HERE
+export const SGT_uniswap = createContract("erc20_uniswap", "SGT_uniswap");
+export const SGT_vEth2_uniswap = createContract("erc20_uniswap", "SGT_vEth2_uniswap");
+export const vEth2_saddle = createContract("erc20", "vEth2_saddle");
+    // // Geysers
+export const geyser_vEth2 = createContract("geyser", "geyser_vEth2");
+export const geyser_SGT = createContract("geyser", "geyser_SGT");
+export const geyser_SGT_uniswap = createContract("geyser", "geyser_SGT_uniswap");
+export const geyser_SGT_vEth2_uniswap = createContract("geyser", "geyser_SGT_vEth2_uniswap");
+export const geyser_vEth2_saddle = createContract("geyser_new", "geyser_vEth2_saddle");
+
+
+    // OLD Geysers HERE
+export const geyser_vEth2_old = createContract("geyser", "geyser_vEth2_old");
+export const geyser_SGT_old = createContract("geyser", "geyser_SGT_old");
+export const geyser_SGT_uniswap_old = createContract("geyser", "geyser_SGT_uniswap_old");
+export const geyser_vEth2_saddle_old = createContract("geyser", "geyser_vEth2_saddle_old");
+
+    //Airdrop
+export const airdrop = createContractDefault("airdrop_distributor");
+
+    //Migrator
+export const migrator = createContractDefault("migrator");
+
 export const masterchef = createContract('geyser_new', 'masterchef');
 export const SGT_sushiswap = createContract('erc20_uniswap', 'SGT_sushiswap');
 export const veSGT = createContract('erc20', 'veSGT');
 export const vETH2_CRV = createContract('erc20', 'vETH2_CRV');
 
+export const withdrawals = createContractDefault('withdrawals');
+export const rollovers = createContractDefault("rollovers");
+export const sgETH = createContractDefault('sgETH');
+export const wsgETH = createContractDefault("wsgETH");
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
     geyser_SGT_uniswap: _geyser_SGT_uniswap_old,

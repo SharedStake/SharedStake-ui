@@ -14,7 +14,18 @@
         </div> -->
         <!-- <migrator /> -->
         <div class="notification">
-          For new farming pools you can also use
+          Checkout
+          <a
+            href="https://bunni.pro/stake"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            bunni.pro</a
+          >
+          for new farming pools!
+        </div>
+        <div class="notification">
+          <!-- For new farming pools you can also use
           <a
             href="https://app.multifarm.fi/farms/ETH_Sharedstake"
             target="_blank"
@@ -29,7 +40,8 @@
           >
             vfat.tools/sgt</a
           >
-          and please withdraw remaining funds from the following old pools
+          and  -->
+          Please withdraw remaining funds from the following old pools
         </div>
       </div>
       <newGeyser
@@ -40,7 +52,7 @@
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
-      <div class="notification"> Old farms - please withdraw ASAP </div>
+      <div class="notification">Old farms - please withdraw ASAP</div>
       <geyser
         class="geyser geyser-old"
         v-for="pool in pools"
@@ -96,7 +108,8 @@ export default {
         active: true,
         tokenPerSgt: 1,
         oldPool: oldPools["geyser_SGT"],
-        link: "https://v2.info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
+        link:
+          "https://v2.info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
       },
       {
         name: "SGT - Eth",
@@ -109,7 +122,8 @@ export default {
         active: true,
         tokenPerSgt: 0,
         oldPool: oldPools["geyser_SGT_uniswap"],
-        link: "https://v2.info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
+        link:
+          "https://v2.info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
       },
       {
         name: "SGT - vEth2",
@@ -121,7 +135,8 @@ export default {
         external: false,
         active: true,
         tokenPerSgt: 0,
-        link: "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
+        link:
+          "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
       },
       {
         name: "vEth2",
@@ -149,7 +164,8 @@ export default {
         external: false,
         active: true,
         tokenPerSgt: 0,
-        link: "https://app.sushi.com/add/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD", //for inactive pools => change this to uniswap
+        link:
+          "https://app.sushi.com/add/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD", //for inactive pools => change this to uniswap
       },
       {
         name: "veSGT",
@@ -194,13 +210,12 @@ export default {
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
   },
-  mounted: async function () {
+  mounted: async function() {
     await this.mounted();
   },
   watch: {
     async userAddress(newVal) {
       if (newVal) await this.mounted;
-      console.log(newVal);
     },
   },
   methods: {
@@ -214,7 +229,10 @@ export default {
         const ethPerSgtFromUniswap = ethOnUniswapLP / sgtOnUniswapLP;
         //get vEth2 price from saddle pool
         let vEth2Pr = await vEth2Price();
-        vEth2Pr = vEth2Pr.dividedBy(1e18).toFixed(2).toString();
+        vEth2Pr = vEth2Pr
+          .dividedBy(1e18)
+          .toFixed(2)
+          .toString();
 
         this.pools[3].tokenPerSgt = ethPerSgtFromUniswap * vEth2Pr;
         this.newPools[0].tokenPerSgt = ethPerSgtFromUniswap; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach

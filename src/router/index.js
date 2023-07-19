@@ -19,6 +19,11 @@ const FAQ = () => import("../components/FAQ/FAQ.vue")
 const Root = () => import("../Root.vue")
 const Landing = () => import("../components/Landing/Landing.vue")
 
+const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
+const Rollover = () => import("../components/Withdraw/Rollover.vue")
+const Wrap = () => import("../components/Stake/Wrap.vue");
+const Unwrap = () => import("../components/Stake/Unwrap.vue");
+
 Vue.use(VueRouter);
 
 let routes = [{
@@ -59,8 +64,27 @@ let routes = [{
         path: "/faq",
         name: "FAQ",
         component: FAQ,
-    }
-    ]
+    },
+    {
+        path: "/withdraw",
+        name: "Withdraw",
+        component: Withdraw,
+    },
+    {
+        path: "/rollover",
+        name: "Rollover",
+        component: Rollover,
+    },
+    {
+        path: "/wrap",
+        name: "Wrap",
+        component: Wrap,
+    },
+    {
+        path: "/unwrap",
+        name: "Unwrap",
+        component: Unwrap,
+    }]
 },
     // {
     //     path: "/roadmap",
