@@ -30,66 +30,65 @@ Vue.use(VueRouter);
 let routes = [
   {
     path: "/",
-    name: "/",
     component: Root,
     children: [
       {
-        path: "/ref/:address",
+        path: "ref/:address",
         name: "Referral",
         component: Landing,
       },
       {
-        path: "/",
+        path: "",
         name: "Landing",
         component: Landing,
       },
       {
-        path: "/stake",
+        path: "stake",
         name: "Stake",
         component: Stake,
       },
       {
-        path: "/earn",
+        path: "earn",
         name: "Earn",
         component: Earn,
       },
       {
-        path: "/dashboard",
+        path: "dashboard",
         name: "Dashboard",
         component: Dashboard,
       },
       {
-        path: "/privacy",
+        path: "privacy",
         name: "Privacy Policy",
         component: PrivacyPolicy,
       },
       {
-        path: "/terms",
+        path: "terms",
         name: "Terms of Service",
         component: TermsOfService,
       },
       {
-        path: "/faq",
+        path: "faq",
         name: "FAQ",
         component: FAQ,
       },
       {
-        path: "/withdraw",
+        path: "withdraw",
         name: "Withdraw",
         component: Withdraw,
       },
       {
-        path: "/rollover",
+        path: "rollover",
         name: "Rollover",
         component: Rollover,
       },
       {
-        path: "/wrap",
+        path: "wrap",
         name: "Wrap",
         component: Wrap,
       },
       {
-        path: "/unwrap",
+        path: "unwrap",
         name: "Unwrap",
         component: Unwrap,
       },
