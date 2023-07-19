@@ -266,6 +266,7 @@ export default {
       userDepositedVEth2: BN(0),
       contractVeth2Bal: BN(0),
       outputTokenBalance: BN(0),
+      virtualPrice: BN('1.1'),
       loading: false,
       error: false,
       dev: false, // change to true for log
@@ -330,7 +331,7 @@ export default {
     contractHasEthAvailable() {
       return (
         this.ethAvailableForWithdrawal.gt(0) &&
-        this.ethAvailableForWithdrawal.gte(this.userDepositedVEth2)
+        this.ethAvailableForWithdrawal.gte(this.userDepositedVEth2.multipliedBy(this.virtualPrice))
       );
     },
 
