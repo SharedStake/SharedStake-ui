@@ -77,7 +77,7 @@ if (window.ethereum) {
 
     if (chainId == CHAIN_IDS.MAINNET) {
         addressTemp = {
-            validator: "0xbca3b7b87dcb15f0efa66136bc0e4684a3e5da4d",//🆗
+            validator: "0x85Bc06f4e3439d41f610a440Ba0FbE333736B310",//🆗
             // Protocol Tokens
             vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
             SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078",
@@ -105,11 +105,18 @@ if (window.ethereum) {
             SGT_sushiswap: '0x41bfba56b9ba48d0a83775d89c247180617266bc',
             veSGT: '0x21b555305e9d65c8b8ae232e60fd806edc9c5d78',
             vETH2_CRV: '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
-            masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412'
+            masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412',
+
+            // New contracts. shareddeposit v2
+            withdrawals: "0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4",
+            rollovers: "0x68a31dfD0c81A411C5adadc8A40225425777466C",
+
+            sgETH: "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
+            wsgETH: "0x31AA035313b1D2109e61Ee0E3662A86A8615fF1d"
         }
     } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0x1C974Ef3993152eCB53FdCF8b543b39f82122447",// 
+            validator: "0x3E95C4b7cd1D01d53B13DaceF38CbFF2ef651fA5",// 
             // Protocol Tokens
             vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
@@ -119,16 +126,15 @@ if (window.ethereum) {
             geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             
             // New withdrawals contract.
-            withdrawals: "0xd70201Ea40c12cFE6Bf69Dc9A2ca9FB14bb8DB0b",
-            rollovers: "0xaa93EF92Ef8663902BeE679B9B8bFB60c966d50C",
+            withdrawals: "0x36FE69187b7e74B78fbC757EDC1598320f82adf2",
+            rollovers: "0xF6e2B4a6bFd6f3446503d147762e8A8BEFEBC2B7",
 
-            sgETH: "0x453B459249F82ba3f369651aD485Fa11C6F082F8",
-            wsgETH: "0xbFA813C3266Af70A5Ddc15d9253655281e2bCd23"
+            sgETH: "0x571038a10C6A435A100a0188EA6cD4863c59430c",
+            wsgETH: "0x1DdFaF369A526139a315aD1E2e34E6C8cD7aF177"
         }
     }
 
     if (isValidChain(chainId)) {
-
         _addresses = checksumAddresses(addressTemp, web3);
 
         // Utils
