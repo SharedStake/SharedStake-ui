@@ -11,7 +11,7 @@ export const getCurrentGasPrices = async () => {
   // console.log('getCurrentGasPrices', response);
   // if (!response || response.status !== 200) {
   return {
-    low: 2,
+    low: 29,
     medium: 30,
     high: 200,
     tip: {
