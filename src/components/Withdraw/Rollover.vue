@@ -22,7 +22,7 @@ export default {
     return {
       ABI: ABI_Rollover,
       title: "Rollover",
-      descr: "Goerlli testnet rollover - Redeem vETH2 for sgETH",
+      descr: "Redeem vETH2 for sgETH",
       getEthAvailableForWithdrawal: this.getEthAvailableForRollovers,
       ethAvailableForWithdrawal: BN(0),
       outputTokenName: "sgETH"
