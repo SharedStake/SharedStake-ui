@@ -98,4 +98,14 @@ export async function changeWallets() {
   }
 }
 
+export async function tryToAutoConnect() {
+  if (window.ethereum) {
+    const wallet = localStorage.getItem("selectedWallet");
+    if (wallet) {
+      await onboard.walletSelect(wallet);
+      await onboard.walletCheck();
+    }
+  }
+}
+
 export default onboard;

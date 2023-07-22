@@ -6,8 +6,17 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   name: "App",
+  methods: {
+    ...mapActions(["tryToAutoConnect"]),
+  },
+  mounted() {
+    // Connect wallet.
+    this.tryToAutoConnect();
+  },
 };
 </script>
 <style lang="css">
