@@ -8,18 +8,20 @@
         {{ contractEtherLimit }}ETH is required (for
         {{ numOfValidators }} validators).<br />
         When ETH is deposited into the SharedDeposit contract, a
-        Validator-Share-ETH2 / SharedStake Governed Ether token (SGEth) is minted. 
-        SGEth is then optionally wrapped into wsgETH to earn interest from validators.  
-        Redeemable for the
-        deposited ETH.
+        Validator-Share-ETH2 / SharedStake Governed Ether token (SGEth) is
+        minted. SGEth is then optionally wrapped into wsgETH to earn interest
+        from validators. Redeemable for the deposited ETH.
       </div>
     </div>
     <vep
       :loading="loading"
       :progress="contractDepositRatio"
       :legend-value="ethDeposited"
-      :legendFormatter="({currentValue}) => new Intl.NumberFormat('en-US').format(currentValue)"
-      :size="180"
+      :legendFormatter="
+        ({ currentValue }) =>
+          new Intl.NumberFormat('en-US').format(currentValue)
+      "
+      :size="220"
       :thickness="5"
       :empty-thickness="3"
       color="rgb(37, 167, 219)"
@@ -27,18 +29,19 @@
       empty-color="#181818"
       empty-color-fill="#181818"
       lineMode="in"
-      animation="loop 700 1000"
-      fontSize="1.5rem"
+      animation="700 1000"
+      fontSize="2rem"
       font-color="white"
+ 
     >
-      <span slot="legend-value">
-        of {{ maxEthDepositOnContract.toLocaleString('en-US') }}
-        <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
-      </span>
+      <div slot="legend-value" class=" text-sm">
+        / {{ maxEthDepositOnContract.toLocaleString("en-US") }}
+      </div>
 
-      <span slot="legend-caption">
-        <span class="blue">ETH staked</span>
-      </span>
+      <div slot="legend-caption" class="flex flex-row gap-2">
+        <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
+        <div class="blue">ETH Staked</div>
+      </div>
     </vep>
   </div>
 </template>
@@ -85,11 +88,15 @@ export default {
       let validatorPrice = await validator.methods.costPerValidator().call();
       this.numOfValidators = await validator.methods.numValidators().call();
 
-      maxValidatorShares = BN(maxValidatorShares).dividedBy(1e18).toFixed(2);
+      maxValidatorShares = BN(maxValidatorShares)
+        .dividedBy(1e18)
+        .toFixed(2);
       currentValidatorShares = BN(currentValidatorShares)
         .dividedBy(1e18)
         .toFixed(2);
-      validatorPrice = BN(validatorPrice).dividedBy(1e18).toFixed(2);
+      validatorPrice = BN(validatorPrice)
+        .dividedBy(1e18)
+        .toFixed(2);
 
       this.ethDeposited = this.calculateEthDepositted(
         currentValidatorShares,
@@ -119,16 +126,15 @@ export default {
       const stakePerValidator = 32;
       let ethDepositedToContract =
         (currentValidatorShares * validatorPrice) / stakePerValidator;
-      
+
       const v1 = stakePerValidator * 500;
       ethDepositedToContract += v1;
       // To 2 decimal accuracy and cast it to number
       return +ethDepositedToContract.toFixed(2);
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .gauge {
