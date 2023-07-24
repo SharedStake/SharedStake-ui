@@ -5,28 +5,35 @@
 // import axios from "axios"
 
 export const getCurrentGasPrices = async () => {
-  // todo fix me
-  // let response = await axios.get('https://www.gasnow.org/api/v3/gas/price')
-  // let response = await axios.get('https://ethgasstation.info/api/ethgasAPI.json?');
-  // console.log('getCurrentGasPrices', response);
-  // if (!response || response.status !== 200) {
-  return {
-    low: 29,
-    medium: 30,
-    high: 200,
-    tip: {
-      low: 0.1,
-      medium: 1,
-      high: 2,
-    },
-  };
-  // }
-  // return {
-  //     low: response.data.data.slow / 1e9,
-  //     medium: response.data.data.standard / 1e9,
-  //     high: response.data.data.fast / 1e9
-  // }
+  try {
+    const gasPrice = await web3.eth.getGasPrice();
+
+    // Convert the gas price from wei to gwei, and then to a number.
+    const gasPriceInGwei = Number(web3.utils.fromWei(gasPrice, "gwei"));
+    // Min gas price check
+    const lowGasPrice = Math.max(
+      gasPriceInGwei * 0.8,
+      web3.utils.fromWei("21000", "gwei")
+    );
+
+    return {
+      low: lowGasPrice, // Here we're assuming low is 80% of the current gas price but a min of 2100wei.
+      medium: gasPriceInGwei,
+      high: gasPriceInGwei * 1.2, // Here we're assuming high is 120% of the current gas price.
+      tip: {
+        low: 1, // Adjust these priority fees as you see fit.
+        medium: 2,
+        high: 5,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Unable to retrieve current gas prices.",
+    };
+  }
 };
+
 import Notify from "bnc-notify";
 
 export const notify = Notify({
@@ -60,7 +67,10 @@ export function notifyNotification(message, type = "pending") {
 }
 
 import Web3 from "web3";
-const web3 = new Web3();
+import { RPC_URL } from "../store/init/onboard";
+const web3 = new Web3(
+  new Web3.providers.HttpProvider(RPC_URL)
+);
 export function toWei(value) {
   console.log(web3);
   if (!value || value == 0 || !value?.toString) return 0;
