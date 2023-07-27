@@ -1,20 +1,23 @@
 <template>
   <span>
-  <ConnectButton v-if="!userConnectedWalletAddress" />
-  <SharedButton v-else-if="!loading" @click="execTx" :disabled="disabled">
-    <slot />
-  </SharedButton>
-  <p v-else-if="loading">
-    <ImageVue :src="'loading.svg'" :size="'45px'" />
-  </p>
+    <ConnectButton v-if="!userConnectedWalletAddress" />
+    <SharedButton v-else-if="!loading" @click="execTx" :disabled="disabled">
+      <slot />
+    </SharedButton>
+    <p v-else-if="loading">
+      <ImageVue :src="'loading.svg'" :size="'45px'" />
+    </p>
   </span>
 </template>
-
 
 <script>
 import { mapGetters } from "vuex";
 import SharedButton from "./SharedButton.vue";
-import { notifyHandler, notifyNotification, getCurrentGasPrices } from "@/utils/common";
+import {
+  notifyHandler,
+  notifyNotification,
+  getCurrentGasPrices,
+} from "@/utils/common";
 import ImageVue from "../Handlers/ImageVue.vue";
 import ConnectButton from "./ConnectButton.vue";
 
@@ -29,18 +32,17 @@ export default {
   data() {
     return {
       gasPrices: {},
-      loading: false
-    }
+      loading: false,
+    };
   },
 
   computed: {
     ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
     gasPrice() {
-      return this.chosenGas ? this.chosenGas : this.gasPrices[this.defaultGas ? this.defaultGas : 'low'];
+      return this.chosenGas
+        ? this.chosenGas
+        : this.gasPrices[this.defaultGas ? this.defaultGas : "medium"];
     },
-    tip() {
-      return this.gasPrices.tip[this.defaultGas ? this.defaultGas : 'low']
-    }
   },
 
   mounted: async function () {
@@ -52,7 +54,7 @@ export default {
       immediate: true,
       async handler() {
         this.gasPrices = await getCurrentGasPrices();
-      }
+      },
     },
   },
 
@@ -62,17 +64,30 @@ export default {
       let args = this.click();
       await this.wrapTx(args.abiCall, args.argsArr, args.senderObj, args.cb);
     },
-  
-    async wrapTx(abiCall = () => {}, argsArr = [], senderObj = {}, cb = () => { }) {
+
+    async wrapTx(
+      abiCall = () => { },
+      argsArr = [],
+      senderObj = {},
+      cb = () => { }
+    ) {
+      // console.log(senderObj);
       this.loading = true;
+      const chosenGas = this.gasPrice;
+
       await abiCall(...argsArr)
         .send({
-          // type: 2, // todo : fix gas pricing
+          // Transactions now handled in accordance EIP-1559
           from: this.userConnectedWalletAddress,
-          gasPrice: BN(this.gasPrice).multipliedBy(1000000000).toString(),
-          // maxPriorityFeePerGas: BN(this.tip).multipliedBy(1000000000).toString(),
-          ...senderObj
+          maxFeePerGas: BN(chosenGas.maxFeePerGas)
+            .multipliedBy(1000000000)
+            .toString(),
+          maxPriorityFeePerGas: BN(chosenGas.maxPriorityFeePerGas)
+            .multipliedBy(1000000000)
+            .toString(),
+          ...senderObj,
         })
+
         .on("transactionHash", function (hash) {
           notifyHandler(hash);
         })
@@ -91,6 +106,6 @@ export default {
           this.loading = false;
         });
     },
-  }
-}
+  },
+};
 </script>

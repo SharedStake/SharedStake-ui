@@ -3,33 +3,51 @@
  * import the libraries from here to use
  */
 // import axios from "axios"
+import gas from '@web3-onboard/gas'
 
 export const getCurrentGasPrices = async () => {
-  try {
-    const gasPrice = await web3.eth.getGasPrice();
+  try { // Using the blocknative gas platform api https://docs.blocknative.com/gas-prediction/gas-platform
+    const gasBlockPrices = await gas.get({
+      chains: ['0x1'],
+      // apiKey: '<OPTIONAL_API_KEY>',
+      endpoint: 'blockPrices'
+    });
+    // console.log(gasBlockPrices[0].blockPrices[0].estimatedPrices)
 
-    // Convert the gas price from wei to gwei, and then to a number.
-    const gasPriceInGwei = Number(web3.utils.fromWei(gasPrice, "gwei"));
-    // Min gas price check
-    const lowGasPrice = Math.max(
-      gasPriceInGwei * 0.8,
-      web3.utils.fromWei("21000", "gwei")
-    );
-
+    const estimatedPrices = gasBlockPrices[0].blockPrices[0].estimatedPrices;
+    // console.log(estimatedPrices)
     return {
-      low: lowGasPrice, // Here we're assuming low is 80% of the current gas price but a min of 2100wei.
-      medium: gasPriceInGwei,
-      high: gasPriceInGwei * 1.2, // Here we're assuming high is 120% of the current gas price.
-      tip: {
-        low: 1, // Adjust these priority fees as you see fit.
-        medium: 2,
-        high: 5,
+      low: {
+        maxFeePerGas: estimatedPrices[4].maxFeePerGas,
+        maxPriorityFeePerGas: estimatedPrices[4].maxPriorityFeePerGas,
       },
+      medium: {
+        maxFeePerGas: estimatedPrices[2].maxFeePerGas,
+        maxPriorityFeePerGas: estimatedPrices[2].maxPriorityFeePerGas,
+      },
+      high: {
+        maxFeePerGas: estimatedPrices[0].maxFeePerGas,
+        maxPriorityFeePerGas: estimatedPrices[0].maxPriorityFeePerGas,
+      }
     };
+    
   } catch (error) {
     console.error(error);
+    // If the API call fails, return hardcoded gas prices
     return {
-      error: "Unable to retrieve current gas prices.",
+      // Change hardcoded failover gas fees as and when required
+      low: {
+        maxFeePerGas: 29, //  Gwei
+        maxPriorityFeePerGas: 1, //  Gwei
+      },
+      medium: {
+        maxFeePerGas: 58, //  Gwei
+        maxPriorityFeePerGas: 2, //  Gwei
+      },
+      high: {
+        maxFeePerGas: 117, //  Gwei
+        maxPriorityFeePerGas: 3, //  Gwei
+      }
     };
   }
 };
@@ -72,7 +90,7 @@ const web3 = new Web3(
   new Web3.providers.HttpProvider(RPC_URL)
 );
 export function toWei(value) {
-  console.log(web3);
+  // console.log(web3);
   if (!value || value == 0 || !value?.toString) return 0;
   return web3.utils.toWei(value.toString(), "ether");
 }

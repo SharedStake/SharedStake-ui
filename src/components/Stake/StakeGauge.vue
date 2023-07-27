@@ -29,7 +29,7 @@
       empty-color="#181818"
       empty-color-fill="#181818"
       lineMode="in"
-      animation="700 1000"
+      animation="reverse 700 400"
       fontSize="2rem"
       font-color="white"
  

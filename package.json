@@ -10,6 +10,7 @@
   "dependencies": {
     "@gnosis.pm/safe-apps-onboard": "^0.3.0",
     "@gnosis.pm/safe-apps-sdk": "^2.3.0",
+    "@web3-onboard/gas": "^2.1.8",
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
     "bnc-notify": "^1.5.1",
@@ -22,7 +23,7 @@
     "vue-notification": "^1.3.20",
     "vue-router": "^3.4.9",
     "vuex": "^3.6.0",
-    "web3": "^1.3.4"
+    "web3": "^1.5.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
