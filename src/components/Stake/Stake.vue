@@ -78,23 +78,31 @@
 
         <div id="gas">
           <span id="gas">Gas</span>
+          <!-- Updated Chooser to gas and tip in accordance to EIP-1559 -->
           <Chooser
             :routes="[
               {
-                text: gas.low.toFixed(0),
+                text: (
+                  gas.low.maxFeePerGas + gas.low.maxPriorityFeePerGas
+                ).toFixed(1),
                 cb: updateGasCb,
               },
               {
-                text: gas.medium.toFixed(0),
+                text: (
+                  gas.medium.maxFeePerGas + gas.medium.maxPriorityFeePerGas
+                ).toFixed(1),
                 cb: updateGasCb,
               },
               {
-                text: gas.high.toFixed(0),
+                text: (
+                  gas.high.maxFeePerGas + gas.high.maxPriorityFeePerGas
+                ).toFixed(1),
                 cb: updateGasCb,
               },
             ]"
-            :currentActive="0"
+            :currentActive="1" 
           />
+          <!-- Default to medium gas -->
         </div>
         <div class="navbar s-toggle">
           <span id="gas">
@@ -189,9 +197,8 @@ import ApprovalButton from "../Common/ApproveButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
 import { toChecksumAddress } from "../../utils/common";
+import { getCurrentGasPrices } from "@/utils/common.js";
 
-// import { vEth2Price } from "@/utils/veth2.js";
-// import Swal from "sweetalert2";
 export default {
   components: { ImageVue, StakeGauge, ApprovalButton, Chooser, DappTxBtn },
   data: () => ({
@@ -206,13 +213,19 @@ export default {
     userApprovedwsgETH: BN(0),
     balance: 0,
     otherBalance: 0,
-    gas: { low: 20, medium: 90, high: 180 },
+    // Update gas object structure for EIP-1559
+    gas: {
+      low: { maxFeePerGas: 0, maxPriorityFeePerGas: 0 },
+      medium: { maxFeePerGas: 0, maxPriorityFeePerGas: 0 },
+      high: { maxFeePerGas: 0, maxPriorityFeePerGas: 0 },
+    },
+    chosenGas: { maxFeePerGas: 0, maxPriorityFeePerGas: 0 },
+    gasLevels: ["low", "medium", "high"], // Required to index Chooser update
     validInput: true,
     txs: [],
     maxValShares: 0,
     remaining: BN(0),
     remainingByFee: BN(0),
-    chosenGas: 20,
     loading: true,
     adminFee: 0,
     contractBal: 0,
@@ -224,18 +237,11 @@ export default {
     wsgETHRedemptionPrice: BN(0),
   }),
   mounted: async function() {
-    // this.gas = await getCurrentGasPrices();
-    // this.chosenGas = this.gas.medium;
+    // Polling blocknative gas API
+    this.gas = await getCurrentGasPrices();
+    this.chosenGas = this.gas.medium;
     this.loading = false;
-
-    // await Swal.fire({
-    //   title: "<span style='color:tomato'>Please note!<span>",
-    //   html: `We recommend purchasing vETH2 on curve as its cheaper`,
-    //   background: "#181818",
-    //   showCancelButton: false,
-    //   showConfirmButton: false
-    // });
-
+    // console.log("chosenGas", this.chosenGas);
     await this.mounted();
   },
   computed: {
@@ -269,17 +275,23 @@ export default {
       this.isDeposit = index > 0 ? false : true;
       await this.mounted();
     },
-    updateGasCb(index, routes) {
-      this.updateGas(parseInt(routes[index].text));
+    updateGasCb(index) {
+      // Handle Chooser with EIP-1559 update
+      this.updateGas(this.gasLevels[index]);
     },
     updateGas(gas) {
-      this.chosenGas = gas;
+      this.chosenGas = this.gas[gas]; // Updated EIP-1559 gas object structure
       this.amountCheck(true);
     },
     async onMAX() {
       if (this.isDeposit) {
         let gas = this.chosenGas;
-        let BNamount = this.EthBal.minus(BN(gas * 200000 * 1000000000));
+        let BNamount = this.EthBal.minus(
+          BN(
+            // sum both fees together for EIP-1559
+            (gas.maxPriorityFeePerGas + gas.maxFeePerGas) * 200000 * 1000000000
+          )
+        );
         let remaining = await validator.methods.remainingSpaceInEpoch().call();
         this.remaining = BN(remaining);
         if (this.remaining.eq(0)) {
@@ -316,13 +328,21 @@ export default {
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake"))
         return {};
 
-      let fn = validator.methods,
-        senderObj = {
-          gasPrice: BN(this.chosenGas)
-            .multipliedBy(1000000000)
-            .toString(),
-        },
-        args = [];
+      let fn = validator.methods;
+      // Transactions now handled in accordance EIP-1559
+      let senderObj = {
+        maxFeePerGas: BN(this.chosenGas.maxFeePerGas)
+          .multipliedBy(1000000000)
+          .toString(),
+        maxPriorityFeePerGas: BN(this.chosenGas.maxPriorityFeePerGas)
+          .multipliedBy(1000000000)
+          .toString(),
+      };
+      // Debug senderObj sent to BappTxBtn.vue
+      // console.log(senderObj);
+
+      let args = [];
+
       if (!this.isDeposit) {
         if (this.get_wsgETH) {
           fn = fn.unstakeAndWithdraw;
@@ -426,9 +446,16 @@ export default {
         return;
       }
       this.validInput = this.isDeposit
-        ? this.EthBal.minus(BN(this.chosenGas * 200000 * 1000000000)).gte(
-            this.BNamount
-          )
+        ? this.EthBal.minus(
+            // Accounting for EIP-1559 gas and priority fees
+            BN(
+              // Adjusted for EIP-1559
+              (this.chosenGas.maxPriorityFeePerGas +
+                this.chosenGas.maxFeePerGas) *
+                200000 *
+                1000000000
+            )
+          ).gte(this.BNamount)
         : this.get_wsgETH
         ? BN(this.userWSGETHBal).gte(this.BNamount)
         : this.vEth2Bal.gte(this.BNamount);

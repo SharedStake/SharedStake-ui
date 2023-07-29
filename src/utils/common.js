@@ -3,30 +3,55 @@
  * import the libraries from here to use
  */
 // import axios from "axios"
+import gas from '@web3-onboard/gas'
 
 export const getCurrentGasPrices = async () => {
-  // todo fix me
-  // let response = await axios.get('https://www.gasnow.org/api/v3/gas/price')
-  // let response = await axios.get('https://ethgasstation.info/api/ethgasAPI.json?');
-  // console.log('getCurrentGasPrices', response);
-  // if (!response || response.status !== 200) {
-  return {
-    low: 29,
-    medium: 30,
-    high: 200,
-    tip: {
-      low: 0.1,
-      medium: 1,
-      high: 2,
-    },
-  };
-  // }
-  // return {
-  //     low: response.data.data.slow / 1e9,
-  //     medium: response.data.data.standard / 1e9,
-  //     high: response.data.data.fast / 1e9
-  // }
+  try { // Using the blocknative gas platform api https://docs.blocknative.com/gas-prediction/gas-platform
+    const gasBlockPrices = await gas.get({
+      chains: ['0x1'],
+      // apiKey: '<OPTIONAL_API_KEY>',
+      endpoint: 'blockPrices'
+    });
+    // console.log(gasBlockPrices[0].blockPrices[0].estimatedPrices)
+
+    const estimatedPrices = gasBlockPrices[0].blockPrices[0].estimatedPrices;
+    // console.log(estimatedPrices)
+    return {
+      low: {
+        maxFeePerGas: estimatedPrices[4].maxFeePerGas,
+        maxPriorityFeePerGas: estimatedPrices[4].maxPriorityFeePerGas,
+      },
+      medium: {
+        maxFeePerGas: estimatedPrices[2].maxFeePerGas,
+        maxPriorityFeePerGas: estimatedPrices[2].maxPriorityFeePerGas,
+      },
+      high: {
+        maxFeePerGas: estimatedPrices[0].maxFeePerGas,
+        maxPriorityFeePerGas: estimatedPrices[0].maxPriorityFeePerGas,
+      }
+    };
+    
+  } catch (error) {
+    console.error(error);
+    // If the API call fails, return hardcoded gas prices
+    return {
+      // Change hardcoded failover gas fees as and when required
+      low: {
+        maxFeePerGas: 29, //  Gwei
+        maxPriorityFeePerGas: 1, //  Gwei
+      },
+      medium: {
+        maxFeePerGas: 58, //  Gwei
+        maxPriorityFeePerGas: 2, //  Gwei
+      },
+      high: {
+        maxFeePerGas: 117, //  Gwei
+        maxPriorityFeePerGas: 3, //  Gwei
+      }
+    };
+  }
 };
+
 import Notify from "bnc-notify";
 
 export const notify = Notify({
@@ -60,9 +85,12 @@ export function notifyNotification(message, type = "pending") {
 }
 
 import Web3 from "web3";
-const web3 = new Web3();
+import { RPC_URL } from "../store/init/onboard";
+const web3 = new Web3(
+  new Web3.providers.HttpProvider(RPC_URL)
+);
 export function toWei(value) {
-  console.log(web3);
+  // console.log(web3);
   if (!value || value == 0 || !value?.toString) return 0;
   return web3.utils.toWei(value.toString(), "ether");
 }
