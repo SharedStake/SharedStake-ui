@@ -6,6 +6,8 @@
     :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
     :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
     :outputTokenName="outputTokenName"
+    :totalRedeemed="totalRedeemed"
+    :getTotalRedeemed="getTotalRedeemed"
   />
 </template>
 
@@ -24,6 +26,7 @@ export default {
       title: "Withdraw",
       descr: "Withdrawals - Redeem vETH2 for ETH",
       ethAvailableForWithdrawal: BN(0),
+      totalRedeemed: BN(0),
       outputTokenName: "ETH",
     };
   },
@@ -39,6 +42,12 @@ export default {
 
       this.ethAvailableForWithdrawal = BN(amt);
     },
+
+    async getTotalRedeemed() {
+      let amt = await ABI_withdrawals.methods.totalOut().call();
+      console.log(BN(amt), 'asfaf')
+      this.totalRedeemed = BN(amt);
+    }
   },
 };
 </script>

@@ -211,6 +211,7 @@
         :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
         :veth2Bal="contractVeth2Bal"
         :userBal="userVEth2Balance"
+        :totalRedeemed="totalRedeemed"
       />
     </section>
   </div>
@@ -255,6 +256,8 @@ export default {
     "descr",
     "getEthAvailableForWithdrawal",
     "ethAvailableForWithdrawal",
+    'getTotalRedeemed',
+    'totalRedeemed',
     "outputTokenName",
   ],
 
@@ -466,6 +469,7 @@ export default {
       await this.getUserDepositedVEth2();
       await this.getContractVeth2Queue();
       await this.getEthAvailableForWithdrawal();
+      await this.getTotalRedeemed();
     },
 
     handleFillMaxAmount() {

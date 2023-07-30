@@ -44,7 +44,18 @@
             There is {{
             veth2Bal.div(10 ** 18)
             .decimalPlaces(6)
-            .toString()}} vETH2 queued here. 
+            .toString()}} vETH2 deposited here. 
+            <br />
+            Of which {{ 
+              totalRedeemed.div(10 ** 18)
+                .decimalPlaces(6).toString()
+            }} has already been redeemed. 
+            <br />
+            A total of {{ 
+            (veth2Bal.minus(totalRedeemed).minus(ethAvailableForWithdrawal.div(1/1.1))).div(10 ** 18)
+            .decimalPlaces(6)
+            .toString()
+            }} vETH2 is queued. (if the number is negative that means there's excess in the buffer)
           </template>
         </QuestionAnswer>
 
@@ -78,6 +89,6 @@ import QuestionAnswer from "@/components/Withdraw/QuestionAnswer.vue";
 export default {
   name: 'WithdrawalsFAQ',
   components: {QuestionAnswer},
-  props: ['ethAvailableForWithdrawal', 'veth2Bal', 'userBal'],
+  props: ['ethAvailableForWithdrawal', 'totalRedeemed', 'veth2Bal', 'userBal'],
 }
 </script>
