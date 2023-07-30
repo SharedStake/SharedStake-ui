@@ -45,6 +45,12 @@
         <DropdownItemAnchor href="https://sharedtools.org">
           SharedTools
         </DropdownItemAnchor>
+        <DropdownItemAnchor href="https://discord.gg/C9GhCv86My">
+          Discord
+        </DropdownItemAnchor>
+        <DropdownItemAnchor href="https://t.me/SharedStakeFinance">
+          Telegram
+        </DropdownItemAnchor>
         <DropdownItemAnchor href="https://twitter.com/ChimeraDefi">
           Twitter
         </DropdownItemAnchor>
