@@ -10,11 +10,13 @@
       </div>
       <div class="flex flex-col justify-center h-full p-4">
         <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
-          <h1 class="mb-6 mainTitle">Simple Ethereum 2.0 Staking</h1>
+          <h1 class="mb-6 mainTitle">ETHEREUM LIQUID STAKING DERIVATIVE! <br /> EST 2020.</h1>
           <div class="exp">
             SharedStake is a decentralized Ethereum 2 staking solution that
             allows users to stake any amount of Ether and earn additional yield
             on top of their ETH2 rewards.
+            <br /><b> V2 LIVE NOW! </b>
+            <br /><b> V1 Redemptions LIVE NOW at 1.1 Eth per vETH2. </b>
           </div>
         </div>
         <div
@@ -24,7 +26,7 @@
             class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-brand-primary md:font-medium md:text-3xl md:px-8 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary whitespace-nowrap"
             to="/stake"
           >
-            STAKE
+            STAKE V2
           </router-link>
           <a
             class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
