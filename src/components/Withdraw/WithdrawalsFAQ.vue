@@ -45,17 +45,21 @@
         There is {{
           veth2Bal.div(10 ** 18)
             .decimalPlaces(6)
-            .toString() }} vETH2 deposited here.
+            .toString() }} vETH2 deposited here. 
+        Redeemable for {{
+          veth2Bal.div(1/1.1).div(10 ** 18)
+            .decimalPlaces(6)
+            .toString()  }} tokens.
         <br />
-        Of which {{
+        From which {{
           totalRedeemed.div(10 ** 18)
             .decimalPlaces(6).toString()
-        }} has already been redeemed.
+        }} tokens have already been redeemed.
         <br />
         A total of {{
-          (veth2Bal
+          (veth2Bal.multipliedBy(11).div(10)
             .minus(totalRedeemed)
-            .minus(ethAvailableForWithdrawal.div(1 / 1.1))
+            .minus(ethAvailableForWithdrawal)
           ).div(10 ** 18)
             .decimalPlaces(6)
             .toString()
@@ -71,7 +75,7 @@
         You can withdraw upto {{
           ethAvailableForWithdrawal.div(10 ** 18)
             .decimalPlaces(6)
-            .toString() }} ETH buffered in the contract right now.
+            .toString() }} ETH buffered in the contract. Right now! 
       </template>
     </QuestionAnswer>
 
