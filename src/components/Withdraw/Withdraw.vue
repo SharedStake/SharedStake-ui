@@ -45,7 +45,6 @@ export default {
 
     async getTotalRedeemed() {
       let amt = await ABI_withdrawals.methods.totalOut().call();
-      console.log(BN(amt), 'asfaf')
       this.totalRedeemed = BN(amt);
     }
   },
