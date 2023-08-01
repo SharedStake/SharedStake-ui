@@ -10,13 +10,19 @@
       </div>
       <div class="flex flex-col justify-center h-full p-4">
         <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
-          <h1 class="mb-6 mainTitle">ETHEREUM LIQUID STAKING DERIVATIVE! <br /> EST 2020.</h1>
+          <h1 class="relative mb-6 mainTitle">
+            <span
+              title="Established in 2020"
+              class="absolute p-1 px-2 text-xs font-semibold text-gray-800 transform -translate-x-1/2 bg-gray-300 rounded-sm -bottom-6 md:bottom-auto md:-top-6 md:left-0 left-1/2 md:translate-x-0"
+            >
+              EST. 2020
+            </span>
+            ETHEREUM LIQUID STAKING DERIVATIVE! <br />
+          </h1>
           <div class="exp">
             SharedStake is a decentralized Ethereum 2 staking solution that
             allows users to stake any amount of Ether and earn additional yield
             on top of their ETH2 rewards.
-            <br /><b> V2 LIVE NOW! </b>
-            <br /><b> V1 Redemptions LIVE NOW at 1.1 Eth per vETH2. </b>
           </div>
         </div>
         <div
@@ -39,8 +45,8 @@
         </div>
 
         <div class="flex items-center justify-center md-large:justify-start">
-          <p class="gap-8 mb-8 text-l">
-            Join the conversation!
+          <p class="gap-8 mb-3 text-lg">
+            Join the conversation:
           </p>
         </div>
         <div
@@ -116,21 +122,21 @@
         </div>
 
         <div class="flex items-center justify-center md-large:justify-start">
-          <p class="mb-6 text-l">
-            vETH2 Redemptions
+          <p class="mb-3 text-lg">
+            vETH2 Redemptions:
           </p>
         </div>
         <div
-          class="flex items-center justify-center gap-8 mb-8 md-large:justify-start"
+          class="flex items-center justify-center gap-4 mb-8 md-large:justify-start"
         >
           <router-link
-            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
             to="/rollover"
           >
             Rollover
           </router-link>
           <router-link
-            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
             to="/withdraw"
           >
             Withdraw
@@ -1287,8 +1293,8 @@ export default {
   overflow-wrap: normal;
   max-width: 900px;
   font-size: 64px;
-  font-weight: 300;
-  line-height: 1.2;
+  font-weight: 500;
+  line-height: 1.05;
 }
 
 .exp {
