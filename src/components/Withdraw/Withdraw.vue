@@ -16,6 +16,7 @@ import { withdrawals as ABI_withdrawals } from "@/contracts";
 import BN from "bignumber.js";
 import { mapGetters } from "vuex";
 import RedemptionBase from "./RedemptionBase.vue";
+// BS comment to try to create new amplify link and force reload without cache for users 
 
 export default {
   name: "Withdraw",
