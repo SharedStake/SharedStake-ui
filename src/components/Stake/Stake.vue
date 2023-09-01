@@ -202,7 +202,7 @@ import { getCurrentGasPrices } from "@/utils/common.js";
 export default {
   components: { ImageVue, StakeGauge, ApprovalButton, Chooser, DappTxBtn },
   data: () => ({
-    buttonText: "Enter an amount",
+    buttonText: "Currently disabled",
     BNamount: BN(0),
     Damount: "",
     isDeposit: true,
@@ -325,6 +325,8 @@ export default {
       this.isDeposit = !this.isDeposit;
     },
     genSubmit() {
+      console.log("Disabled due to vulnerabilities")
+      if (this.isDeposit || this.buttonText == "Stake") return;
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake"))
         return {};
 
@@ -532,7 +534,9 @@ export default {
       let otherBalance = val ? this.vEth2Bal : this.EthBal;
       this.otherBalance = otherBalance.dividedBy(1e18).toFixed(6);
       this.Damount = "";
-      this.buttonText = "Enter an amount";
+      // this.buttonText = "Enter an amount";
+
+      this.buttonText = "Currently disabled";
     },
     validInput: function(val) {
       if (!val) {
@@ -543,6 +547,7 @@ export default {
           this.buttonText = "input is too small";
           return;
         }
+      this.buttonText = "Currently disabled";
       }
       if (val) {
         if (this.isDeposit) this.buttonText = "Stake";
@@ -552,6 +557,7 @@ export default {
     async userAddress(newVal) {
       if (newVal) {
         this.buttonText = "Enter an amount";
+        this.buttonText = "Currently disabled";
         await this.mounted();
       } else {
         this.buttonText = "Connect to wallet ↗";

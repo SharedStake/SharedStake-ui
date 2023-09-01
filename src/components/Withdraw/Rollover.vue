@@ -24,7 +24,7 @@ export default {
     return {
       ABI: ABI_Rollover,
       title: "Rollover",
-      descr: "Redeem vETH2 for sgETH",
+      descr: "BROKEN do not use! | Redeem vETH2 for sgETH",
       ethAvailableForWithdrawal: BN(0),
       totalRedeemed: BN(0),
       outputTokenName: "sgETH"
@@ -38,7 +38,8 @@ export default {
       let amt = await ABI_sgETH.methods
         .balanceOf(ABI_Rollover.options.address)
         .call();
-      this.ethAvailableForWithdrawal = BN(amt);
+      this.ethAvailableForWithdrawal = BN(amt*0);
+      // this.ethAvailableForWithdrawal = BN(amt);
     },
     async getTotalRedeemed() {
       let amt = await ABI_Rollover.methods.totalOut().call();
