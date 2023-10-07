@@ -202,6 +202,11 @@
               >
                 <span>Withdraw your {{ outputTokenName }}</span>
               </dapp-tx-btn>
+              <dapp-tx-btn
+                :click="handleWithdrawVeth"
+              >
+                <span>Withdraw your vETH2</span>
+              </dapp-tx-btn>
             </div>
           </template>
         </div>
@@ -396,6 +401,16 @@ export default {
     handleWithdrawEth() {
       return {
         abiCall: this.ABI.methods.redeem,
+        argsArr: [],
+        cb: async () => {
+          this.completed = true; // Mark as completed in the UI - will reset on navigation.
+          await this.refreshBalances(); // update state to trigger next step
+        },
+      };
+    },
+    handleWithdrawVeth() {
+      return {
+        abiCall: this.ABI.methods.withdraw,
         argsArr: [],
         cb: async () => {
           this.completed = true; // Mark as completed in the UI - will reset on navigation.

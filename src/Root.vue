@@ -3,11 +3,13 @@
     <div
       class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary"
     >
-      🚀 SharedStake v2 is LIVE. Staking & redemptions are fully operational! 🚀
+      🚀 v2 - limited redemption capacity  🚀
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
         Redemptions at 1.1Eth per vETH2
+        <br />
+        version: 1.0.2
       </p>
     </div>
     <div
