@@ -7,9 +7,9 @@
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
-        Redemptions at 1.1Eth per vETH2
+        Redemptions at 1.08Eth per vETH2 coming soon according to SIP 35.1  
         <br />
-        version: 1.0.2
+        version: 1.0.3
       </p>
     </div>
     <div
