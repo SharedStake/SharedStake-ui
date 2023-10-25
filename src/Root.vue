@@ -9,7 +9,7 @@
       >
         Redemptions at 1.08Eth per vETH2 coming soon according to SIP 35.1  
         <br />
-        version: 1.0.3
+        version: 1.0.4
       </p>
     </div>
     <div
