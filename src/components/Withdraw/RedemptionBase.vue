@@ -164,7 +164,7 @@
 
           <template v-else>
             <p
-              v-if="!userHasTokenBalance"
+              v-if="!userHasTokenBalance && stage == 'approvalStage'"
               class="mt-2 text-sm font-semibold text-gray-200"
             >
               You need to have vETH2 tokens in your wallet in order to withdraw
@@ -200,7 +200,7 @@
                 :disabled="!contractHasEthAvailable"
                 :click="handleWithdrawEth"
               >
-                <span>Withdraw your {{ outputTokenName }}</span>
+                <span>Redeem for {{ outputTokenName }}</span>
               </dapp-tx-btn>
               <dapp-tx-btn
                 :click="handleWithdrawVeth"
