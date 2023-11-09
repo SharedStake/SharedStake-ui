@@ -179,12 +179,13 @@
               :cb="getUserApprovedVEth2"
             />
 
-            <dapp-tx-btn
+            <!-- Disable the button to deposit till new contract is up -->
+            <!-- <dapp-tx-btn
               v-else-if="stage == 'depositStage'"
               :click="handleDepositVEth2"
             >
               <span>Request {{ this.title.toLowerCase() }}</span>
-            </dapp-tx-btn>
+            </dapp-tx-btn> -->
 
             <div class="text-center" v-else-if="stage == 'withdrawStage'">
               <p
