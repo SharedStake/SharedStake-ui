@@ -24,7 +24,7 @@ export default {
     return {
       ABI: ABI_withdrawals,
       title: "Withdraw",
-      descr: "Withdrawals - Redeem vETH2 for ETH - Paused (see discord)",
+      descr: "Withdrawals - Redeem vETH2 for ETH",
       ethAvailableForWithdrawal: BN(0),
       totalRedeemed: BN(0),
       outputTokenName: "ETH",

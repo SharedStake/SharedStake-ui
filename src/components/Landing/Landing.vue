@@ -129,12 +129,18 @@
         <div
           class="flex items-center justify-center gap-4 mb-8 md-large:justify-start"
         >
-          <router-link
+          <!-- <router-link
             class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
             to="/rollover"
           >
-            Rollover
-          </router-link>
+            Rollover (Returning soon!)
+          </router-link> -->
+          <span
+            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
+            to="/rollover"
+          >
+            Rollover (Returning soon!)
+        </span>
           <router-link
             class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
             to="/withdraw"

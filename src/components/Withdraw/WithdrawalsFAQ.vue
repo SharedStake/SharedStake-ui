@@ -27,11 +27,11 @@
         How much is vETH2 worth? (Redemption rate)
       </template>
       <template #answer>
-        The rate is 1.1
-        i.e. 1 vETH2 = 1.1 ETH.
+        The rate is 1.08
+        i.e. 1 vETH2 = 1.08 ETH.
         <p v-if="userBal > 0">
           OR
-          {{ userBal.div(10 ** 18).decimalPlaces(6).toString() }} vETH2 = {{ userBal.div(1 / 1.1).div(10 **
+          {{ userBal.div(10 ** 18).decimalPlaces(6).toString() }} vETH2 = {{ userBal.div(1 / 1.08).div(10 **
             18).decimalPlaces(6).toString() }} ETH/sgETH
         </p>
       </template>
@@ -47,7 +47,7 @@
             .decimalPlaces(6)
             .toString() }} vETH2 deposited here. 
         Redeemable for {{
-          veth2Bal.div(1/1.1).div(10 ** 18)
+          veth2Bal.div(1/1.08).div(10 ** 18)
             .decimalPlaces(6)
             .toString()  }} tokens.
         <br />
@@ -89,6 +89,17 @@
         It takes 7-14 days to withdraw your ETH. This is because the ETH you
         staked is locked in the Ethereum 2.0 deposit contract and validators need to have their withdrawal addresses
         changed, then exited wherein they enter the exit queue.
+      </template>
+    </QuestionAnswer>
+
+    <QuestionAnswer>
+      <template #question>
+        I don't see the veth2 I previously deposited
+      </template>
+      <template #answer>
+        If you had deposited in the old withdrawals/rollover contract, you will have to use etherscan to manually retrieve/withdraw 
+        your vETH2 and redo the process. <br />
+        You can find a howto in the <a class="link" href="https://docs.sharedstake.finance/withdrawals/withdraw-veth2-via-etherscan">docs under Withdrawals at docs.sharedstake.finance</a>
       </template>
     </QuestionAnswer>
   </div>

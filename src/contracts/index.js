@@ -108,7 +108,7 @@ if (window.ethereum) {
             masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412',
 
             // New contracts. shareddeposit v2
-            withdrawals: "0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4",
+            withdrawals: "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432",
             rollovers: "0x68a31dfD0c81A411C5adadc8A40225425777466C",
 
             sgETH: "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
@@ -116,7 +116,7 @@ if (window.ethereum) {
         }
     } else if (chainId == CHAIN_IDS.GOERLI) {
         addressTemp = {
-            validator: "0x3E95C4b7cd1D01d53B13DaceF38CbFF2ef651fA5",// 
+            validator: "0xb6F4a4ae69df1EB0d7dE4141CAd600104FAC28f6",// 
             // Protocol Tokens
             vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
             SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
@@ -126,11 +126,11 @@ if (window.ethereum) {
             geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
             
             // New withdrawals contract.
-            withdrawals: "0x36FE69187b7e74B78fbC757EDC1598320f82adf2",
-            rollovers: "0xF6e2B4a6bFd6f3446503d147762e8A8BEFEBC2B7",
+            withdrawals: "0x330B12204596812946d010c24b0Da3c8Af37B37c",
+            rollovers: "0x8CcE3694d698cb5DF1e1bD8A948899449Ea94ffB",
 
-            sgETH: "0x571038a10C6A435A100a0188EA6cD4863c59430c",
-            wsgETH: "0x1DdFaF369A526139a315aD1E2e34E6C8cD7aF177"
+            sgETH: "0x0056390361289CAFc3E10b65AC4C49e44C08B7df",
+            wsgETH: "0x7b569f6eC245403B5fbF68aDa4aef95cb26b6351"
         }
     }
 
