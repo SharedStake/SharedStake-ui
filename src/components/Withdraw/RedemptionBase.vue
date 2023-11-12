@@ -141,7 +141,7 @@
             <span>
               <span class="text-3xl font-semibold">{{
                 userDepositedVEth2
-                  .div(1 / 1.1)
+                  .div(1 / 1.08)
                   .div(10 ** 18)
                   .decimalPlaces(6)
                   .toString()
@@ -179,13 +179,14 @@
               :cb="getUserApprovedVEth2"
             />
 
-            <!-- Disable the button to deposit till new contract is up -->
-            <!-- <dapp-tx-btn
+            <!-- -Temp conditional disable for rollover stages -->
+            <dapp-tx-btn
               v-else-if="stage == 'depositStage'"
               :click="handleDepositVEth2"
+              :disabled="outputTokenName=='sgETH'" 
             >
               <span>Request {{ this.title.toLowerCase() }}</span>
-            </dapp-tx-btn> -->
+            </dapp-tx-btn>
 
             <div class="text-center" v-else-if="stage == 'withdrawStage'">
               <p
