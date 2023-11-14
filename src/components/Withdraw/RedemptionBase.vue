@@ -177,13 +177,14 @@
               :ABI_spender="ABI"
               :amount="this.amount"
               :cb="getUserApprovedVEth2"
+              :disabled="userInputIsInvalid"
             />
 
             <!-- -Temp conditional disable for rollover stages -->
             <dapp-tx-btn
               v-else-if="stage == 'depositStage'"
               :click="handleDepositVEth2"
-              :disabled="outputTokenName=='sgETH'" 
+              :disabled="userInputIsInvalid" 
             >
               <span>Request {{ this.title.toLowerCase() }}</span>
             </dapp-tx-btn>
@@ -318,6 +319,13 @@ export default {
         this.userApprovedVEth2.gt(0) &&
         this.userApprovedVEth2.gte(toWei(this.amount?.toString() || "0"))
       );
+    },
+
+    userInputIsInvalid() {
+      return this.outputTokenName == 'sgETH' || !(
+          this.amount !== null &&
+          this.amount > 0
+        );
     },
 
     userCanRequestWithdrawal() {
