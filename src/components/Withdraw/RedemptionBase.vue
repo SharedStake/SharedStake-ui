@@ -83,7 +83,7 @@
             <input
               :value="amount"
               class="max-w-xs ml-2 text-white bg-transparent border-none outline-none"
-              :placeholder="
+              :placeholder="'>0 to ' + 
                 this.userVEth2Balance
                   .div(10 ** 18)
                   .decimalPlaces(6)

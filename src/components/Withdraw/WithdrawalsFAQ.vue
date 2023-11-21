@@ -11,14 +11,16 @@
       <template #answer>
         You can withdraw your staked ETH by following the steps:
         <br />
-        <strong>Step 1:</strong> Approve vETH2
+        <strong>Step 1:</strong> Approve vETH2 (Please enter how much vETH2 you'd like to redeem)
         <br />
         <strong>Step 2:</strong> Deposit vETH2
         <br />
-        <strong>Step 3:</strong> Withdraw
+        <strong>Step 3:</strong> Redeem (when there is ETH available)
         <br />
         <strong>Note: You must deposit vETH2 first. ETH or tokens will then be buffered into the contract based on
-          demand</strong>
+          demand. </strong>
+          <br />
+        <strong>Note: You can at any point after deposit, choose to withdraw your vETH2 and use OTC or uniswap to sell for ETH. If you require a quicker flow. </strong>
       </template>
     </QuestionAnswer>
 
@@ -86,7 +88,8 @@
         How long does it take to withdraw my ETH?
       </template>
       <template #answer>
-        It takes 7-14 days to withdraw your ETH. This is because the ETH you
+        It takes at least 7-14 days to withdraw your ETH. This wait time may be longer if demand is high. As ETH is buffered in phases your personal wait time may be affected by other users redeeming before you.
+        This is because the ETH you
         staked is locked in the Ethereum 2.0 deposit contract and validators need to have their withdrawal addresses
         changed, then exited wherein they enter the exit queue.
       </template>
@@ -119,3 +122,10 @@ export default {
   ],
 }
 </script>
+
+
+<style scoped>
+.links {
+  color: blue !important;
+}
+</style>
