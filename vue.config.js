@@ -29,7 +29,6 @@ module.exports = {
             alias: {
                 '@web3-onboard/core': path.resolve(__dirname, 'node_modules/@web3-onboard/core/dist/index.js'),
                 '@web3-onboard/vue': path.resolve(__dirname, 'node_modules/@web3-onboard/vue/dist/index.js'),
-                'bnc-onboard': path.resolve(__dirname, 'node_modules/bnc-onboard/dist/bnc-onboard.min.js'),
                 '@ethereumjs/util': path.resolve(__dirname, 'node_modules/@ethereumjs/util/dist/index.browser.js'),
                 '@metamask/abi-utils': path.resolve(__dirname, 'node_modules/@metamask/abi-utils/lib/index.js')
             }

@@ -16,7 +16,6 @@
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
     "bnc-notify": "^1.5.1",
-    "bnc-onboard": "^1.25.0",
     "core-js": "^3.6.5",
     "esbuild-loader": "^4.1.0",
     "ethers": "^6.12.1",
