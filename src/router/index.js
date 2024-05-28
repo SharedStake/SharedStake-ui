@@ -7,7 +7,7 @@ import VueRouter from "vue-router";
 
 const Stake = () => import("../components/Stake/Stake.vue")
 const Earn = () => import("../components/Earn/Earn.vue")
-const Dashboard = () => import("../components/Dashboard/Dashboard.vue")
+//const Dashboard = () => import("../components/Dashboard/Dashboard.vue")
 const PrivacyPolicy = () => import("../components/Privacy/PrivacyPolicy.vue")
 const TermsOfService = () => import("../components/TermsOfService/TermsOfService.vue")
 const FAQ = () => import("../components/FAQ/FAQ.vue")
@@ -45,11 +45,11 @@ let routes = [{
         name: "Earn",
         component: Earn,
     },
-    {
-        path: "/dashboard",
-        name: "Dashboard",
-        component: Dashboard,
-    },
+//    {
+//        path: "/dashboard",
+//        name: "Dashboard",
+//        component: Dashboard,
+//    },
     {
         path: "/privacy",
         name: "Privacy Policy",
