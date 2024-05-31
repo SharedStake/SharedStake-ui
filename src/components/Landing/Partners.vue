@@ -31,27 +31,13 @@ export default {
             "https://v2.info.uniswap.org/pair/0x3d07f6e1627DA96B8836190De64c1aED70e3FC55/",
           key: 1,
         },
-        // {
-        //   name: "Ruler",
-        //   imageUrl: "ruler.png",
-        //   text: "Use Ruler to get loans using vETH2 as collateral!",
-        //   link: "https://rulerprotocol.com/",
-        //   key: 2,
-        // },
-        // {
-        //   name: "Saddle",
-        //   imageUrl: "saddle.png",
-        //   text: "vETH2 liquidity pool provider.",
-        //   link: "https://saddle.finance",
-        //   key: 3,
-        // },
         {
           name: "Defi Pulse",
           imageUrl: "defipulse.png",
           text:
             "The latest analytics, rankings, and resources for DeFi applications & protocols.",
           link: "https://defipulse.com/",
-          key: 4,
+          key: 2,
         },
         {
           name: "Gnosis",
@@ -59,21 +45,21 @@ export default {
           text:
             "The most trusted platform to manage digital assets on Ethereum.",
           link: "https://gnosis.io/",
-          key: 5,
+          key: 3,
         },
         {
           name: "Bunni.pro",
           imageUrl: "uniswap.png",
           text: "Earn yield on your univ3 position using bunni",
           link: "https://bunni.pro/",
-          key: 6,
+          key: 4,
         },
         {
           name: "Immunefi",
           imageUrl: "immunefi.png",
           text: "DeFi's leading bug bounty platform.",
           link: "https://immunefi.com/",
-          key: 6,
+          key: 5,
         },
       ],
     };
