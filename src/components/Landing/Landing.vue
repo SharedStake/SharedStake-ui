@@ -161,7 +161,7 @@
         than any other Staking-as-a-Service model on the market.
       </div>
 
-      <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
+      <!-- <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
       <div
         class="grid items-center justify-center gap-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3"
       >
@@ -242,7 +242,7 @@
             <div class="NumDetail">Uptime so far at SharedStake in months</div>
           </div>
         </template>
-      </div>
+      </div> -->
       <div v-if="isMobile()">
         <p class="text-center">
           More detailed dashboard available on desktops with an ETH RPC provider

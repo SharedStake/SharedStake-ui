@@ -8,9 +8,6 @@ module.exports = {
         config.module
           .rule('js')
           .test(/\.js$/)
-        //   .exclude
-        //     .add(/node_modules(?!\/@web3-onboard\/core)/)  // Exclude all node_modules except @web3-onboard/core
-        //     .end()
           .use('babel-loader')
           .loader('babel-loader')
           .options({
