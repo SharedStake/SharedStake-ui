@@ -8,6 +8,10 @@ module.exports = {
         config.module
           .rule('js')
           .test(/\.js$/)
+        //   .exclude
+            // This breaks on windows
+            // .add(/node_modules(?!\/@web3-onboard\/core)/)  // Exclude all node_modules except @web3-onboard/core
+            // .end()
           .use('babel-loader')
           .loader('babel-loader')
           .options({
@@ -22,8 +26,7 @@ module.exports = {
         '@web3-onboard/core',
       ],
       configureWebpack: {
-            //Allows debugging in Chrome Dev Tools
-            devtool: 'source-map'
+        devtool: 'source-map',
         resolve: {
             alias: {
                 '@web3-onboard/core': path.resolve(__dirname, 'node_modules/@web3-onboard/core/dist/index.js'),
@@ -31,5 +34,6 @@ module.exports = {
                 '@ethereumjs/util': path.resolve(__dirname, 'node_modules/@ethereumjs/util/dist/index.browser.js'),
                 '@metamask/abi-utils': path.resolve(__dirname, 'node_modules/@metamask/abi-utils/lib/index.js')
             }
-      }
+        }
+    }
 }
