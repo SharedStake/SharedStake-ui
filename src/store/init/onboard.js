@@ -2,9 +2,9 @@ import Web3 from 'web3';
 import store from '../index'
 
 
-import { init } from '@web3-onboard/vue'
+// import { init, useOnboard } from '@web3-onboard/vue'
 import injectedModule from '@web3-onboard/injected-wallets'
-import { useOnboard } from '@web3-onboard/vue'
+import Onboard from '@web3-onboard/core'
 
 // const FORTMATIC_KEY = "Your Fortmatic key here"
 // const PORTIS_KEY = "Your Portis key here"
@@ -14,9 +14,10 @@ const INFURA_KEY = "623c40ea76b44f068428108587d37f4e";
 // const CONTACT_EMAIL = "chimera_defi@protonmail.com";
 export const RPC_URL = `https://mainnet.infura.io/v3/${INFURA_KEY}`;
 // const APP_NAME = "SharedStake";
-
-init({
-  wallets: [injectedModule()],
+const injected = injectedModule()
+// init({
+const onboard = Onboard({
+  wallets: [injected],
   chains: [
     {
       id: '0x1',
@@ -24,9 +25,15 @@ init({
       label: 'Ethereum Mainnet',
       rpcUrl: RPC_URL
     }
-  ]
+  ],
+  // connect: {
+  //   autoConnectLastWallet: true
+  // }
 })
-const onboard = useOnboard();
+// const onboard = useOnboard();
+
+// const { connectWallet, disconnectConnectedWallet, connectedWallet } =
+//   useOnboard()
 // const wallets = [
 //   injected,
 //   { walletName: "metamask", preferred: true },
@@ -72,6 +79,14 @@ const onboard = useOnboard();
 //   { walletName: "wallet.io", rpcUrl: RPC_URL },
 // ];
 
+// const wallets = onboard.state.select('wallets')
+// wallets.subscribe(() => changeWallets())
+// const address = onboard.state.select('address')
+// address.subscribe((account) => store.commit("setAddress", account))
+// const network = onboard.state.select('address')
+// network.subscribe((nw) => store.commit("setNetwork", nw))
+
+
 // const onboard = Onboard({
 //   dappId: "5f2bd7eb-6a4d-43d0-8569-8de42386cb2d", // [String] The API key created by step one above
 //   networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
@@ -105,23 +120,35 @@ const onboard = useOnboard();
 
 window.onboard = onboard;
 export async function changeWallets() {
-  await onboard.disconnectConnectedWallet();
-  await onboard.connectWallet();
+  // await onboard.disconnectConnectedWallet();
+  let selected = await onboard.connectWallet();
+  console.log(selected)
   localStorage.removeItem("selectedWallet");
 
   // Returns false if user closes/cancels the connect popup
-  const selected = await onboard.walletSelect();
-  if (selected) {
-    // Can only call once user selected, otherwise will get error.
-    await onboard.walletCheck();
-  }
-  const wallet = onboard.connectedWallet()
+  // const selected = await onboard.walletSelect();
+  // if (selected) {
+  //   // Can only call once user selected, otherwise will get error.
+  //   await onboard.walletCheck();
+  // }
+  // const wallet = onboard.alreadyConnectedWallets[0];
+  const wallet = selected[0];
   if (wallet) {
-      console.log(`wallet switched to: ${wallet.name}`);
+      console.log(`wallet switched to: ${wallet.label}`);
       let W3 = (window.web3 = new Web3(wallet.provider));
       store.commit("setWeb3", W3);
-      store.commit("setWallet", wallet.name);
-      localStorage.setItem("selectedWallet", wallet.name);
+      store.commit("setWallet", wallet.label);
+
+      store.commit("setAddress", wallet.accounts[0].address)
+      store.commit("setNetwork", wallet.chains[0])
+      localStorage.setItem("selectedWallet", wallet.label);
+
+      const wallets = onboard.state.select('wallets')
+      wallets.subscribe(() => changeWallets())
+      // const address = onboard.state.select('address')
+      // address.subscribe((account) => store.commit("setAddress", account))
+      // const network = onboard.state.select('address')
+      // network.subscribe((nw) => store.commit("setNetwork", nw))
   }
 }
 
