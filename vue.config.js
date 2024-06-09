@@ -16,7 +16,11 @@ module.exports = {
           .loader('babel-loader')
           .options({
             presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-transform-optional-chaining']
+            plugins: [
+              '@babel/plugin-transform-optional-chaining', 
+              '@babel/plugin-proposal-nullish-coalescing-operator',
+              '@babel/plugin-syntax-bigint'
+            ]
           });
       },
       transpileDependencies: [
