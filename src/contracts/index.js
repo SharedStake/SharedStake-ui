@@ -35,7 +35,8 @@ const chainIdMainnet = "0x1";
 
 const CHAIN_IDS = {
     GOERLI: chainIdGoerli,
-    MAINNET: chainIdMainnet
+    MAINNET: chainIdMainnet,
+    SEPOLIA: "0xaa36a7"
 };
 
 
@@ -132,6 +133,16 @@ if (window.ethereum) {
             sgETH: "0x0056390361289CAFc3E10b65AC4C49e44C08B7df",
             wsgETH: "0x7b569f6eC245403B5fbF68aDa4aef95cb26b6351"
         }
+    } else if (chainId == CHAIN_IDS.SEPOLIA) {
+        addressTemp =
+        {
+            sgETH: '0xA3A244Db2C07061E159090BB8b354ae4662fB0C3',
+            wsgETH: '0xc8BD8F8AC1410e6f59a5EeAf7be00703232EcD56',
+            validator: '0x1974601C7f3A4b3E30A65eFD66f35358390B55a8',
+            PaymentSplitter: '0xFDCDe0019BffA69B72aC14715b61Cb5A3EdAe1f9',
+            withdrawals: '0xA357FA70FCaEa08c467EfB31e082ec933178d1EE',
+            RewardsReceiver: '0x17A043f3bb5360562301B08D8178731037D2EE4E'
+        }
     }
 
     if (isValidChain(chainId)) {
@@ -148,11 +159,15 @@ if (window.ethereum) {
             return connErr();
         }
         createContractDefault = (name) => createContract(name, name)
+    } else {
+        console.log("invalid chain detected. PLEASE SWITCH TO ETH MAINNET OR TESTNET");
     }
 
 
     /************************************* CONTRACTS ****************************************/
 
+} else {
+    connErr();
 }
 
 export const addresses = _addresses
