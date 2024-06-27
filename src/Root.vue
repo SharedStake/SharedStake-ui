@@ -4,15 +4,15 @@
     <div
       class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary"
     >
-      🚀 v2 - limited redemption capacity  🚀
+      🚀 v2 - Sepolia testnet live now! 🚀
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
-        Redemptions at 1.08Eth per vETH2 live now according to SIP 35.1  
+        Get ready for V2!
         <br />
-        Over 10k ETH already redeemed! 
+        Please stake all mainnet veth2 for redemptions asap. Over 90% already redeemed. 
         <br />
-        version: 1.0.5
+        version: 1.0.6
       </p>
     </div>
     <div
