@@ -9,10 +9,11 @@ import Onboard from '@web3-onboard/core'
 // const FORTMATIC_KEY = "Your Fortmatic key here"
 // const PORTIS_KEY = "Your Portis key here"
 // const SQUARELINK_KEY = "Your Squarelink key here"
-const INFURA_KEY = "623c40ea76b44f068428108587d37f4e";
+// const INFURA_KEY = "623c40ea76b44f068428108587d37f4e";
 // const APP_URL = "https://www.sharedstake.org/";
 // const CONTACT_EMAIL = "chimera_defi@protonmail.com";
-export const RPC_URL = `https://mainnet.infura.io/v3/${INFURA_KEY}`;
+// export const RPC_URL = `https://mainnet.infura.io/v3/${INFURA_KEY}`;
+export const RPC_URL = "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd"
 // const APP_NAME = "SharedStake";
 const injected = injectedModule()
 // init({
@@ -122,7 +123,6 @@ window.onboard = onboard;
 export async function changeWallets() {
   // await onboard.disconnectConnectedWallet();
   let selected = await onboard.connectWallet();
-  console.log(selected)
   localStorage.removeItem("selectedWallet");
 
   // Returns false if user closes/cancels the connect popup
@@ -132,16 +132,19 @@ export async function changeWallets() {
   //   await onboard.walletCheck();
   // }
   // const wallet = onboard.alreadyConnectedWallets[0];
-  const wallet = selected[0];
+  const wallet = selected[0]
   if (wallet) {
       console.log(`wallet switched to: ${wallet.label}`);
       let W3 = (window.web3 = new Web3(wallet.provider));
       store.commit("setWeb3", W3);
       store.commit("setWallet", wallet.label);
 
-      store.commit("setAddress", wallet.accounts[0].address)
+      store.dispatch("setAddressOnboard", wallet.accounts[0].address)
+      // store.
       store.commit("setNetwork", wallet.chains[0])
       localStorage.setItem("selectedWallet", wallet.label);
+      // store.
+      store.commit("setAddress",  wallet.accounts[0].address)  
 
       const wallets = onboard.state.select('wallets')
       wallets.subscribe(() => changeWallets())
