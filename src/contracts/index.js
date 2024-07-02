@@ -136,12 +136,12 @@ if (window.ethereum) {
     } else if (chainId == CHAIN_IDS.SEPOLIA) {
         addressTemp =
         {
-            sgETH: '0xA3A244Db2C07061E159090BB8b354ae4662fB0C3',
-            wsgETH: '0xc8BD8F8AC1410e6f59a5EeAf7be00703232EcD56',
-            validator: '0x1974601C7f3A4b3E30A65eFD66f35358390B55a8',
-            PaymentSplitter: '0xFDCDe0019BffA69B72aC14715b61Cb5A3EdAe1f9',
-            withdrawals: '0xA357FA70FCaEa08c467EfB31e082ec933178d1EE',
-            RewardsReceiver: '0x17A043f3bb5360562301B08D8178731037D2EE4E'
+            sgETH: '0xCF4831EBE785437DC54a90018b1b410Bd16c8533',
+            wsgETH: '0x514dfd2d10eC6775f030BA2abcf7A2445C0CA6Fb',
+            validator: '0x36c2F00cC7D02be7Df0BC9be2a8e08b74C4f2E56',
+            PaymentSplitter: '0x38E86964A811Ee66D1139CD97C838B713F63779B',
+            withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
+            RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
         }
     }
 
