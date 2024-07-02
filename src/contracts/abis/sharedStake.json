@@ -27,7 +27,7 @@
   },
   {
     "inputs": [],
-    "name": "WithdrawalCredentialsAlreadySet",
+    "name": "NoValidators",
     "type": "error"
   },
   {
@@ -145,6 +145,10 @@
     "type": "event"
   },
   {
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
     "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
@@ -152,6 +156,19 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEPOSIT_CONTRACT",
+    "outputs": [
+      {
+        "internalType": "contract IDepositContract",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -273,19 +290,6 @@
   },
   {
     "inputs": [],
-    "name": "curr_withdrawal_pubkey",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "deposit",
     "outputs": [],
     "stateMutability": "payable",
@@ -325,13 +329,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "name": "donate",
     "outputs": [],
     "stateMutability": "payable",
@@ -351,49 +349,6 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
-    ],
-    "name": "getRoleMember",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getRoleMemberCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -628,6 +583,13 @@
   },
   {
     "inputs": [],
+    "name": "togglePause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "toggleWithdrawRefund",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -707,5 +669,22 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawalPubKey",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]
