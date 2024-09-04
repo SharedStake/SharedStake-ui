@@ -161,7 +161,7 @@
         than any other Staking-as-a-Service model on the market.
       </div>
 
-      <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
+      <!-- <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
       <div
         class="grid items-center justify-center gap-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3"
       >
@@ -242,7 +242,7 @@
             <div class="NumDetail">Uptime so far at SharedStake in months</div>
           </div>
         </template>
-      </div>
+      </div> -->
       <div v-if="isMobile()">
         <p class="text-center">
           More detailed dashboard available on desktops with an ETH RPC provider
@@ -304,7 +304,7 @@
           </div>
           <div class="LearnButton">
             <a
-              href="https://chimera-1.gitbook.io/sharedstake-v2/"
+              href="https://docs.sharedstake.finance/"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -421,7 +421,9 @@
         </a>
       </div>
     </div>
-    <div class="exp roadMap" v-show="scrolled > 4700">
+    <!-- <div class="exp roadMap" v-show="scrolled > 4700"> -->
+      <!-- disable the roadmap as its outdated TODO: new roadmap -->
+    <div class="exp roadMap" v-show="false">
       <div class="mainBox">
         <div class="exp titleBox">
           <div class="X">Roadmap</div>
@@ -1110,6 +1112,8 @@ export default {
         return [array.slice(0, size), ...chunkArray(array.slice(size), size)];
       };
       async function getAllValidatorInfo(indices) {
+        // disable the dashboard, exit early for now with just 1 validator
+        indices = indices[0];
         // beacon chain api supports 100 indices per call, and a max of 10 calls/min for free tier
         await Promise.all(
           chunkArray(indices, 100).map(async (chunk) => {

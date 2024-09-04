@@ -186,6 +186,7 @@
 <script>
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
+BN.config({ DECIMAL_PLACES: 5 })
 BN.config({ EXPONENTIAL_AT: 100 });
 import { mapGetters } from "vuex";
 
@@ -198,11 +199,12 @@ import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
 import { toChecksumAddress } from "../../utils/common";
 import { getCurrentGasPrices } from "@/utils/common.js";
+const enableStaking = true;
 
 export default {
   components: { ImageVue, StakeGauge, ApprovalButton, Chooser, DappTxBtn },
   data: () => ({
-    buttonText: "Currently disabled",
+    buttonText: enableStaking ? "Enter an amount" : "Currently disabled",
     BNamount: BN(0),
     Damount: "",
     isDeposit: true,
@@ -319,14 +321,17 @@ export default {
           this.BNamount = this.contractBal;
         }
         this.Damount = this.BNamount.dividedBy(1e18);
+        if (this.BNamount.multipliedBy(100).lt(BN(this.balance).multipliedBy(100))) {
+          this.Damount = BN(this.balance);
+        }
       }
     },
     toggleMode() {
       this.isDeposit = !this.isDeposit;
     },
     genSubmit() {
-      console.log("Disabled due to vulnerabilities")
-      if (this.isDeposit || this.buttonText == "Stake") return;
+      // console.log("Disabled due to vulnerabilities")
+      // if (this.isDeposit || this.buttonText == "Stake") return;
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake"))
         return {};
 
@@ -534,9 +539,11 @@ export default {
       let otherBalance = val ? this.vEth2Bal : this.EthBal;
       this.otherBalance = otherBalance.dividedBy(1e18).toFixed(6);
       this.Damount = "";
+      
+      this.buttonText = enableStaking ? "Enter an amount" : "Currently disabled";
       // this.buttonText = "Enter an amount";
 
-      this.buttonText = "Currently disabled";
+      // this.buttonText = "Currently disabled";
     },
     validInput: function(val) {
       if (!val) {
@@ -547,7 +554,7 @@ export default {
           this.buttonText = "input is too small";
           return;
         }
-      this.buttonText = "Currently disabled";
+      // this.buttonText = "Currently disabled";
       }
       if (val) {
         if (this.isDeposit) this.buttonText = "Stake";
@@ -557,7 +564,7 @@ export default {
     async userAddress(newVal) {
       if (newVal) {
         this.buttonText = "Enter an amount";
-        this.buttonText = "Currently disabled";
+        // this.buttonText = "Currently disabled";
         await this.mounted();
       } else {
         this.buttonText = "Connect to wallet ↗";

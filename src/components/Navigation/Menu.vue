@@ -28,12 +28,12 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemAnchor href="https://chimera-1.gitbook.io/sharedstake-v2/" class="px-6">
+      <DropdownItemAnchor href="https://docs.sharedstake.finance/" class="px-6">
         Learn
         <DropdownArrow />
       </DropdownItemAnchor>
       <DropdownGroup>
-        <DropdownItemAnchor href="https://chimera-1.gitbook.io/sharedstake-v2/">
+        <DropdownItemAnchor href="https://docs.sharedstake.finance/">
           Docs
         </DropdownItemAnchor>
         <DropdownItemAnchor href="https://snapshot.org/#/sharedstake.eth">

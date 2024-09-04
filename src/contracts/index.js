@@ -35,7 +35,8 @@ const chainIdMainnet = "0x1";
 
 const CHAIN_IDS = {
     GOERLI: chainIdGoerli,
-    MAINNET: chainIdMainnet
+    MAINNET: chainIdMainnet,
+    SEPOLIA: "0xaa36a7"
 };
 
 
@@ -58,7 +59,7 @@ let _ABIs = {
 let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue")
 let createContract = () => connErr();
 let createContractDefault = () => connErr();
-let isValidChain = (cid) =>  cid == CHAIN_IDS.MAINNET || cid == CHAIN_IDS.GOERLI;
+let isValidChain = (cid) => Object.values(CHAIN_IDS).indexOf(cid) > -1;
 // makes sure all addresses are checksumed
 let checksumAddresses = (_addresses, web3) => {
     for (const x in _addresses) {
@@ -77,7 +78,7 @@ if (window.ethereum) {
 
     if (chainId == CHAIN_IDS.MAINNET) {
         addressTemp = {
-            validator: "0x85Bc06f4e3439d41f610a440Ba0FbE333736B310",//🆗
+            validator: "",// break for now - on mainnet, till we deploy audited new v2
             // Protocol Tokens
             vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
             SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078",
@@ -132,6 +133,16 @@ if (window.ethereum) {
             sgETH: "0x0056390361289CAFc3E10b65AC4C49e44C08B7df",
             wsgETH: "0x7b569f6eC245403B5fbF68aDa4aef95cb26b6351"
         }
+    } else if (chainId == CHAIN_IDS.SEPOLIA) {
+        addressTemp =
+        {
+            sgETH: '0xCF4831EBE785437DC54a90018b1b410Bd16c8533',
+            wsgETH: '0x514dfd2d10eC6775f030BA2abcf7A2445C0CA6Fb',
+            validator: '0xd6Ad9a646330F1a937347a5cfaaDE57990109b5C',
+            PaymentSplitter: '0x38E86964A811Ee66D1139CD97C838B713F63779B',
+            withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
+            RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
+        }
     }
 
     if (isValidChain(chainId)) {
@@ -148,11 +159,15 @@ if (window.ethereum) {
             return connErr();
         }
         createContractDefault = (name) => createContract(name, name)
+    } else {
+        console.log("invalid chain detected. PLEASE SWITCH TO ETH MAINNET OR TESTNET");
     }
 
 
     /************************************* CONTRACTS ****************************************/
 
+} else {
+    connErr();
 }
 
 export const addresses = _addresses

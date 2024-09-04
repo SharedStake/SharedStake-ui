@@ -4,15 +4,15 @@
     <div
       class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary"
     >
-      🚀 v2 - limited redemption capacity  🚀
+      🚀 v2 - Sepolia testnet live now! 🚀 Switch network to Sepolia and try staking/unstaking now for a chance to get an airdrop! 🚀
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
-        Redemptions at 1.08Eth per vETH2 live now according to SIP 35.1  
+        Get ready for V2!
         <br />
-        Over 10k ETH already redeemed! 
+        Over 90% of veth2 already redeemed! New v2 withdrawawls contracts with better UX coming soon for remaining users! 
         <br />
-        version: 1.0.5
+        version: 1.0.6
       </p>
     </div>
     <div
@@ -107,7 +107,7 @@
       </span>
       <span class="link">
         <a
-          href="https://docs.sharedstake.org/"
+          href="https://docs.sharedstake.finance/"
           target="_blank"
           rel="noopener noreferrer"
           >Docs
