@@ -4,13 +4,13 @@
     <div
       class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary"
     >
-      🚀 v2 - Sepolia testnet live now! 🚀
+      🚀 v2 - Sepolia testnet live now! 🚀 Switch network to Sepolia and try staking/unstaking now for a chance to get an airdrop! 🚀
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
         Get ready for V2!
         <br />
-        Please stake all mainnet veth2 for redemptions asap. Over 90% already redeemed. 
+        Over 90% of veth2 already redeemed! New v2 withdrawawls contracts with better UX coming soon for remaining users! 
         <br />
         version: 1.0.6
       </p>
