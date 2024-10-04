@@ -78,7 +78,7 @@ if (window.ethereum) {
 
     if (chainId == CHAIN_IDS.MAINNET) {
         addressTemp = {
-            validator: "",// break for now - on mainnet, till we deploy audited new v2
+            validator: "0x85Bc06f4e3439d41f610a440Ba0FbE333736B310",// break for now - on mainnet, till we deploy audited new v2
             // Protocol Tokens
             vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
             SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078",
