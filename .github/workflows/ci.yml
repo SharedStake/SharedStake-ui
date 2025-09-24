@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --openssl-legacy-provider
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,11 +38,9 @@ jobs:
         run: yarn lint
 
       - name: Build
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: yarn build
 
-      - name: E2E Tests
+      - name: E2E Tests (Chromium)
         env:
           CI: true
         run: |

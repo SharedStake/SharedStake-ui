@@ -1,16 +1,21 @@
 version: 1
+env:
+  variables:
+    NODE_OPTIONS: --openssl-legacy-provider
 frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 18 && nvm use 18
+        - export NVM_DIR="$HOME/.nvm"
+        - . "$NVM_DIR/nvm.sh" || true
+        - nvm install 18 || true
+        - nvm use 18 || true
         - node -v && npm -v
         - npm install -g yarn@1.22.22
         - yarn -v
         - yarn install --ignore-engines
     build:
       commands:
-        - export NODE_OPTIONS=--openssl-legacy-provider
         - yarn build
   artifacts:
     baseDirectory: dist
