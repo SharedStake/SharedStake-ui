@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "setup": "nvm use 16",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -16,10 +16,10 @@
     "@web3-onboard/gas": "2.1.8",
     "@web3-onboard/injected-wallets": "^2.10.17",
     "@web3-onboard/vue": "^2.7.16",
-    "axios": "^0.21.1",
+    "axios": "^1.7.7",
     "bignumber.js": "^9.0.1",
     "bnc-notify": "^1.5.1",
-    "core-js": "^3.6.5",
+    "core-js": "^3.38.1",
     "ethers": "^6.12.1",
     "sweetalert2": "^10.16.7",
     "three": "^0.126.1",
@@ -31,9 +31,10 @@
     "web3": "^1.5.3"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "^4.5.13",
+    "@babel/plugin-transform-optional-chaining": "^7.25.7",
+    "@vue/cli-plugin-babel": "~4.5.19",
+    "@vue/cli-plugin-eslint": "~4.5.19",
+    "@vue/cli-service": "~4.5.19",
     "autoprefixer": "^9.8.8",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",

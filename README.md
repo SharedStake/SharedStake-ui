@@ -5,8 +5,10 @@ vue implementation of sharedstake
 
 ## Project setup
 ```
-nvm install 16
-nvm use 16
+# Use a compatible Node version (nvm will read .nvmrc)
+nvm use
+
+# Install dependencies
 yarn install
 ```
 
@@ -24,6 +26,10 @@ yarn build
 ```
 yarn lint
 ```
+
+### Notes
+- This repo targets Vue 2 with Vue CLI 4 and Tailwind 2 (PostCSS 7 compat).
+- Node 18 LTS is recommended. For Node ≥17, scripts set `NODE_OPTIONS=--openssl-legacy-provider` to avoid OpenSSL issues with webpack/Terser.
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
