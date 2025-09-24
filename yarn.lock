@@ -3435,7 +3435,7 @@ bluebird@^3.1.1:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
 
-bnc-notify@^1.5.1:
+bnc-notify@^1.9.8:
   version "1.9.8"
   resolved "https://registry.yarnpkg.com/bnc-notify/-/bnc-notify-1.9.8.tgz#8e0464428ddc5245a223a5814af39a7b03f74669"
   integrity sha512-CTEuKZ/nkeBFYhusU2prl+w62+CF9io5DEEtXPCywzYh5t8+obD0f/eZ3yD146DGVPANhltgkCXE3oNspGvBug==
@@ -3988,10 +3988,10 @@ cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-crypto-es@^1.2.2:
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/crypto-es/-/crypto-es-1.2.7.tgz#754a6d52319a94fb4eb1f119297f17196b360f88"
-  integrity sha512-UUqiVJ2gUuZFmbFsKmud3uuLcNP2+Opt+5ysmljycFCyhA0+T16XJmo1ev/t5kMChMqWh7IEvURNCqsg+SjZGQ==
+crypto-es@^1.2.2, crypto-es@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/crypto-es/-/crypto-es-2.1.0.tgz#1095f324ffd7dc1ccab8e21d0960e17025da8ce9"
+  integrity sha512-C5Dbuv4QTPGuloy5c5Vv/FZHtmK+lobLAypFfuRaBbwCsk3qbCWWESCH3MUcBsrgXloRNMrzwUAiPg4U6+IaKA==
 
 css-color-names@^0.0.4:
   version "0.0.4"

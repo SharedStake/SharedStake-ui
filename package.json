@@ -21,7 +21,7 @@
     "@web3-onboard/vue": "^2.10.0",
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
-    "bnc-notify": "^1.5.1",
+    "bnc-notify": "^1.9.8",
     "core-js": "^3.37.1",
     "ethers": "^6.15.0",
     "rxjs": "^7.8.1",
@@ -66,5 +66,8 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "resolutions": {
+    "crypto-es": "^2.1.0"
+  }
 }
