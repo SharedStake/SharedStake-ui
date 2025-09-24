@@ -7,4 +7,7 @@
 - Fixed Node 17+ OpenSSL/Terser issue by setting NODE_OPTIONS=--openssl-legacy-provider in scripts.
 - Build now succeeds; lints pass.
 - Next: Document follow-ups and best practices.
+- Updated CI:
+  - Amplify: pin Node 18, add yarn ignore-engines, export NODE_OPTIONS in build.
+  - GitHub Actions workflow: Node 18, yarn install ignore-engines, lint, build, and run e2e.
 

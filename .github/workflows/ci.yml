@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Show versions
+        run: |
+          node -v
+          npm -v
+
+      - name: Install Yarn
+        run: |
+          npm i -g yarn@1.22.22
+          yarn -v
+
+      - name: Install dependencies
+        run: yarn install --ignore-engines
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: yarn build
+
+      - name: E2E Tests
+        env:
+          CI: true
+        run: |
+          yarn test:e2e:install
+          yarn test:e2e
+

@@ -3,9 +3,14 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install -g yarn && yarn install
+        - nvm install 18 && nvm use 18
+        - node -v && npm -v
+        - npm install -g yarn@1.22.22
+        - yarn -v
+        - yarn install --ignore-engines
     build:
       commands:
+        - export NODE_OPTIONS=--openssl-legacy-provider
         - yarn build
   artifacts:
     baseDirectory: dist
