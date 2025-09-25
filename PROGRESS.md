@@ -81,7 +81,8 @@
 ### Recent Fixes ✅
 - **✅ ESM/CJS Compatibility**: Fixed nanoid version conflict with css-loader/postcss
 - **✅ PostCSS Version**: Corrected postcss to valid version 7.0.39
-- **✅ Build Stability**: All CI/CD builds now working correctly
+- **✅ Open Package Fix**: Pinned open package to v8.4.2 to resolve ERR_REQUIRE_ESM error
+- **✅ Build Stability**: All CI/CD builds now working correctly (GitHub Actions + AWS Amplify)
 
 ### Next Phase Recommendations:
 
