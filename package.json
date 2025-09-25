@@ -79,6 +79,9 @@
     "nanoid": "^3.3.4",
     "esbuild": "^0.25.0",
     "webpack-dev-server": "^5.2.1",
-    "open": "^8.4.2"
+    "open": "^8.4.2",
+    "brace-expansion": "^1.1.12",
+    "on-headers": "^1.1.0",
+    "tmp": "^0.2.4"
   }
 }
