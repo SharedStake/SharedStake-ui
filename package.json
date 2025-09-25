@@ -42,7 +42,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.7.1",
-    "postcss": "^7.0.40",
+    "postcss": "^7.0.39",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
     "vue-template-compiler": "^2.7.14"
   },
