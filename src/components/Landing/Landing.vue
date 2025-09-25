@@ -2,15 +2,17 @@
   <div class="Landing">
     <div class="Container first" v-show="scrolled >= 0">
       <div class="LogoContainer">
-        <ImageVue
-          class="align-self-center justify-self-center"
-          :src="'logo-red.svg'"
-          :size="windowWidth > 900 ? '180px' : '20vw'"
-        />
+        <div class="aspect-square w-32 md:w-48 mx-auto">
+          <ImageVue
+            class="align-self-center justify-self-center w-full h-full object-contain"
+            :src="'logo-red.svg'"
+            :size="windowWidth > 900 ? '180px' : '20vw'"
+          />
+        </div>
       </div>
       <div class="flex flex-col justify-center h-full p-4">
         <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
-          <h1 class="relative mb-6 mainTitle">
+          <h1 class="relative mb-6 mainTitle text-balance">
             <span
               title="Established in 2020"
               class="absolute p-1 px-2 text-xs font-semibold text-gray-800 transform -translate-x-1/2 bg-gray-300 rounded-sm -bottom-6 md:bottom-auto md:-top-6 md:left-0 left-1/2 md:translate-x-0"
@@ -19,7 +21,7 @@
             </span>
             ETHEREUM LIQUID STAKING DERIVATIVE! <br />
           </h1>
-          <div class="exp">
+          <div class="exp text-pretty">
             SharedStake is a decentralized Ethereum 2 staking solution that
             allows users to stake any amount of Ether and earn additional yield
             on top of their ETH2 rewards.
@@ -29,13 +31,13 @@
           class="flex items-center justify-center gap-6 mb-8 md-large:justify-start"
         >
           <router-link
-            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-brand-primary md:font-medium md:text-3xl md:px-8 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary whitespace-nowrap"
+            class="btn btn-primary text-xl md:text-3xl px-6 md:px-8 whitespace-nowrap"
             to="/stake"
           >
             STAKE V2
           </router-link>
           <a
-            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            class="btn btn-outline text-xl md:text-2xl px-6 md:px-8 whitespace-nowrap"
             rel="noopener noreferrer nofollow"
             href="https://app.passch.com/"
             target="_blank"
@@ -161,9 +163,9 @@
         than any other Staking-as-a-Service model on the market.
       </div>
 
-      <!-- <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
+      <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
       <div
-        class="grid items-center justify-center gap-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3"
+        class="@container grid items-center justify-center gap-8 gap-y-12 @sm:grid-cols-2 @lg:grid-cols-3"
       >
         <div class="Stat">
           <div class="Num">{{ TVL }}</div>

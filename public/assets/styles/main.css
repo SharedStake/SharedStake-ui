@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Modern CSS features */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+  
+  .scroll-auto {
+    scroll-behavior: auto;
+  }
+}
+
+/* Enhanced component styles */
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-brand-primary text-white hover:bg-blue-700 focus:ring-brand-primary;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white focus:ring-brand-primary;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
+  
+  .card-hover {
+    @apply card hover:shadow-md transition-shadow duration-200;
+  }
+  
+  .input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-primary focus:ring-brand-primary sm:text-sm;
+  }
+  
+  .input-error {
+    @apply input border-red-300 focus:border-red-500 focus:ring-red-500;
+  }
+}

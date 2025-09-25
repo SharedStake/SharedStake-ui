@@ -14,7 +14,7 @@
           <div class="inputBody">
             <div class="flex_row">
               <input
-                class="token-amount-input"
+                class="input token-amount-input"
                 inputmode="decimal"
                 title="Token Amount"
                 autocomplete="off"
@@ -43,7 +43,7 @@
           <div class="inputBody">
             <div class="flex_row">
               <input
-                class="token-amount-input"
+                class="input token-amount-input"
                 inputmode="decimal"
                 title="Token Amount"
                 autocomplete="off"

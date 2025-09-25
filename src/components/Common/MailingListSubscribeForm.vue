@@ -27,7 +27,7 @@
                         type="email"
                         value=""
                         name="EMAIL"
-                        class="email"
+                        class="input email"
                         id="mce-EMAIL"
                         placeholder="email address"
                         required
@@ -37,7 +37,7 @@
                         value="Subscribe"
                         name="subscribe"
                         id="mc-embedded-subscribe"
-                        class="submit-button"
+                        class="btn btn-primary submit-button"
                     />
                 </div>
             </div>
