@@ -78,6 +78,7 @@
     "svelte": "^4.2.19",
     "nanoid": "^3.3.4",
     "esbuild": "^0.25.0",
-    "webpack-dev-server": "^5.2.1"
+    "webpack-dev-server": "^5.2.1",
+    "open": "^8.4.2"
   }
 }
