@@ -42,7 +42,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.7.1",
-    "postcss": "^7.0.39",
+    "postcss": "^7.0.40",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
     "vue-template-compiler": "^2.7.14"
   },
@@ -70,6 +70,14 @@
   "resolutions": {
     "crypto-es": "^2.1.0",
     "cross-spawn": "^6.0.6",
-    "ws": "^8.17.1"
+    "ws": "^8.17.1",
+    "micromatch": "^4.0.8",
+    "webpack": "^5.94.0",
+    "@babel/runtime": "^7.26.10",
+    "@babel/helpers": "^7.26.10",
+    "svelte": "^4.2.19",
+    "nanoid": "^5.0.9",
+    "esbuild": "^0.25.0",
+    "webpack-dev-server": "^5.2.1"
   }
 }
