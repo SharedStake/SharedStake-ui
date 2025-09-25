@@ -22,6 +22,7 @@ const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
 const Rollover = () => import("../components/Withdraw/Rollover.vue")
 const Wrap = () => import("../components/Stake/Wrap.vue");
 const Unwrap = () => import("../components/Stake/Unwrap.vue");
+const Web3Test = () => import("../components/Web3Test.vue");
 
 Vue.use(VueRouter);
 
@@ -78,6 +79,11 @@ let routes = [{
         path: "/unwrap",
         name: "Unwrap",
         component: Unwrap,
+    },
+    {
+        path: "/web3-test",
+        name: "Web3 Test",
+        component: Web3Test,
     }]
 },
     // {
