@@ -28,6 +28,14 @@
                 class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded font-semibold">
           📄 Test Contract Interaction
         </button>
+        <button @click="testStakeUnstakeRoutes" 
+                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded font-semibold">
+          🛣️ Test Routes
+        </button>
+        <button @click="testStoreIntegration" 
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded font-semibold">
+          🗄️ Test Store
+        </button>
       </div>
       
       <!-- Test Status -->
@@ -46,6 +54,7 @@
 import Web3 from 'web3';
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
+import { addresses, ABIs } from '../contracts/index.js';
 
 export default {
   name: 'Web3Test',
@@ -201,8 +210,85 @@ export default {
         const networkId = await this.web3.eth.net.getId();
         this.addTest('Network ID', () => networkId === 1, `Network ID: ${networkId} (should be 1 for mainnet)`);
         
+        // Test SharedStake contract addresses
+        this.addTest('Contract Addresses', () => {
+          return addresses && Object.keys(addresses).length > 0;
+        }, `Found ${Object.keys(addresses || {}).length} contract addresses`);
+        
+        // Test contract creation
+        if (addresses && ABIs) {
+          try {
+            const validatorContract = new this.web3.eth.Contract(ABIs.validator, addresses.validator);
+            this.addTest('Validator Contract', () => validatorContract, 'Validator contract created successfully');
+            
+            const vEth2Contract = new this.web3.eth.Contract(ABIs.vEth2, addresses.vEth2);
+            this.addTest('vEth2 Contract', () => vEth2Contract, 'vEth2 contract created successfully');
+            
+            const sgtContract = new this.web3.eth.Contract(ABIs.SGT, addresses.SGT);
+            this.addTest('SGT Contract', () => sgtContract, 'SGT contract created successfully');
+            
+            // Test geyser contracts
+            if (addresses.geyser_vEth2) {
+              const geyserContract = new this.web3.eth.Contract(ABIs.geyser, addresses.geyser_vEth2);
+              this.addTest('Geyser Contract', () => geyserContract, 'Geyser contract created successfully');
+            }
+            
+          } catch (error) {
+            this.addTest('Contract Creation', () => false, `Contract creation failed: ${error.message}`);
+          }
+        }
+        
       } catch (error) {
         this.addTest('Contract Interaction', () => false, `Interaction failed: ${error.message}`);
+      }
+    },
+    
+    async testStakeUnstakeRoutes() {
+      this.addTest('Stake Route Available', () => {
+        return this.$router.resolve({ name: 'Stake' }).resolved.matched.length > 0;
+      }, 'Stake route is accessible');
+      
+      this.addTest('Earn Route Available', () => {
+        return this.$router.resolve({ name: 'Earn' }).resolved.matched.length > 0;
+      }, 'Earn route is accessible');
+      
+      this.addTest('Withdraw Route Available', () => {
+        return this.$router.resolve({ name: 'Withdraw' }).resolved.matched.length > 0;
+      }, 'Withdraw route is accessible');
+      
+      this.addTest('Wrap Route Available', () => {
+        return this.$router.resolve({ name: 'Wrap' }).resolved.matched.length > 0;
+      }, 'Wrap route is accessible');
+      
+      this.addTest('Unwrap Route Available', () => {
+        return this.$router.resolve({ name: 'Unwrap' }).resolved.matched.length > 0;
+      }, 'Unwrap route is accessible');
+    },
+    
+    async testStoreIntegration() {
+      try {
+        // Test if store is available
+        this.addTest('Vuex Store', () => {
+          return this.$store && typeof this.$store === 'object';
+        }, 'Vuex store is available');
+        
+        // Test if Web3 is stored in store
+        this.addTest('Web3 in Store', () => {
+          return this.$store.state.web3 && typeof this.$store.state.web3 === 'object';
+        }, 'Web3 instance stored in Vuex store');
+        
+        // Test if address is stored
+        this.addTest('Address in Store', () => {
+          return this.$store.state.address && typeof this.$store.state.address === 'string';
+        }, `Address stored: ${this.$store.state.address || 'None'}`);
+        
+        // Test if wallet is stored
+        this.addTest('Wallet in Store', () => {
+          return this.$store.state.wallet && typeof this.$store.state.wallet === 'string';
+        }, `Wallet stored: ${this.$store.state.wallet || 'None'}`);
+        
+      } catch (error) {
+        this.addTest('Store Integration', () => false, `Store test failed: ${error.message}`);
       }
     }
   }
