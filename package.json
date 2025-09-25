@@ -35,15 +35,18 @@
     "web3": "^4.16.0"
   },
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.19",
     "@vue/cli-plugin-babel": "^5.0.9",
     "@vue/cli-plugin-eslint": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
-    "autoprefixer": "^9.8.8",
+    "autoprefixer": "^10.4.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.7.1",
-    "postcss": "^7.0.39",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.4.0",
     "vue-template-compiler": "^2.7.14"
   },
   "eslintConfig": {
@@ -80,8 +83,9 @@
     "esbuild": "^0.25.0",
     "webpack-dev-server": "^5.2.1",
     "open": "^8.4.2",
-    "brace-expansion": "^1.1.12",
-    "on-headers": "^1.1.0",
-    "tmp": "^0.2.4"
+      "brace-expansion": "^1.1.12",
+      "on-headers": "^1.1.0",
+      "tmp": "^0.2.4",
+      "postcss": "^8.4.31"
   }
 }

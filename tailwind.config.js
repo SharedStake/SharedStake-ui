@@ -1,25 +1,40 @@
-// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  purge: ["./public/**/*.html", "./src/**/*.vue"],
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
-        "brand-primary": "#e6007a",
-        "brand-primary-light": "#e2539e",
+        primary: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+        },
+        'brand-primary': '#3b82f6', // Blue-500
+        'brand-primary-light': '#60a5fa', // Blue-400
       },
-      screens: {
-        "md-large": "900px",
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
-      maxWidth: {
-        content: 1300,
-      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+      }
     },
   },
-  variants: {
-    extend: {
-      display: ["group-hover"],
-      visibility: ["group-hover"],
-    },
-  },
-  plugins: [],
-};
+  plugins: [
+    // Add Tailwind CSS 3.x plugins
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
+}
