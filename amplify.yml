@@ -3,7 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install -g yarn && yarn install
+        - nvm use 18
+        - npm install -g yarn
+        - yarn install
     build:
       commands:
         - yarn build
