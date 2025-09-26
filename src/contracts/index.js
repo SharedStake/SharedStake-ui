@@ -69,8 +69,20 @@ let checksumAddresses = (_addresses, web3) => {
 }
 
 
+// Initialize Web3 instance
+let web3 = null;
+let isInitialized = false;
+
+const initializeWeb3 = () => {
+    if (window.ethereum && !isInitialized) {
+        web3 = new Web3(window.ethereum);
+        isInitialized = true;
+    }
+    return web3;
+};
+
 if (window.ethereum) {
-    const web3 = new Web3(window.ethereum);
+    initializeWeb3();
 
     // @TODO: Figure out what causes FF to not connect the wallet correctly. 
     let chainId = window.ethereum.chainId;
@@ -150,11 +162,12 @@ if (window.ethereum) {
 
         // Utils
         createContract = (abi, address) => {
+            const web3Instance = initializeWeb3();
             if (
-                _addresses && _ABIs &&
+                web3Instance && _addresses && _ABIs &&
                 _addresses[address] && _ABIs[abi]
             ) {
-                return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
+                return new web3Instance.eth.Contract(_ABIs[abi], _addresses[address]);
             }
             return connErr();
         }
@@ -217,3 +230,23 @@ export const oldPools = {
     geyser_vEth2: _geyser_vEth2_old,
     geyser_vEth2_saddle: _geyser_vEth2_saddle_old
 }
+
+// Function to reinitialize contracts when Web3 becomes available
+export const reinitializeContracts = () => {
+    if (window.ethereum) {
+        initializeWeb3();
+        // Re-export all contracts with fresh Web3 instance
+        return {
+            validator: createContractDefault('validator'),
+            vEth2: createContractDefault('vEth2'),
+            SGT: createContractDefault('SGT'),
+            sgETH: createContractDefault('sgETH'),
+            wsgETH: createContractDefault('wsgETH'),
+            geyser_vEth2: createContract("geyser", "geyser_vEth2"),
+            geyser_SGT: createContract("geyser", "geyser_SGT"),
+            withdrawals: createContractDefault('withdrawals'),
+            rollovers: createContractDefault("rollovers")
+        };
+    }
+    return null;
+};

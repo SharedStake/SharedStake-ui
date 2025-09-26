@@ -75,18 +75,29 @@ export default {
       this.loading = true;
       const chosenGas = this.gasPrice;
 
-      await abiCall(...argsArr)
-        .send({
-          // Transactions now handled in accordance EIP-1559
-          from: this.userConnectedWalletAddress,
-          maxFeePerGas: BN(chosenGas.maxFeePerGas)
-            .multipliedBy(1000000000)
-            .toString(),
-          maxPriorityFeePerGas: BN(chosenGas.maxPriorityFeePerGas)
-            .multipliedBy(1000000000)
-            .toString(),
-          ...senderObj,
-        })
+      try {
+        // Validate that abiCall is a proper Web3 contract method
+        if (!abiCall || typeof abiCall !== 'function') {
+          throw new Error("Invalid contract method provided");
+        }
+
+        const contractMethod = abiCall(...argsArr);
+        if (!contractMethod || typeof contractMethod.send !== 'function') {
+          throw new Error("Contract method does not have a send function. Make sure the contract is properly initialized.");
+        }
+
+        await contractMethod
+          .send({
+            // Transactions now handled in accordance EIP-1559
+            from: this.userConnectedWalletAddress,
+            maxFeePerGas: BN(chosenGas.maxFeePerGas)
+              .multipliedBy(1000000000)
+              .toString(),
+            maxPriorityFeePerGas: BN(chosenGas.maxPriorityFeePerGas)
+              .multipliedBy(1000000000)
+              .toString(),
+            ...senderObj,
+          })
 
         .on("transactionHash", function (hash) {
           notifyHandler(hash);
@@ -96,15 +107,25 @@ export default {
           notifyNotification("Tx successful", "success");
           await cb();
         })
-        .on("error", () => {
+        .on("error", (error) => {
+          console.error("Transaction error:", error);
           this.error = true;
+          notifyNotification("Transaction failed", "error");
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error("Transaction catch error:", error);
           this.error = true;
+          notifyNotification("Transaction failed", "error");
         })
         .finally(() => {
           this.loading = false;
         });
+      } catch (error) {
+        console.error("Contract method error:", error);
+        this.error = true;
+        this.loading = false;
+        notifyNotification("Contract method error: " + error.message, "error");
+      }
     },
   },
 };

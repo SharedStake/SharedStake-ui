@@ -244,7 +244,7 @@ export default {
     this.chosenGas = this.gas.medium;
     this.loading = false;
     // console.log("chosenGas", this.chosenGas);
-    await this.mounted();
+    await this.initializeBalances();
   },
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
@@ -378,9 +378,26 @@ export default {
       };
     },
 
-    async mounted() {
+    async initializeBalances() {
       //balances
       try {
+        // Ensure contracts are properly initialized
+        if (!sgETH || !sgETH.methods) {
+          console.log("Contracts not initialized, waiting for Web3...");
+          // Wait a bit and try to reinitialize
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const { reinitializeContracts } = await import("@/contracts");
+          const contracts = reinitializeContracts();
+          if (contracts && contracts.sgETH) {
+            this.sgETH = contracts.sgETH;
+            this.wsgETH = contracts.wsgETH;
+            this.validator = contracts.validator;
+          } else {
+            console.error("Failed to initialize contracts");
+            return;
+          }
+        }
+
         let walletAddress = this.userAddress;
         let amount = await window.ethereum.request({
           method: "eth_getBalance",
@@ -388,7 +405,7 @@ export default {
         });
 
         this.EthBal = BN(amount);
-        let veth2 = await sgETH.methods.balanceOf(walletAddress).call();
+        let veth2 = await this.sgETH.methods.balanceOf(walletAddress).call();
         let wsgeth = await this.getUserWsgETHBalance();
         this.vEth2Bal = BN(veth2);
         let _parse = (n) =>
@@ -480,17 +497,29 @@ export default {
       }
     },
     async getUserWsgETHBalance() {
-      let bal = await wsgETH.methods.balanceOf(this.userAddress).call();
+      if (!this.wsgETH || !this.wsgETH.methods) {
+        console.error("wsgETH contract not initialized");
+        return "0";
+      }
+      let bal = await this.wsgETH.methods.balanceOf(this.userAddress).call();
       this.userWSGETHBal = bal;
       return bal;
     },
     async getWsgETHRedemption() {
-      let vp = await wsgETH.methods.pricePerShare().call();
+      if (!this.wsgETH || !this.wsgETH.methods) {
+        console.error("wsgETH contract not initialized");
+        return;
+      }
+      let vp = await this.wsgETH.methods.pricePerShare().call();
       this.wsgETHRedemptionPrice = BN(vp);
     },
     async getUserApprovedwsgEth() {
-      let userApproved = await wsgETH.methods
-        .allowance(this.userAddress, validator.options.address)
+      if (!this.wsgETH || !this.wsgETH.methods || !this.validator) {
+        console.error("Contracts not initialized");
+        return;
+      }
+      let userApproved = await this.wsgETH.methods
+        .allowance(this.userAddress, this.validator.options.address)
         .call();
       this.userApprovedwsgETH = BN(userApproved);
     },
