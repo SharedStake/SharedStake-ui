@@ -84,36 +84,45 @@ export default {
         return;
       }
 
-      await abiCall(...argsArr)
-        .send({
-          // Transactions now handled in accordance EIP-1559
-          from: this.userConnectedWalletAddress,
-          maxFeePerGas: BN(chosenGas.maxFeePerGas)
-            .multipliedBy(1000000000)
-            .toString(),
-          maxPriorityFeePerGas: BN(chosenGas.maxPriorityFeePerGas)
-            .multipliedBy(1000000000)
-            .toString(),
-          ...senderObj,
-        })
+      // ethers.js transaction syntax
+      const txOptions = {
+        // Transactions now handled in accordance EIP-1559
+        maxFeePerGas: BN(chosenGas.maxFeePerGas)
+          .multipliedBy(1000000000)
+          .toString(),
+        maxPriorityFeePerGas: BN(chosenGas.maxPriorityFeePerGas)
+          .multipliedBy(1000000000)
+          .toString(),
+        ...senderObj,
+      };
 
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-        })
-        .once("confirmation", async () => {
+      // Remove 'from' field as ethers.js uses the signer's address automatically
+      delete txOptions.from;
+
+      try {
+        const tx = await abiCall(...argsArr, txOptions);
+        
+        // Handle transaction hash notification
+        notifyHandler(tx.hash);
+        
+        // Wait for transaction confirmation
+        const receipt = await tx.wait();
+        
+        if (receipt.status === 1) {
           this.error = false;
           notifyNotification("Tx successful", "success");
           await cb();
-        })
-        .on("error", () => {
+        } else {
           this.error = true;
-        })
-        .catch(() => {
-          this.error = true;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+          notifyNotification("Tx failed", "error");
+        }
+      } catch (error) {
+        console.error("Transaction error:", error);
+        this.error = true;
+        notifyNotification("Transaction failed", "error");
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };

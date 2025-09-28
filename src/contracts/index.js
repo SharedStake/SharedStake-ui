@@ -5,7 +5,7 @@
  * DELETE USELESS INFO 
 **/
 
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 import sharedStake from './abis/sharedStake.json'
 import vEth2Token from './abis/vEth2Token.json'
 import erc20 from './abis/erc20.json'
@@ -60,24 +60,26 @@ let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethere
 let createContract = () => connErr();
 let createContractDefault = () => connErr();
 let isValidChain = (cid) => Object.values(CHAIN_IDS).indexOf(cid) > -1;
-// makes sure all addresses are checksumed
-let checksumAddresses = (_addresses, web3) => {
-    for (const x in _addresses) {
-        _addresses[x] = web3.utils.toChecksumAddress(_addresses[x]);
-    }
-    return _addresses;
-}
+// makes sure all addresses are checksumed (not needed with ethers.js as it handles this automatically)
+// let checksumAddresses = (_addresses, web3) => {
+//     for (const x in _addresses) {
+//         _addresses[x] = web3.utils.toChecksumAddress(_addresses[x]);
+//     }
+//     return _addresses;
+// }
 
 
-// Initialize Web3 and contracts when window.ethereum is available
-let web3 = null;
+// Initialize ethers.js and contracts when window.ethereum is available
+let provider = null;
+let signer = null;
 let isInitialized = false;
 
-// Function to initialize Web3 and contracts
-const initializeWeb3 = () => {
+// Function to initialize ethers.js and contracts
+const initializeEthers = () => {
     if (window.ethereum && !isInitialized) {
         try {
-            web3 = new Web3(window.ethereum);
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = null; // Will be set when user connects wallet
             isInitialized = true;
             
             // @TODO: Figure out what causes FF to not connect the wallet correctly. 
@@ -154,19 +156,20 @@ const initializeWeb3 = () => {
             }
 
             if (isValidChain(chainId)) {
-                _addresses = checksumAddresses(addressTemp, web3);
+                _addresses = addressTemp; // ethers.js handles checksumming automatically
 
                 // Utils
-                createContract = (abi, address) => {
+                createContract = (abi, address, useSigner = false) => {
                     if (
                         _addresses && _ABIs &&
                         _addresses[address] && _ABIs[abi]
                     ) {
-                        return new web3.eth.Contract(_ABIs[abi], _addresses[address]);
+                        const contractProvider = useSigner && signer ? signer : provider;
+                        return new ethers.Contract(_addresses[address], _ABIs[abi], contractProvider);
                     }
                     return connErr();
                 }
-                createContractDefault = (name) => createContract(name, name)
+                createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
             } else {
                 console.log("invalid chain detected. PLEASE SWITCH TO ETH MAINNET OR TESTNET");
             }
@@ -181,12 +184,12 @@ const initializeWeb3 = () => {
 
 // Initialize immediately if window.ethereum is available
 if (window.ethereum) {
-    initializeWeb3();
+    initializeEthers();
 } else {
     // Wait for window.ethereum to be available
     const checkEthereum = () => {
         if (window.ethereum) {
-            initializeWeb3();
+            initializeEthers();
         } else {
             setTimeout(checkEthereum, 100);
         }
@@ -194,48 +197,70 @@ if (window.ethereum) {
     checkEthereum();
 }
 
+// Function to get signer and update contracts
+export const getSigner = async () => {
+    if (provider && !signer) {
+        try {
+            signer = await provider.getSigner();
+            // Update all contracts with signer for write operations
+            updateContractsWithSigner();
+        } catch (error) {
+            console.error("Error getting signer:", error);
+        }
+    }
+    return signer;
+};
+
+// Function to update contracts with signer
+const updateContractsWithSigner = () => {
+    if (signer) {
+        // Recreate contracts with signer for write operations
+        // This will be called when user connects wallet
+    }
+};
+
 export const addresses = _addresses
 export const ABIs = _ABIs
 
 
 // Export contract getters that return contracts when available
-export const validator = () => createContractDefault('validator');
-export const vEth2 = () => createContractDefault('vEth2');
-export const SGT = () => createContractDefault('SGT');
+export const validator = (useSigner = false) => createContractDefault('validator', useSigner);
+export const vEth2 = (useSigner = false) => createContractDefault('vEth2', useSigner);
+export const SGT = (useSigner = false) => createContractDefault('SGT', useSigner);
 
     // OTHER Tokens HERE
-export const SGT_uniswap = () => createContract("erc20_uniswap", "SGT_uniswap");
-export const SGT_vEth2_uniswap = () => createContract("erc20_uniswap", "SGT_vEth2_uniswap");
-export const vEth2_saddle = () => createContract("erc20", "vEth2_saddle");
+export const SGT_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_uniswap", useSigner);
+export const SGT_vEth2_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_vEth2_uniswap", useSigner);
+export const vEth2_saddle = (useSigner = false) => createContract("erc20", "vEth2_saddle", useSigner);
     // // Geysers
-export const geyser_vEth2 = () => createContract("geyser", "geyser_vEth2");
-export const geyser_SGT = () => createContract("geyser", "geyser_SGT");
-export const geyser_SGT_uniswap = () => createContract("geyser", "geyser_SGT_uniswap");
-export const geyser_SGT_vEth2_uniswap = () => createContract("geyser", "geyser_SGT_vEth2_uniswap");
-export const geyser_vEth2_saddle = () => createContract("geyser_new", "geyser_vEth2_saddle");
+export const geyser_vEth2 = (useSigner = false) => createContract("geyser", "geyser_vEth2", useSigner);
+export const geyser_SGT = (useSigner = false) => createContract("geyser", "geyser_SGT", useSigner);
+export const geyser_SGT_uniswap = (useSigner = false) => createContract("geyser", "geyser_SGT_uniswap", useSigner);
+export const geyser_SGT_vEth2_uniswap = (useSigner = false) => createContract("geyser", "geyser_SGT_vEth2_uniswap", useSigner);
+export const geyser_vEth2_saddle = (useSigner = false) => createContract("geyser_new", "geyser_vEth2_saddle", useSigner);
 
 
     // OLD Geysers HERE
-export const geyser_vEth2_old = () => createContract("geyser", "geyser_vEth2_old");
-export const geyser_SGT_old = () => createContract("geyser", "geyser_SGT_old");
-export const geyser_SGT_uniswap_old = () => createContract("geyser", "geyser_SGT_uniswap_old");
-export const geyser_vEth2_saddle_old = () => createContract("geyser", "geyser_vEth2_saddle_old");
+export const geyser_vEth2_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_old", useSigner);
+export const geyser_SGT_old = (useSigner = false) => createContract("geyser", "geyser_SGT_old", useSigner);
+export const geyser_SGT_uniswap_old = (useSigner = false) => createContract("geyser", "geyser_SGT_uniswap_old", useSigner);
+export const geyser_vEth2_saddle_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_saddle_old", useSigner);
 
     //Airdrop
-export const airdrop = () => createContractDefault("airdrop_distributor");
+export const airdrop = (useSigner = false) => createContractDefault("airdrop_distributor", useSigner);
 
     //Migrator
-export const migrator = () => createContractDefault("migrator");
+export const migrator = (useSigner = false) => createContractDefault("migrator", useSigner);
 
-export const masterchef = () => createContract('geyser_new', 'masterchef');
-export const SGT_sushiswap = () => createContract('erc20_uniswap', 'SGT_sushiswap');
-export const veSGT = () => createContract('erc20', 'veSGT');
-export const vETH2_CRV = () => createContract('erc20', 'vETH2_CRV');
+export const masterchef = (useSigner = false) => createContract('geyser_new', 'masterchef', useSigner);
+export const SGT_sushiswap = (useSigner = false) => createContract('erc20_uniswap', 'SGT_sushiswap', useSigner);
+export const veSGT = (useSigner = false) => createContract('erc20', 'veSGT', useSigner);
+export const vETH2_CRV = (useSigner = false) => createContract('erc20', 'vETH2_CRV', useSigner);
 
-export const withdrawals = () => createContractDefault('withdrawals');
-export const rollovers = () => createContractDefault("rollovers");
-export const sgETH = () => createContractDefault('sgETH');
-export const wsgETH = () => createContractDefault("wsgETH");
+export const withdrawals = (useSigner = false) => createContractDefault('withdrawals', useSigner);
+export const rollovers = (useSigner = false) => createContractDefault("rollovers", useSigner);
+export const sgETH = (useSigner = false) => createContractDefault('sgETH', useSigner);
+export const wsgETH = (useSigner = false) => createContractDefault("wsgETH", useSigner);
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
     geyser_SGT_uniswap: _geyser_SGT_uniswap_old,

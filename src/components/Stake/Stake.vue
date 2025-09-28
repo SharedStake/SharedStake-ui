@@ -294,7 +294,7 @@ export default {
             (gas.maxPriorityFeePerGas + gas.maxFeePerGas) * 200000 * 1000000000
           )
         );
-        let remaining = await validator().methods.remainingSpaceInEpoch().call();
+        let remaining = await validator().remainingSpaceInEpoch();
         this.remaining = BN(remaining);
         if (this.remaining.eq(0)) {
           this.amountCheck();
@@ -307,7 +307,7 @@ export default {
         }
         this.Damount = this.BNamount.dividedBy(1e18);
       } else {
-        let remainingByFee = await validator().methods.adminFeeTotal().call();
+        let remainingByFee = await validator().adminFeeTotal();
         if (remainingByFee > 10)
           this.remainingByFee = BN(remainingByFee).multipliedBy(320);
         else {
@@ -335,8 +335,8 @@ export default {
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake"))
         return {};
 
-      const validatorContract = validator();
-      if (!validatorContract || !validatorContract.methods) {
+      const validatorContract = validator(true); // Use signer for write operations
+      if (!validatorContract) {
         console.error("Validator contract not initialized");
         return {};
       }
@@ -358,19 +358,19 @@ export default {
 
       if (!this.isDeposit) {
         if (this.get_wsgETH) {
-          fn = validatorContract.methods.unstakeAndWithdraw;
+          fn = validatorContract.unstakeAndWithdraw;
           args = [this.BNamount.toString(), this.userAddress];
         } else {
-          fn = validatorContract.methods.withdraw;
+          fn = validatorContract.withdraw;
           args = [this.BNamount.toString()];
         }
       } else {
         senderObj.value = this.BNamount.toString();
         senderObj.gas = 200000;
         if (this.get_wsgETH) {
-          fn = validatorContract.methods.depositAndStake;
+          fn = validatorContract.depositAndStake;
         } else {
-          fn = validatorContract.methods.deposit;
+          fn = validatorContract.deposit;
         }
       }
       const result = {
@@ -402,12 +402,12 @@ export default {
         this.EthBal = BN(amount);
         
         const sgETHContract = sgETH();
-        if (!sgETHContract || !sgETHContract.methods) {
+        if (!sgETHContract) {
           console.error("sgETH contract not initialized");
           return;
         }
         
-        let veth2 = await sgETHContract.methods.balanceOf(walletAddress).call();
+        let veth2 = await sgETHContract.balanceOf(walletAddress);
         let wsgeth = await this.getUserWsgETHBalance();
         this.vEth2Bal = BN(veth2);
         let _parse = (n) =>
@@ -425,19 +425,19 @@ export default {
             .toFixed(6);
         }
         const validatorContract = validator();
-        if (!validatorContract || !validatorContract.methods) {
+        if (!validatorContract) {
           console.error("Validator contract not initialized");
           return;
         }
         
-        let remaining = await validatorContract.methods.remainingSpaceInEpoch().call();
+        let remaining = await validatorContract.remainingSpaceInEpoch();
         this.remaining = BN(remaining);
-        let remainingByFee = await validatorContract.methods.adminFeeTotal().call();
+        let remainingByFee = await validatorContract.adminFeeTotal();
         this.remainingByFee = BN(remainingByFee).multipliedBy(320);
 
         let contractBal = await window.ethereum.request({
           method: "eth_getBalance",
-          params: [toChecksumAddress(validatorContract.options.address), "latest"],
+          params: [toChecksumAddress(validatorContract.target), "latest"],
         });
 
         this.contractBal = BN(contractBal);
@@ -506,33 +506,31 @@ export default {
     },
     async getUserWsgETHBalance() {
       const wsgETHContract = wsgETH();
-      if (!wsgETHContract || !wsgETHContract.methods) {
+      if (!wsgETHContract) {
         console.error("wsgETH contract not initialized");
         return "0";
       }
-      let bal = await wsgETHContract.methods.balanceOf(this.userAddress).call();
+      let bal = await wsgETHContract.balanceOf(this.userAddress);
       this.userWSGETHBal = bal;
       return bal;
     },
     async getWsgETHRedemption() {
       const wsgETHContract = wsgETH();
-      if (!wsgETHContract || !wsgETHContract.methods) {
+      if (!wsgETHContract) {
         console.error("wsgETH contract not initialized");
         return;
       }
-      let vp = await wsgETHContract.methods.pricePerShare().call();
+      let vp = await wsgETHContract.pricePerShare();
       this.wsgETHRedemptionPrice = BN(vp);
     },
     async getUserApprovedwsgEth() {
       const wsgETHContract = wsgETH();
       const validatorContract = validator();
-      if (!wsgETHContract || !wsgETHContract.methods || !validatorContract) {
+      if (!wsgETHContract || !validatorContract) {
         console.error("Contracts not initialized");
         return;
       }
-      let userApproved = await wsgETHContract.methods
-        .allowance(this.userAddress, validatorContract.options.address)
-        .call();
+      let userApproved = await wsgETHContract.allowance(this.userAddress, validatorContract.target);
       this.userApprovedwsgETH = BN(userApproved);
     },
   },
