@@ -35,15 +35,35 @@ export default {
   },
   methods: {
     async getEthAvailableForWithdrawal() {
-      let amt = await ABI_sgETH.methods
-        .balanceOf(ABI_Rollover.options.address)
-        .call();
-      this.ethAvailableForWithdrawal = BN(amt*0);
-      // this.ethAvailableForWithdrawal = BN(amt);
+      try {
+        const sgETHContract = ABI_sgETH();
+        const rolloverContract = ABI_Rollover();
+        if (!sgETHContract || !rolloverContract) {
+          console.error("Contracts not available");
+          return;
+        }
+        const rolloverAddress = await rolloverContract.getAddress();
+        let amt = await sgETHContract.balanceOf(rolloverAddress);
+        this.ethAvailableForWithdrawal = BN(amt.toString()).multipliedBy(0);
+        // this.ethAvailableForWithdrawal = BN(amt.toString());
+      } catch (error) {
+        console.error("Error getting sgETH available for withdrawal:", error);
+        this.ethAvailableForWithdrawal = BN(0);
+      }
     },
     async getTotalRedeemed() {
-      let amt = await ABI_Rollover.methods.totalOut().call();
-      this.totalRedeemed = BN(amt);
+      try {
+        const rolloverContract = ABI_Rollover();
+        if (!rolloverContract) {
+          console.error("Rollover contract not available");
+          return;
+        }
+        let amt = await rolloverContract.totalOut();
+        this.totalRedeemed = BN(amt.toString());
+      } catch (error) {
+        console.error("Error getting total redeemed:", error);
+        this.totalRedeemed = BN(0);
+      }
     }
   },
 };
