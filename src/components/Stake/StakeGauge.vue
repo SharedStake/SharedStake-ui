@@ -79,22 +79,23 @@ export default {
         return;
       }
 
-      let maxValidatorShares = await validator.methods
-        .maxValidatorShares()
-        .call();
-      let currentValidatorShares = await validator.methods
-        .curValidatorShares()
-        .call();
-      let validatorPrice = await validator.methods.costPerValidator().call();
-      this.numOfValidators = await validator.methods.numValidators().call();
+      const validatorContract = validator();
+      if (!validatorContract) {
+        console.error("Validator contract not available");
+        return;
+      }
+      let maxValidatorShares = await validatorContract.maxValidatorShares();
+      let currentValidatorShares = await validatorContract.curValidatorShares();
+      let validatorPrice = await validatorContract.costPerValidator();
+      this.numOfValidators = await validatorContract.numValidators();
 
-      maxValidatorShares = BN(maxValidatorShares)
+      maxValidatorShares = BN(maxValidatorShares.toString())
         .dividedBy(1e18)
         .toFixed(2);
-      currentValidatorShares = BN(currentValidatorShares)
+      currentValidatorShares = BN(currentValidatorShares.toString())
         .dividedBy(1e18)
         .toFixed(2);
-      validatorPrice = BN(validatorPrice)
+      validatorPrice = BN(validatorPrice.toString())
         .dividedBy(1e18)
         .toFixed(2);
 

@@ -2902,15 +2902,6 @@
     svelte-i18n "^4.0.1"
     viem "2.12.0"
 
-"@web3-onboard/gas@^2.1.8":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@web3-onboard/gas/-/gas-2.2.1.tgz#f0444ac257868155f4ee06c83185aba7abf09f02"
-  integrity sha512-B7JXnr4DVgLzlLrF8iWJ3nrr46CiDSyG7swGkRtwf4BTkENSXvIGy+jG91LCFr3Qd/Z4aX8tFndnrI1hhw1RUQ==
-  dependencies:
-    "@web3-onboard/common" "^2.4.1"
-    joi "17.9.1"
-    rxjs "^7.5.2"
-
 "@web3-onboard/injected-wallets@^2.11.3":
   version "2.11.3"
   resolved "https://registry.yarnpkg.com/@web3-onboard/injected-wallets/-/injected-wallets-2.11.3.tgz#adbbd1eba48a373fe923527d7da379a6be79cbeb"
@@ -7368,7 +7359,7 @@ rxjs@^6.6.3:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@^7.5.2, rxjs@^7.5.5:
+rxjs@^7.5.5:
   version "7.8.1"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.1.tgz#6f6f3d99ea8044291efd92e7c7fcf562c4057543"
   integrity sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==

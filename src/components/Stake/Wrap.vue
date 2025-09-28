@@ -253,7 +253,13 @@ export default {
 
     handleDeposit() {
       return {
-        abiCall: this.wsgETH.methods.deposit,
+        abiCall: async (...args) => {
+          const contract = this.wsgETH(true); // Use signer for write operations
+          if (!contract) {
+            throw new Error("wsgETH contract not available");
+          }
+          return await contract.deposit(...args);
+        },
         argsArr: [toWei(this.amount), this.userConnectedWalletAddress],
         cb: async () => {
           await this.refreshBalances();

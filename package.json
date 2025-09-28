@@ -16,7 +16,6 @@
     "@babel/preset-env": "^7.23.0",
     "@vue/composition-api": "^1.7.2",
     "@web3-onboard/core": "^2.24.1",
-    "@web3-onboard/gas": "^2.1.8",
     "@web3-onboard/injected-wallets": "^2.11.3",
     "@web3-onboard/vue": "^2.10.0",
     "axios": "^1.7.2",

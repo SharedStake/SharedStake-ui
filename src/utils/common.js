@@ -3,36 +3,40 @@
  * import the libraries from here to use
  */
 // import axios from "axios"
-import gas from '@web3-onboard/gas'
+import { ethers } from "ethers";
 
 export const getCurrentGasPrices = async () => {
-  try { // Using the blocknative gas platform api https://docs.blocknative.com/gas-prediction/gas-platform
-    const gasBlockPrices = await gas.get({
-      chains: ['0x1'],
-      // apiKey: '<OPTIONAL_API_KEY>',
-      endpoint: 'blockPrices'
-    });
-    // console.log(gasBlockPrices[0].blockPrices[0].estimatedPrices)
+  try {
+    // Use ethers.js native gas estimation instead of @web3-onboard/gas
+    const provider = window.ethersProvider || new ethers.JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd");
+    const feeData = await provider.getFeeData();
+    
+    if (!feeData.maxFeePerGas || !feeData.maxPriorityFeePerGas) {
+      throw new Error("EIP-1559 not supported, falling back to hardcoded values");
+    }
 
-    const estimatedPrices = gasBlockPrices[0].blockPrices[0].estimatedPrices;
-    // console.log(estimatedPrices)
+    // Convert from wei to gwei for easier handling
+    const maxFeeGwei = Number(ethers.formatUnits(feeData.maxFeePerGas, "gwei"));
+    const maxPriorityGwei = Number(ethers.formatUnits(feeData.maxPriorityFeePerGas, "gwei"));
+    
+    // Provide low, medium, high options based on current network fees
     return {
       low: {
-        maxFeePerGas: estimatedPrices[4].maxFeePerGas,
-        maxPriorityFeePerGas: estimatedPrices[4].maxPriorityFeePerGas,
+        maxFeePerGas: Math.max(Math.round(maxFeeGwei * 0.9), 10), // 90% of current, min 10 Gwei
+        maxPriorityFeePerGas: Math.max(Math.round(maxPriorityGwei * 0.8), 1), // 80% of current, min 1 Gwei
       },
       medium: {
-        maxFeePerGas: estimatedPrices[2].maxFeePerGas,
-        maxPriorityFeePerGas: estimatedPrices[2].maxPriorityFeePerGas,
+        maxFeePerGas: Math.round(maxFeeGwei), // Current network fee
+        maxPriorityFeePerGas: Math.round(maxPriorityGwei), // Current priority fee
       },
       high: {
-        maxFeePerGas: estimatedPrices[0].maxFeePerGas,
-        maxPriorityFeePerGas: estimatedPrices[0].maxPriorityFeePerGas,
+        maxFeePerGas: Math.round(maxFeeGwei * 1.2), // 120% of current for faster confirmation
+        maxPriorityFeePerGas: Math.round(maxPriorityGwei * 1.5), // 150% of current priority
       }
     };
     
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching gas prices, using fallback:", error);
     // If the API call fails, return hardcoded gas prices
     return {
       // Change hardcoded failover gas fees as and when required
@@ -83,8 +87,6 @@ export function notifyNotification(message, type = "pending") {
 
   return notify.notification(notificationObject);
 }
-
-import { ethers } from "ethers";
 
 export function toWei(value) {
   if (!value || value == 0 || !value?.toString) return "0";
