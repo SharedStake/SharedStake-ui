@@ -35,10 +35,14 @@ export default {
   },
   methods: {
     async getEthAvailableForWithdrawal() {
+      if (!this.userConnectedWalletAddress) {
+        // User not connected, skip contract calls
+        return;
+      }
       try {
-        const contract = ABI_withdrawals();
+        const contract = this.ABI(); // Use this.ABI() which is the function
         if (!contract) {
-          console.error("Withdrawals contract not available");
+          console.error("Withdrawals contract not available - wallet may not be connected");
           return;
         }
         const contractAddress = await contract.getAddress();
@@ -55,10 +59,14 @@ export default {
     },
 
     async getTotalRedeemed() {
+      if (!this.userConnectedWalletAddress) {
+        // User not connected, skip contract calls
+        return;
+      }
       try {
-        const contract = ABI_withdrawals();
+        const contract = this.ABI(); // Use this.ABI() which is the function
         if (!contract) {
-          console.error("Withdrawals contract not available");
+          console.error("Withdrawals contract not available - wallet may not be connected");
           return;
         }
         let amt = await contract.totalOut();

@@ -56,7 +56,10 @@ let _ABIs = {
     wsgETH: wsgETHABI
 }
 
-let connErr = () => console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue")
+let connErr = () => {
+    console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue");
+    return null; // Return null instead of undefined
+}
 let createContract = () => connErr();
 let createContractDefault = () => connErr();
 let isValidChain = (cid) => Object.values(CHAIN_IDS).indexOf(cid) > -1;
@@ -84,6 +87,7 @@ const initializeEthers = () => {
             
             // @TODO: Figure out what causes FF to not connect the wallet correctly. 
             let chainId = window.ethereum.chainId;
+            console.log("Initializing contracts for chainId:", chainId);
             let addressTemp = {};
 
             if (chainId == CHAIN_IDS.MAINNET) {
@@ -157,6 +161,7 @@ const initializeEthers = () => {
 
             if (isValidChain(chainId)) {
                 _addresses = addressTemp; // ethers.js handles checksumming automatically
+                console.log("Contracts initialized for chain:", chainId, "Addresses:", Object.keys(_addresses));
 
                 // Utils
                 createContract = (abi, address, useSigner = false) => {
@@ -167,7 +172,8 @@ const initializeEthers = () => {
                         const contractProvider = useSigner && signer ? signer : provider;
                         return new ethers.Contract(_addresses[address], _ABIs[abi], contractProvider);
                     }
-                    return connErr();
+                    console.log("Contract creation failed - ABI:", abi, "Address:", address, "Available addresses:", Object.keys(_addresses), "Available ABIs:", Object.keys(_ABIs));
+                    return null;
                 }
                 createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
             } else {

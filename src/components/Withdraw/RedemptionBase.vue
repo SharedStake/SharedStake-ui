@@ -551,8 +551,8 @@ export default {
 
       await this.getUserDepositedVEth2();
       await this.getContractVeth2Queue();
-      await this.getEthAvailableForWithdrawal();
-      await this.getTotalRedeemed();
+      if (this.getEthAvailableForWithdrawal) await this.getEthAvailableForWithdrawal();
+      if (this.getTotalRedeemed) await this.getTotalRedeemed();
     },
 
     handleFillMaxAmount() {
