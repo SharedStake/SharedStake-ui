@@ -84,17 +84,18 @@ export function notifyNotification(message, type = "pending") {
   return notify.notification(notificationObject);
 }
 
-import Web3 from "web3";
-import { RPC_URL } from "../store/init/onboard";
-const web3 = new Web3(
-  new Web3.providers.HttpProvider(RPC_URL)
-);
+import { ethers } from "ethers";
+
 export function toWei(value) {
-  // console.log(web3);
-  if (!value || value == 0 || !value?.toString) return 0;
-  return web3.utils.toWei(value.toString(), "ether");
+  if (!value || value == 0 || !value?.toString) return "0";
+  return ethers.parseEther(value.toString()).toString();
 }
 
 export function toChecksumAddress(address) {
-  return web3.utils.toChecksumAddress(address);
+  try {
+    return ethers.getAddress(address);
+  } catch (error) {
+    console.error("Invalid address:", address);
+    return address;
+  }
 }
