@@ -66,6 +66,8 @@
 - ✅ All original runtime errors resolved
 - ✅ Modern ethers.js v6 patterns implemented throughout
 
+**📁 Detailed Documentation**: See `/llm/` folder for comprehensive reports and future plans
+
 ### ✅ Completed Tasks
 - [x] Align `@vue/cli-*` packages on v5.x
 - [x] Update security-sensitive libs within safe range

@@ -3,10 +3,14 @@
 vue implementation of sharedstake
 ```
 
+## 🤖 AI Documentation
+
+**📁 For AI Agents**: See `/llm/` folder for comprehensive migration documentation and future plans.
+
 ## Project setup
 ```
-nvm install 16
-nvm use 16
+nvm install 18
+nvm use 18
 yarn install
 ```
 

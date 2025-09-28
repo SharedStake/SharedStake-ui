@@ -90,6 +90,8 @@ While the application is now building and running successfully, there are severa
 **Timeline:** ✅ COMPLETED  
 **Impact:** ✅ CRITICAL SUCCESS - Modern, secure, performant Web3 integration
 
+**📁 Detailed Documentation**: See `/llm/` folder for comprehensive migration reports
+
 ### 5. Tailwind CSS Update 🟡
 **Current State:** PostCSS 7 compatibility mode  
 **Recommended Action:**
