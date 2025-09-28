@@ -75,6 +75,12 @@ export default {
       this.loading = true;
       const chosenGas = this.gasPrice;
 
+      if (!abiCall || typeof abiCall !== 'function') {
+        console.error("abiCall is not a valid function");
+        this.loading = false;
+        return;
+      }
+
       await abiCall(...argsArr)
         .send({
           // Transactions now handled in accordance EIP-1559
