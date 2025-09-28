@@ -341,7 +341,6 @@ export default {
         return {};
       }
 
-      let fn = validatorContract.methods;
       // Transactions now handled in accordance EIP-1559
       let senderObj = {
         maxFeePerGas: BN(this.chosenGas.maxFeePerGas)
@@ -355,25 +354,26 @@ export default {
       // console.log(senderObj);
 
       let args = [];
+      let fn;
 
       if (!this.isDeposit) {
         if (this.get_wsgETH) {
-          fn = fn.unstakeAndWithdraw;
+          fn = validatorContract.methods.unstakeAndWithdraw;
           args = [this.BNamount.toString(), this.userAddress];
         } else {
-          fn = fn.withdraw;
+          fn = validatorContract.methods.withdraw;
           args = [this.BNamount.toString()];
         }
       } else {
         senderObj.value = this.BNamount.toString();
         senderObj.gas = 200000;
         if (this.get_wsgETH) {
-          fn = fn.depositAndStake;
+          fn = validatorContract.methods.depositAndStake;
         } else {
-          fn = fn.deposit;
+          fn = validatorContract.methods.deposit;
         }
       }
-      return {
+      const result = {
         abiCall: fn,
         argsArr: args,
         senderObj: senderObj,
@@ -382,6 +382,12 @@ export default {
           await this.initializeData();
         },
       };
+      
+      console.log("genSubmit result:", result);
+      console.log("genSubmit fn:", fn);
+      console.log("genSubmit fn type:", typeof fn);
+      
+      return result;
     },
 
     async initializeData() {

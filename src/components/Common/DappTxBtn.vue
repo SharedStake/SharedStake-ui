@@ -62,6 +62,9 @@ export default {
     async execTx() {
       this.loading = true;
       let args = this.click();
+      console.log("DappTxBtn execTx - args:", args);
+      console.log("DappTxBtn execTx - abiCall:", args.abiCall);
+      console.log("DappTxBtn execTx - abiCall type:", typeof args.abiCall);
       await this.wrapTx(args.abiCall, args.argsArr, args.senderObj, args.cb);
     },
 
