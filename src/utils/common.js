@@ -1,5 +1,5 @@
 /**
- * This file includes common libraries and settings for them; such as axios, web3, bignumber.js.
+ * This file includes common libraries and settings for them; such as axios, ethers.js, bignumber.js.
  * import the libraries from here to use
  */
 // import axios from "axios"

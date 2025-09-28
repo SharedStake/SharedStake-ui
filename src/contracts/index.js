@@ -176,7 +176,7 @@ const initializeEthers = () => {
 
             /************************************* CONTRACTS ****************************************/
         } catch (error) {
-            console.error("Error initializing Web3:", error);
+            console.error("Error initializing ethers.js:", error);
             connErr();
         }
     }

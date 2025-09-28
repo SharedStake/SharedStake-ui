@@ -138,7 +138,7 @@ export async function changeWallets() {
       // Create ethers.js provider instead of Web3
       let provider = new ethers.BrowserProvider(wallet.provider);
       window.ethersProvider = provider;
-      store.commit("setWeb3", provider); // Store ethers provider instead
+      store.commit("setEthersProvider", provider); // Store ethers provider instead
       store.commit("setWallet", wallet.label);
 
       store.dispatch("setAddressOnboard", wallet.accounts[0].address)
