@@ -1175,22 +1175,26 @@ export default {
       // Temporary till defi mining starts again
       this.APY = 5;
       try {
-        let token = SGT_uniswap;
-        let tokenGeyser = geyser_SGT_uniswap;
-        let reserves = await token.methods.getReserves().call();
+        let token = SGT_uniswap();
+        let tokenGeyser = geyser_SGT_uniswap();
+        if (!token || !tokenGeyser) {
+          console.error("Contracts not available");
+          return;
+        }
+        let reserves = await token.getReserves();
         let Sgt = reserves[0];
-        let totalSupply = await token.methods.totalSupply().call();
-        let tokenPerSgt = totalSupply / (Sgt * 2);
-        let totalStaked = await tokenGeyser.methods.totalSupply().call();
-        totalStaked = BN(totalStaked);
+        let totalSupply = await token.totalSupply();
+        let tokenPerSgt = totalSupply / (Sgt * 2n);
+        let totalStaked = await tokenGeyser.totalSupply();
+        totalStaked = BN(totalStaked.toString());
         let now = Math.floor(Date.now() / 1000);
-        let until = await tokenGeyser.methods.periodFinish().call();
-        let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
+        let until = await tokenGeyser.periodFinish();
+        let remDays = BN((Number(until) - now) / 60 / 60 / 24); //get remaining days
         let stakedSchedule = remDays;
-        let duration = await tokenGeyser.methods.rewardsDuration().call(); //in second
+        let duration = await tokenGeyser.rewardsDuration(); //in second
         let remRewards = BN(remDays).times(
           BN(75000).div(
-            BN(duration)
+            BN(Number(duration))
               .div(60)
               .div(60)
               .div(24)
@@ -1226,9 +1230,14 @@ export default {
         throw "Window doesn't have ethereum enabled";
       }
 
-      const vETH2TotalSupply = await vEth2.methods.totalSupply().call();
+      const vEth2Contract = vEth2();
+      if (!vEth2Contract) {
+        console.error("vETH2 contract not available");
+        return "0";
+      }
+      const vETH2TotalSupply = await vEth2Contract.totalSupply();
 
-      return BN(vETH2TotalSupply)
+      return BN(vETH2TotalSupply.toString())
         .div(1e18)
         .toFixed(0)
         .toString();

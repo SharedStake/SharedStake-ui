@@ -429,28 +429,36 @@ export default {
       if (!user) user = this.userAddress;
       if (user)
         try {
-          let decimals = await this.pool.token.methods.decimals().call();
+          let tokenContract = this.pool.token();
+          let geyserContract = this.pool.geyser();
+          if (!tokenContract || !geyserContract) {
+            console.error("Contracts not available");
+            return;
+          }
+
+          let decimals = await tokenContract.decimals();
           this.decimals = decimals;
 
-          let balance = await this.pool.token.methods.balanceOf(user).call();
-          this.balance = BN(balance);
-          let staked = await this.pool.geyser.methods.balanceOf(user).call();
-          this.staked = BN(staked);
+          let balance = await tokenContract.balanceOf(user);
+          this.balance = BN(balance.toString());
+          let staked = await geyserContract.balanceOf(user);
+          this.staked = BN(staked.toString());
 
-          let earned = await this.pool.geyser.methods.earned(user).call();
-          this.earned = BN(earned);
-          let totalStaked = await this.pool.geyser.methods.totalSupply().call();
-          this.totalStaked = BN(totalStaked);
+          let earned = await geyserContract.earned(user);
+          this.earned = BN(earned.toString());
+          let totalStaked = await geyserContract.totalSupply();
+          this.totalStaked = BN(totalStaked.toString());
 
           if (this.pool.oldPool) {
-            let oldStaked = await this.pool.oldPool.methods
-              .balanceOf(user)
-              .call();
-            this.oldStaked = BN(oldStaked);
+            let oldPoolContract = this.pool.oldPool();
+            if (oldPoolContract) {
+              let oldStaked = await oldPoolContract.balanceOf(user);
+              this.oldStaked = BN(oldStaked.toString());
 
-            let oldEarned = await this.pool.oldPool.methods.earned(user).call();
-            this.oldEarned = BN(oldEarned);
-            if (oldEarned > 0) {
+              let oldEarned = await oldPoolContract.earned(user);
+              this.oldEarned = BN(oldEarned.toString());
+            }
+            if (this.oldEarned > 0) {
               this.$notify({
                 group: "foo",
                 type: "error",
@@ -465,12 +473,10 @@ export default {
           }
 
           let now = Math.floor(Date.now() / 1000);
-          let until = await this.pool.geyser.methods.periodFinish().call();
+          let until = await geyserContract.periodFinish();
           let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
           this.stakedSchedule = remDays;
-          let duration = await this.pool.geyser.methods
-            .rewardsDuration()
-            .call(); //in second
+          let duration = await geyserContract.rewardsDuration(); //in second
           let remRewards = BN(remDays).times(
             BN(this.pool.locked).div(BN(duration).div(60).div(60).div(24))
           );
@@ -481,52 +487,39 @@ export default {
     },
     async Deposit() {
       let myAmount = this.bigDAmount.toString();
-      let geyserAddress = this.pool.geyser._address;
-      let allowance = await this.pool.token.methods
-        .allowance(this.userAddress, geyserAddress)
-        .call();
+      let tokenContract = this.pool.token();
+      let geyserContract = this.pool.geyser();
+      if (!tokenContract || !geyserContract) {
+        console.error("Contracts not available");
+        return;
+      }
+      let geyserAddress = await geyserContract.getAddress();
+      let allowance = await tokenContract.allowance(this.userAddress, geyserAddress);
       let approval = true;
       let self = this;
       if (BN(allowance).lt(this.bigDAmount)) {
         if (this.inf_approval)
           myAmount = BN(2).pow(BN(256)).minus(BN(1)).toString();
-        await this.pool.token.methods
-          .approve(geyserAddress, myAmount)
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            console.log("approved");
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            approval = false;
-            console.log(err);
-          })
-          .catch((err) => {
-            approval = false;
-            console.log(err);
-          });
+        try {
+          const tx = await tokenContract.connect(await window.ethersProvider.getSigner()).approve(geyserAddress, myAmount);
+          notifyHandler(tx.hash);
+          await tx.wait();
+          console.log("approved");
+        } catch (err) {
+          approval = false;
+          console.log(err);
+        }
         await timeout(6000);
       }
       if (approval) {
-        await this.pool.geyser.methods
-          .stake(myAmount)
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            self.mounted();
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            console.log(err);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        try {
+          const tx = await geyserContract.connect(await window.ethersProvider.getSigner()).stake(myAmount);
+          notifyHandler(tx.hash);
+          await tx.wait();
+          self.mounted();
+        } catch (err) {
+          console.log(err);
+        }
       }
     },
     async Withdraw() {

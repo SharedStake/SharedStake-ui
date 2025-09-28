@@ -1,4 +1,4 @@
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 import store from '../index'
 
 
@@ -135,8 +135,10 @@ export async function changeWallets() {
   const wallet = selected[0]
   if (wallet) {
       console.log(`wallet switched to: ${wallet.label}`);
-      let W3 = (window.web3 = new Web3(wallet.provider));
-      store.commit("setWeb3", W3);
+      // Create ethers.js provider instead of Web3
+      let provider = new ethers.BrowserProvider(wallet.provider);
+      window.ethersProvider = provider;
+      store.commit("setWeb3", provider); // Store ethers provider instead
       store.commit("setWallet", wallet.label);
 
       store.dispatch("setAddressOnboard", wallet.accounts[0].address)

@@ -56,10 +56,19 @@ export default {
   },
 
   methods: {
-    genProps() {
+    async genProps() {
+      const spenderContract = this.ABI_spender();
+      const spenderAddress = await spenderContract.getAddress();
+      
       return {
-        abiCall: this.ABI_token.methods.approve,
-        argsArr: [this.ABI_spender.options.address, this.ethAmt],
+        abiCall: async (...args) => {
+          const tokenContract = this.ABI_token(true); // Use signer for write operations
+          if (!tokenContract) {
+            throw new Error("Token contract not available");
+          }
+          return await tokenContract.approve(...args);
+        },
+        argsArr: [spenderAddress, this.ethAmt],
         cb: this.wrappedCb,
       };
     },
@@ -70,13 +79,23 @@ export default {
     },
 
     async getApproved() {
-      let userApproved = await this.ABI_token.methods
-        .allowance(
+      try {
+        const tokenContract = this.ABI_token();
+        const spenderContract = this.ABI_spender();
+        if (!tokenContract || !spenderContract) {
+          console.error("Contracts not available");
+          return;
+        }
+        const spenderAddress = await spenderContract.getAddress();
+        let userApproved = await tokenContract.allowance(
           this.userConnectedWalletAddress,
-          this.ABI_spender.options.address
-        )
-        .call();
-      this.userApproved = BN(userApproved);
+          spenderAddress
+        );
+        this.userApproved = BN(userApproved.toString());
+      } catch (error) {
+        console.error("Error getting approved amount:", error);
+        this.userApproved = BN(0);
+      }
     },
   },
 };
