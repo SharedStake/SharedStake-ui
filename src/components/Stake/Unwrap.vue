@@ -109,7 +109,7 @@
 
 <script>
 import BN from "bignumber.js";
-import { wsgETH, sgETH, safeContractCall } from "@/contracts";
+import { wsgETH, sgETH } from "@/contracts";
 import { mapGetters } from "vuex";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
@@ -258,25 +258,33 @@ export default {
     },
 
     async getUserTokenBalance() {
-      const result = await safeContractCall(wsgETH, 'balanceOf', [this.userConnectedWalletAddress], 'wsgETH');
-      if (result) {
+      try {
+        const contract = wsgETH();
+        if (!contract) return "0";
+        const result = await contract.balanceOf(this.userConnectedWalletAddress);
         this.userTokenBalance = BN(result.toString());
         if (this.dev) console.log("userTokenBalance", result.toString());
         return result.toString();
+      } catch (error) {
+        console.error("Error getting user token balance:", error);
+        this.userTokenBalance = BN(0);
+        return "0";
       }
-      this.userTokenBalance = BN(0);
-      return "0";
     },
 
     async getUserOutputTokenBalance() {
-      const result = await safeContractCall(sgETH, 'balanceOf', [this.userConnectedWalletAddress], 'sgETH');
-      if (result) {
+      try {
+        const contract = sgETH();
+        if (!contract) return "0";
+        const result = await contract.balanceOf(this.userConnectedWalletAddress);
         this.userOutputTokenBalance = BN(result.toString());
         if (this.dev) console.log("userOutputTokenBalance", result.toString());
         return result.toString();
+      } catch (error) {
+        console.error("Error getting user output token balance:", error);
+        this.userOutputTokenBalance = BN(0);
+        return "0";
       }
-      this.userOutputTokenBalance = BN(0);
-      return "0";
     },
 
     handleFillMaxAmount() {

@@ -267,13 +267,11 @@ if (window.ethereum) {
     checkEthereum();
 }
 
-// Function to get signer and update contracts
+// Function to get signer
 export const getSigner = async () => {
     if (provider && !signer) {
         try {
             signer = await provider.getSigner();
-            // Update all contracts with signer for write operations
-            updateContractsWithSigner();
         } catch (error) {
             console.error("Error getting signer:", error);
         }
@@ -281,77 +279,33 @@ export const getSigner = async () => {
     return signer;
 };
 
-// Utility function to safely get contract with error handling
-export const safeGetContract = (contractFactory, contractName = 'Contract') => {
-    const contract = contractFactory();
-    if (!contract) {
-        console.error(`${contractName} contract not available`);
-        return null;
-    }
-    return contract;
-};
-
-// Utility function for safe contract calls with error handling
-export const safeContractCall = async (contractFactory, method, args = [], contractName = 'Contract') => {
-    const contract = safeGetContract(contractFactory, contractName);
-    if (!contract) return null;
-    
-    try {
-        const result = await contract[method](...args);
-        return result;
-    } catch (error) {
-        if (error.code === 'CALL_EXCEPTION' && error.reason === null) {
-            console.warn(`Method ${method} not implemented on ${contractName} contract, using default value`);
-            return null;
-        } else if (error.code === 'BAD_DATA') {
-            console.warn(`${contractName}.${method} returned empty data, using default value`);
-            return null;
-        } else {
-            console.error(`Error calling ${method} on ${contractName}:`, error);
-            return null;
-        }
-    }
-};
-
-// Function to update contracts with signer
-const updateContractsWithSigner = () => {
-    if (signer) {
-        // Recreate contracts with signer for write operations
-        // This will be called when user connects wallet
-    }
-};
-
 export const addresses = _addresses
 export const ABIs = _ABIs
 
-
-// Export contract getters that return contracts when available
+// Contract factory functions
 export const validator = (useSigner = false) => createContractDefault('validator', useSigner);
 export const vEth2 = (useSigner = false) => createContractDefault('vEth2', useSigner);
 export const SGT = (useSigner = false) => createContractDefault('SGT', useSigner);
 
-    // OTHER Tokens HERE
+// Token contracts
 export const SGT_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_uniswap", useSigner);
 export const SGT_vEth2_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_vEth2_uniswap", useSigner);
 export const vEth2_saddle = (useSigner = false) => createContract("erc20", "vEth2_saddle", useSigner);
-    // // Geysers
+// Geyser contracts
 export const geyser_vEth2 = (useSigner = false) => createContract("geyser", "geyser_vEth2", useSigner);
 export const geyser_SGT = (useSigner = false) => createContract("geyser", "geyser_SGT", useSigner);
 export const geyser_SGT_uniswap = (useSigner = false) => createContract("geyser", "geyser_SGT_uniswap", useSigner);
 export const geyser_SGT_vEth2_uniswap = (useSigner = false) => createContract("geyser", "geyser_SGT_vEth2_uniswap", useSigner);
 export const geyser_vEth2_saddle = (useSigner = false) => createContract("geyser_new", "geyser_vEth2_saddle", useSigner);
 
-
-    // OLD Geysers HERE
+// Legacy geyser contracts
 export const geyser_vEth2_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_old", useSigner);
 export const geyser_SGT_old = (useSigner = false) => createContract("geyser", "geyser_SGT_old", useSigner);
 export const geyser_SGT_uniswap_old = (useSigner = false) => createContract("geyser", "geyser_SGT_uniswap_old", useSigner);
 export const geyser_vEth2_saddle_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_saddle_old", useSigner);
 
-    //Airdrop
+// Utility contracts
 export const airdrop = (useSigner = false) => createContractDefault("airdrop_distributor", useSigner);
-
-    //Migrator
 export const migrator = (useSigner = false) => createContractDefault("migrator", useSigner);
 
 export const masterchef = (useSigner = false) => createContract('geyser_new', 'masterchef', useSigner);

@@ -35,17 +35,10 @@ export default {
   },
   methods: {
     async getEthAvailableForWithdrawal() {
-      if (!this.userConnectedWalletAddress) {
-        // User not connected, skip contract calls
-        return;
-      }
       try {
         const sgETHContract = ABI_sgETH();
-        const rolloverContract = this.ABI(); // Use this.ABI() for consistency
-        if (!sgETHContract || !rolloverContract) {
-          console.error("Contracts not available - wallet may not be connected");
-          return;
-        }
+        const rolloverContract = this.ABI();
+        if (!sgETHContract || !rolloverContract) return;
         const rolloverAddress = await rolloverContract.getAddress();
         let amt = await sgETHContract.balanceOf(rolloverAddress);
         this.ethAvailableForWithdrawal = BN(amt.toString()).multipliedBy(0);
@@ -56,16 +49,9 @@ export default {
       }
     },
     async getTotalRedeemed() {
-      if (!this.userConnectedWalletAddress) {
-        // User not connected, skip contract calls
-        return;
-      }
       try {
-        const rolloverContract = this.ABI(); // Use this.ABI() for consistency
-        if (!rolloverContract) {
-          console.error("Rollover contract not available - wallet may not be connected");
-          return;
-        }
+        const rolloverContract = this.ABI();
+        if (!rolloverContract) return;
         let amt = await rolloverContract.totalOut();
         this.totalRedeemed = BN(amt.toString());
       } catch (error) {

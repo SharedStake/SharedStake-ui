@@ -121,44 +121,23 @@ const onboard = Onboard({
 
 window.onboard = onboard;
 export async function changeWallets() {
-  // await onboard.disconnectConnectedWallet();
-  try {
-    let selected = await onboard.connectWallet();
-    localStorage.removeItem("selectedWallet");
+  let selected = await onboard.connectWallet();
+  localStorage.removeItem("selectedWallet");
 
-  // Returns false if user closes/cancels the connect popup
-  // const selected = await onboard.walletSelect();
-  // if (selected) {
-  //   // Can only call once user selected, otherwise will get error.
-  //   await onboard.walletCheck();
-  // }
-  // const wallet = onboard.alreadyConnectedWallets[0];
   const wallet = selected[0]
   if (wallet) {
       console.log(`wallet switched to: ${wallet.label}`);
-      // Create ethers.js provider instead of Web3
       let provider = new ethers.BrowserProvider(wallet.provider);
       window.ethersProvider = provider;
-      store.commit("setEthersProvider", provider); // Store ethers provider instead
+      store.commit("setEthersProvider", provider);
       store.commit("setWallet", wallet.label);
-
       store.dispatch("setAddressOnboard", wallet.accounts[0].address)
-      // store.
       store.commit("setNetwork", wallet.chains[0])
       localStorage.setItem("selectedWallet", wallet.label);
-      // store.
-      store.commit("setAddress",  wallet.accounts[0].address)  
+      store.commit("setAddress", wallet.accounts[0].address)  
 
       const wallets = onboard.state.select('wallets')
       wallets.subscribe(() => changeWallets())
-      // const address = onboard.state.select('address')
-      // address.subscribe((account) => store.commit("setAddress", account))
-      // const network = onboard.state.select('address')
-      // network.subscribe((nw) => store.commit("setNetwork", nw))
-  }
-  } catch (error) {
-    console.warn("Wallet connection completed with warnings (ENS resolution may have failed):", error);
-    // ENS resolution errors are non-critical, wallet connection still works
   }
 }
 
