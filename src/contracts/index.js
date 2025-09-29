@@ -109,7 +109,6 @@ const initializeEthers = async () => {
             try {
                 const network = await provider.getNetwork();
                 chainId = "0x" + network.chainId.toString(16);
-                console.log("Network detection - ethers.js chainId:", chainId);
             } catch (networkError) {
                 // Fallback to window.ethereum.chainId if ethers.js fails
                 chainId = window.ethereum.chainId;
@@ -121,7 +120,6 @@ const initializeEthers = async () => {
                 chainId = "0x" + parseInt(chainId).toString(16);
             }
             
-            console.log("Final chainId for contract initialization:", chainId, "Raw window.ethereum.chainId:", window.ethereum.chainId);
             let addressTemp = {};
 
             if (chainId == CHAIN_IDS.MAINNET) {
@@ -202,14 +200,14 @@ const initializeEthers = async () => {
                     const contractProvider = useSigner && signer ? signer : provider;
                     return new ethers.Contract(_addresses[address], _ABIs[abi], contractProvider);
                 }
-                console.log("Contract creation failed - ABI:", abi, "Address:", address, "Available addresses:", Object.keys(_addresses), "Available ABIs:", Object.keys(_ABIs));
+                    console.warn("Contract creation failed for:", abi, "->", address);
                 return null;
             }
             createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
 
             if (isValidChain(chainId)) {
                 _addresses = addressTemp; // ethers.js handles checksumming automatically
-                console.log("Contracts initialized for chain:", chainId, "Addresses:", Object.keys(_addresses));
+                console.info("Contracts initialized for chain:", chainId);
             } else {
                 const chainDecimal = parseInt(chainId, 16);
                 console.warn(`Unsupported chain detected: ${chainId} (${chainDecimal}). Supported chains: Mainnet (0x1), Goerli (0x5), Sepolia (0xaa36a7). App will run in limited mode.`);
