@@ -27,6 +27,15 @@ const onboard = Onboard({
       rpcUrl: RPC_URL
     }
   ],
+  // Disable ENS resolution to prevent reverse resolution errors
+  accountCenter: {
+    desktop: {
+      enabled: false
+    },
+    mobile: {
+      enabled: false
+    }
+  },
   // connect: {
   //   autoConnectLastWallet: true
   // }
