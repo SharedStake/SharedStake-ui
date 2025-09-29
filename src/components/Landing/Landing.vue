@@ -1154,9 +1154,6 @@ export default {
       this.vpPostFees = this.vpPostFees.toFixed(4);
       this.elapsed = ((12 * elapsed) / msInYr).toFixed(2);
 
-      console.log(
-        `Fetch success: validatorVirtualPrice ${this.validatorVirtualPrice} | validatorTotalBalance: ${this.validatorTotalBalance} | profit: ${this.profit}`
-      );
     },
     async setupApy() {
       try {

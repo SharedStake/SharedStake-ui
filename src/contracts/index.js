@@ -63,7 +63,7 @@ let _ABIs = {
 let connErr = () => {
     console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue");
     return null; // Return null instead of undefined
-}
+};
 let createContract = () => connErr();
 let createContractDefault = () => connErr();
 let isValidChain = (cid) => Object.values(CHAIN_IDS).indexOf(cid) > -1;

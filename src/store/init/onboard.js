@@ -13,7 +13,7 @@ import Onboard from '@web3-onboard/core'
 // const APP_URL = "https://www.sharedstake.org/";
 // const CONTACT_EMAIL = "chimera_defi@protonmail.com";
 // export const RPC_URL = `https://mainnet.infura.io/v3/${INFURA_KEY}`;
-export const RPC_URL = "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd"
+export const RPC_URL = process.env.VUE_APP_RPC_URL || "https://eth-mainnet.public.blastapi.io"
 // const APP_NAME = "SharedStake";
 const injected = injectedModule()
 // init({
