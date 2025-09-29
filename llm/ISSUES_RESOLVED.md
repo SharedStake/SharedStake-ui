@@ -19,6 +19,8 @@
 - **Method names**: Fixed totalOut → totalAssetsOut (verified in ABI)
 - **Decode errors**: Proper handling of tuple returns from userEntries
 - **ENS resolution**: Added global error handling for ENS reverse resolution failures
+- **Wrap.vue balanceOf**: Fixed legacy .methods.balanceOf().call() → .balanceOf()
+- **Rollover userEntries**: Added validation for undefined tuple elements
 
 ### ✅ Merge Conflicts
 - **Strategy**: Kept ethers.js implementations over Web3.js legacy code

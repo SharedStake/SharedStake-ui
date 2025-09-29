@@ -494,9 +494,15 @@ export default {
           return this.userDepositedVEth2;
         }
         let userDepositedVEth2 = await contract.userEntries(this.userConnectedWalletAddress);
-        // userEntries returns a tuple [amount, blocknum], take the amount
-        this.userDepositedVEth2 = BN(userDepositedVEth2[0].toString());
-        if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2[0].toString());
+        // userEntries returns a tuple [amount, blocknum], validate before using
+        if (userDepositedVEth2 && userDepositedVEth2[0] !== undefined) {
+          this.userDepositedVEth2 = BN(userDepositedVEth2[0].toString());
+          if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2[0].toString());
+        } else {
+          // No entries found for user
+          this.userDepositedVEth2 = BN(0);
+          if (this.dev) console.log("userDepositedVEth2: No entries found for user");
+        }
         this.loading = false;
         return this.userDepositedVEth2;
       } catch (error) {
