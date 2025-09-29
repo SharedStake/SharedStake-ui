@@ -281,6 +281,30 @@ export const getSigner = async () => {
     return signer;
 };
 
+// Utility function to safely get contract with error handling
+export const safeGetContract = (contractFactory, contractName = 'Contract') => {
+    const contract = contractFactory();
+    if (!contract) {
+        console.error(`${contractName} contract not available`);
+        return null;
+    }
+    return contract;
+};
+
+// Utility function for safe contract calls with error handling
+export const safeContractCall = async (contractFactory, method, args = [], contractName = 'Contract') => {
+    const contract = safeGetContract(contractFactory, contractName);
+    if (!contract) return null;
+    
+    try {
+        const result = await contract[method](...args);
+        return result;
+    } catch (error) {
+        console.error(`Error calling ${method} on ${contractName}:`, error);
+        return null;
+    }
+};
+
 // Function to update contracts with signer
 const updateContractsWithSigner = () => {
     if (signer) {

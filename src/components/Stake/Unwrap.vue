@@ -109,7 +109,7 @@
 
 <script>
 import BN from "bignumber.js";
-import { wsgETH, sgETH } from "@/contracts";
+import { wsgETH, sgETH, safeContractCall } from "@/contracts";
 import { mapGetters } from "vuex";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
@@ -255,54 +255,25 @@ export default {
     },
 
     async getUserTokenBalance() {
-      try {
-        const contract = wsgETH();
-        if (!contract) {
-          console.error("wsgETH contract not available");
-          return "0";
-        }
-        let userTokenBalance = await contract.balanceOf(this.userConnectedWalletAddress);
-        this.userTokenBalance = BN(userTokenBalance.toString());
-        if (this.dev) console.log("userTokenBalance", userTokenBalance.toString());
-        return userTokenBalance.toString();
-      } catch (error) {
-        if (error.code === 'NETWORK_ERROR' && error.reason === 'network changed') {
-          console.warn("Network changed during contract call, retrying...");
-          // Retry once after network change
-          try {
-            const contract = wsgETH();
-            if (contract) {
-              let userTokenBalance = await contract.balanceOf(this.userConnectedWalletAddress);
-              this.userTokenBalance = BN(userTokenBalance.toString());
-              return userTokenBalance.toString();
-            }
-          } catch (retryError) {
-            console.error("Retry failed:", retryError);
-          }
-        } else {
-          console.error("Error getting user token balance:", error);
-        }
-        return "0";
+      const result = await safeContractCall(wsgETH, 'balanceOf', [this.userConnectedWalletAddress], 'wsgETH');
+      if (result) {
+        this.userTokenBalance = BN(result.toString());
+        if (this.dev) console.log("userTokenBalance", result.toString());
+        return result.toString();
       }
+      this.userTokenBalance = BN(0);
+      return "0";
     },
 
     async getUserOutputTokenBalance() {
-      try {
-        const contract = sgETH();
-        if (!contract) {
-          console.error("sgETH contract not available");
-          return "0";
-        }
-        let userOutputTokenBalance = await contract.balanceOf(this.userConnectedWalletAddress);
-        this.userOutputTokenBalance = BN(userOutputTokenBalance.toString());
-        if (this.dev) {
-          console.log("userOutputTokenBalance", userOutputTokenBalance.toString());
-        }
-        return userOutputTokenBalance.toString();
-      } catch (error) {
-        console.error("Error getting user output token balance:", error);
-        return "0";
+      const result = await safeContractCall(sgETH, 'balanceOf', [this.userConnectedWalletAddress], 'sgETH');
+      if (result) {
+        this.userOutputTokenBalance = BN(result.toString());
+        if (this.dev) console.log("userOutputTokenBalance", result.toString());
+        return result.toString();
       }
+      this.userOutputTokenBalance = BN(0);
+      return "0";
     },
 
     handleFillMaxAmount() {
