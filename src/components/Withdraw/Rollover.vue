@@ -42,8 +42,18 @@ export default {
       // this.ethAvailableForWithdrawal = BN(amt);
     },
     async getTotalRedeemed() {
-      let amt = await ABI_Rollover.methods.totalOut().call();
-      this.totalRedeemed = BN(amt);
+      try {
+        if (ABI_Rollover && ABI_Rollover.methods && ABI_Rollover.methods.totalOut) {
+          let amt = await ABI_Rollover.methods.totalOut().call();
+          this.totalRedeemed = BN(amt);
+        } else {
+          console.warn("Rollover contract not available or totalOut method not found");
+          this.totalRedeemed = BN(0);
+        }
+      } catch (error) {
+        console.warn("Error getting total redeemed from rollover:", error);
+        this.totalRedeemed = BN(0);
+      }
     }
   },
 };

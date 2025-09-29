@@ -449,11 +449,16 @@ export default {
 
     async getUserDepositedVEth2() {
       this.loading = true;
-      let userDepositedVEth2 = await this.ABI.methods
-        .userEntries(this.userConnectedWalletAddress)
-        .call();
-      this.userDepositedVEth2 = BN(userDepositedVEth2);
-      if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2);
+      try {
+        let userDepositedVEth2 = await this.ABI.methods
+          .userEntries(this.userConnectedWalletAddress)
+          .call();
+        this.userDepositedVEth2 = BN(userDepositedVEth2);
+        if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2);
+      } catch (error) {
+        console.warn("Error getting user deposited vETH2:", error);
+        this.userDepositedVEth2 = BN(0);
+      }
       this.loading = false;
       return this.userDepositedVEth2;
     },
@@ -467,15 +472,25 @@ export default {
 
     async getOutputTokenBalance() {
       let bal = 0;
-      if (this.outputTokenName.toLowerCase() == "sgeth") {
-        bal = await sgETH.methods
-          .balanceOf(this.userConnectedWalletAddress)
-          .call();
-      } else {
-        bal = await window.ethereum.request({
-          method: "eth_getBalance",
-          params: [this.userConnectedWalletAddress, "latest"],
-        });
+      try {
+        if (this.outputTokenName.toLowerCase() == "sgeth") {
+          if (sgETH && sgETH.methods && sgETH.methods.balanceOf) {
+            bal = await sgETH.methods
+              .balanceOf(this.userConnectedWalletAddress)
+              .call();
+          } else {
+            console.warn("sgETH contract not available");
+            bal = 0;
+          }
+        } else {
+          bal = await window.ethereum.request({
+            method: "eth_getBalance",
+            params: [this.userConnectedWalletAddress, "latest"],
+          });
+        }
+      } catch (error) {
+        console.warn("Error getting output token balance:", error);
+        bal = 0;
       }
       this.outputTokenBalance = BN(bal);
     },
