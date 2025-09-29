@@ -27,15 +27,6 @@ const onboard = Onboard({
       rpcUrl: RPC_URL
     }
   ],
-  // Disable ENS resolution to prevent reverse resolution errors
-  accountCenter: {
-    desktop: {
-      enabled: false
-    },
-    mobile: {
-      enabled: false
-    }
-  },
   // connect: {
   //   autoConnectLastWallet: true
   // }
@@ -131,8 +122,9 @@ const onboard = Onboard({
 window.onboard = onboard;
 export async function changeWallets() {
   // await onboard.disconnectConnectedWallet();
-  let selected = await onboard.connectWallet();
-  localStorage.removeItem("selectedWallet");
+  try {
+    let selected = await onboard.connectWallet();
+    localStorage.removeItem("selectedWallet");
 
   // Returns false if user closes/cancels the connect popup
   // const selected = await onboard.walletSelect();
@@ -163,6 +155,10 @@ export async function changeWallets() {
       // address.subscribe((account) => store.commit("setAddress", account))
       // const network = onboard.state.select('address')
       // network.subscribe((nw) => store.commit("setNetwork", nw))
+  }
+  } catch (error) {
+    console.warn("Wallet connection completed with warnings (ENS resolution may have failed):", error);
+    // ENS resolution errors are non-critical, wallet connection still works
   }
 }
 

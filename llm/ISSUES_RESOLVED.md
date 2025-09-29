@@ -18,6 +18,7 @@
 - **BigInt mixing**: Added Number() conversions for arithmetic
 - **Method names**: Fixed totalOut → totalAssetsOut (verified in ABI)
 - **Decode errors**: Proper handling of tuple returns from userEntries
+- **ENS resolution**: Added global error handling for ENS reverse resolution failures
 
 ### ✅ Merge Conflicts
 - **Strategy**: Kept ethers.js implementations over Web3.js legacy code
@@ -44,6 +45,18 @@ if (!contract) {
   console.error("Contract not available");
   return;
 }
+```
+
+**ENS Error Handling**:
+```javascript
+// Global handling for ENS resolution failures
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason?.message?.includes('reverse') || 
+      event.reason?.message?.includes('Internal error')) {
+    console.warn('ENS resolution failed (non-critical)');
+    event.preventDefault();
+  }
+});
 ```
 
 ## 📊 Final Status

@@ -40,7 +40,7 @@
 - Merge conflicts → Resolved with main branch
 - BigInt mixing → Explicit type conversions
 - Method names → Verified against ABIs
-- ENS resolution → Disabled account center
+- ENS resolution → Added global error handling for reverse resolution failures
 
 ### ✅ Production Polish
 - Debug logging → Cleaned up for production
