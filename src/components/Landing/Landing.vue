@@ -29,9 +29,9 @@
           class="flex items-center justify-center gap-6 mb-8 md-large:justify-start"
         >
           <div
-            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gray-500 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50"
+            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gray-500 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center"
           >
-            STAKE V2
+            <span>STAKE V2</span>
             <div class="text-xs mt-1">Coming Soon</div>
           </div>
           <a
@@ -64,7 +64,7 @@
             />
           </a>
 
-          <div class="cursor-not-allowed opacity-50">
+          <div class="cursor-not-allowed opacity-50 flex flex-col items-center">
             <ImageVue
               :src="'socialmediaicons/TG.svg'"
               size="24px"
@@ -139,9 +139,9 @@
             Rollover (Returning soon!)
         </span>
           <div
-            class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50"
+            class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center"
           >
-            Withdraw
+            <span>Withdraw</span>
             <div class="text-xs mt-1">Coming Soon</div>
           </div>
         </div>

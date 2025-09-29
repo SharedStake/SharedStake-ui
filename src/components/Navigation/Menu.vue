@@ -1,20 +1,20 @@
 <template>
   <section class="flex items-center justify-around gap-4 lg:gap-6 xl:gap-8">
     <div class="relative py-2 cursor-pointer group">
-      <div class="px-6 disabled-dropdown-item">
+      <div class="flex items-center gap-1 px-6 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item">
         Stake
         <DropdownArrow />
       </div>
       <DropdownGroup>
-        <div class="dropdown-item disabled">
-          Stake
+        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item">
+          <span>Stake</span>
           <div class="coming-soon">Coming Soon</div>
         </div>
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
-        <div class="dropdown-item disabled">
-          Withdraw
+        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item">
+          <span>Withdraw</span>
           <div class="coming-soon">Coming Soon</div>
         </div>
         <DropdownItemRouter to="/wrap">
@@ -50,8 +50,8 @@
         <DropdownItemAnchor href="https://discord.gg/C9GhCv86My">
           Discord
         </DropdownItemAnchor>
-        <div class="dropdown-item disabled">
-          Telegram
+        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item">
+          <span>Telegram</span>
           <div class="coming-soon">Coming Soon</div>
         </div>
         <DropdownItemAnchor href="https://twitter.com/ChimeraDefi">
@@ -104,21 +104,18 @@ export default {
 </script>
 
 <style scoped>
-.dropdown-item.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
 .disabled-dropdown-item {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .coming-soon {
   font-size: 10px;
   color: #999;
   margin-top: 2px;
+  font-weight: normal;
 }
 </style>

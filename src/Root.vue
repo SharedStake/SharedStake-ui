@@ -62,8 +62,8 @@
     <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
       <ConnectButton />
 
-      <div class="link disabled-link">
-        Stake
+      <div class="link disabled-link flex flex-col items-start">
+        <span>Stake</span>
         <div class="coming-soon">Coming Soon</div>
       </div>
       <router-link class="link" to="/wrap" @click.native="showSidebar = false">
@@ -83,8 +83,8 @@
       >
         Rollover
       </router-link>
-      <div class="link disabled-link">
-        Withdraw
+      <div class="link disabled-link flex flex-col items-start">
+        <span>Withdraw</span>
         <div class="coming-soon">Coming Soon</div>
       </div>
       <router-link class="link" to="/earn" @click.native="showSidebar = false">
@@ -605,6 +605,7 @@ export default {
   font-size: 10px;
   color: #999;
   margin-top: 2px;
+  font-weight: normal;
 }
 
 @media only screen and (max-width: 1100px) {
