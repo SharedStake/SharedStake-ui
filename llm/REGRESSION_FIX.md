@@ -7,9 +7,10 @@
 ## 🔍 Root Cause Analysis
 
 ### Primary Issues
-1. **Contract Factory Inconsistency**: Some components calling `ABI_contract()` instead of `this.ABI()`
-2. **Wallet Connection Timing**: Contracts being called before wallet connection
-3. **Error Handling**: `connErr()` returning `undefined` instead of `null`
+1. **Chain ID Detection Bug**: `window.ethereum.chainId` returning incorrect values (129399 instead of 1 for Mainnet)
+2. **Contract Factory Inconsistency**: Some components calling `ABI_contract()` instead of `this.ABI()`
+3. **Wallet Connection Timing**: Contracts being called before wallet connection
+4. **Error Handling**: `connErr()` returning `undefined` instead of `null`
 
 ### Affected Components
 - `src/components/Withdraw/Withdraw.vue` - getTotalRedeemed method
@@ -18,7 +19,27 @@
 
 ## ✅ Fixes Applied
 
-### 1. Unsupported Network Handling ⭐ PRIMARY FIX
+### 1. Chain ID Detection Fix ⭐ PRIMARY FIX
+```javascript
+// BEFORE - Unreliable chain ID detection
+let chainId = window.ethereum.chainId; // Could return wrong values
+
+// AFTER - Robust chain ID detection with fallback
+try {
+    const network = await provider.getNetwork();
+    chainId = "0x" + network.chainId.toString(16); // Use ethers.js
+} catch (networkError) {
+    chainId = window.ethereum.chainId; // Fallback if needed
+    console.warn("Using fallback chain ID detection");
+}
+
+// Ensure proper hex format
+if (chainId && !chainId.startsWith('0x')) {
+    chainId = "0x" + parseInt(chainId).toString(16);
+}
+```
+
+### 2. Unsupported Network Handling
 ```javascript
 // BEFORE - App failed on unsupported networks
 if (isValidChain(chainId)) {
@@ -39,7 +60,7 @@ if (isValidChain(chainId)) {
 }
 ```
 
-### 2. Contract Factory Consistency
+### 3. Contract Factory Consistency
 ```javascript
 // BEFORE (inconsistent)
 const contract = ABI_withdrawals(); // Wrong - calling import directly
@@ -48,7 +69,7 @@ const contract = ABI_withdrawals(); // Wrong - calling import directly
 const contract = this.ABI(); // Correct - using data property
 ```
 
-### 3. Wallet Connection Guards
+### 4. Wallet Connection Guards
 ```javascript
 // Added to all contract methods
 if (!this.userConnectedWalletAddress) {
@@ -57,7 +78,7 @@ if (!this.userConnectedWalletAddress) {
 }
 ```
 
-### 4. Error Handling Improvement
+### 5. Error Handling Improvement
 ```javascript
 // BEFORE
 let connErr = () => console.log("Error..."); // Returns undefined
@@ -69,7 +90,7 @@ let connErr = () => {
 }
 ```
 
-### 5. Prop Method Safety
+### 6. Prop Method Safety
 ```javascript
 // BEFORE
 await this.getTotalRedeemed(); // Could fail if prop not provided
@@ -80,9 +101,13 @@ if (this.getTotalRedeemed) await this.getTotalRedeemed(); // Safe call
 
 ## 🔧 Technical Details
 
+### Chain ID Detection Issue
+**Problem**: `window.ethereum.chainId` sometimes returns incorrect values (e.g., 129399 instead of 1 for Mainnet)
+**Solution**: Use `ethers.js provider.getNetwork()` as primary method with `window.ethereum.chainId` as fallback
+
 ### Contract Initialization Flow
 1. `window.ethereum` detected → `initializeEthers()` called
-2. Chain ID checked → Address mappings loaded  
+2. Chain ID properly detected using ethers.js → Address mappings loaded  
 3. `createContract` functions become available
 4. Components can call contract factory functions
 

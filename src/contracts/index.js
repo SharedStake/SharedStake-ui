@@ -82,16 +82,31 @@ let signer = null;
 let isInitialized = false;
 
 // Function to initialize ethers.js and contracts
-const initializeEthers = () => {
+const initializeEthers = async () => {
     if (window.ethereum && !isInitialized) {
         try {
             provider = new ethers.BrowserProvider(window.ethereum);
             signer = null; // Will be set when user connects wallet
             isInitialized = true;
             
-            // @TODO: Figure out what causes FF to not connect the wallet correctly. 
-            let chainId = window.ethereum.chainId;
-            console.log("Initializing contracts for chainId:", chainId);
+            // Get chain ID properly using ethers.js provider with fallback
+            let chainId;
+            try {
+                const network = await provider.getNetwork();
+                chainId = "0x" + network.chainId.toString(16);
+                console.log("Network detection - ethers.js chainId:", chainId);
+            } catch (networkError) {
+                // Fallback to window.ethereum.chainId if ethers.js fails
+                chainId = window.ethereum.chainId;
+                console.warn("Ethers.js network detection failed, using window.ethereum.chainId:", chainId, "Error:", networkError);
+            }
+            
+            // Ensure chainId is in hex format
+            if (chainId && !chainId.startsWith('0x')) {
+                chainId = "0x" + parseInt(chainId).toString(16);
+            }
+            
+            console.log("Final chainId for contract initialization:", chainId, "Raw window.ethereum.chainId:", window.ethereum.chainId);
             let addressTemp = {};
 
             if (chainId == CHAIN_IDS.MAINNET) {
@@ -222,12 +237,16 @@ const initializeEthers = () => {
 
 // Initialize immediately if window.ethereum is available
 if (window.ethereum) {
-    initializeEthers();
+    initializeEthers().catch(error => {
+        console.error("Error during contract initialization:", error);
+    });
 } else {
     // Wait for window.ethereum to be available
     const checkEthereum = () => {
         if (window.ethereum) {
-            initializeEthers();
+            initializeEthers().catch(error => {
+                console.error("Error during contract initialization:", error);
+            });
         } else {
             setTimeout(checkEthereum, 100);
         }
