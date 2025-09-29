@@ -6,6 +6,7 @@
 **/
 
 import { ethers } from 'ethers';
+import { notifyNotification } from '@/utils/common';
 import sharedStake from './abis/sharedStake.json'
 import vEth2Token from './abis/vEth2Token.json'
 import erc20 from './abis/erc20.json'
@@ -36,7 +37,10 @@ const chainIdMainnet = "0x1";
 const CHAIN_IDS = {
     GOERLI: chainIdGoerli,
     MAINNET: chainIdMainnet,
-    SEPOLIA: "0xaa36a7"
+    SEPOLIA: "0xaa36a7",
+    // Common development networks
+    LOCALHOST: "0x7a69", // 31337 - Hardhat default
+    LOCALHOST_ALT: "0x539", // 1337 - Ganache default
 };
 
 
@@ -159,25 +163,53 @@ const initializeEthers = () => {
                 }
             }
 
+            // Always define contract creation functions
+            createContract = (abi, address, useSigner = false) => {
+                if (
+                    _addresses && _ABIs &&
+                    _addresses[address] && _ABIs[abi]
+                ) {
+                    const contractProvider = useSigner && signer ? signer : provider;
+                    return new ethers.Contract(_addresses[address], _ABIs[abi], contractProvider);
+                }
+                console.log("Contract creation failed - ABI:", abi, "Address:", address, "Available addresses:", Object.keys(_addresses), "Available ABIs:", Object.keys(_ABIs));
+                return null;
+            }
+            createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
+
             if (isValidChain(chainId)) {
                 _addresses = addressTemp; // ethers.js handles checksumming automatically
                 console.log("Contracts initialized for chain:", chainId, "Addresses:", Object.keys(_addresses));
-
-                // Utils
-                createContract = (abi, address, useSigner = false) => {
-                    if (
-                        _addresses && _ABIs &&
-                        _addresses[address] && _ABIs[abi]
-                    ) {
-                        const contractProvider = useSigner && signer ? signer : provider;
-                        return new ethers.Contract(_addresses[address], _ABIs[abi], contractProvider);
-                    }
-                    console.log("Contract creation failed - ABI:", abi, "Address:", address, "Available addresses:", Object.keys(_addresses), "Available ABIs:", Object.keys(_ABIs));
-                    return null;
-                }
-                createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
             } else {
-                console.log("invalid chain detected. PLEASE SWITCH TO ETH MAINNET OR TESTNET");
+                const chainDecimal = parseInt(chainId, 16);
+                console.warn(`Unsupported chain detected: ${chainId} (${chainDecimal}). Supported chains: Mainnet (0x1), Goerli (0x5), Sepolia (0xaa36a7). App will run in limited mode.`);
+                
+                // Show user-friendly notification
+                try {
+                    notifyNotification(
+                        `Unsupported network detected (Chain ID: ${chainDecimal}). Please switch to Ethereum Mainnet, Goerli, or Sepolia for full functionality.`,
+                        "error"
+                    );
+                } catch (e) {
+                    console.log("Could not show notification:", e);
+                }
+                
+                // For development networks (high chain IDs), use Sepolia as fallback
+                if (chainDecimal > 1000) { 
+                    console.info("Using Sepolia addresses as fallback for development network");
+                    addressTemp = {
+                        sgETH: '0xCF4831EBE785437DC54a90018b1b410Bd16c8533',
+                        wsgETH: '0x514dfd2d10eC6775f030BA2abcf7A2445C0CA6Fb',
+                        validator: '0xd6Ad9a646330F1a937347a5cfaaDE57990109b5C',
+                        withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
+                        RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
+                    };
+                    _addresses = addressTemp;
+                    console.warn("⚠️ Using fallback addresses - contracts may not function correctly on this network");
+                } else {
+                    // Set empty addresses to prevent contract creation
+                    _addresses = {};
+                }
             }
 
             /************************************* CONTRACTS ****************************************/

@@ -18,7 +18,28 @@
 
 ## ✅ Fixes Applied
 
-### 1. Contract Factory Consistency
+### 1. Unsupported Network Handling ⭐ PRIMARY FIX
+```javascript
+// BEFORE - App failed on unsupported networks
+if (isValidChain(chainId)) {
+    // Contract setup only for supported chains
+} else {
+    console.log("invalid chain detected"); // App breaks
+}
+
+// AFTER - Graceful degradation with fallback
+if (isValidChain(chainId)) {
+    _addresses = addressTemp; // Supported chains
+} else {
+    // Show user notification + provide fallback for development
+    notifyNotification("Unsupported network detected...", "error");
+    if (chainDecimal > 1000) { // Development network fallback
+        _addresses = sepoliaFallbackAddresses;
+    }
+}
+```
+
+### 2. Contract Factory Consistency
 ```javascript
 // BEFORE (inconsistent)
 const contract = ABI_withdrawals(); // Wrong - calling import directly
@@ -27,7 +48,7 @@ const contract = ABI_withdrawals(); // Wrong - calling import directly
 const contract = this.ABI(); // Correct - using data property
 ```
 
-### 2. Wallet Connection Guards
+### 3. Wallet Connection Guards
 ```javascript
 // Added to all contract methods
 if (!this.userConnectedWalletAddress) {
@@ -36,7 +57,7 @@ if (!this.userConnectedWalletAddress) {
 }
 ```
 
-### 3. Error Handling Improvement
+### 4. Error Handling Improvement
 ```javascript
 // BEFORE
 let connErr = () => console.log("Error..."); // Returns undefined
@@ -48,7 +69,7 @@ let connErr = () => {
 }
 ```
 
-### 4. Prop Method Safety
+### 5. Prop Method Safety
 ```javascript
 // BEFORE
 await this.getTotalRedeemed(); // Could fail if prop not provided

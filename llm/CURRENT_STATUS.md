@@ -56,7 +56,11 @@
 - PostCSS 7.x related moderate vulnerabilities (requires upgrade)
 - Vue 2.x ReDoS vulnerability (requires Vue 3 migration)
 
-**Note**: All critical functionality working, these are optimization opportunities.
+### ✅ Recently Fixed
+- **Contract availability regression** (Sept 28) - Fixed unsupported network handling
+- **Wallet connection timing** - Added proper guards for contract calls
+
+**Note**: All critical functionality working, remaining items are optimization opportunities.
 
 ## 📈 Performance Metrics
 
