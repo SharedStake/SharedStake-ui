@@ -69,7 +69,7 @@ export default {
           console.error("Withdrawals contract not available - wallet may not be connected");
           return;
         }
-        let amt = await contract.totalOut();
+        let amt = await contract.totalAssetsOut();
         this.totalRedeemed = BN(amt.toString());
       } catch (error) {
         console.error("Error getting total redeemed:", error);

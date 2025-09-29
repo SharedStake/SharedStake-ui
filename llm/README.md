@@ -28,18 +28,19 @@ This folder contains consolidated documentation generated during the **Web3.js �
 3. **`SECURITY_AUDIT.md`** - Security audit results and remaining vulnerabilities
 4. **`FUTURE_PLANS.md`** - Next phase priorities and timelines
 5. **`REGRESSION_FIX.md`** - ⚠️ Contract availability regression fix (Sept 28)
+6. **`CRITICAL_ERRORS_FIXED.md`** - 🔥 Latest critical runtime errors fixed (Sept 29)
 
 ### 📚 Detailed Reports
-6. **`WEB3_MIGRATION_COMPLETE.md`** - Comprehensive technical migration details
-7. **`UPGRADE_COMPLETION_REPORT.md`** - Complete business and technical summary
-8. **`FINAL_PROJECT_STATUS.md`** - Consolidated final status report
+7. **`WEB3_MIGRATION_COMPLETE.md`** - Comprehensive technical migration details
+8. **`UPGRADE_COMPLETION_REPORT.md`** - Complete business and technical summary
+9. **`FINAL_PROJECT_STATUS.md`** - Consolidated final status report
 
 ### 🗺️ Future Migration Plans
-9. **`VUE3_MIGRATION_PLAN.md`** - 8-week Vue 2 → Vue 3 strategy
-10. **`POSTCSS_UPGRADE_PLAN.md`** - PostCSS 7.x → 8.x upgrade plan
-11. **`TAILWIND_CSS_UPGRADE_PLAN.md`** - Tailwind CSS 2.x → 3.x migration
-12. **`TESTING_INFRASTRUCTURE_PLAN.md`** - Testing setup strategy
-13. **`PERFORMANCE_MONITORING_PLAN.md`** - Analytics and monitoring setup
+10. **`VUE3_MIGRATION_PLAN.md`** - 8-week Vue 2 → Vue 3 strategy
+11. **`POSTCSS_UPGRADE_PLAN.md`** - PostCSS 7.x → 8.x upgrade plan
+12. **`TAILWIND_CSS_UPGRADE_PLAN.md`** - Tailwind CSS 2.x → 3.x migration
+13. **`TESTING_INFRASTRUCTURE_PLAN.md`** - Testing setup strategy
+14. **`PERFORMANCE_MONITORING_PLAN.md`** - Analytics and monitoring setup
 
 ## 🚀 Next Phase Ready
 

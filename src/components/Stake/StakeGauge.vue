@@ -87,7 +87,7 @@ export default {
       let maxValidatorShares = await validatorContract.maxValidatorShares();
       let currentValidatorShares = await validatorContract.curValidatorShares();
       let validatorPrice = await validatorContract.costPerValidator();
-      this.numOfValidators = await validatorContract.numValidators();
+      this.numOfValidators = Number(await validatorContract.numValidators());
 
       maxValidatorShares = BN(maxValidatorShares.toString())
         .dividedBy(1e18)
@@ -107,7 +107,7 @@ export default {
         maxValidatorShares,
         validatorPrice
       );
-      this.contractEtherLimit = this.numOfValidators * validatorPrice;
+      this.contractEtherLimit = Number(this.numOfValidators) * validatorPrice;
       this.loading = false;
     },
     calculateMaxEth(maxValidatorShares, validatorPrice) {

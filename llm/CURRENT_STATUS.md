@@ -59,6 +59,11 @@
 ### ✅ Recently Fixed
 - **Contract availability regression** (Sept 28) - Fixed unsupported network handling
 - **Wallet connection timing** - Added proper guards for contract calls
+- **Chain ID detection** (Sept 29) - Fixed incorrect chain ID (129399 → 1) using ethers.js
+- **Transaction hash errors** (Sept 29) - Added transaction object validation
+- **Contract decode errors** (Sept 29) - Fixed struct/tuple return type handling
+- **Method name errors** (Sept 29) - Fixed totalOut → totalAssetsOut
+- **BigInt mixing errors** (Sept 29) - Added explicit type conversions
 
 **Note**: All critical functionality working, remaining items are optimization opportunities.
 

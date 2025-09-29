@@ -493,7 +493,17 @@ export default {
           return this.userDepositedVEth2;
         }
         let userDepositedVEth2 = await contract.userEntries(this.userConnectedWalletAddress);
-        this.userDepositedVEth2 = BN(userDepositedVEth2.toString());
+        // userEntries might return a struct or tuple, handle accordingly
+        if (Array.isArray(userDepositedVEth2)) {
+          // If it's a tuple/array, take the first element (amount)
+          this.userDepositedVEth2 = BN(userDepositedVEth2[0].toString());
+        } else if (typeof userDepositedVEth2 === 'object' && userDepositedVEth2.amount) {
+          // If it's a struct with amount property
+          this.userDepositedVEth2 = BN(userDepositedVEth2.amount.toString());
+        } else {
+          // If it's a simple value
+          this.userDepositedVEth2 = BN(userDepositedVEth2.toString());
+        }
         if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2.toString());
         this.loading = false;
         return this.userDepositedVEth2;
@@ -523,18 +533,28 @@ export default {
     },
 
     async getOutputTokenBalance() {
-      let bal = 0;
-      if (this.outputTokenName.toLowerCase() == "sgeth") {
-        bal = await sgETH.methods
-          .balanceOf(this.userConnectedWalletAddress)
-          .call();
-      } else {
-        bal = await window.ethereum.request({
-          method: "eth_getBalance",
-          params: [this.userConnectedWalletAddress, "latest"],
-        });
+      try {
+        let bal = 0;
+        if (this.outputTokenName.toLowerCase() == "sgeth") {
+          const sgETHContract = sgETH();
+          if (!sgETHContract) {
+            console.error("sgETH contract not available");
+            this.outputTokenBalance = BN(0);
+            return;
+          }
+          bal = await sgETHContract.balanceOf(this.userConnectedWalletAddress);
+          bal = bal.toString();
+        } else {
+          bal = await window.ethereum.request({
+            method: "eth_getBalance",
+            params: [this.userConnectedWalletAddress, "latest"],
+          });
+        }
+        this.outputTokenBalance = BN(bal);
+      } catch (error) {
+        console.error("Error getting output token balance:", error);
+        this.outputTokenBalance = BN(0);
       }
-      this.outputTokenBalance = BN(bal);
     },
 
     parseBN(n) {
