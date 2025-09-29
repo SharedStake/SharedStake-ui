@@ -526,40 +526,36 @@ export default {
       let self = this;
       // to add tx watcher
       if (this.bigWAmount.eq(this.staked)) {
-        await this.pool.geyser.methods
-          .exit()
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            self.mounted();
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            console.log(err);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        try {
+          const geyserContract = this.pool.geyser();
+          if (!geyserContract) {
+            console.error("Geyser contract not available");
+            return;
+          }
+          const signer = await window.ethersProvider.getSigner();
+          const tx = await geyserContract.connect(signer).exit();
+          notifyHandler(tx.hash);
+          await tx.wait();
+          self.mounted();
+        } catch (err) {
+          console.log(err);
+        }
       } else {
-        let myAmount = this.bigWAmount.toString();
-        await this.pool.geyser.methods
-          .withdraw(myAmount)
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            self.mounted();
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            console.log(err);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        try {
+          let myAmount = this.bigWAmount.toString();
+          const geyserContract = this.pool.geyser();
+          if (!geyserContract) {
+            console.error("Geyser contract not available");
+            return;
+          }
+          const signer = await window.ethersProvider.getSigner();
+          const tx = await geyserContract.connect(signer).withdraw(myAmount);
+          notifyHandler(tx.hash);
+          await tx.wait();
+          self.mounted();
+        } catch (err) {
+          console.log(err);
+        }
       }
     },
     async Harvest() {
