@@ -44,8 +44,18 @@ export default {
     },
 
     async getTotalRedeemed() {
-      let amt = await ABI_withdrawals.methods.totalOut().call();
-      this.totalRedeemed = BN(amt);
+      try {
+        if (ABI_withdrawals && ABI_withdrawals.methods && ABI_withdrawals.methods.totalOut) {
+          let amt = await ABI_withdrawals.methods.totalOut().call();
+          this.totalRedeemed = BN(amt);
+        } else {
+          console.warn("Withdrawals contract not available or totalOut method not found");
+          this.totalRedeemed = BN(0);
+        }
+      } catch (error) {
+        console.warn("Error getting total redeemed:", error);
+        this.totalRedeemed = BN(0);
+      }
     }
   },
 };

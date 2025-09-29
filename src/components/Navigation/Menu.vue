@@ -1,20 +1,22 @@
 <template>
   <section class="flex items-center justify-around gap-4 lg:gap-6 xl:gap-8">
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemRouter to="/stake" class="px-6">
-        Stake
+      <div class="flex items-center gap-1 px-6 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item">
+        <span>Stake</span>
         <DropdownArrow />
-      </DropdownItemRouter>
+      </div>
       <DropdownGroup>
-        <DropdownItemRouter to="/stake">
-          Stake
-        </DropdownItemRouter>
+        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
+          <span>Stake</span>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
-        <DropdownItemRouter to="/withdraw">
-          Withdraw
-        </DropdownItemRouter>
+        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
+          <span>Withdraw</span>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
         <DropdownItemRouter to="/wrap">
           Wrap
         </DropdownItemRouter>
@@ -48,9 +50,10 @@
         <DropdownItemAnchor href="https://discord.gg/C9GhCv86My">
           Discord
         </DropdownItemAnchor>
-        <DropdownItemAnchor href="https://t.me/SharedStakeFinance">
-          Telegram
-        </DropdownItemAnchor>
+        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
+          <span>Telegram</span>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
         <DropdownItemAnchor href="https://twitter.com/ChimeraDefi">
           Twitter
         </DropdownItemAnchor>
@@ -99,3 +102,23 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.disabled-dropdown-item {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.disabled-dropdown-item.has-coming-soon {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.coming-soon {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+  font-weight: normal;
+}
+</style>
