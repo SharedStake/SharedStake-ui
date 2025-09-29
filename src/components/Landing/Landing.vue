@@ -28,12 +28,12 @@
         <div
           class="flex items-center justify-center gap-6 mb-8 md-large:justify-start"
         >
-          <router-link
-            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-brand-primary md:font-medium md:text-3xl md:px-8 hover:bg-transparent hover:text-brand-primary hover:border-brand-primary whitespace-nowrap"
-            to="/stake"
+          <div
+            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gray-500 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50"
           >
             STAKE V2
-          </router-link>
+            <div class="text-xs mt-1">Coming Soon</div>
+          </div>
           <a
             class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
             rel="noopener noreferrer nofollow"
@@ -64,17 +64,14 @@
             />
           </a>
 
-          <a
-            href="https://t.me/SharedStakeFinance"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <div class="cursor-not-allowed opacity-50">
             <ImageVue
               :src="'socialmediaicons/TG.svg'"
               size="24px"
               class="socialLogo"
             />
-          </a>
+            <div class="text-xs mt-1 text-center">Coming Soon</div>
+          </div>
           <!-- <a
             href="https://www.reddit.com/r/SharedStake/"
             target="_blank"
@@ -141,12 +138,12 @@
           >
             Rollover (Returning soon!)
         </span>
-          <router-link
-            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
-            to="/withdraw"
+          <div
+            class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50"
           >
             Withdraw
-          </router-link>
+            <div class="text-xs mt-1">Coming Soon</div>
+          </div>
         </div>
       </div>
     </div>

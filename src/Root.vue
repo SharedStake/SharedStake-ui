@@ -62,9 +62,10 @@
     <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
       <ConnectButton />
 
-      <router-link class="link" to="/stake" @click.native="showSidebar = false">
+      <div class="link disabled-link">
         Stake
-      </router-link>
+        <div class="coming-soon">Coming Soon</div>
+      </div>
       <router-link class="link" to="/wrap" @click.native="showSidebar = false">
         Wrap
       </router-link>
@@ -82,13 +83,10 @@
       >
         Rollover
       </router-link>
-      <router-link
-        class="link"
-        to="/withdraw"
-        @click.native="showSidebar = false"
-      >
+      <div class="link disabled-link">
         Withdraw
-      </router-link>
+        <div class="coming-soon">Coming Soon</div>
+      </div>
       <router-link class="link" to="/earn" @click.native="showSidebar = false">
         Earn
       </router-link>
@@ -597,6 +595,18 @@ export default {
 .icebear {
   padding: 0 10px;
 }
+.disabled-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.coming-soon {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+
 @media only screen and (max-width: 1100px) {
   .footer {
     grid-template-columns: 1fr 1fr;

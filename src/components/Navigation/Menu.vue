@@ -1,20 +1,22 @@
 <template>
   <section class="flex items-center justify-around gap-4 lg:gap-6 xl:gap-8">
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemRouter to="/stake" class="px-6">
+      <div class="px-6 disabled-dropdown-item">
         Stake
         <DropdownArrow />
-      </DropdownItemRouter>
+      </div>
       <DropdownGroup>
-        <DropdownItemRouter to="/stake">
+        <div class="dropdown-item disabled">
           Stake
-        </DropdownItemRouter>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
-        <DropdownItemRouter to="/withdraw">
+        <div class="dropdown-item disabled">
           Withdraw
-        </DropdownItemRouter>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
         <DropdownItemRouter to="/wrap">
           Wrap
         </DropdownItemRouter>
@@ -48,9 +50,10 @@
         <DropdownItemAnchor href="https://discord.gg/C9GhCv86My">
           Discord
         </DropdownItemAnchor>
-        <DropdownItemAnchor href="https://t.me/SharedStakeFinance">
+        <div class="dropdown-item disabled">
           Telegram
-        </DropdownItemAnchor>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
         <DropdownItemAnchor href="https://twitter.com/ChimeraDefi">
           Twitter
         </DropdownItemAnchor>
@@ -99,3 +102,23 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.dropdown-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.disabled-dropdown-item {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.coming-soon {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+</style>
