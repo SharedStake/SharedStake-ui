@@ -60,9 +60,10 @@
             Next steps
           </p>
           <div class="flex justify-center gap-6">
-            <SharedLink to="/stake">
-              Stake ETH
-            </SharedLink>
+            <div class="disabled-link flex flex-col items-center">
+              <span>Stake ETH</span>
+              <div class="coming-soon">Coming Soon</div>
+            </div>
             <SharedLink to="/wrap">
               Wrap sgETH
             </SharedLink>
@@ -493,18 +494,9 @@ export default {
           return this.userDepositedVEth2;
         }
         let userDepositedVEth2 = await contract.userEntries(this.userConnectedWalletAddress);
-        // userEntries might return a struct or tuple, handle accordingly
-        if (Array.isArray(userDepositedVEth2)) {
-          // If it's a tuple/array, take the first element (amount)
-          this.userDepositedVEth2 = BN(userDepositedVEth2[0].toString());
-        } else if (typeof userDepositedVEth2 === 'object' && userDepositedVEth2.amount) {
-          // If it's a struct with amount property
-          this.userDepositedVEth2 = BN(userDepositedVEth2.amount.toString());
-        } else {
-          // If it's a simple value
-          this.userDepositedVEth2 = BN(userDepositedVEth2.toString());
-        }
-        if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2.toString());
+        // userEntries returns a tuple [amount, blocknum], take the amount
+        this.userDepositedVEth2 = BN(userDepositedVEth2[0].toString());
+        if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2[0].toString());
         this.loading = false;
         return this.userDepositedVEth2;
       } catch (error) {
@@ -584,3 +576,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.disabled-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  color: #999;
+}
+
+.coming-soon {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+  font-weight: normal;
+}
+</style>

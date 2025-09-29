@@ -107,7 +107,7 @@ export default {
         maxValidatorShares,
         validatorPrice
       );
-      this.contractEtherLimit = Number(this.numOfValidators) * validatorPrice;
+      this.contractEtherLimit = Number(this.numOfValidators) * Number(validatorPrice);
       this.loading = false;
     },
     calculateMaxEth(maxValidatorShares, validatorPrice) {

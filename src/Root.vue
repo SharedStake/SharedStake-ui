@@ -1,6 +1,20 @@
 <template>
   <!-- Footer on landing page -->
   <div class="Root">
+    <!-- Maintenance Banner -->
+    <div
+      class="maintenance-banner fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4 text-lg font-bold text-center text-white bg-red-600 shadow-lg"
+    >
+      <div class="flex items-center space-x-2">
+        <svg class="w-6 h-6 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <span>⚠️ UNDER MAINTENANCE ⚠️</span>
+        <svg class="w-6 h-6 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+      </div>
+    </div>
     <div
       class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary"
     >
@@ -17,7 +31,7 @@
     </div>
     <div
       :class="{ 'navbar--hidden': !showNavbar }"
-      class="fixed top-0 w-full p-3 navbar"
+      class="fixed top-16 w-full p-3 navbar"
     >
       <div
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
@@ -62,9 +76,10 @@
     <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
       <ConnectButton />
 
-      <router-link class="link" to="/stake" @click.native="showSidebar = false">
-        Stake
-      </router-link>
+      <div class="link disabled-link flex flex-col items-start">
+        <span>Stake</span>
+        <div class="coming-soon">Coming Soon</div>
+      </div>
       <router-link class="link" to="/wrap" @click.native="showSidebar = false">
         Wrap
       </router-link>
@@ -82,13 +97,10 @@
       >
         Rollover
       </router-link>
-      <router-link
-        class="link"
-        to="/withdraw"
-        @click.native="showSidebar = false"
-      >
-        Withdraw
-      </router-link>
+      <div class="link disabled-link flex flex-col items-start">
+        <span>Withdraw</span>
+        <div class="coming-soon">Coming Soon</div>
+      </div>
       <router-link class="link" to="/earn" @click.native="showSidebar = false">
         Earn
       </router-link>
@@ -440,7 +452,7 @@ export default {
 }
 .sidebar {
   position: fixed;
-  top: 63px;
+  top: 127px;
   bottom: 0;
   overflow-y: auto;
   width: 100%;
@@ -597,6 +609,19 @@ export default {
 .icebear {
   padding: 0 10px;
 }
+.disabled-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.coming-soon {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+  font-weight: normal;
+}
+
 @media only screen and (max-width: 1100px) {
   .footer {
     grid-template-columns: 1fr 1fr;
@@ -609,6 +634,17 @@ export default {
   }
   .navbar {
     justify-content: space-between;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .maintenance-banner {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  .maintenance-banner svg {
+    width: 20px;
+    height: 20px;
   }
 }
 </style>
