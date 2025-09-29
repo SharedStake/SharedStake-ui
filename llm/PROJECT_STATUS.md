@@ -29,6 +29,9 @@
 - Merge conflicts → Resolved with main branch
 - totalOut method → Corrected ABI and component calls
 - Legacy patterns → 100% eliminated (.methods, .call, .send)
+- BigInt mixing → Explicit Number() conversions
+- Navigation duplicates → Route validation added
+- Missing revert data → Enhanced error handling
 
 ## 📊 Final Metrics
 
