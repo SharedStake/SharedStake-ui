@@ -456,7 +456,7 @@ export default {
               let oldEarned = await oldPoolContract.earned(user);
               this.oldEarned = BN(oldEarned.toString());
             }
-            if (this.oldEarned > 0) {
+            if (this.oldEarned.gt(BN(0))) {
               this.$notify({
                 group: "foo",
                 type: "error",
