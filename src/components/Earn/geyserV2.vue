@@ -330,20 +330,20 @@ export default {
     disableHarvest: function () {
       let disable = false;
       if (this.earned == 0) disable = true;
-      else if (this.earned.lte(0)) disable = true;
+      else if (this.earned.lte(BN(0))) disable = true;
       return disable;
     },
     apy: function () {
       const pooledTokenPerSgt = this.pool.tokenPerSgt;
-      const rewardsLeftForEmissionPeriod = this.locked * 1e18;
-      const tokensInPool = this.totalStaked;
-      const daysLeftOfEmissionPeriod = this.stakedSchedule;
+      const rewardsLeftForEmissionPeriod = Number(this.locked) * 1e18;
+          const tokensInPool = Number(this.totalStaked);
+          const daysLeftOfEmissionPeriod = Number(this.stakedSchedule);
 
-      const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
-      const percentageYieldForPool =
-        (rewardsLeftForEmissionPeriod / totalSgtAmountInPool) * 100;
+          const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
+          const percentageYieldForPool =
+            (rewardsLeftForEmissionPeriod / totalSgtAmountInPool) * 100;
 
-      const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
+          const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
 
       return percentageYieldForPool * annualCoefficient;
     },
@@ -457,7 +457,7 @@ export default {
               let oldEarned = await oldPoolContract.earned(user);
               this.oldEarned = BN(oldEarned.toString());
             }
-            if (this.oldEarned > 0) {
+            if (this.oldEarned.gt(BN(0))) {
               this.$notify({
                 group: "foo",
                 type: "error",

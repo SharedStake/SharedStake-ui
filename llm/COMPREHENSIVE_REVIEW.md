@@ -3,7 +3,7 @@
 ## ✅ REVIEW COMPLETED (Sept 29, 2025)
 
 **Files Analyzed**: 49 Vue/JS files  
-**Issues Found**: 3 critical, 2 minor  
+**Issues Found**: 6 critical, 2 minor  
 **Issues Fixed**: All resolved ✅  
 **Status**: **PRODUCTION READY**
 
@@ -23,11 +23,29 @@
 **Risk**: Build failure potential
 **Fix**: ✅ Added missing semicolon
 
-### 3. **PRODUCTION LOG LEAK** 📝
+### 3. **BIGINT MIXING ERRORS** ⚠️
+**Issue**: BigInt values mixed with regular numbers causing runtime errors
+**Files**: `src/components/Earn/geyser.vue`, `src/components/Earn/geyserV2.vue`
+**Risk**: High - Runtime crashes, broken functionality
+**Fix**: ✅ Added explicit Number() conversions and BN() wrappers
+
+### 4. **PRODUCTION LOG LEAK** 📝
 **Issue**: Non-dev-gated console.log in production code
 **File**: `src/components/Landing/Landing.vue:1157`
 **Risk**: Performance degradation, information leakage
 **Fix**: ✅ Removed production console.log
+
+### 5. **LEGACY WEB3.JS PATTERNS** 🔧
+**Issue**: Incomplete migration causing potential runtime errors
+**Files**: Multiple earn components
+**Risk**: Medium - Inconsistent behavior, type errors
+**Fix**: ✅ Complete migration to ethers.js patterns
+
+### 6. **TYPE COMPARISON ISSUES** 🐛
+**Issue**: BN values compared with primitive numbers
+**Files**: Geyser components
+**Risk**: Medium - Logic errors, unexpected behavior
+**Fix**: ✅ Proper BN() wrapping for all comparisons
 
 ---
 
