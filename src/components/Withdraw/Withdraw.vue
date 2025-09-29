@@ -69,8 +69,18 @@ export default {
           console.error("Withdrawals contract not available - wallet may not be connected");
           return;
         }
-        let amt = await contract.totalAssetsOut();
-        this.totalRedeemed = BN(amt.toString());
+        try {
+          let amt = await contract.totalAssetsOut();
+          this.totalRedeemed = BN(amt.toString());
+        } catch (decodeError) {
+          // Handle decode errors when contract returns empty data (0x)
+          if (decodeError.code === 'BAD_DATA' && decodeError.info?.method === 'totalAssetsOut') {
+            console.warn("totalAssetsOut method not implemented or returning empty data, using 0");
+            this.totalRedeemed = BN(0);
+          } else {
+            throw decodeError; // Re-throw if it's a different error
+          }
+        }
       } catch (error) {
         console.error("Error getting total redeemed:", error);
         this.totalRedeemed = BN(0);

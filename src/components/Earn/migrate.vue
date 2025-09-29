@@ -155,23 +155,28 @@ export default {
       this.innerWidth = window.innerWidth;
     },
     async isEligible() {
-      let _approved = await SGT.methods
-        .allowance(this.userAddress, migrator.options.address)
-        .call();
-      this.approved = _approved;
-      let balance = await SGT.methods.balanceOf(this.userAddress).call();
+      const sgtContract = SGT();
+      const migratorContract = migrator();
+      if (!sgtContract || !migratorContract) {
+        console.error("Migration contracts not available");
+        return;
+      }
+      
+      const migratorAddress = await migratorContract.getAddress();
+      let _approved = await sgtContract.allowance(this.userAddress, migratorAddress);
+      this.approved = _approved.toString();
+      
+      let balance = await sgtContract.balanceOf(this.userAddress);
       if (balance == 0) {
         this.available = 0;
-      } else this.available = BN(balance).dividedBy(1e18).toFixed(3).toString();
-      this.balance = BN(balance);
+      } else this.available = BN(balance.toString()).dividedBy(1e18).toFixed(3).toString();
+      this.balance = BN(balance.toString());
 
-      let userInfo = await migrator.methods
-        .lockedSwaps(this.userAddress)
-        .call();
+      let userInfo = await migratorContract.lockedSwaps(this.userAddress);
       let amount = userInfo[0];
       if (amount == 0) {
         this.sentAmount = 0;
-      } else this.sentAmount = BN(amount).dividedBy(1e18).toFixed(3).toString();
+      } else this.sentAmount = BN(amount.toString()).dividedBy(1e18).toFixed(3).toString();
 
       let startTime = userInfo[1];
       this.startTime = startTime;

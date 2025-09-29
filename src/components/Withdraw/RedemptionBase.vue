@@ -493,15 +493,25 @@ export default {
           this.loading = false;
           return this.userDepositedVEth2;
         }
-        let userDepositedVEth2 = await contract.userEntries(this.userConnectedWalletAddress);
-        // userEntries returns a tuple [amount, blocknum], validate before using
-        if (userDepositedVEth2 && userDepositedVEth2[0] !== undefined) {
-          this.userDepositedVEth2 = BN(userDepositedVEth2[0].toString());
-          if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2[0].toString());
-        } else {
-          // No entries found for user
-          this.userDepositedVEth2 = BN(0);
-          if (this.dev) console.log("userDepositedVEth2: No entries found for user");
+        try {
+          let userDepositedVEth2 = await contract.userEntries(this.userConnectedWalletAddress);
+          // userEntries returns a tuple [amount, blocknum], validate before using
+          if (userDepositedVEth2 && userDepositedVEth2[0] !== undefined) {
+            this.userDepositedVEth2 = BN(userDepositedVEth2[0].toString());
+            if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2[0].toString());
+          } else {
+            // No entries found for user
+            this.userDepositedVEth2 = BN(0);
+            if (this.dev) console.log("userDepositedVEth2: No entries found for user");
+          }
+        } catch (decodeError) {
+          // Handle decode errors when user has no entries (returns 0x0000...)
+          if (decodeError.code === 'BAD_DATA' && decodeError.info?.method === 'userEntries') {
+            console.warn("User has no withdrawal entries, using 0");
+            this.userDepositedVEth2 = BN(0);
+          } else {
+            throw decodeError; // Re-throw if it's a different error
+          }
         }
         this.loading = false;
         return this.userDepositedVEth2;
