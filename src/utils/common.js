@@ -74,7 +74,7 @@ export function notifyHandler(hash) {
         `https://${chain}etherscan.io/tx/${transaction.hash}`,
         "_blank",
         "noopener norefferer"
-      ) && console.log("notify handler tx", transaction),
+      ),
   }));
 }
 

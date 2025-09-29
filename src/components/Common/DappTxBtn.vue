@@ -72,7 +72,6 @@ export default {
       senderObj = {},
       cb = () => { }
     ) {
-      // console.log(senderObj);
       this.loading = true;
       const chosenGas = this.gasPrice;
 

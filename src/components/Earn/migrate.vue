@@ -140,7 +140,6 @@ export default {
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
     remaining_time() {
-      console.log(this.startTime, Date.now());
       return (
         (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /
         1000
@@ -199,10 +198,8 @@ export default {
         that.approval = true;
         await tx.wait();
         that.approval = false;
-        console.log("approved");
       } catch (err) {
         that.approval = false;
-        console.log(err);
       }
       this.isEligible();
     },
@@ -222,10 +219,8 @@ export default {
         that.approval = true;
         await tx.wait();
         that.approval = false;
-        console.log("approved");
       } catch (err) {
         that.approval = false;
-        console.log(err);
       }
       this.isEligible();
     },
@@ -245,10 +240,8 @@ export default {
         that.releasing = true;
         await tx.wait();
         that.approval = false;
-        console.log("approved");
       } catch (err) {
         that.releasing = false;
-        console.log(err);
       }
       this.isEligible();
     },

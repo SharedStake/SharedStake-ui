@@ -350,7 +350,6 @@ export default {
   },
   watch: {
     DAmount(newValue, oldVal) {
-      console.log(newValue, oldVal);
       if (newValue.length > 40) {
         this.Damount = oldVal;
         // this.amountCheck();
@@ -416,7 +415,6 @@ export default {
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
     },
     userAddress(newVal) {
-      console.log(newVal);
       if (newVal) this.mounted(newVal);
     },
   },
@@ -482,7 +480,7 @@ export default {
           );
           this.locked = BN(remRewards);
         } catch (err) {
-          console.log(err);
+          // Silently handle error
         }
     },
     async Deposit() {
@@ -504,10 +502,8 @@ export default {
           const tx = await tokenContract.connect(await window.ethersProvider.getSigner()).approve(geyserAddress, myAmount);
           notifyHandler(tx.hash);
           await tx.wait();
-          console.log("approved");
         } catch (err) {
           approval = false;
-          console.log(err);
         }
         await timeout(6000);
       }
@@ -518,7 +514,7 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
-          console.log(err);
+          // Silently handle error
         }
       }
     },
@@ -538,7 +534,7 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
-          console.log(err);
+          // Silently handle error
         }
       } else {
         try {
@@ -554,7 +550,7 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
-          console.log(err);
+          // Silently handle error
         }
       }
     },

@@ -350,7 +350,6 @@ export default {
   },
   watch: {
     DAmount(newValue, oldVal) {
-      console.log(newValue, oldVal);
       if (newValue.length > 40) {
         this.Damount = oldVal;
         // this.amountCheck();
@@ -416,7 +415,6 @@ export default {
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
     },
     userAddress(newVal) {
-      console.log(newVal);
       if (newVal) this.mounted(newVal);
     },
   },
@@ -442,11 +440,9 @@ export default {
           let balance = await tokenContract.balanceOf(user);
           this.balance = BN(balance.toString());
           let staked = await geyserContract.userInfo(0, user);
-          console.log(staked);
           this.staked = BN(staked.amount.toString());
 
           let earned = await geyserContract.pendingReward(0, user);
-          console.log(earned);
           this.earned = BN(earned.toString());
           let geyserAddress = await geyserContract.getAddress();
           let totalStaked = await tokenContract.balanceOf(geyserAddress);
@@ -477,16 +473,14 @@ export default {
           let now = Date.now();
           let until = new Date(2021, 6, 27);
           until = until.getTime();
-          console.log(now, until);
 
           let remDays = BN((until - now) / 60 / 60 / 24 / 1000); //get remaining days
           this.stakedSchedule = remDays;
 
           let remRewards = await geyserContract.fundBalance();
           this.locked = BN(BN(remRewards.toString()).dividedBy(1e18).toFixed(3));
-          console.log(this.locked);
         } catch (err) {
-          console.log(err);
+          // Silently handle error
         }
     },
     async Deposit() {
@@ -511,10 +505,8 @@ export default {
           const tx = await tokenContract.connect(signer).approve(geyserAddress, myAmount);
           notifyHandler(tx.hash);
           await tx.wait();
-          console.log("approved");
         } catch (err) {
           approval = false;
-          console.log(err);
         }
         await timeout(6000);
       }
@@ -527,7 +519,7 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
-          console.log(err);
+          // Silently handle error
         }
       }
     },

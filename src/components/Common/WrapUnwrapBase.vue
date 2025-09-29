@@ -202,7 +202,6 @@ export default {
         approvalStage: this.approvalStage,
         depositStage: this.depositStage,
       };
-      if (this.dev) console.log("State :", state);
       if (state.depositStage && !state.approvalStage) return "depositStage";
       return "approvalStage";
     },
@@ -262,7 +261,6 @@ export default {
         console.error("Error getting user approved:", error);
         this.userApproved = BN(0);
       }
-      if (this.dev) console.log("userApproved", this.userApproved);
     },
 
     async getUserTokenBalance() {
@@ -278,7 +276,6 @@ export default {
         console.error("Error getting user token balance:", error);
         this.userTokenBalance = BN(0);
       }
-      if (this.dev) console.log("userTokenBalance", this.userTokenBalance);
       return this.userTokenBalance;
     },
 
@@ -295,7 +292,6 @@ export default {
         console.error("Error getting user output token balance:", error);
         this.userOutputTokenBalance = BN(0);
       }
-      if (this.dev) console.log("userOutputTokenBalance", this.userOutputTokenBalance);
       return this.userOutputTokenBalance;
     },
 

@@ -111,13 +111,13 @@
 import BN from "bignumber.js";
 import { wsgETH, sgETH } from "@/contracts";
 import { mapGetters } from "vuex";
+import { toWei } from "@/utils/common";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
 
 import ImageVue from "../Handlers/ImageVue.vue";
-import { toWei } from "../../utils/common";
 
 // Max unit is the maximum value that can be represented in Solidity
 // const MAX_UNIT = 2 ** 256 - 1;
@@ -225,10 +225,8 @@ export default {
     handleClick() {
       return {
         abiCall: async (...args) => {
-          const contract = wsgETH(true); // Use signer for write operations
-          if (!contract) {
-            throw new Error("wsgETH contract not available");
-          }
+          const contract = wsgETH(true);
+          if (!contract) throw new Error("wsgETH contract not available");
           return await contract.redeem(...args);
         },
         argsArr: [
@@ -236,9 +234,7 @@ export default {
           this.userConnectedWalletAddress,
           this.userConnectedWalletAddress,
         ],
-        cb: async () => {
-          await this.refreshBalances();
-        },
+        cb: this.refreshBalances,
       };
     },
 
@@ -263,7 +259,6 @@ export default {
         if (!contract) return "0";
         const result = await contract.balanceOf(this.userConnectedWalletAddress);
         this.userTokenBalance = BN(result.toString());
-        if (this.dev) console.log("userTokenBalance", result.toString());
         return result.toString();
       } catch (error) {
         console.error("Error getting user token balance:", error);
@@ -278,7 +273,6 @@ export default {
         if (!contract) return "0";
         const result = await contract.balanceOf(this.userConnectedWalletAddress);
         this.userOutputTokenBalance = BN(result.toString());
-        if (this.dev) console.log("userOutputTokenBalance", result.toString());
         return result.toString();
       } catch (error) {
         console.error("Error getting user output token balance:", error);

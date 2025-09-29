@@ -1082,14 +1082,12 @@ export default {
       try {
         this.TVL = await this.fetchTvlFromEtherscan();
       } catch (e) {
-        console.log(e);
         const STATIC_TVL = 17688; // Updated 1 feb 2023
 
         if (!this.isMobile()) {
           try {
             this.TVL = await this.fetchTvlWithWallet();
           } catch (e) {
-            console.log(e);
             this.TVL = BN(STATIC_TVL).toString();
           }
         } else {
@@ -1164,7 +1162,6 @@ export default {
       try {
         this.getAPY();
       } catch (e) {
-        console.log(e);
         this.APY = await BN(6).toString();
       }
     },

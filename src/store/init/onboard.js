@@ -126,7 +126,6 @@ export async function changeWallets() {
 
   const wallet = selected[0]
   if (wallet) {
-      console.log(`wallet switched to: ${wallet.label}`);
       let provider = new ethers.BrowserProvider(wallet.provider);
       window.ethersProvider = provider;
       store.commit("setEthersProvider", provider);

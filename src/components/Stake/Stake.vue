@@ -243,7 +243,6 @@ export default {
     this.gas = await getCurrentGasPrices();
     this.chosenGas = this.gas.medium;
     this.loading = false;
-    // console.log("chosenGas", this.chosenGas);
     await this.initializeData();
   },
   computed: {
@@ -330,8 +329,6 @@ export default {
       this.isDeposit = !this.isDeposit;
     },
     genSubmit() {
-      // console.log("Disabled due to vulnerabilities")
-      // if (this.isDeposit || this.buttonText == "Stake") return;
       if (!(this.buttonText == "Stake" || this.buttonText == "Unstake"))
         return {};
 
@@ -350,8 +347,6 @@ export default {
           .multipliedBy(1000000000)
           .toString(),
       };
-      // Debug senderObj sent to BappTxBtn.vue
-      // console.log(senderObj);
 
       let args = [];
       let fn;
@@ -383,9 +378,6 @@ export default {
         },
       };
       
-      console.log("genSubmit result:", result);
-      console.log("genSubmit fn:", fn);
-      console.log("genSubmit fn type:", typeof fn);
       
       return result;
     },
