@@ -474,11 +474,11 @@ export default {
 
           let now = Math.floor(Date.now() / 1000);
           let until = await geyserContract.periodFinish();
-          let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
+          let remDays = BN((Number(until) - now) / 60 / 60 / 24); //get remaining days
           this.stakedSchedule = remDays;
           let duration = await geyserContract.rewardsDuration(); //in second
           let remRewards = BN(remDays).times(
-            BN(this.pool.locked).div(BN(duration).div(60).div(60).div(24))
+            BN(this.pool.locked).div(BN(Number(duration)).div(60).div(60).div(24))
           );
           this.locked = BN(remRewards);
         } catch (err) {

@@ -231,7 +231,7 @@ export default {
           let sgtOnUniswapLP = uniswapEthSgtReserves[0];
           let ethOnUniswapLP = uniswapEthSgtReserves[1];
 
-        const ethPerSgtFromUniswap = ethOnUniswapLP / sgtOnUniswapLP;
+        const ethPerSgtFromUniswap = Number(ethOnUniswapLP) / Number(sgtOnUniswapLP);
         //get vEth2 price from saddle pool
         let vEth2Pr = await vEth2Price();
         vEth2Pr = vEth2Pr
@@ -244,7 +244,7 @@ export default {
 
           let totalSupply = await token.totalSupply();
 
-          const uniswapEthSgtLpTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2n); // Approximation
+          const uniswapEthSgtLpTokenPerSgt = Number(totalSupply) / (Number(sgtOnUniswapLP) * 2); // Approximation
           this.pools[1].tokenPerSgt = uniswapEthSgtLpTokenPerSgt;
         } catch (error) {
           console.error("Error loading SGT-ETH pool data:", error);
@@ -262,7 +262,7 @@ export default {
 
           // pool 2
           let totalSupply = await token.totalSupply();
-          const unsiwapvEth2SgtLPTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2n);
+          const unsiwapvEth2SgtLPTokenPerSgt = Number(totalSupply) / (Number(sgtOnUniswapLP) * 2);
           this.pools[2].tokenPerSgt = unsiwapvEth2SgtLPTokenPerSgt;
         } catch (error) {
           console.error("Error loading SGT-vETH2 pool data:", error);

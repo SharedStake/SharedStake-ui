@@ -210,7 +210,10 @@ export default {
 
   methods: {
     routeClickCb(index, routes) {
-      this.$router.push(`/${routes[index].text.toLowerCase()}`);
+      const targetRoute = `/${routes[index].text.toLowerCase()}`;
+      if (this.$route.path !== targetRoute) {
+        this.$router.push(targetRoute);
+      }
     },
 
     handleDeposit() {

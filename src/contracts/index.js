@@ -300,8 +300,16 @@ export const safeContractCall = async (contractFactory, method, args = [], contr
         const result = await contract[method](...args);
         return result;
     } catch (error) {
-        console.error(`Error calling ${method} on ${contractName}:`, error);
-        return null;
+        if (error.code === 'CALL_EXCEPTION' && error.reason === null) {
+            console.warn(`Method ${method} not implemented on ${contractName} contract, using default value`);
+            return null;
+        } else if (error.code === 'BAD_DATA') {
+            console.warn(`${contractName}.${method} returned empty data, using default value`);
+            return null;
+        } else {
+            console.error(`Error calling ${method} on ${contractName}:`, error);
+            return null;
+        }
     }
 };
 
