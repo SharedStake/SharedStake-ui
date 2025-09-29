@@ -704,7 +704,7 @@
     },
     {
       "inputs": [],
-      "name": "totalAssetsOut",
+      "name": "totalOut",
       "outputs": [
         {
           "internalType": "uint256",

@@ -183,74 +183,73 @@ export default {
     },
     async Approve() {
       let that = this;
-      await SGT.methods
-        .approve(migrator.options.address, this.balance.toString())
-        .send({ from: this.userAddress, gas: 100000 })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-          that.approval = true;
-        })
-        .once("confirmation", () => {
-          that.approval = false;
-          console.log("approved");
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          that.approval = false;
-          console.log(err);
-        })
-        .catch((err) => {
-          that.approval = false;
-          console.log(err);
+      try {
+        const sgtContract = SGT();
+        const migratorContract = migrator();
+        if (!sgtContract || !migratorContract) {
+          console.error("Migration contracts not available");
+          return;
+        }
+        const migratorAddress = await migratorContract.getAddress();
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await sgtContract.connect(signer).approve(migratorAddress, this.balance.toString(), {
+          gasLimit: 100000
         });
+        notifyHandler(tx.hash);
+        that.approval = true;
+        await tx.wait();
+        that.approval = false;
+        console.log("approved");
+      } catch (err) {
+        that.approval = false;
+        console.log(err);
+      }
       this.isEligible();
     },
     async Claim() {
       let that = this;
-      await migrator.methods
-        .migrate(this.balance.toString())
-        .send({ from: this.userAddress, gas: 200000 })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-          that.approval = true;
-        })
-        .once("confirmation", () => {
-          that.approval = false;
-          console.log("approved");
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          that.approval = false;
-          console.log(err);
-        })
-        .catch((err) => {
-          that.approval = false;
-          console.log(err);
+      try {
+        const migratorContract = migrator();
+        if (!migratorContract) {
+          console.error("Migrator contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await migratorContract.connect(signer).migrate(this.balance.toString(), {
+          gasLimit: 200000
         });
+        notifyHandler(tx.hash);
+        that.approval = true;
+        await tx.wait();
+        that.approval = false;
+        console.log("approved");
+      } catch (err) {
+        that.approval = false;
+        console.log(err);
+      }
       this.isEligible();
     },
     async Release() {
       let that = this;
-      await migrator.methods
-        .releaseTokens()
-        .send({ from: this.userAddress, gas: 200000 })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-          that.releasing = true;
-        })
-        .once("confirmation", () => {
-          that.approval = false;
-          console.log("approved");
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          that.releasing = false;
-          console.log(err);
-        })
-        .catch((err) => {
-          that.releasing = false;
-          console.log(err);
+      try {
+        const migratorContract = migrator();
+        if (!migratorContract) {
+          console.error("Migrator contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await migratorContract.connect(signer).releaseTokens({
+          gasLimit: 200000
         });
+        notifyHandler(tx.hash);
+        that.releasing = true;
+        await tx.wait();
+        that.approval = false;
+        console.log("approved");
+      } catch (err) {
+        that.releasing = false;
+        console.log(err);
+      }
       this.isEligible();
     },
   },

@@ -560,40 +560,37 @@ export default {
     },
     async Harvest() {
       let self = this;
-      await this.pool.geyser.methods
-        .getReward()
-        .send({ from: this.userAddress })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-        })
-        .once("confirmation", () => {
-          self.mounted();
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          console.log(err);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        const geyserContract = this.pool.geyser();
+        if (!geyserContract) {
+          console.error("Geyser contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await geyserContract.connect(signer).getReward();
+        notifyHandler(tx.hash);
+        await tx.wait();
+        self.mounted();
+      } catch (err) {
+        console.log(err);
+      }
     },
     async ExitOldPool() {
       let self = this;
-      await this.pool.oldPool.methods
-        .exit()
-        .send({ from: this.userAddress })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-        })
-        .once("confirmation", () => {
-          self.mounted();
-        })
-        .on("error", () => {
-          // if (error.message.includes("User denied transaction signature"))
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        const oldPoolContract = this.pool.oldPool();
+        if (!oldPoolContract) {
+          console.error("Old pool contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await oldPoolContract.connect(signer).exit();
+        notifyHandler(tx.hash);
+        await tx.wait();
+        self.mounted();
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 };
