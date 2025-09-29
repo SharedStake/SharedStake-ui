@@ -122,8 +122,8 @@
 
 ### **Environment Configuration** ✅
 - Added `.env.example` with proper RPC configuration
-- Secure API key management
-- Fallback to public RPC endpoints
+- Secure API key management with working Alchemy fallback
+- Environment variable override capability for custom keys
 
 ### **Code Quality** ✅
 - Removed all non-dev-gated console.logs

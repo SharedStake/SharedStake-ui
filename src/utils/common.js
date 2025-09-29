@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 export const getCurrentGasPrices = async () => {
   try {
     // Use ethers.js native gas estimation instead of @web3-onboard/gas
-    const provider = window.ethersProvider || new ethers.JsonRpcProvider(process.env.VUE_APP_RPC_URL || "https://eth-mainnet.public.blastapi.io");
+    const provider = window.ethersProvider || new ethers.JsonRpcProvider(process.env.VUE_APP_RPC_URL || "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd");
     const feeData = await provider.getFeeData();
     
     if (!feeData.maxFeePerGas || !feeData.maxPriorityFeePerGas) {
