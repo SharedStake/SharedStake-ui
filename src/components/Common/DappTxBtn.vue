@@ -102,6 +102,11 @@ export default {
       try {
         const tx = await abiCall(...argsArr, txOptions);
         
+        // Validate transaction object
+        if (!tx || !tx.hash) {
+          throw new Error("Invalid transaction object returned from contract call");
+        }
+        
         // Handle transaction hash notification
         notifyHandler(tx.hash);
         

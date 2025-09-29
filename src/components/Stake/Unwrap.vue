@@ -266,7 +266,22 @@ export default {
         if (this.dev) console.log("userTokenBalance", userTokenBalance.toString());
         return userTokenBalance.toString();
       } catch (error) {
-        console.error("Error getting user token balance:", error);
+        if (error.code === 'NETWORK_ERROR' && error.reason === 'network changed') {
+          console.warn("Network changed during contract call, retrying...");
+          // Retry once after network change
+          try {
+            const contract = wsgETH();
+            if (contract) {
+              let userTokenBalance = await contract.balanceOf(this.userConnectedWalletAddress);
+              this.userTokenBalance = BN(userTokenBalance.toString());
+              return userTokenBalance.toString();
+            }
+          } catch (retryError) {
+            console.error("Retry failed:", retryError);
+          }
+        } else {
+          console.error("Error getting user token balance:", error);
+        }
         return "0";
       }
     },

@@ -221,10 +221,15 @@ export default {
   methods: {
     async mounted() {
       if (this.pools[1].active) {
-        let token = SGT_uniswap;
-        let uniswapEthSgtReserves = await token.methods.getReserves().call();
-        let sgtOnUniswapLP = uniswapEthSgtReserves[0];
-        let ethOnUniswapLP = uniswapEthSgtReserves[1];
+        try {
+          let token = SGT_uniswap();
+          if (!token) {
+            console.warn("SGT_uniswap contract not available");
+            return;
+          }
+          let uniswapEthSgtReserves = await token.getReserves();
+          let sgtOnUniswapLP = uniswapEthSgtReserves[0];
+          let ethOnUniswapLP = uniswapEthSgtReserves[1];
 
         const ethPerSgtFromUniswap = ethOnUniswapLP / sgtOnUniswapLP;
         //get vEth2 price from saddle pool
@@ -237,20 +242,31 @@ export default {
         this.pools[3].tokenPerSgt = ethPerSgtFromUniswap * vEth2Pr;
         this.newPools[0].tokenPerSgt = ethPerSgtFromUniswap; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
 
-        let totalSupply = await token.methods.totalSupply().call();
+          let totalSupply = await token.totalSupply();
 
-        const uniswapEthSgtLpTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2); // Approximation
-        this.pools[1].tokenPerSgt = uniswapEthSgtLpTokenPerSgt;
+          const uniswapEthSgtLpTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2n); // Approximation
+          this.pools[1].tokenPerSgt = uniswapEthSgtLpTokenPerSgt;
+        } catch (error) {
+          console.error("Error loading SGT-ETH pool data:", error);
+        }
       }
       if (this.pools[2].active) {
-        let token = SGT_vEth2_uniswap;
-        let reserves = await token.methods.getReserves().call();
-        let sgtOnUniswapLP = reserves[0];
+        try {
+          let token = SGT_vEth2_uniswap();
+          if (!token) {
+            console.warn("SGT_vEth2_uniswap contract not available");
+            return;
+          }
+          let reserves = await token.getReserves();
+          let sgtOnUniswapLP = reserves[0];
 
-        // pool 2
-        let totalSupply = await token.methods.totalSupply().call();
-        const unsiwapvEth2SgtLPTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2);
-        this.pools[2].tokenPerSgt = unsiwapvEth2SgtLPTokenPerSgt;
+          // pool 2
+          let totalSupply = await token.totalSupply();
+          const unsiwapvEth2SgtLPTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2n);
+          this.pools[2].tokenPerSgt = unsiwapvEth2SgtLPTokenPerSgt;
+        } catch (error) {
+          console.error("Error loading SGT-vETH2 pool data:", error);
+        }
       }
     },
   },

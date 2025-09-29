@@ -89,6 +89,21 @@ const initializeEthers = async () => {
             signer = null; // Will be set when user connects wallet
             isInitialized = true;
             
+            // Listen for network changes and reinitialize
+            if (window.ethereum.on) {
+                window.ethereum.on('chainChanged', (newChainId) => {
+                    console.log('Network changed to:', newChainId);
+                    // Reset initialization flag to allow reinitialization
+                    isInitialized = false;
+                    // Reinitialize with new network
+                    setTimeout(() => {
+                        initializeEthers().catch(error => {
+                            console.error("Error reinitializing after network change:", error);
+                        });
+                    }, 100);
+                });
+            }
+            
             // Get chain ID properly using ethers.js provider with fallback
             let chainId;
             try {
