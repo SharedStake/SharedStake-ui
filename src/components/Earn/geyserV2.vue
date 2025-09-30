@@ -66,10 +66,8 @@
       <div class="statsPart" id="whiteBorder">
         <div class="minitext blue">Total Staked:</div>
         {{
-          totalStaked == 0
+          totalStaked.eq(0)
             ? 0
-            : totalStaked.eq(0)
-            ? totalStaked
             : totalStaked
                 .div(10 ** decimals)
                 .toFixed(1)
@@ -79,14 +77,12 @@
       </div>
       <div class="statsPart" id="whiteBorder">
         <div class="minitext blue">Remaining Rewards:</div>
-        {{ locked == 0 ? 0 : locked.eq(0) ? 0 : locked.toFixed(1).toString() }}
+        {{ locked.eq(0) ? 0 : locked.toFixed(1).toString() }}
         SGT
       </div>
       <div class="statsPart">
         {{
-          stakedSchedule == 0
-            ? 0
-            : stakedSchedule.eq(0)
+          stakedSchedule.eq(0)
             ? 0
             : stakedSchedule.toFixed(0).toString()
         }}
@@ -98,9 +94,7 @@
       <div class="userPart rightBorder">
         <div class="minitext blue">Staked:</div>
         {{
-          staked == 0
-            ? 0
-            : staked.eq(0)
+          staked.eq(0)
             ? 0
             : staked
                 .div(10 ** decimals)
@@ -112,9 +106,7 @@
       <div class="userPart">
         <div class="minitext blue">Earned:</div>
         {{
-          earned == 0
-            ? 0
-            : earned.eq(0)
+          earned.eq(0)
             ? 0
             : earned
                 .div(10 ** 18)
@@ -225,14 +217,12 @@
             <button
               class="mainButton"
               @click="ExitOldPool"
-              :disabled="!(oldStaked > 0 || oldEarned > 0)"
+              :disabled="!(oldStaked.gt(0) || oldEarned.gt(0))"
             >
               EXIT from the old pool:
               {{
-                oldStaked == 0
+                oldStaked.eq(0)
                   ? 0
-                  : oldStaked.eq(0)
-                  ? oldStaked
                   : oldStaked
                       .div(10 ** decimals)
                       .toFixed(1)
@@ -240,9 +230,7 @@
               }}
               Tokens +
               {{
-                oldEarned == 0
-                  ? 0
-                  : oldEarned.eq(0)
+                oldEarned.eq(0)
                   ? 0
                   : oldEarned
                       .div(10 ** 18)
