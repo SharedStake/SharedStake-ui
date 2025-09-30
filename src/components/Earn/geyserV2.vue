@@ -323,15 +323,15 @@ export default {
     },
     apy: function () {
       const pooledTokenPerSgt = this.pool.tokenPerSgt;
-      const rewardsLeftForEmissionPeriod = Number(this.locked) * 1e18;
-          const tokensInPool = Number(this.totalStaked);
-          const daysLeftOfEmissionPeriod = Number(this.stakedSchedule);
+      const rewardsLeftForEmissionPeriod = this.locked.multipliedBy(1e18).toNumber();
+      const tokensInPool = this.totalStaked.toNumber();
+      const daysLeftOfEmissionPeriod = this.stakedSchedule.toNumber();
 
-          const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
-          const percentageYieldForPool =
-            (rewardsLeftForEmissionPeriod / totalSgtAmountInPool) * 100;
+      const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
+      const percentageYieldForPool =
+        (rewardsLeftForEmissionPeriod / totalSgtAmountInPool) * 100;
 
-          const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
+      const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
 
       return percentageYieldForPool * annualCoefficient;
     },
@@ -462,7 +462,7 @@ export default {
           let until = new Date(2021, 6, 27);
           until = until.getTime();
 
-          let remDays = BN((until - now) / 60 / 60 / 24 / 1000); //get remaining days
+          let remDays = BN(until - now).div(60).div(60).div(24).div(1000); //get remaining days
           this.stakedSchedule = remDays;
 
           let remRewards = await geyserContract.fundBalance();
