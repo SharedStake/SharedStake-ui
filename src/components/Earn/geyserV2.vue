@@ -323,7 +323,7 @@ export default {
     },
     apy: function () {
       const pooledTokenPerSgt = this.pool.tokenPerSgt;
-      const rewardsLeftForEmissionPeriod = this.locked.multipliedBy(1e18).toNumber();
+      const rewardsLeftForEmissionPeriod = this.locked.multipliedBy(BN(10).pow(18)).toNumber();
       const tokensInPool = this.totalStaked.toNumber();
       const daysLeftOfEmissionPeriod = this.stakedSchedule.toNumber();
 
@@ -351,7 +351,7 @@ export default {
       }
       if (newValue[newValue.length - 1] == 0) {
         this.Damount = newValue;
-        this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
+        this.bigDAmount = BN(this.Damount).multipliedBy(BN(10).pow(18));
         // this.amountCheck();
         return;
       }
@@ -364,7 +364,7 @@ export default {
         return;
       }
       if (isNaN(newValue)) {
-        this.Damount = this.bigDAmount.dividedBy(1e18).toString();
+        this.Damount = this.bigDAmount.dividedBy(BN(10).pow(18)).toString();
         return;
       }
       if (!newValue) {
@@ -372,8 +372,8 @@ export default {
       } else {
         this.Damount = newValue;
       }
-      this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
-      this.Damount = this.bigDAmount.dividedBy(1e18).toString();
+      this.bigDAmount = BN(this.Damount).multipliedBy(BN(10).pow(18));
+      this.Damount = this.bigDAmount.dividedBy(BN(10).pow(18)).toString();
       // this.amountCheck();
     },
     WAmount(newValue, oldVal) {
@@ -384,7 +384,7 @@ export default {
       }
       if (newValue[newValue.length - 1] == 0) {
         this.WAmount = newValue;
-        this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
+        this.bigWAmount = BN(this.WAmount).multipliedBy(BN(10).pow(18));
         // this.amountCheck();
         return;
       }
@@ -397,7 +397,7 @@ export default {
         return;
       }
       if (isNaN(newValue)) {
-        this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+        this.WAmount = this.bigWAmount.dividedBy(BN(10).pow(18)).toString();
         return;
       }
       if (!newValue) {
@@ -405,8 +405,8 @@ export default {
       } else {
         this.WAmount = newValue;
       }
-      this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
-      this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+      this.bigWAmount = BN(this.WAmount).multipliedBy(BN(10).pow(18));
+      this.WAmount = this.bigWAmount.dividedBy(BN(10).pow(18)).toString();
     },
     userAddress(newVal) {
       if (newVal) this.mounted(newVal);
@@ -472,7 +472,7 @@ export default {
           this.stakedSchedule = remDays;
 
           let remRewards = await geyserContract.fundBalance();
-          this.locked = BN(BN(remRewards.toString()).dividedBy(1e18).toFixed(3));
+          this.locked = BN(BN(remRewards.toString()).dividedBy(BN(10).pow(18)).toFixed(3));
         } catch (err) {
           // Silently handle error
         }
