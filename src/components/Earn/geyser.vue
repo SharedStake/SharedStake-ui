@@ -36,7 +36,7 @@
           balance == 0
             ? 0
             : balance
-                .div(10 ** decimals)
+                .div(BN(10).pow(decimals))
                 .toFixed(3)
                 .toString()
         }}
@@ -70,7 +70,7 @@
           totalStaked.eq(0)
             ? 0
             : totalStaked
-                .div(10 ** decimals)
+                .div(BN(10).pow(decimals))
                 .toFixed(1)
                 .toString()
         }}
@@ -98,7 +98,7 @@
           staked.eq(0)
             ? 0
             : staked
-                .div(10 ** decimals)
+                .div(BN(10).pow(decimals))
                 .toFixed(3)
                 .toString()
         }}
@@ -110,7 +110,7 @@
           earned.eq(0)
             ? 0
             : earned
-                .div(10 ** 18)
+                .div(BN(10).pow(18))
                 .toFixed(3)
                 .toString()
         }}
@@ -141,7 +141,7 @@
               @click="
                 () => {
                   DAmount = balance
-                    ? balance.div(10 ** decimals).toString()
+                    ? balance.div(BN(10).pow(decimals)).toString()
                     : 0;
                 }
               "
@@ -190,7 +190,7 @@
               class="toMax"
               @click="
                 () => {
-                  WAmount = staked ? staked.div(10 ** decimals).toString() : 0;
+                  WAmount = staked ? staked.div(BN(10).pow(decimals)).toString() : 0;
                 }
               "
               title="Get max token"
@@ -225,7 +225,7 @@
                 oldStaked.eq(0)
                   ? 0
                   : oldStaked
-                      .div(10 ** decimals)
+                      .div(BN(10).pow(decimals))
                       .toFixed(1)
                       .toString()
               }}
@@ -234,7 +234,7 @@
                 oldEarned.eq(0)
                   ? 0
                   : oldEarned
-                      .div(10 ** 18)
+                      .div(BN(10).pow(18))
                       .toFixed(3)
                       .toString()
               }}

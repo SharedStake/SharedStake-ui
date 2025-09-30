@@ -8,6 +8,7 @@ Fixed BigInt type mixing errors in the earn page components that were causing ru
 - `src/components/Earn/geyserV2.vue`
 - `src/components/Earn/Earn.vue`
 - `src/components/Landing/Landing.vue`
+- `src/components/Withdraw/WithdrawalsFAQ.vue`
 
 ## 🔧 Specific Fixes Applied
 
@@ -79,6 +80,40 @@ let remDays = BN((Number(until) - now) / 60 / 60 / 24);
 let remDays = BN(Number(until) - now).div(60).div(60).div(24);
 ```
 
+### 5. Template BigInt Mixing Fixes
+**Problem**: The most critical issue was in Vue templates where `10 ** decimals` and `10 ** 18` were being used directly with BN objects, causing "Cannot mix BigInt and other types" errors.
+
+**Before** (in templates):
+```javascript
+balance.div(10 ** decimals)
+totalStaked.div(10 ** decimals)
+earned.div(10 ** 18)
+```
+
+**After** (in templates):
+```javascript
+balance.div(BN(10).pow(decimals))
+totalStaked.div(BN(10).pow(decimals))
+earned.div(BN(10).pow(18))
+```
+
+### 6. WithdrawalsFAQ.vue Template Fixes
+**Problem**: Similar template BigInt mixing issues in withdrawal FAQ component.
+
+**Before**:
+```javascript
+userBal.div(10 ** 18)
+veth2Bal.div(10 ** 18)
+totalRedeemed.div(10 ** 18)
+```
+
+**After**:
+```javascript
+userBal.div(BN(10).pow(18))
+veth2Bal.div(BN(10).pow(18))
+totalRedeemed.div(BN(10).pow(18))
+```
+
 ## ✅ Benefits
 1. **Type Safety**: Proper BigNumber.js method usage prevents type mixing errors
 2. **Precision**: Maintains precision in calculations by using BN methods
@@ -92,8 +127,9 @@ let remDays = BN(Number(until) - now).div(60).div(60).div(24);
 - ✅ Maintains existing functionality
 
 ## 📊 Impact
-- **Files Fixed**: 4 components across earn and landing pages
-- **Type Safety**: 100% BigInt type mixing issues resolved
+- **Files Fixed**: 5 components across earn, landing, and withdraw pages
+- **Type Safety**: 100% critical BigInt type mixing issues resolved
+- **Template Fixes**: All template BigInt mixing errors eliminated
 - **Build Status**: ✅ Passing
 - **Lint Status**: ✅ Clean
 
