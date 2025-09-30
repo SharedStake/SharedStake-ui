@@ -40,7 +40,7 @@
         </span>
       </div>
       <div v-if="userAddress" class="headerPart poolButton">
-        <span v-if="available == 0">
+        <span v-if="available === 0">
           <div class="minitext">Status:</div>
           No balance
         </span>
@@ -70,7 +70,7 @@
         </span>
       </div>
       <div v-if="userAddress" class="headerPart poolButton">
-        <span v-if="sentAmount == 0">
+        <span v-if="sentAmount === 0">
           <div class="minitext">Status:</div>
           No funds migrated yet.
         </span>
@@ -166,14 +166,14 @@ export default {
       this.approved = _approved.toString();
       
       let balance = await sgtContract.balanceOf(this.userAddress);
-      if (balance == 0) {
+      if (balance === 0n) {
         this.available = 0;
       } else this.available = BN(balance.toString()).dividedBy(1e18).toFixed(3).toString();
       this.balance = BN(balance.toString());
 
       let userInfo = await migratorContract.lockedSwaps(this.userAddress);
       let amount = userInfo[0];
-      if (amount == 0) {
+      if (amount === 0n) {
         this.sentAmount = 0;
       } else this.sentAmount = BN(amount.toString()).dividedBy(1e18).toFixed(3).toString();
 

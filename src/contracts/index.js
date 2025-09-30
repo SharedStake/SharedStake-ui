@@ -13,8 +13,8 @@ import erc20 from './abis/erc20.json'
 import erc20_uniswap from './abis/erc20_uniswap.json'
 import geyserABI from './abis/geyser.json'
 import geyserABI_new from './abis/geyserV2.json'
-import sgtABI from './abis/erc20.json' //change this
-import airdrop_distributor from './abis/distributor.json' //change this
+import sgtABI from './abis/erc20.json'
+import airdrop_distributor from './abis/distributor.json'
 import migratorABI from './abis/migrator.json' 
 
 // https://github.com/chimera-defi/SharedDeposit/blob/main/data/abi/Withdrawals.json
@@ -47,12 +47,12 @@ const CHAIN_IDS = {
 let _ABIs = {
     validator: sharedStake,
     vEth2: vEth2Token,
-    SGT: sgtABI, //change this and abi
+    SGT: sgtABI,
     geyser: geyserABI,
     erc20,
     erc20_uniswap,
     airdrop_distributor,
-    geyser_new: geyserABI_new, //use this one for 
+    geyser_new: geyserABI_new, 
     migrator:migratorABI,
     withdrawals: withdrawalsABI,
     rollovers: rolloversABI,
@@ -133,10 +133,10 @@ const initializeEthers = async () => {
                     SGT_vEth2_uniswap: "0xC794746Df95C4B7043E8d6B521cFECaB1b14C6cE",
                     vEth2_saddle: "0xe37E2a01feA778BC1717d72Bd9f018B6A6B241D5",
                     // Geysers
-                    geyser_vEth2: "0x2b228842b97ab8a1f3dcd216ec5d553ada957915",// change this address
+                    geyser_vEth2: "0x2b228842b97ab8a1f3dcd216ec5d553ada957915",
                     geyser_vEth2_saddle: "0x6f27C4E4888A7090CAD2e1b82D6e02eBb4FA06EC",
-                    geyser_SGT: "0x3FD816A5943a77FA10DE73B44d891676bD818C9C",// change this address 
-                    geyser_SGT_uniswap: "0x77d03ecC4d6a15C320dd3849973aA3a599cBB07F",// change this address 
+                    geyser_SGT: "0x3FD816A5943a77FA10DE73B44d891676bD818C9C",
+                    geyser_SGT_uniswap: "0x77d03ecC4d6a15C320dd3849973aA3a599cBB07F", 
                     geyser_SGT_vEth2_uniswap: "0x53dc9D5deB3B7f5cD9A3E4D19A2beCda559D57Aa",
                     // OLD Geysers
                     geyser_vEth2_old: "0xA919D7a5fb7ad4ab6F2aae82b6F39d181A027d35",

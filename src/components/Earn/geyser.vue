@@ -23,7 +23,7 @@
         <div class="yearlyGrowth">
           0
           <!-- {{
-            apy == 0 || isNaN(apy)
+            apy === 0 || isNaN(apy)
               ? pool.external
                 ? "+150%"
                 : "Connect"
@@ -33,7 +33,7 @@
       </div>
       <div class="headerPart poolBalance">
         {{
-          balance == 0
+          balance.eq(0)
             ? 0
             : balance
                 .div(10 ** decimals)
@@ -318,7 +318,7 @@ export default {
     },
     disableHarvest: function () {
       let disable = false;
-      if (this.earned == 0) disable = true;
+      if (this.earned.eq(0)) disable = true;
       else if (this.earned.lte(BN(0))) disable = true;
       return disable;
     },
@@ -556,7 +556,7 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
-        console.log(err);
+        console.error("Error in harvest:", err);
       }
     },
     async ExitOldPool() {
@@ -573,7 +573,7 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
-        console.log(err);
+        console.error("Error in exit old pool:", err);
       }
     },
   },
