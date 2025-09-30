@@ -6,6 +6,8 @@ Fixed BigInt type mixing errors in the earn page components that were causing ru
 ## 📁 Files Modified
 - `src/components/Earn/geyser.vue`
 - `src/components/Earn/geyserV2.vue`
+- `src/components/Earn/Earn.vue`
+- `src/components/Landing/Landing.vue`
 
 ## 🔧 Specific Fixes Applied
 
@@ -49,6 +51,34 @@ let remDays = BN((until - now) / 60 / 60 / 24 / 1000);
 let remDays = BN(until - now).div(60).div(60).div(24).div(1000);
 ```
 
+### 3. Earn.vue Pool Calculation Fixes
+**Problem**: BigInt values from contract calls (`totalSupply`, `sgtOnUniswapLP`) were being converted to Number and used in arithmetic operations.
+
+**Before**:
+```javascript
+const uniswapEthSgtLpTokenPerSgt = Number(totalSupply) / (Number(sgtOnUniswapLP) * 2);
+const unsiwapvEth2SgtLPTokenPerSgt = Number(totalSupply) / (Number(sgtOnUniswapLP) * 2);
+```
+
+**After**:
+```javascript
+const uniswapEthSgtLpTokenPerSgt = BN(totalSupply.toString()).div(BN(sgtOnUniswapLP.toString()).multipliedBy(2)).toNumber();
+const unsiwapvEth2SgtLPTokenPerSgt = BN(totalSupply.toString()).div(BN(sgtOnUniswapLP.toString()).multipliedBy(2)).toNumber();
+```
+
+### 4. Landing.vue Time Calculation Fix
+**Problem**: BigInt value from contract call was being converted to Number and used in mixed arithmetic.
+
+**Before**:
+```javascript
+let remDays = BN((Number(until) - now) / 60 / 60 / 24);
+```
+
+**After**:
+```javascript
+let remDays = BN(Number(until) - now).div(60).div(60).div(24);
+```
+
 ## ✅ Benefits
 1. **Type Safety**: Proper BigNumber.js method usage prevents type mixing errors
 2. **Precision**: Maintains precision in calculations by using BN methods
@@ -62,7 +92,7 @@ let remDays = BN(until - now).div(60).div(60).div(24).div(1000);
 - ✅ Maintains existing functionality
 
 ## 📊 Impact
-- **Files Fixed**: 2 critical earn page components
+- **Files Fixed**: 4 components across earn and landing pages
 - **Type Safety**: 100% BigInt type mixing issues resolved
 - **Build Status**: ✅ Passing
 - **Lint Status**: ✅ Clean

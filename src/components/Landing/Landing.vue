@@ -1180,7 +1180,7 @@ export default {
         totalStaked = BN(totalStaked.toString());
         let now = Math.floor(Date.now() / 1000);
         let until = await tokenGeyser.periodFinish();
-        let remDays = BN((Number(until) - now) / 60 / 60 / 24); //get remaining days
+        let remDays = BN(Number(until) - now).div(60).div(60).div(24); //get remaining days
         let stakedSchedule = remDays;
         let duration = await tokenGeyser.rewardsDuration(); //in second
         let remRewards = BN(remDays).times(
