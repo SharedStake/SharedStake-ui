@@ -33,7 +33,7 @@
       </div>
       <div class="headerPart poolBalance">
         {{
-          balance.eq(0)
+          balance == 0
             ? 0
             : balance
                 .div(10 ** decimals)
@@ -260,12 +260,12 @@ export default {
   props: ["pool", "chosen"],
   data: () => ({
     innerWidth: 0,
-    balance: 0,
-    staked: 0,
-    earned: 0,
-    locked: 0,
-    totalStaked: 0,
-    stakedSchedule: 0,
+    balance: BN(0),
+    staked: BN(0),
+    earned: BN(0),
+    locked: BN(0),
+    totalStaked: BN(0),
+    stakedSchedule: BN(0),
     decimals: 1,
     //functional
     txs: [],
@@ -274,8 +274,8 @@ export default {
     WAmount: 0,
     bigWAmount: BN(0),
     inf_approval: false,
-    oldStaked: 0,
-    oldEarned: 0,
+    oldStaked: BN(0),
+    oldEarned: BN(0),
   }),
   created: function () {
     this.innerWidth = window.innerWidth;
