@@ -35,25 +35,30 @@ export default {
   },
   methods: {
     async getEthAvailableForWithdrawal() {
-      const amt = await window.ethereum.request({
-        method: "eth_getBalance",
-        params: [ABI_withdrawals.options.address, "latest"],
-      });
+      try {
+        const contract = this.ABI();
+        if (!contract) return;
+        const contractAddress = await contract.getAddress();
+        const amt = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [contractAddress, "latest"],
+        });
 
-      this.ethAvailableForWithdrawal = BN(amt);
+        this.ethAvailableForWithdrawal = BN(amt);
+      } catch (error) {
+        console.error("Error getting ETH available for withdrawal:", error);
+        this.ethAvailableForWithdrawal = BN(0);
+      }
     },
 
     async getTotalRedeemed() {
       try {
-        if (ABI_withdrawals && ABI_withdrawals.methods && ABI_withdrawals.methods.totalOut) {
-          let amt = await ABI_withdrawals.methods.totalOut().call();
-          this.totalRedeemed = BN(amt);
-        } else {
-          console.warn("Withdrawals contract not available or totalOut method not found");
-          this.totalRedeemed = BN(0);
-        }
+        const contract = this.ABI();
+        if (!contract) return;
+        let amt = await contract.totalOut();
+        this.totalRedeemed = BN(amt.toString());
       } catch (error) {
-        console.warn("Error getting total redeemed:", error);
+        console.error("Error getting total redeemed:", error);
         this.totalRedeemed = BN(0);
       }
     }

@@ -398,12 +398,19 @@ export default {
 
   methods: {
     routeClickCb(index, routes) {
-      this.$router.push(`/${routes[index].text.toLowerCase()}`);
+      const targetRoute = `/${routes[index].text.toLowerCase()}`;
+      if (this.$route.path !== targetRoute) {
+        this.$router.push(targetRoute);
+      }
     },
 
     handleDepositVEth2() {
       return {
-        abiCall: this.ABI.methods.deposit,
+        abiCall: async (...args) => {
+          const contract = this.ABI(true);
+          if (!contract) throw new Error("ABI contract not available");
+          return await contract.deposit(...args);
+        },
         argsArr: [toWei(this.amount)],
         cb: this.refreshBalances,
       };
@@ -411,88 +418,137 @@ export default {
 
     handleWithdrawEth() {
       return {
-        abiCall: this.ABI.methods.redeem,
+        abiCall: async (...args) => {
+          const contract = this.ABI(true);
+          if (!contract) throw new Error("ABI contract not available");
+          return await contract.redeem(...args);
+        },
         argsArr: [],
         cb: async () => {
-          this.completed = true; // Mark as completed in the UI - will reset on navigation.
-          await this.refreshBalances(); // update state to trigger next step
+          this.completed = true;
+          await this.refreshBalances();
         },
       };
     },
     handleWithdrawVeth() {
       return {
-        abiCall: this.ABI.methods.withdraw,
+        abiCall: async (...args) => {
+          const contract = this.ABI(true);
+          if (!contract) throw new Error("ABI contract not available");
+          return await contract.withdraw(...args);
+        },
         argsArr: [],
         cb: async () => {
-          this.completed = true; // Mark as completed in the UI - will reset on navigation.
-          await this.refreshBalances(); // update state to trigger next step
+          this.completed = true;
+          await this.refreshBalances();
         },
       };
     },
 
     async getUserApprovedVEth2() {
-      let userApprovedVEth2 = await ABI_vEth2.methods
-        .allowance(this.userConnectedWalletAddress, this.ABI.options.address)
-        .call();
-      this.userApprovedVEth2 = BN(userApprovedVEth2);
-      if (this.dev) console.log("userApprovedVEth2", userApprovedVEth2);
+      try {
+        const vEth2Contract = ABI_vEth2();
+        const targetContract = this.ABI();
+        if (!vEth2Contract || !targetContract) {
+          console.error("Contracts not available");
+          return;
+        }
+        const targetAddress = await targetContract.getAddress();
+        let userApprovedVEth2 = await vEth2Contract.allowance(this.userConnectedWalletAddress, targetAddress);
+        this.userApprovedVEth2 = BN(userApprovedVEth2.toString());
+        if (this.dev) console.log("userApprovedVEth2", userApprovedVEth2.toString());
+      } catch (error) {
+        console.error("Error getting user approved vETH2:", error);
+        this.userApprovedVEth2 = BN(0);
+      }
     },
 
     async getUserTokenBalance() {
-      let userVeth2Balance = await ABI_vEth2.methods
-        .balanceOf(this.userConnectedWalletAddress)
-        .call();
-      this.userVEth2Balance = BN(userVeth2Balance);
-      if (this.dev) console.log("userVeth2Balance", userVeth2Balance);
-      return userVeth2Balance;
+      try {
+        const vEth2Contract = ABI_vEth2();
+        if (!vEth2Contract) {
+          console.error("vETH2 contract not available");
+          return "0";
+        }
+        let userVeth2Balance = await vEth2Contract.balanceOf(this.userConnectedWalletAddress);
+        this.userVEth2Balance = BN(userVeth2Balance.toString());
+        if (this.dev) console.log("userVeth2Balance", userVeth2Balance.toString());
+        return userVeth2Balance.toString();
+      } catch (error) {
+        console.error("Error getting user vETH2 balance:", error);
+        return "0";
+      }
     },
 
     async getUserDepositedVEth2() {
       this.loading = true;
       try {
-        let userDepositedVEth2 = await this.ABI.methods
-          .userEntries(this.userConnectedWalletAddress)
-          .call();
-        this.userDepositedVEth2 = BN(userDepositedVEth2);
-        if (this.dev) console.log("userDepositedVEth2", userDepositedVEth2);
+        const contract = this.ABI();
+        if (!contract) {
+          console.error("ABI contract not available");
+          this.userDepositedVEth2 = BN(0);
+          this.loading = false;
+          return this.userDepositedVEth2;
+        }
+        try {
+          let userDepositedVEth2 = await contract.userEntries(this.userConnectedWalletAddress);
+          this.userDepositedVEth2 = userDepositedVEth2?.[0] ? BN(userDepositedVEth2[0].toString()) : BN(0);
+          if (this.dev) console.log("userDepositedVEth2", this.userDepositedVEth2.toString());
+        } catch (error) {
+          // Handle decode errors or missing entries
+          this.userDepositedVEth2 = BN(0);
+          if (error.code !== 'BAD_DATA') console.error("Error getting user deposited vETH2:", error);
+        }
+        this.loading = false;
+        return this.userDepositedVEth2;
       } catch (error) {
-        console.warn("Error getting user deposited vETH2:", error);
+        console.error("Error getting user deposited vETH2:", error);
         this.userDepositedVEth2 = BN(0);
+        this.loading = false;
+        return this.userDepositedVEth2;
       }
-      this.loading = false;
-      return this.userDepositedVEth2;
     },
 
     async getContractVeth2Queue() {
-      let bal = await ABI_vEth2.methods
-        .balanceOf(this.ABI.options.address)
-        .call();
-      this.contractVeth2Bal = BN(bal);
+      try {
+        const vEth2Contract = ABI_vEth2();
+        const targetContract = this.ABI();
+        if (!vEth2Contract || !targetContract) {
+          console.error("Contracts not available");
+          return;
+        }
+        const targetAddress = await targetContract.getAddress();
+        let bal = await vEth2Contract.balanceOf(targetAddress);
+        this.contractVeth2Bal = BN(bal.toString());
+      } catch (error) {
+        console.error("Error getting contract vETH2 balance:", error);
+        this.contractVeth2Bal = BN(0);
+      }
     },
 
     async getOutputTokenBalance() {
-      let bal = 0;
       try {
+        let bal = 0;
         if (this.outputTokenName.toLowerCase() == "sgeth") {
-          if (sgETH && sgETH.methods && sgETH.methods.balanceOf) {
-            bal = await sgETH.methods
-              .balanceOf(this.userConnectedWalletAddress)
-              .call();
-          } else {
-            console.warn("sgETH contract not available");
-            bal = 0;
+          const sgETHContract = sgETH();
+          if (!sgETHContract) {
+            console.error("sgETH contract not available");
+            this.outputTokenBalance = BN(0);
+            return;
           }
+          bal = await sgETHContract.balanceOf(this.userConnectedWalletAddress);
+          bal = bal.toString();
         } else {
           bal = await window.ethereum.request({
             method: "eth_getBalance",
             params: [this.userConnectedWalletAddress, "latest"],
           });
         }
+        this.outputTokenBalance = BN(bal);
       } catch (error) {
-        console.warn("Error getting output token balance:", error);
-        bal = 0;
+        console.error("Error getting output token balance:", error);
+        this.outputTokenBalance = BN(0);
       }
-      this.outputTokenBalance = BN(bal);
     },
 
     parseBN(n) {
@@ -509,8 +565,8 @@ export default {
 
       await this.getUserDepositedVEth2();
       await this.getContractVeth2Queue();
-      await this.getEthAvailableForWithdrawal();
-      await this.getTotalRedeemed();
+      if (this.getEthAvailableForWithdrawal) await this.getEthAvailableForWithdrawal();
+      if (this.getTotalRedeemed) await this.getTotalRedeemed();
     },
 
     handleFillMaxAmount() {

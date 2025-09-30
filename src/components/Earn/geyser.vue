@@ -23,7 +23,7 @@
         <div class="yearlyGrowth">
           0
           <!-- {{
-            apy == 0 || isNaN(apy)
+            apy === 0 || isNaN(apy)
               ? pool.external
                 ? "+150%"
                 : "Connect"
@@ -67,10 +67,8 @@
       <div class="statsPart" id="whiteBorder">
         <div class="minitext blue">Total Staked:</div>
         {{
-          totalStaked == 0
+          totalStaked.eq(0)
             ? 0
-            : totalStaked.eq(0)
-            ? totalStaked
             : totalStaked
                 .div(10 ** decimals)
                 .toFixed(1)
@@ -80,14 +78,12 @@
       </div>
       <div class="statsPart" id="whiteBorder">
         <div class="minitext blue">Remaining Rewards:</div>
-        {{ locked == 0 ? 0 : locked.eq(0) ? 0 : locked.toFixed(1).toString() }}
+        {{ locked.eq(0) ? 0 : locked.toFixed(1).toString() }}
         SGT
       </div>
       <div class="statsPart">
         {{
-          stakedSchedule == 0
-            ? 0
-            : stakedSchedule.eq(0)
+          stakedSchedule.eq(0)
             ? 0
             : stakedSchedule.toFixed(0).toString()
         }}
@@ -99,9 +95,7 @@
       <div class="userPart rightBorder">
         <div class="minitext blue">Staked:</div>
         {{
-          staked == 0
-            ? 0
-            : staked.eq(0)
+          staked.eq(0)
             ? 0
             : staked
                 .div(10 ** decimals)
@@ -113,9 +107,7 @@
       <div class="userPart">
         <div class="minitext blue">Earned:</div>
         {{
-          earned == 0
-            ? 0
-            : earned.eq(0)
+          earned.eq(0)
             ? 0
             : earned
                 .div(10 ** 18)
@@ -226,14 +218,12 @@
             <button
               class="mainButton"
               @click="ExitOldPool"
-              :disabled="!(oldStaked > 0 || oldEarned > 0)"
+              :disabled="!(oldStaked.gt(0) || oldEarned.gt(0))"
             >
               EXIT from the old pool:
               {{
-                oldStaked == 0
+                oldStaked.eq(0)
                   ? 0
-                  : oldStaked.eq(0)
-                  ? oldStaked
                   : oldStaked
                       .div(10 ** decimals)
                       .toFixed(1)
@@ -241,9 +231,7 @@
               }}
               Tokens +
               {{
-                oldEarned == 0
-                  ? 0
-                  : oldEarned.eq(0)
+                oldEarned.eq(0)
                   ? 0
                   : oldEarned
                       .div(10 ** 18)
@@ -272,12 +260,12 @@ export default {
   props: ["pool", "chosen"],
   data: () => ({
     innerWidth: 0,
-    balance: 0,
-    staked: 0,
-    earned: 0,
-    locked: 0,
-    totalStaked: 0,
-    stakedSchedule: 0,
+    balance: BN(0),
+    staked: BN(0),
+    earned: BN(0),
+    locked: BN(0),
+    totalStaked: BN(0),
+    stakedSchedule: BN(0),
     decimals: 1,
     //functional
     txs: [],
@@ -286,8 +274,8 @@ export default {
     WAmount: 0,
     bigWAmount: BN(0),
     inf_approval: false,
-    oldStaked: 0,
-    oldEarned: 0,
+    oldStaked: BN(0),
+    oldEarned: BN(0),
   }),
   created: function () {
     this.innerWidth = window.innerWidth;
@@ -330,15 +318,15 @@ export default {
     },
     disableHarvest: function () {
       let disable = false;
-      if (this.earned == 0) disable = true;
-      else if (this.earned.lte(0)) disable = true;
+      if (this.earned.eq(0)) disable = true;
+      else if (this.earned.lte(BN(0))) disable = true;
       return disable;
     },
     apy: function () {
       const pooledTokenPerSgt = this.pool.tokenPerSgt;
-      const rewardsLeftForEmissionPeriod = this.locked * 1e18;
-      const tokensInPool = this.totalStaked;
-      const daysLeftOfEmissionPeriod = this.stakedSchedule;
+      const rewardsLeftForEmissionPeriod = Number(this.locked) * 1e18;
+      const tokensInPool = Number(this.totalStaked);
+      const daysLeftOfEmissionPeriod = Number(this.stakedSchedule);
 
       const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
       const percentageYieldForPool = rewardsLeftForEmissionPeriod / totalSgtAmountInPool * 100;
@@ -350,7 +338,6 @@ export default {
   },
   watch: {
     DAmount(newValue, oldVal) {
-      console.log(newValue, oldVal);
       if (newValue.length > 40) {
         this.Damount = oldVal;
         // this.amountCheck();
@@ -416,7 +403,6 @@ export default {
       this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
     },
     userAddress(newVal) {
-      console.log(newVal);
       if (newVal) this.mounted(newVal);
     },
   },
@@ -429,28 +415,36 @@ export default {
       if (!user) user = this.userAddress;
       if (user)
         try {
-          let decimals = await this.pool.token.methods.decimals().call();
+          let tokenContract = this.pool.token();
+          let geyserContract = this.pool.geyser();
+          if (!tokenContract || !geyserContract) {
+            console.error("Contracts not available");
+            return;
+          }
+
+          let decimals = await tokenContract.decimals();
           this.decimals = decimals;
 
-          let balance = await this.pool.token.methods.balanceOf(user).call();
-          this.balance = BN(balance);
-          let staked = await this.pool.geyser.methods.balanceOf(user).call();
-          this.staked = BN(staked);
+          let balance = await tokenContract.balanceOf(user);
+          this.balance = BN(balance.toString());
+          let staked = await geyserContract.balanceOf(user);
+          this.staked = BN(staked.toString());
 
-          let earned = await this.pool.geyser.methods.earned(user).call();
-          this.earned = BN(earned);
-          let totalStaked = await this.pool.geyser.methods.totalSupply().call();
-          this.totalStaked = BN(totalStaked);
+          let earned = await geyserContract.earned(user);
+          this.earned = BN(earned.toString());
+          let totalStaked = await geyserContract.totalSupply();
+          this.totalStaked = BN(totalStaked.toString());
 
           if (this.pool.oldPool) {
-            let oldStaked = await this.pool.oldPool.methods
-              .balanceOf(user)
-              .call();
-            this.oldStaked = BN(oldStaked);
+            let oldPoolContract = this.pool.oldPool();
+            if (oldPoolContract) {
+              let oldStaked = await oldPoolContract.balanceOf(user);
+              this.oldStaked = BN(oldStaked.toString());
 
-            let oldEarned = await this.pool.oldPool.methods.earned(user).call();
-            this.oldEarned = BN(oldEarned);
-            if (oldEarned > 0) {
+              let oldEarned = await oldPoolContract.earned(user);
+              this.oldEarned = BN(oldEarned.toString());
+            }
+            if (this.oldEarned.gt(BN(0))) {
               this.$notify({
                 group: "foo",
                 type: "error",
@@ -465,146 +459,122 @@ export default {
           }
 
           let now = Math.floor(Date.now() / 1000);
-          let until = await this.pool.geyser.methods.periodFinish().call();
-          let remDays = BN((until - now) / 60 / 60 / 24); //get remaining days
+          let until = await geyserContract.periodFinish();
+          let remDays = BN((Number(until) - now) / 60 / 60 / 24); //get remaining days
           this.stakedSchedule = remDays;
-          let duration = await this.pool.geyser.methods
-            .rewardsDuration()
-            .call(); //in second
+          let duration = await geyserContract.rewardsDuration(); //in second
           let remRewards = BN(remDays).times(
-            BN(this.pool.locked).div(BN(duration).div(60).div(60).div(24))
+            BN(this.pool.locked).div(BN(Number(duration)).div(60).div(60).div(24))
           );
           this.locked = BN(remRewards);
         } catch (err) {
-          console.log(err);
+          // Silently handle error
         }
     },
     async Deposit() {
       let myAmount = this.bigDAmount.toString();
-      let geyserAddress = this.pool.geyser._address;
-      let allowance = await this.pool.token.methods
-        .allowance(this.userAddress, geyserAddress)
-        .call();
+      let tokenContract = this.pool.token();
+      let geyserContract = this.pool.geyser();
+      if (!tokenContract || !geyserContract) {
+        console.error("Contracts not available");
+        return;
+      }
+      let geyserAddress = await geyserContract.getAddress();
+      let allowance = await tokenContract.allowance(this.userAddress, geyserAddress);
       let approval = true;
       let self = this;
       if (BN(allowance).lt(this.bigDAmount)) {
         if (this.inf_approval)
           myAmount = BN(2).pow(BN(256)).minus(BN(1)).toString();
-        await this.pool.token.methods
-          .approve(geyserAddress, myAmount)
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            console.log("approved");
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            approval = false;
-            console.log(err);
-          })
-          .catch((err) => {
-            approval = false;
-            console.log(err);
-          });
+        try {
+          const tx = await tokenContract.connect(await window.ethersProvider.getSigner()).approve(geyserAddress, myAmount);
+          notifyHandler(tx.hash);
+          await tx.wait();
+        } catch (err) {
+          approval = false;
+        }
         await timeout(6000);
       }
       if (approval) {
-        await this.pool.geyser.methods
-          .stake(myAmount)
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            self.mounted();
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            console.log(err);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        try {
+          const tx = await geyserContract.connect(await window.ethersProvider.getSigner()).stake(myAmount);
+          notifyHandler(tx.hash);
+          await tx.wait();
+          self.mounted();
+        } catch (err) {
+          // Silently handle error
+        }
       }
     },
     async Withdraw() {
       let self = this;
       // to add tx watcher
       if (this.bigWAmount.eq(this.staked)) {
-        await this.pool.geyser.methods
-          .exit()
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            self.mounted();
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            console.log(err);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        try {
+          const geyserContract = this.pool.geyser();
+          if (!geyserContract) {
+            console.error("Geyser contract not available");
+            return;
+          }
+          const signer = await window.ethersProvider.getSigner();
+          const tx = await geyserContract.connect(signer).exit();
+          notifyHandler(tx.hash);
+          await tx.wait();
+          self.mounted();
+        } catch (err) {
+          // Silently handle error
+        }
       } else {
-        let myAmount = this.bigWAmount.toString();
-        await this.pool.geyser.methods
-          .withdraw(myAmount)
-          .send({ from: this.userAddress })
-          .on("transactionHash", function (hash) {
-            notifyHandler(hash);
-          })
-          .once("confirmation", () => {
-            self.mounted();
-          })
-          .on("error", (err) => {
-            // if (error.message.includes("User denied transaction signature"))
-            console.log(err);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        try {
+          let myAmount = this.bigWAmount.toString();
+          const geyserContract = this.pool.geyser();
+          if (!geyserContract) {
+            console.error("Geyser contract not available");
+            return;
+          }
+          const signer = await window.ethersProvider.getSigner();
+          const tx = await geyserContract.connect(signer).withdraw(myAmount);
+          notifyHandler(tx.hash);
+          await tx.wait();
+          self.mounted();
+        } catch (err) {
+          // Silently handle error
+        }
       }
     },
     async Harvest() {
       let self = this;
-      await this.pool.geyser.methods
-        .getReward()
-        .send({ from: this.userAddress })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-        })
-        .once("confirmation", () => {
-          self.mounted();
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          console.log(err);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        const geyserContract = this.pool.geyser();
+        if (!geyserContract) {
+          console.error("Geyser contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await geyserContract.connect(signer).getReward();
+        notifyHandler(tx.hash);
+        await tx.wait();
+        self.mounted();
+      } catch (err) {
+        console.error("Error in harvest:", err);
+      }
     },
     async ExitOldPool() {
       let self = this;
-      await this.pool.oldPool.methods
-        .exit()
-        .send({ from: this.userAddress })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-        })
-        .once("confirmation", () => {
-          self.mounted();
-        })
-        .on("error", () => {
-          // if (error.message.includes("User denied transaction signature"))
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        const oldPoolContract = this.pool.oldPool();
+        if (!oldPoolContract) {
+          console.error("Old pool contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await oldPoolContract.connect(signer).exit();
+        notifyHandler(tx.hash);
+        await tx.wait();
+        self.mounted();
+      } catch (err) {
+        console.error("Error in exit old pool:", err);
+      }
     },
   },
 };

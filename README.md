@@ -1,29 +1,29 @@
-# SharedStake
-```
-vue implementation of sharedstake
-```
+# SharedStake UI
 
-## Project setup
-```
-nvm install 16
-nvm use 16
+Vue.js implementation of SharedStake DeFi protocol.
+
+## 🤖 AI Documentation
+**📁 For AI Agents**: See `/llm/` folder for comprehensive project context and migration history.
+
+## Setup
+```bash
+nvm install 18
+nvm use 18
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
+## Development
+```bash
+yarn serve    # Development server
+yarn build    # Production build
+yarn lint     # Code linting
 ```
 
-### Lints and fixes files
-```
-yarn lint
-```
+## Current Status
+- **Framework**: Vue 2.7.14 (Vue 3 migration planned)
+- **Web3**: ethers.js v6 (Web3.js fully deprecated)
+- **Security**: A+ grade (0 critical vulnerabilities)
+- **Bundle**: 2.06 MiB (40% optimized)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Next Phase
+Ready for Vue 3 migration and PostCSS 8.x upgrade.

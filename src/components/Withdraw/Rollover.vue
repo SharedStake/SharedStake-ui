@@ -35,23 +35,27 @@ export default {
   },
   methods: {
     async getEthAvailableForWithdrawal() {
-      let amt = await ABI_sgETH.methods
-        .balanceOf(ABI_Rollover.options.address)
-        .call();
-      this.ethAvailableForWithdrawal = BN(amt*0);
-      // this.ethAvailableForWithdrawal = BN(amt);
+      try {
+        const sgETHContract = ABI_sgETH();
+        const rolloverContract = this.ABI();
+        if (!sgETHContract || !rolloverContract) return;
+        const rolloverAddress = await rolloverContract.getAddress();
+        let amt = await sgETHContract.balanceOf(rolloverAddress);
+        this.ethAvailableForWithdrawal = BN(amt.toString()).multipliedBy(0);
+        // this.ethAvailableForWithdrawal = BN(amt.toString());
+      } catch (error) {
+        console.error("Error getting sgETH available for withdrawal:", error);
+        this.ethAvailableForWithdrawal = BN(0);
+      }
     },
     async getTotalRedeemed() {
       try {
-        if (ABI_Rollover && ABI_Rollover.methods && ABI_Rollover.methods.totalOut) {
-          let amt = await ABI_Rollover.methods.totalOut().call();
-          this.totalRedeemed = BN(amt);
-        } else {
-          console.warn("Rollover contract not available or totalOut method not found");
-          this.totalRedeemed = BN(0);
-        }
+        const rolloverContract = this.ABI();
+        if (!rolloverContract) return;
+        let amt = await rolloverContract.totalOut();
+        this.totalRedeemed = BN(amt.toString());
       } catch (error) {
-        console.warn("Error getting total redeemed from rollover:", error);
+        console.error("Error getting total redeemed:", error);
         this.totalRedeemed = BN(0);
       }
     }

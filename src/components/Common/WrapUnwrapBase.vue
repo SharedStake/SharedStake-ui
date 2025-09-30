@@ -84,6 +84,7 @@
 
 <script>
 import BN from "bignumber.js";
+import { ethers } from "ethers";
 import { wsgETH, sgETH } from "@/contracts";
 import { mapGetters } from "vuex";
 import Step from "@/components/Withdraw/Step.vue";
@@ -156,7 +157,7 @@ export default {
       return (
         this.userApproved.gt(0) &&
         this.userApproved.gte(
-          window.web3.utils.toWei(this.amount?.toString() || '0', "ether")
+          ethers.parseEther(this.amount?.toString() || '0').toString()
         )
       );
     },
@@ -209,13 +210,22 @@ export default {
 
   methods: {
     routeClickCb(index, routes) {
-      this.$router.push(`/${routes[index].text.toLowerCase()}`);
+      const targetRoute = `/${routes[index].text.toLowerCase()}`;
+      if (this.$route.path !== targetRoute) {
+        this.$router.push(targetRoute);
+      }
     },
 
     handleDeposit() {
       return {
-        abiCall: this.wsgETH.methods.deposit,
-        argsArr: [window.web3.utils.toWei(this.amount, "ether"), this.userConnectedWalletAddress],
+        abiCall: async (...args) => {
+          const contract = this.wsgETH(true); // Use signer for write operations
+          if (!contract) {
+            throw new Error("wsgETH contract not available");
+          }
+          return await contract.deposit(...args);
+        },
+        argsArr: [ethers.parseEther(this.amount.toString()), this.userConnectedWalletAddress],
         cb: async () => {
           await this.refreshBalances();
         }
@@ -238,29 +248,55 @@ export default {
     },
 
     async getUserApproved() {
-      let userApproved = await sgETH.methods
-        .allowance(this.userConnectedWalletAddress, wsgETH.options.address)
-        .call();
-      this.userApproved = BN(userApproved);
-      if (this.dev) console.log("userApproved", userApproved);
+      try {
+        const sgETHContract = sgETH();
+        const wsgETHContract = wsgETH();
+        if (!sgETHContract || !wsgETHContract) {
+          console.error("Contracts not available");
+          return;
+        }
+        const wsgETHAddress = await wsgETHContract.getAddress();
+        let userApproved = await sgETHContract.allowance(this.userConnectedWalletAddress, wsgETHAddress);
+        this.userApproved = BN(userApproved.toString());
+      } catch (error) {
+        console.error("Error getting user approved:", error);
+        this.userApproved = BN(0);
+      }
+      if (this.dev) console.log("userApproved", this.userApproved);
     },
 
     async getUserTokenBalance() {
-      let userTokenBalance = await sgETH.methods
-        .balanceOf(this.userConnectedWalletAddress)
-        .call();
-      this.userTokenBalance = BN(userTokenBalance);
-      if (this.dev) console.log("userTokenBalance", userTokenBalance);
-      return userTokenBalance;
+      try {
+        const sgETHContract = sgETH();
+        if (!sgETHContract) {
+          console.error("sgETH contract not available");
+          return;
+        }
+        let userTokenBalance = await sgETHContract.balanceOf(this.userConnectedWalletAddress);
+        this.userTokenBalance = BN(userTokenBalance.toString());
+      } catch (error) {
+        console.error("Error getting user token balance:", error);
+        this.userTokenBalance = BN(0);
+      }
+      if (this.dev) console.log("userTokenBalance", this.userTokenBalance);
+      return this.userTokenBalance;
     },
 
     async getUserOutputTokenBalance() {
-      let userOutputTokenBalance = await wsgETH.methods
-        .balanceOf(this.userConnectedWalletAddress)
-        .call();
-      this.userOutputTokenBalance = BN(userOutputTokenBalance);
-      if (this.dev) console.log("userOutputTokenBalance", userOutputTokenBalance);
-      return userOutputTokenBalance;
+      try {
+        const wsgETHContract = wsgETH();
+        if (!wsgETHContract) {
+          console.error("wsgETH contract not available");
+          return;
+        }
+        let userOutputTokenBalance = await wsgETHContract.balanceOf(this.userConnectedWalletAddress);
+        this.userOutputTokenBalance = BN(userOutputTokenBalance.toString());
+      } catch (error) {
+        console.error("Error getting user output token balance:", error);
+        this.userOutputTokenBalance = BN(0);
+      }
+      if (this.dev) console.log("userOutputTokenBalance", this.userOutputTokenBalance);
+      return this.userOutputTokenBalance;
     },
 
     handleFillMaxAmount() {

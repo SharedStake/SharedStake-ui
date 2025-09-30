@@ -2,7 +2,7 @@ import { changeWallets } from "../init/onboard"
 
 const state = {
     address: null,
-    web3: null,
+    ethersProvider: null, // Modern ethers.js provider (was web3)
     walletname: null,
     network: null,
 };
@@ -27,7 +27,7 @@ const networks = {
 const getters = {
     userAddress: state => state.address,
     isAuth: state => { return state.address ? true : false },
-    web3: state => state.web3,
+    ethersProvider: state => state.ethersProvider, // Modern ethers.js provider
     getNetwork: state => networks[state.network],
     getNetworkId: state => state.network,
 };
@@ -42,8 +42,8 @@ const actions = {
     exit({ commit }) {
         commit('removeAddress');
     },
-    setWeb3({ commit }, newWeb3) {
-        commit('setWeb3', newWeb3);
+    setEthersProvider({ commit }, newProvider) {
+        commit('setEthersProvider', newProvider);
     },
     setWallet({ commit }, wallet) {
         commit('setWallet', wallet);
@@ -60,7 +60,7 @@ const mutations = {
     removeAddress: (state) => {//remove address from local storage
         state.address = null;
     },
-    setWeb3: (state, newWeb3) => (state.web3 = newWeb3),
+    setEthersProvider: (state, newProvider) => (state.ethersProvider = newProvider),
     setWallet: (state, wallet) => (state.walletname = wallet),
     setNetwork: (state, network) => (state.network = network),
     setOnboard: (state, onboard) => (state.onboard = onboard),

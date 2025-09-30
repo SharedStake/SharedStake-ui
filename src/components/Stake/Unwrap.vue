@@ -111,13 +111,13 @@
 import BN from "bignumber.js";
 import { wsgETH, sgETH } from "@/contracts";
 import { mapGetters } from "vuex";
+import { toWei } from "@/utils/common";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
 
 import ImageVue from "../Handlers/ImageVue.vue";
-import { toWei } from "../../utils/common";
 
 // Max unit is the maximum value that can be represented in Solidity
 // const MAX_UNIT = 2 ** 256 - 1;
@@ -216,20 +216,25 @@ export default {
 
   methods: {
     routeClickCb(index, routes) {
-      this.$router.push(`/${routes[index].text.toLowerCase()}`);
+      const targetRoute = `/${routes[index].text.toLowerCase()}`;
+      if (this.$route.path !== targetRoute) {
+        this.$router.push(targetRoute);
+      }
     },
 
     handleClick() {
       return {
-        abiCall: this.wsgETH.methods.redeem,
+        abiCall: async (...args) => {
+          const contract = wsgETH(true);
+          if (!contract) throw new Error("wsgETH contract not available");
+          return await contract.redeem(...args);
+        },
         argsArr: [
           toWei(this.amount),
           this.userConnectedWalletAddress,
           this.userConnectedWalletAddress,
         ],
-        cb: async () => {
-          await this.refreshBalances();
-        },
+        cb: this.refreshBalances,
       };
     },
 
@@ -249,23 +254,33 @@ export default {
     },
 
     async getUserTokenBalance() {
-      let userTokenBalance = await wsgETH.methods
-        .balanceOf(this.userConnectedWalletAddress)
-        .call();
-      this.userTokenBalance = BN(userTokenBalance);
-      if (this.dev) console.log("userTokenBalance", userTokenBalance);
-      return userTokenBalance;
+      try {
+        const contract = wsgETH();
+        if (!contract) return "0";
+        const result = await contract.balanceOf(this.userConnectedWalletAddress);
+        this.userTokenBalance = BN(result.toString());
+        if (this.dev) console.log("userTokenBalance", result.toString());
+        return result.toString();
+      } catch (error) {
+        console.error("Error getting user token balance:", error);
+        this.userTokenBalance = BN(0);
+        return "0";
+      }
     },
 
     async getUserOutputTokenBalance() {
-      let userOutputTokenBalance = await sgETH.methods
-        .balanceOf(this.userConnectedWalletAddress)
-        .call();
-      this.userOutputTokenBalance = BN(userOutputTokenBalance);
-      if (this.dev) {
-        console.log("userOutputTokenBalance", userOutputTokenBalance);
+      try {
+        const contract = sgETH();
+        if (!contract) return "0";
+        const result = await contract.balanceOf(this.userConnectedWalletAddress);
+        this.userOutputTokenBalance = BN(result.toString());
+        if (this.dev) console.log("userOutputTokenBalance", result.toString());
+        return result.toString();
+      } catch (error) {
+        console.error("Error getting user output token balance:", error);
+        this.userOutputTokenBalance = BN(0);
+        return "0";
       }
-      return userOutputTokenBalance;
     },
 
     handleFillMaxAmount() {

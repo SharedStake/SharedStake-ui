@@ -60,7 +60,7 @@
 import ImageVue from "../Handlers/ImageVue";
 import { airdrop } from "@/contracts";
 import { notify } from "@/utils/common";
-import web3 from "web3";
+import { ethers } from "ethers";
 import { merkle } from "./airdrop.js";
 import { mapGetters } from "vuex";
 
@@ -109,52 +109,81 @@ export default {
       this.innerWidth = window.innerWidth;
     },
     async isEligible() {
-      let address = web3.utils.toChecksumAddress(this.address);
-      const claims = merkle.claims;
-      let claim = null;
-      for (let key in claims) {
-        if (key == address) {
-          claim = claims[key];
+      try {
+        if (!this.address || this.address.trim() === '') {
+          this.eligible = false;
+          return;
         }
+        
+        // Validate and checksum the address using ethers.js
+        let address;
+        try {
+          address = ethers.getAddress(this.address);
+        } catch (error) {
+          console.error("Invalid Ethereum address:", this.address);
+          this.eligible = false;
+          return;
+        }
+        
+        const claims = merkle.claims;
+        let claim = null;
+        for (let key in claims) {
+          if (key == address) {
+            claim = claims[key];
+          }
+        }
+        if (claim) {
+          this.eligible = true;
+          const airdropContract = airdrop();
+          if (!airdropContract) {
+            console.error("Airdrop contract not available");
+            return;
+          }
+          
+          // Convert claim index to hex format
+          const claimIndexHex = ethers.toQuantity(claim.index);
+          let isClaimed = await airdropContract.isClaimed(claimIndexHex);
+          if (isClaimed) this.isClaimed = true;
+          else {
+            this.isClaimed = false;
+            this.available = (parseInt(claim.amount, 16) / 1e18).toFixed(2);
+            this.claim = claim;
+          }
+        } else this.eligible = false;
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        this.eligible = false;
       }
-      if (claim) {
-        this.eligible = true;
-        let isClaimed = await airdrop.methods
-          .isClaimed(web3.utils.numberToHex(claim.index))
-          .call();
-        if (isClaimed) this.isClaimed = true;
-        else {
-          this.isClaimed = false;
-          this.available = (parseInt(claim.amount, 16) / 1e18).toFixed(2);
-          this.claim = claim;
-        }
-      } else this.eligible = false;
     },
     async Claim() {
-      // to add tx watcher
-      await airdrop.methods
-        .claim(
-          web3.utils.numberToHex(this.claim.index),
+      try {
+        const airdropContract = airdrop(true); // Use signer for write operations
+        if (!airdropContract) {
+          throw new Error("Airdrop contract not available");
+        }
+        
+        // Convert claim index to hex format using ethers.js
+        const claimIndexHex = ethers.toQuantity(this.claim.index);
+        
+        const tx = await airdropContract.claim(
+          claimIndexHex,
           this.address,
           this.claim.amount,
           this.claim.proof
-        )
-        .send({ from: this.userAddress })
-        .on("transactionHash", function (hash) {
-          notify.hash(hash);
-        })
-        .once("confirmation", () => {
-          this.loading = false;
-          self.mounted();
-        })
-        .on("error", () => {
-          // if (error.message.includes("User denied transaction signature"))
-          this.loading = false;
-        })
-        .catch((err) => {
-          this.loading = false;
-          console.log(err);
-        });
+        );
+        
+        // Notify with transaction hash
+        notify.hash(tx.hash);
+        
+        // Wait for confirmation
+        await tx.wait();
+        
+        this.loading = false;
+        await this.mounted();
+      } catch (error) {
+        console.error("Error claiming airdrop:", error);
+        this.loading = false;
+      }
     },
   },
 };

@@ -22,6 +22,7 @@ const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
 const Rollover = () => import("../components/Withdraw/Rollover.vue")
 const Wrap = () => import("../components/Stake/Wrap.vue");
 const Unwrap = () => import("../components/Stake/Unwrap.vue");
+// const Web3Test = () => import("../components/Web3Test.vue"); // Removed after Web3.js migration
 
 Vue.use(VueRouter);
 
@@ -78,13 +79,19 @@ let routes = [{
         path: "/unwrap",
         name: "Unwrap",
         component: Unwrap,
-    }]
-},
+    },
     // {
-    //     path: "/roadmap",
-    //     name: "Roadmap",
-    //     component: Roadmap,
-    // }, {
+    //     path: "/web3-test",
+    //     name: "Web3 Test",
+    //     component: Web3Test,
+    // } // Removed after Web3.js migration
+    ]
+}
+// }, {
+//     path: "/roadmap", 
+//     name: "Roadmap",
+//     component: Roadmap,
+// }, {
     //     path: "/app",
     //     name: "Root",
     //     component: Root,
@@ -151,6 +158,27 @@ const router = new VueRouter({
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }
     }
+});
+
+// Preload critical routes for better performance
+router.beforeEach((to, from, next) => {
+    // Preload critical routes that are likely to be visited
+    const criticalRoutes = ['/stake', '/earn', '/withdraw'];
+    
+    if (criticalRoutes.includes(to.path)) {
+        // Preload the next likely route
+        const nextRoute = criticalRoutes[criticalRoutes.indexOf(to.path) + 1];
+        if (nextRoute) {
+            // Preload the next route in the background
+            setTimeout(() => {
+                import(`../components${nextRoute === '/stake' ? '/Stake/Stake.vue' : 
+                    nextRoute === '/earn' ? '/Earn/Earn.vue' : 
+                    '/Withdraw/Withdraw.vue'}`);
+            }, 1000);
+        }
+    }
+    
+    next();
 });
 
 export default router;

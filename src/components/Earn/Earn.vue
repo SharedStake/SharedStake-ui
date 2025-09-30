@@ -96,7 +96,7 @@ export default {
     chosen: null,
     pools: [
       // Note that order of these pools affects functionality in mounted-lifetime method.
-      // TODO: Make these order agnostic by maybe maping the pools in mounted() with pool name.
+      // Pool configuration order is important for proper display
       {
         name: "SGT",
         pic: "tokens/logo-red.svg",
@@ -109,7 +109,7 @@ export default {
         tokenPerSgt: 1,
         oldPool: oldPools["geyser_SGT"],
         link:
-          "https://v2.info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078", //for inactive pools => change this to uniswap
+          "https://v2.info.uniswap.org/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078",
       },
       {
         name: "SGT - Eth",
@@ -123,7 +123,7 @@ export default {
         tokenPerSgt: 0,
         oldPool: oldPools["geyser_SGT_uniswap"],
         link:
-          "https://v2.info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55", //for inactive pools => change this to uniswap
+          "https://v2.info.uniswap.org/pair/0x3d07f6e1627da96b8836190de64c1aed70e3fc55",
       },
       {
         name: "SGT - vEth2",
@@ -136,7 +136,7 @@ export default {
         active: true,
         tokenPerSgt: 0,
         link:
-          "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce", //for inactive pools => change this to uniswap
+          "https://v2.info.uniswap.org/pair/0xc794746df95c4b7043e8d6b521cfecab1b14c6ce",
       },
       {
         name: "vEth2",
@@ -165,7 +165,7 @@ export default {
         active: true,
         tokenPerSgt: 0,
         link:
-          "https://app.sushi.com/add/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD", //for inactive pools => change this to uniswap
+          "https://app.sushi.com/add/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD",
       },
       {
         name: "veSGT",
@@ -177,7 +177,7 @@ export default {
         external: false,
         active: true,
         tokenPerSgt: 0,
-        link: "https://sharedtools.org", //for inactive pools => change this to uniswap
+        link: "https://sharedtools.org",
       },
 
       {
@@ -221,12 +221,17 @@ export default {
   methods: {
     async mounted() {
       if (this.pools[1].active) {
-        let token = SGT_uniswap;
-        let uniswapEthSgtReserves = await token.methods.getReserves().call();
-        let sgtOnUniswapLP = uniswapEthSgtReserves[0];
-        let ethOnUniswapLP = uniswapEthSgtReserves[1];
+        try {
+          let token = SGT_uniswap();
+          if (!token) {
+            console.warn("SGT_uniswap contract not available");
+            return;
+          }
+          let uniswapEthSgtReserves = await token.getReserves();
+          let sgtOnUniswapLP = uniswapEthSgtReserves[0];
+          let ethOnUniswapLP = uniswapEthSgtReserves[1];
 
-        const ethPerSgtFromUniswap = ethOnUniswapLP / sgtOnUniswapLP;
+        const ethPerSgtFromUniswap = Number(ethOnUniswapLP) / Number(sgtOnUniswapLP);
         //get vEth2 price from saddle pool
         let vEth2Pr = await vEth2Price();
         vEth2Pr = vEth2Pr
@@ -237,20 +242,31 @@ export default {
         this.pools[3].tokenPerSgt = ethPerSgtFromUniswap * vEth2Pr;
         this.newPools[0].tokenPerSgt = ethPerSgtFromUniswap; //saddle pool's LP token is simply 1 eth => possible improvement = get more accurate approach
 
-        let totalSupply = await token.methods.totalSupply().call();
+          let totalSupply = await token.totalSupply();
 
-        const uniswapEthSgtLpTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2); // Approximation
-        this.pools[1].tokenPerSgt = uniswapEthSgtLpTokenPerSgt;
+          const uniswapEthSgtLpTokenPerSgt = Number(totalSupply) / (Number(sgtOnUniswapLP) * 2); // Approximation
+          this.pools[1].tokenPerSgt = uniswapEthSgtLpTokenPerSgt;
+        } catch (error) {
+          console.error("Error loading SGT-ETH pool data:", error);
+        }
       }
       if (this.pools[2].active) {
-        let token = SGT_vEth2_uniswap;
-        let reserves = await token.methods.getReserves().call();
-        let sgtOnUniswapLP = reserves[0];
+        try {
+          let token = SGT_vEth2_uniswap();
+          if (!token) {
+            console.warn("SGT_vEth2_uniswap contract not available");
+            return;
+          }
+          let reserves = await token.getReserves();
+          let sgtOnUniswapLP = reserves[0];
 
-        // pool 2
-        let totalSupply = await token.methods.totalSupply().call();
-        const unsiwapvEth2SgtLPTokenPerSgt = totalSupply / (sgtOnUniswapLP * 2);
-        this.pools[2].tokenPerSgt = unsiwapvEth2SgtLPTokenPerSgt;
+          // pool 2
+          let totalSupply = await token.totalSupply();
+          const unsiwapvEth2SgtLPTokenPerSgt = Number(totalSupply) / (Number(sgtOnUniswapLP) * 2);
+          this.pools[2].tokenPerSgt = unsiwapvEth2SgtLPTokenPerSgt;
+        } catch (error) {
+          console.error("Error loading SGT-vETH2 pool data:", error);
+        }
       }
     },
   },

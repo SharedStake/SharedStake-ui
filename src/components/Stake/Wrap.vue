@@ -248,12 +248,21 @@ export default {
 
   methods: {
     routeClickCb(index, routes) {
-      this.$router.push(`/${routes[index].text.toLowerCase()}`);
+      const targetRoute = `/${routes[index].text.toLowerCase()}`;
+      if (this.$route.path !== targetRoute) {
+        this.$router.push(targetRoute);
+      }
     },
 
     handleDeposit() {
       return {
-        abiCall: this.wsgETH.methods.deposit,
+        abiCall: async (...args) => {
+          const contract = this.wsgETH(true); // Use signer for write operations
+          if (!contract) {
+            throw new Error("wsgETH contract not available");
+          }
+          return await contract.deposit(...args);
+        },
         argsArr: [toWei(this.amount), this.userConnectedWalletAddress],
         cb: async () => {
           await this.refreshBalances();
@@ -278,31 +287,59 @@ export default {
     },
 
     async getUserApproved() {
-      let userApproved = await sgETH.methods
-        .allowance(this.userConnectedWalletAddress, wsgETH.options.address)
-        .call();
-      this.userApproved = BN(userApproved);
-      if (this.dev) console.log("userApproved", userApproved);
+      try {
+        const sgETHContract = sgETH();
+        const wsgETHContract = wsgETH();
+        if (!sgETHContract || !wsgETHContract) {
+          console.error("Contracts not available");
+          return;
+        }
+        const wsgETHAddress = await wsgETHContract.getAddress();
+        let userApproved = await sgETHContract.allowance(this.userConnectedWalletAddress, wsgETHAddress);
+        this.userApproved = BN(userApproved.toString());
+        if (this.dev) console.log("userApproved", userApproved.toString());
+      } catch (error) {
+        console.error("Error getting user approved amount:", error);
+        this.userApproved = BN(0);
+      }
     },
 
     async getUserTokenBalance() {
-      let userTokenBalance = await sgETH.methods
-        .balanceOf(this.userConnectedWalletAddress)
-        .call();
-      this.userTokenBalance = BN(userTokenBalance);
-      if (this.dev) console.log("userTokenBalance", userTokenBalance);
-      return userTokenBalance;
+      try {
+        const sgETHContract = sgETH();
+        if (!sgETHContract) {
+          console.error("sgETH contract not available");
+          return "0";
+        }
+        let userTokenBalance = await sgETHContract.balanceOf(this.userConnectedWalletAddress);
+        this.userTokenBalance = BN(userTokenBalance.toString());
+        if (this.dev) console.log("userTokenBalance", userTokenBalance.toString());
+        return userTokenBalance.toString();
+      } catch (error) {
+        console.error("Error getting user token balance:", error);
+        this.userTokenBalance = BN(0);
+        return "0";
+      }
     },
 
     async getUserOutputTokenBalance() {
-      let userOutputTokenBalance = await wsgETH.methods
-        .balanceOf(this.userConnectedWalletAddress)
-        .call();
-      this.userOutputTokenBalance = BN(userOutputTokenBalance);
-      if (this.dev) {
-        console.log("userOutputTokenBalance", userOutputTokenBalance);
+      try {
+        const wsgETHContract = wsgETH();
+        if (!wsgETHContract) {
+          console.error("wsgETH contract not available");
+          return "0";
+        }
+        let userOutputTokenBalance = await wsgETHContract.balanceOf(this.userConnectedWalletAddress);
+        this.userOutputTokenBalance = BN(userOutputTokenBalance.toString());
+        if (this.dev) {
+          console.log("userOutputTokenBalance", userOutputTokenBalance.toString());
+        }
+        return userOutputTokenBalance.toString();
+      } catch (error) {
+        console.error("Error getting user output token balance:", error);
+        this.userOutputTokenBalance = BN(0);
+        return "0";
       }
-      return userOutputTokenBalance;
     },
 
     handleFillMaxAmount() {

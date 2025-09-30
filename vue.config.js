@@ -38,6 +38,48 @@ module.exports = {
                 '@ethereumjs/util': path.resolve(__dirname, 'node_modules/@ethereumjs/util/dist/index.browser.js'),
                 '@metamask/abi-utils': path.resolve(__dirname, 'node_modules/@metamask/abi-utils/lib/index.js')
             }
+        },
+        optimization: {
+            splitChunks: {
+                chunks: 'all',
+                cacheGroups: {
+                    // Separate Vue ecosystem
+                    vue: {
+                        test: /[\\/]node_modules[\\/](vue|vue-router|vuex|@vue)[\\/]/,
+                        name: 'vue-vendor',
+                        chunks: 'all',
+                        priority: 20
+                    },
+                    // Separate Web3 ecosystem
+                    web3: {
+                        test: /[\\/]node_modules[\\/](web3|ethers|@web3-onboard|@ethereumjs|@metamask)[\\/]/,
+                        name: 'web3-vendor',
+                        chunks: 'all',
+                        priority: 19
+                    },
+                    // Separate UI libraries
+                    ui: {
+                        test: /[\\/]node_modules[\\/](sweetalert2|vue-notification|vue-ellipse-progress|three|axios)[\\/]/,
+                        name: 'ui-vendor',
+                        chunks: 'all',
+                        priority: 18
+                    },
+                    // Separate utility libraries
+                    utils: {
+                        test: /[\\/]node_modules[\\/](bignumber\.js|rxjs|core-js|bnc-notify)[\\/]/,
+                        name: 'utils-vendor',
+                        chunks: 'all',
+                        priority: 17
+                    },
+                    // Default vendor chunk
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendor',
+                        chunks: 'all',
+                        priority: 10
+                    }
+                }
+            }
         }
     }
 }

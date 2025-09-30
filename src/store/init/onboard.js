@@ -1,4 +1,4 @@
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 import store from '../index'
 
 
@@ -13,7 +13,7 @@ import Onboard from '@web3-onboard/core'
 // const APP_URL = "https://www.sharedstake.org/";
 // const CONTACT_EMAIL = "chimera_defi@protonmail.com";
 // export const RPC_URL = `https://mainnet.infura.io/v3/${INFURA_KEY}`;
-export const RPC_URL = "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd"
+export const RPC_URL = process.env.VUE_APP_RPC_URL || "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd"
 // const APP_NAME = "SharedStake";
 const injected = injectedModule()
 // init({
@@ -121,37 +121,22 @@ const onboard = Onboard({
 
 window.onboard = onboard;
 export async function changeWallets() {
-  // await onboard.disconnectConnectedWallet();
   let selected = await onboard.connectWallet();
   localStorage.removeItem("selectedWallet");
 
-  // Returns false if user closes/cancels the connect popup
-  // const selected = await onboard.walletSelect();
-  // if (selected) {
-  //   // Can only call once user selected, otherwise will get error.
-  //   await onboard.walletCheck();
-  // }
-  // const wallet = onboard.alreadyConnectedWallets[0];
   const wallet = selected[0]
   if (wallet) {
-      console.log(`wallet switched to: ${wallet.label}`);
-      let W3 = (window.web3 = new Web3(wallet.provider));
-      store.commit("setWeb3", W3);
+      let provider = new ethers.BrowserProvider(wallet.provider);
+      window.ethersProvider = provider;
+      store.commit("setEthersProvider", provider);
       store.commit("setWallet", wallet.label);
-
       store.dispatch("setAddressOnboard", wallet.accounts[0].address)
-      // store.
       store.commit("setNetwork", wallet.chains[0])
       localStorage.setItem("selectedWallet", wallet.label);
-      // store.
-      store.commit("setAddress",  wallet.accounts[0].address)  
+      store.commit("setAddress", wallet.accounts[0].address)  
 
       const wallets = onboard.state.select('wallets')
       wallets.subscribe(() => changeWallets())
-      // const address = onboard.state.select('address')
-      // address.subscribe((account) => store.commit("setAddress", account))
-      // const network = onboard.state.select('address')
-      // network.subscribe((nw) => store.commit("setNetwork", nw))
   }
 }
 

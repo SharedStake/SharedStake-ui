@@ -40,7 +40,7 @@
         </span>
       </div>
       <div v-if="userAddress" class="headerPart poolButton">
-        <span v-if="available == 0">
+        <span v-if="available === 0">
           <div class="minitext">Status:</div>
           No balance
         </span>
@@ -70,7 +70,7 @@
         </span>
       </div>
       <div v-if="userAddress" class="headerPart poolButton">
-        <span v-if="sentAmount == 0">
+        <span v-if="sentAmount === 0">
           <div class="minitext">Status:</div>
           No funds migrated yet.
         </span>
@@ -140,7 +140,6 @@ export default {
   computed: {
     ...mapGetters({ userAddress: "userAddress" }),
     remaining_time() {
-      console.log(this.startTime, Date.now());
       return (
         (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /
         1000
@@ -155,97 +154,95 @@ export default {
       this.innerWidth = window.innerWidth;
     },
     async isEligible() {
-      let _approved = await SGT.methods
-        .allowance(this.userAddress, migrator.options.address)
-        .call();
-      this.approved = _approved;
-      let balance = await SGT.methods.balanceOf(this.userAddress).call();
-      if (balance == 0) {
+      const sgtContract = SGT();
+      const migratorContract = migrator();
+      if (!sgtContract || !migratorContract) {
+        console.error("Migration contracts not available");
+        return;
+      }
+      
+      const migratorAddress = await migratorContract.getAddress();
+      let _approved = await sgtContract.allowance(this.userAddress, migratorAddress);
+      this.approved = _approved.toString();
+      
+      let balance = await sgtContract.balanceOf(this.userAddress);
+      if (balance === 0n) {
         this.available = 0;
-      } else this.available = BN(balance).dividedBy(1e18).toFixed(3).toString();
-      this.balance = BN(balance);
+      } else this.available = BN(balance.toString()).dividedBy(1e18).toFixed(3).toString();
+      this.balance = BN(balance.toString());
 
-      let userInfo = await migrator.methods
-        .lockedSwaps(this.userAddress)
-        .call();
+      let userInfo = await migratorContract.lockedSwaps(this.userAddress);
       let amount = userInfo[0];
-      if (amount == 0) {
+      if (amount === 0n) {
         this.sentAmount = 0;
-      } else this.sentAmount = BN(amount).dividedBy(1e18).toFixed(3).toString();
+      } else this.sentAmount = BN(amount.toString()).dividedBy(1e18).toFixed(3).toString();
 
       let startTime = userInfo[1];
       this.startTime = startTime;
     },
     async Approve() {
       let that = this;
-      await SGT.methods
-        .approve(migrator.options.address, this.balance.toString())
-        .send({ from: this.userAddress, gas: 100000 })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-          that.approval = true;
-        })
-        .once("confirmation", () => {
-          that.approval = false;
-          console.log("approved");
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          that.approval = false;
-          console.log(err);
-        })
-        .catch((err) => {
-          that.approval = false;
-          console.log(err);
+      try {
+        const sgtContract = SGT();
+        const migratorContract = migrator();
+        if (!sgtContract || !migratorContract) {
+          console.error("Migration contracts not available");
+          return;
+        }
+        const migratorAddress = await migratorContract.getAddress();
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await sgtContract.connect(signer).approve(migratorAddress, this.balance.toString(), {
+          gasLimit: 100000
         });
+        notifyHandler(tx.hash);
+        that.approval = true;
+        await tx.wait();
+        that.approval = false;
+      } catch (err) {
+        that.approval = false;
+      }
       this.isEligible();
     },
     async Claim() {
       let that = this;
-      await migrator.methods
-        .migrate(this.balance.toString())
-        .send({ from: this.userAddress, gas: 200000 })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-          that.approval = true;
-        })
-        .once("confirmation", () => {
-          that.approval = false;
-          console.log("approved");
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          that.approval = false;
-          console.log(err);
-        })
-        .catch((err) => {
-          that.approval = false;
-          console.log(err);
+      try {
+        const migratorContract = migrator();
+        if (!migratorContract) {
+          console.error("Migrator contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await migratorContract.connect(signer).migrate(this.balance.toString(), {
+          gasLimit: 200000
         });
+        notifyHandler(tx.hash);
+        that.approval = true;
+        await tx.wait();
+        that.approval = false;
+      } catch (err) {
+        that.approval = false;
+      }
       this.isEligible();
     },
     async Release() {
       let that = this;
-      await migrator.methods
-        .releaseTokens()
-        .send({ from: this.userAddress, gas: 200000 })
-        .on("transactionHash", function (hash) {
-          notifyHandler(hash);
-          that.releasing = true;
-        })
-        .once("confirmation", () => {
-          that.approval = false;
-          console.log("approved");
-        })
-        .on("error", (err) => {
-          // if (error.message.includes("User denied transaction signature"))
-          that.releasing = false;
-          console.log(err);
-        })
-        .catch((err) => {
-          that.releasing = false;
-          console.log(err);
+      try {
+        const migratorContract = migrator();
+        if (!migratorContract) {
+          console.error("Migrator contract not available");
+          return;
+        }
+        const signer = await window.ethersProvider.getSigner();
+        const tx = await migratorContract.connect(signer).releaseTokens({
+          gasLimit: 200000
         });
+        notifyHandler(tx.hash);
+        that.releasing = true;
+        await tx.wait();
+        that.approval = false;
+      } catch (err) {
+        that.releasing = false;
+      }
       this.isEligible();
     },
   },
