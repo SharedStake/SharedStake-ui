@@ -35,7 +35,7 @@
           balance == 0
             ? 0
             : balance
-                .div(BN(10).pow(decimals))
+                .div(decimalsPower)
                 .toFixed(3)
                 .toString()
         }}
@@ -69,7 +69,7 @@
           totalStaked.eq(0)
             ? 0
             : totalStaked
-                .div(BN(10).pow(decimals))
+                .div(decimalsPower)
                 .toFixed(1)
                 .toString()
         }}
@@ -97,7 +97,7 @@
           staked.eq(0)
             ? 0
             : staked
-                .div(BN(10).pow(decimals))
+                .div(decimalsPower)
                 .toFixed(3)
                 .toString()
         }}
@@ -109,7 +109,7 @@
           earned.eq(0)
             ? 0
             : earned
-                .div(BN(10).pow(18))
+                .div(eighteenPower)
                 .toFixed(3)
                 .toString()
         }}
@@ -140,7 +140,7 @@
               @click="
                 () => {
                   DAmount = balance
-                    ? balance.div(BN(10).pow(decimals)).toString()
+                    ? balance.div(decimalsPower).toString()
                     : 0;
                 }
               "
@@ -189,7 +189,7 @@
               class="toMax"
               @click="
                 () => {
-                  WAmount = staked ? staked.div(BN(10).pow(decimals)).toString() : 0;
+                  WAmount = staked ? staked.div(decimalsPower).toString() : 0;
                 }
               "
               title="Get max token"
@@ -224,7 +224,7 @@
                 oldStaked.eq(0)
                   ? 0
                   : oldStaked
-                      .div(BN(10).pow(decimals))
+                      .div(decimalsPower)
                       .toFixed(1)
                       .toString()
               }}
@@ -233,7 +233,7 @@
                 oldEarned.eq(0)
                   ? 0
                   : oldEarned
-                      .div(BN(10).pow(18))
+                      .div(eighteenPower)
                       .toFixed(3)
                       .toString()
               }}
@@ -334,6 +334,12 @@ export default {
       const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
 
       return percentageYieldForPool * annualCoefficient;
+    },
+    decimalsPower: function() {
+      return BN(10).pow(this.decimals);
+    },
+    eighteenPower: function() {
+      return BN(10).pow(18);
     },
   },
   watch: {

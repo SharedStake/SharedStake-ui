@@ -109,9 +109,44 @@ totalRedeemed.div(10 ** 18)
 
 **After**:
 ```javascript
-userBal.div(BN(10).pow(18))
-veth2Bal.div(BN(10).pow(18))
-totalRedeemed.div(BN(10).pow(18))
+userBal.div(eighteenPower)
+veth2Bal.div(eighteenPower)
+totalRedeemed.div(eighteenPower)
+```
+
+### 7. Template Scope Fixes (CRITICAL)
+**Problem**: `BN` was not available in Vue template context, causing "t.BN is not a function" errors.
+
+**Solution**: Added computed properties to make BN operations available in templates:
+
+**geyser.vue & geyserV2.vue**:
+```javascript
+computed: {
+  decimalsPower: function() {
+    return BN(10).pow(this.decimals);
+  },
+  eighteenPower: function() {
+    return BN(10).pow(18);
+  },
+}
+```
+
+**WithdrawalsFAQ.vue**:
+```javascript
+computed: {
+  eighteenPower: function() {
+    return BN(10).pow(18);
+  },
+}
+```
+
+**Template Usage**:
+```javascript
+// ❌ WRONG - BN not available in template
+balance.div(BN(10).pow(decimals))
+
+// ✅ CORRECT - Using computed property
+balance.div(decimalsPower)
 ```
 
 ## ✅ Benefits
