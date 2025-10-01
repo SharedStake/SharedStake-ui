@@ -35,7 +35,7 @@
           balance == 0
             ? 0
             : balance
-                .div(10 ** decimals)
+                .div(decimalsPower)
                 .toFixed(3)
                 .toString()
         }}
@@ -69,7 +69,7 @@
           totalStaked.eq(0)
             ? 0
             : totalStaked
-                .div(10 ** decimals)
+                .div(decimalsPower)
                 .toFixed(1)
                 .toString()
         }}
@@ -97,7 +97,7 @@
           staked.eq(0)
             ? 0
             : staked
-                .div(10 ** decimals)
+                .div(decimalsPower)
                 .toFixed(3)
                 .toString()
         }}
@@ -109,7 +109,7 @@
           earned.eq(0)
             ? 0
             : earned
-                .div(10 ** 18)
+                .div(eighteenPower)
                 .toFixed(3)
                 .toString()
         }}
@@ -140,7 +140,7 @@
               @click="
                 () => {
                   DAmount = balance
-                    ? balance.div(10 ** decimals).toString()
+                    ? balance.div(decimalsPower).toString()
                     : 0;
                 }
               "
@@ -189,7 +189,7 @@
               class="toMax"
               @click="
                 () => {
-                  WAmount = staked ? staked.div(10 ** decimals).toString() : 0;
+                  WAmount = staked ? staked.div(decimalsPower).toString() : 0;
                 }
               "
               title="Get max token"
@@ -224,7 +224,7 @@
                 oldStaked.eq(0)
                   ? 0
                   : oldStaked
-                      .div(10 ** decimals)
+                      .div(decimalsPower)
                       .toFixed(1)
                       .toString()
               }}
@@ -233,7 +233,7 @@
                 oldEarned.eq(0)
                   ? 0
                   : oldEarned
-                      .div(10 ** 18)
+                      .div(eighteenPower)
                       .toFixed(3)
                       .toString()
               }}
@@ -323,17 +323,23 @@ export default {
     },
     apy: function () {
       const pooledTokenPerSgt = this.pool.tokenPerSgt;
-      const rewardsLeftForEmissionPeriod = Number(this.locked) * 1e18;
-          const tokensInPool = Number(this.totalStaked);
-          const daysLeftOfEmissionPeriod = Number(this.stakedSchedule);
+      const rewardsLeftForEmissionPeriod = this.locked.multipliedBy(BN(10).pow(18)).toNumber();
+      const tokensInPool = this.totalStaked.toNumber();
+      const daysLeftOfEmissionPeriod = this.stakedSchedule.toNumber();
 
-          const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
-          const percentageYieldForPool =
-            (rewardsLeftForEmissionPeriod / totalSgtAmountInPool) * 100;
+      const totalSgtAmountInPool = tokensInPool / pooledTokenPerSgt;
+      const percentageYieldForPool =
+        (rewardsLeftForEmissionPeriod / totalSgtAmountInPool) * 100;
 
-          const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
+      const annualCoefficient = 365 / daysLeftOfEmissionPeriod;
 
       return percentageYieldForPool * annualCoefficient;
+    },
+    decimalsPower: function() {
+      return BN(10).pow(this.decimals);
+    },
+    eighteenPower: function() {
+      return BN(10).pow(18);
     },
   },
   watch: {
@@ -345,7 +351,7 @@ export default {
       }
       if (newValue[newValue.length - 1] == 0) {
         this.Damount = newValue;
-        this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
+        this.bigDAmount = BN(this.Damount).multipliedBy(BN(10).pow(18));
         // this.amountCheck();
         return;
       }
@@ -358,7 +364,7 @@ export default {
         return;
       }
       if (isNaN(newValue)) {
-        this.Damount = this.bigDAmount.dividedBy(1e18).toString();
+        this.Damount = this.bigDAmount.dividedBy(BN(10).pow(18)).toString();
         return;
       }
       if (!newValue) {
@@ -366,8 +372,8 @@ export default {
       } else {
         this.Damount = newValue;
       }
-      this.bigDAmount = BN(this.Damount).multipliedBy(1e18);
-      this.Damount = this.bigDAmount.dividedBy(1e18).toString();
+      this.bigDAmount = BN(this.Damount).multipliedBy(BN(10).pow(18));
+      this.Damount = this.bigDAmount.dividedBy(BN(10).pow(18)).toString();
       // this.amountCheck();
     },
     WAmount(newValue, oldVal) {
@@ -378,7 +384,7 @@ export default {
       }
       if (newValue[newValue.length - 1] == 0) {
         this.WAmount = newValue;
-        this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
+        this.bigWAmount = BN(this.WAmount).multipliedBy(BN(10).pow(18));
         // this.amountCheck();
         return;
       }
@@ -391,7 +397,7 @@ export default {
         return;
       }
       if (isNaN(newValue)) {
-        this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+        this.WAmount = this.bigWAmount.dividedBy(BN(10).pow(18)).toString();
         return;
       }
       if (!newValue) {
@@ -399,8 +405,8 @@ export default {
       } else {
         this.WAmount = newValue;
       }
-      this.bigWAmount = BN(this.WAmount).multipliedBy(1e18);
-      this.WAmount = this.bigWAmount.dividedBy(1e18).toString();
+      this.bigWAmount = BN(this.WAmount).multipliedBy(BN(10).pow(18));
+      this.WAmount = this.bigWAmount.dividedBy(BN(10).pow(18)).toString();
     },
     userAddress(newVal) {
       if (newVal) this.mounted(newVal);
@@ -462,11 +468,11 @@ export default {
           let until = new Date(2021, 6, 27);
           until = until.getTime();
 
-          let remDays = BN((until - now) / 60 / 60 / 24 / 1000); //get remaining days
+          let remDays = BN(until - now).div(60).div(60).div(24).div(1000); //get remaining days
           this.stakedSchedule = remDays;
 
           let remRewards = await geyserContract.fundBalance();
-          this.locked = BN(BN(remRewards.toString()).dividedBy(1e18).toFixed(3));
+          this.locked = BN(BN(remRewards.toString()).dividedBy(BN(10).pow(18)).toFixed(3));
         } catch (err) {
           // Silently handle error
         }

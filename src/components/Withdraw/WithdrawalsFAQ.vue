@@ -33,8 +33,7 @@
         i.e. 1 vETH2 = 1.08 ETH.
         <p v-if="userBal > 0">
           OR
-          {{ userBal.div(10 ** 18).decimalPlaces(6).toString() }} vETH2 = {{ userBal.div(1 / 1.08).div(10 **
-            18).decimalPlaces(6).toString() }} ETH/sgETH
+          {{ userBal.div(eighteenPower).decimalPlaces(6).toString() }} vETH2 = {{ userBal.div(1 / 1.08).div(eighteenPower).decimalPlaces(6).toString() }} ETH/sgETH
         </p>
       </template>
     </QuestionAnswer>
@@ -45,16 +44,16 @@
       </template>
       <template #answer>
         There is {{
-          veth2Bal.div(10 ** 18)
+          veth2Bal.div(eighteenPower)
             .decimalPlaces(6)
             .toString() }} vETH2 deposited here. 
         Redeemable for {{
-          veth2Bal.div(1/1.08).div(10 ** 18)
+          veth2Bal.div(1/1.08).div(eighteenPower)
             .decimalPlaces(6)
             .toString()  }} tokens.
         <br />
         From which {{
-          totalRedeemed.div(10 ** 18)
+          totalRedeemed.div(eighteenPower)
             .decimalPlaces(6).toString()
         }} tokens have already been redeemed.
         <br />
@@ -64,7 +63,7 @@
             .minus(ethAvailableForWithdrawal)
           ).div(11)
             .multipliedBy(10)
-            .div(10 ** 18)
+            .div(eighteenPower)
             .decimalPlaces(6)
             .toString()
         }} vETH2 is queued. (if the number is negative that means there's excess in the buffer)
@@ -77,7 +76,7 @@
       </template>
       <template #answer>
         You can withdraw upto {{
-          ethAvailableForWithdrawal.div(10 ** 18)
+          ethAvailableForWithdrawal.div(eighteenPower)
             .decimalPlaces(6)
             .toString() }} ETH buffered in the contract. Right now! 
       </template>
@@ -110,6 +109,7 @@
 
 <script>
 import QuestionAnswer from "@/components/Withdraw/QuestionAnswer.vue";
+import BN from "bignumber.js";
 
 export default {
   name: 'WithdrawalsFAQ',
@@ -120,6 +120,11 @@ export default {
     'veth2Bal',
     'userBal'
   ],
+  computed: {
+    eighteenPower: function() {
+      return BN(10).pow(18);
+    },
+  },
 }
 </script>
 
