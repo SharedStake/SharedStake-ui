@@ -275,33 +275,22 @@ export default {
 
 <style scoped>
 .EarnWrapper {
+  @apply pt-24 pb-12;
   font-family: "Work Sans";
-  padding-top: 100px;
-  padding-bottom: 5vh;
 }
 .Earn {
+  @apply flex-grow flex flex-col justify-start items-center;
   scroll-behavior: smooth;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
 }
 span {
-  text-align: left;
-  font-size: 18px;
+  @apply text-left text-lg;
 }
 .logo {
-  color: rgb(250, 82, 160);
-  font-size: 22px;
+  @apply text-brand-primary text-xl;
 }
 
 .notification {
-  width: 90%;
-  margin-top: 50px;
-  padding: 0;
-  text-align: center;
+  @apply w-11/12 mt-12 p-0 text-center text-2xl;
   color: tomato;
-  font-size: 24px;
 }
 </style>

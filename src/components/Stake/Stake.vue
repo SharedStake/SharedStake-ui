@@ -647,19 +647,13 @@ export default {
   color: #fff;
 }
 .stakePage {
-  width: calc(100% - 20px);
-  padding: 10px;
-  height: calc(80% - 20px);
-  display: grid;
+  @apply w-[calc(100%-20px)] p-2.5 h-[calc(80%-20px)] grid gap-0 justify-center items-center;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0.2fr 1fr 0.5fr;
-  gap: 0px 0px;
   grid-template-areas:
     "."
     "."
     ".";
-  justify-content: center;
-  align-items: center;
 }
 .sPElement {
   align-self: center;

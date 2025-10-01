@@ -1,3 +1,154 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Font imports - consolidated */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,700&family=Ubuntu:wght@300;400;500;700&family=Work+Sans:wght@300&display=swap");
+
+@layer base {
+  body {
+    @apply m-0 p-0 antialiased;
+    scroll-behavior: smooth;
+    font-size: 30px;
+    font-family: "Inter", -apple-system, "Roboto", BlinkMacSystemFont, "Segoe UI",
+      Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol";
+    font-weight: 300;
+  }
+  
+  a {
+    @apply no-underline text-white;
+    font-family: "Roboto";
+  }
+}
+
+@layer components {
+  /* Button components */
+  .btn-gradient {
+    @apply px-6 py-2 text-lg text-white whitespace-nowrap rounded-full transition-all duration-500;
+    border: 3px double transparent;
+    background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
+      radial-gradient(
+        circle at left top,
+        rgb(250, 82, 160) 0%,
+        rgb(37, 167, 219) 100%
+      );
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-size: 100% 100%;
+  }
+  
+  .btn-gradient:hover {
+    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
+  }
+  
+  .btn-animated {
+    animation: animatedButton 3s ease-out backwards infinite;
+  }
+  
+  /* Notification styles */
+  .notification-base {
+    @apply m-2.5 p-2.5 text-sm text-white;
+    border-left-width: 5px;
+    border-left-style: solid;
+  }
+  
+  .notification-info {
+    @apply notification-base bg-blue-400;
+    border-left-color: #187fe7;
+  }
+  
+  .notification-success {
+    @apply notification-base bg-green-400;
+    border-left-color: #42a85f;
+  }
+  
+  .notification-warn {
+    @apply notification-base bg-yellow-400;
+    border-left-color: #f48a06;
+  }
+  
+  .notification-error {
+    @apply notification-base bg-red-500;
+    border-left-color: #b82e24;
+  }
+  
+  /* Layout utilities */
+  .flex-center-row {
+    @apply flex flex-row items-center justify-evenly;
+  }
+  
+  .flex-center-col {
+    @apply flex flex-col items-center justify-evenly;
+  }
+  
+  /* Logo effects */
+  .logo-glow {
+    @apply transition-all duration-300;
+  }
+  
+  .logo-glow:hover {
+    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
+  }
+  
+  /* Link styles */
+  .nav-link {
+    @apply text-white opacity-70 py-4 px-0 rounded-lg font-normal text-base cursor-pointer transition-opacity duration-300 w-fit;
+  }
+  
+  .nav-link:hover,
+  .nav-link.router-link-active {
+    @apply opacity-100;
+  }
+  
+  /* Footer styles */
+  .footer-link {
+    @apply m-0 pb-3.5;
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  @keyframes animatedButton {
+    from { background-position: 0px; }
+    to { background-position: 168.6px; }
+  }
+  
+  @keyframes SidebarUp {
+    from {
+      transform: translate3d(0, -100%, 0);
+      opacity: 0;
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes TextEnter {
+    from {
+      transform: translate3d(0, 2rem, 0);
+      opacity: 0;
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes Glow {
+    from {
+      filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(120%);
+    }
+    to {
+      filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
+    }
+  }
+}
+
+/* Responsive utilities */
+@media only screen and (max-width: 700px) {
+  .notification-base {
+    @apply text-xs;
+  }
+}

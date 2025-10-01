@@ -1253,85 +1253,60 @@ export default {
 }
 
 .Container {
-  position: relative;
-  min-height: 100vh;
-  color: #fff;
-  z-index: 1;
+  @apply relative min-h-screen text-white z-10;
 }
 
 .LogoContainer {
+  @apply grid justify-center items-center;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
   background-position: center;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  justify-content: center;
-  align-items: center;
 }
 
 .BadgeContainer {
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  z-index: 1;
+  @apply relative justify-center items-center text-white z-10;
 }
 
 .first {
-  padding-top: 10rem;
-  display: grid;
+  @apply pt-40 grid gap-0;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
-  gap: 0px 0px;
   grid-template-areas: ". .";
 }
 
 .Explanation {
-  padding: 0 75px 200px 0;
+  @apply pr-20 pb-52;
   animation: TextEnter 0.4s ease-out backwards;
 }
 
 .Exp,
 .Explanation,
 .Logo {
-  align-self: center;
-  justify-self: center;
+  @apply self-center justify-self-center;
 }
 
 .mainTitle {
+  @apply max-w-[900px] text-6xl font-medium leading-tight;
   overflow-wrap: normal;
-  max-width: 900px;
-  font-size: 64px;
-  font-weight: 500;
-  line-height: 1.05;
 }
 
 .exp {
-  font-size: 21px;
-  line-height: 31px;
-  font-weight: 300;
-  padding: 0px;
+  @apply text-xl leading-8 font-light p-0 z-10;
   color: rgba(255, 255, 255, 0.9);
-  /* text-align: justify; */
   text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
-  z-index: 1;
 }
 
 .social {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  @apply flex flex-row items-center justify-between mt-8;
   animation: TextEnter 0.8s ease-out backwards;
-  margin-top: 30px;
 }
 
 .socialLogo {
+  @apply cursor-pointer transition-all duration-500;
   filter: brightness(300%);
-  transition: filter 0.5s ease-out;
-  cursor: pointer;
 }
 
 .socialLogo:hover {
@@ -1339,16 +1314,7 @@ export default {
 }
 
 .LearnButton {
-  width: fit-content;
-  margin: 24px auto 0;
-  font-size: 21px;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #fff;
-  border-radius: 10px;
-  text-align: center;
-  transition: transform 0.5s ease-out;
-  cursor: pointer;
-  z-index: 3;
+  @apply w-fit mx-auto mt-6 text-xl px-6 py-2 border-2 border-white rounded-lg text-center cursor-pointer z-[3] transition-transform duration-500;
   grid-area: Button;
 }
 

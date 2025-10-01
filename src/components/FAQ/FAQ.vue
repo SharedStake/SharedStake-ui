@@ -80,33 +80,25 @@
 
 <style scoped>
 .container {
+  @apply w-3/5 mx-auto mb-5 pt-36 flex pb-6 flex-col;
   background-color: rgb(24, 24, 24);
-  width: 60%;
-  margin: auto;
-  margin-bottom: 20px;
-  padding-top: 140px;
-  display: flex;
-  padding-bottom: 24px;
-  flex-direction: column;
 }
 
 h1 {
-  margin: auto;
+  @apply mx-auto;
 }
 
 h2 {
-  font-size: 1.25rem;
-  font-weight: 500;
-  margin-top: 24px;
+  @apply text-xl font-medium mt-6;
 }
 
 div {
-  font-size: 16px;
+  @apply text-base;
 }
 
 @media only screen and (max-width: 900px) {
   .container {
-    width: 90%;
+    @apply w-11/12;
   }
 }
 </style>

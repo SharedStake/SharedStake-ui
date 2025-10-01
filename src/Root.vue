@@ -37,9 +37,9 @@
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
       >
         <router-link to="/">
-          <div class="flex_row LogoContainer">
-            <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
-            <div class="main">SharedStake</div>
+          <div class="flex-center-row LogoContainer">
+            <ImageVue :src="'logo-white.svg'" :size="'30px'" class="logo-glow" />
+            <div class="pl-2.5 font-normal text-2xl">SharedStake</div>
           </div>
         </router-link>
 
@@ -183,7 +183,7 @@
         </p>
         <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
-      <div class="flex_row LogoContainer">
+      <div class="flex-center-row LogoContainer">
         <div class="footerLinks">
           <ImageVue
             :src="'logo-white.svg'"
@@ -371,280 +371,110 @@ export default {
 
 <style scoped>
 .Root {
-  min-height: 100vh;
+  @apply min-h-screen;
   background: rgb(15, 16, 19);
 }
 .navbar,
 .footer {
-  z-index: 100;
+  @apply z-50;
 }
 .navbar {
+  @apply text-white transition-all duration-500;
   background: #0f1013;
-  color: rgb(255, 255, 255);
   transform: translate3d(0, 0, 0);
-  transition: 0.5s all ease-out;
 }
 .navbar.navbar--hidden {
-  box-shadow: none;
+  @apply shadow-none;
   transform: translate3d(0, -100%, 0);
 }
 
 .showers {
-  width: max-content;
-  min-width: 32px;
-  display: flex;
-  align-self: center;
-  flex-direction: column;
-
-  overflow: visible;
+  @apply w-max min-w-[32px] flex self-center flex-col overflow-visible;
 }
 .shower {
-  margin-bottom: 8px;
-  height: 2px;
-  transform-origin: center;
-  transition-duration: 250ms;
-  transition-property: transform;
-  transition-timing-function: linear;
+  @apply mb-2 h-0.5 transition-transform duration-300 origin-center;
 }
 .cross1 {
+  @apply relative left-px top-2.5;
   transform: rotate(45deg);
-  position: relative;
-  left: 1px;
-  top: 10px;
 }
 .cross2 {
   transform: rotate(-45deg);
 }
 .LogoContainer {
-  font-size: 24px;
-  align-items: center;
-  cursor: pointer;
-  /* grid-area: Logo; */
-  justify-content: center;
-}
-
-.Logo {
-  transition: all 0.25s ease 0s;
-}
-.FooterLogo,
-.Logo:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  /* Similar syntax to box-shadow */
+  @apply text-2xl items-center cursor-pointer justify-center;
 }
 .FooterLogo {
-  margin-bottom: 50px;
-}
-.main {
-  padding: 0 0 0 10px;
-  font-weight: 400;
+  @apply mb-12 logo-glow;
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
 }
 .footerGroup,
 .links {
-  box-sizing: border-box;
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  padding-left: 10px;
-  transition: right 0.25s ease 0s;
+  @apply box-border flex items-center justify-center pl-2.5 transition-all duration-300;
 }
 .sidebar {
-  position: fixed;
-  top: 127px;
-  bottom: 0;
-  overflow-y: auto;
-  width: 100%;
-  padding: 1.5rem;
-  padding-top: 0;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  -webkit-box-align: center;
-  align-items: flex-start;
-  -webkit-box-pack: center;
-  justify-content: center;
-  transition: right 0.25s ease 0s;
-  animation: SidebarUp 0.5s ease-out 0s forwards;
-  z-index: 99;
+  @apply fixed top-32 bottom-0 overflow-y-auto w-full px-6 pt-0 box-border flex flex-col items-start justify-center transition-all duration-300 z-50;
   background: rgb(15, 16, 19);
+  animation: SidebarUp 0.5s ease-out 0s forwards;
 }
 
-@keyframes SidebarUp {
-  from {
-    transform: translate3d(0, -100%, 0);
-    opacity: 0;
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
+/* Animation moved to main.css */
 .link {
-  text-decoration: none;
-  margin: 0px;
-  --tw-space-x-reverse: 0;
-  margin-right: calc(2.5rem * var(--tw-space-x-reverse));
-  margin-left: calc(2.5rem * (1 - var(--tw-space-x-reverse)));
-  color: rgb(255, 255, 255);
-  opacity: 0.67;
-  padding: 15px 0px;
-  border-radius: 0.5rem;
-  font-weight: 400;
-  width: fit-content;
-  font-size: 16px;
-  cursor: pointer;
-  transition: opacity 0.35s ease 0s;
+  @apply nav-link mx-10;
 }
 
 .sidebar .link {
-  padding: 8px 0;
-  font-size: 14px;
+  @apply py-2 text-sm mx-0;
 }
-
-.router-link-active,
-.link:hover {
-  opacity: 1;
-}
-.ConnectButton {
-  padding: 0.5rem 1.5rem;
-  border: 3px double transparent;
-  border-radius: 80px;
-  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(
-      circle at left top,
-      rgb(250, 82, 160) 0%,
-      rgb(37, 167, 219) 100%
-    );
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  background-size: 100% 100%;
-  transition: filter 0.5s ease-out;
-  white-space: nowrap;
-}
-.animatedButton {
-  animation: animatedButton 3s ease-out backwards infinite;
-}
-.ConnectButton:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
-    brightness(200%);
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
-}
-@keyframes animatedButton {
-  from {
-    background-position: 0px;
-  }
-
-  to {
-    background-position: 168.6px;
-  }
-}
+/* Button styles moved to main.css */
 .footer {
-  padding: 40px 30px 10px 30px;
+  @apply px-8 pt-10 pb-2.5 text-white min-h-[350px] items-center;
   background-color: rgb(24, 24, 24);
-  color: rgb(255, 255, 255);
-  min-height: 350px;
-  /* display: grid; */
-  /* grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.4fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Disclaimer Logo"
-    "Disclaimer Info"
-    "bottom bottom "; */
-  align-items: center;
 }
 
 .disclaimer {
-  grid-area: Disclaimer;
-  font-size: 14px;
-  padding: 0 0 50px 0;
-  text-align: center;
+  @apply text-sm pb-12 text-center leading-6 opacity-50 transition-opacity duration-300 hover:opacity-100;
   text-justify: inter-word;
-  line-height: 22px;
-  opacity: 0.5;
-  transition: opacity 0.35s ease 0s;
-}
-.disclaimer:hover {
-  opacity: 1;
 }
 .footerLinks {
-  grid-area: Info;
-  max-width: 1500px;
-  width: calc(100% - 60px);
-  margin: 0px auto;
-  display: flex;
-  flex-wrap: wrap;
-  -webkit-box-pack: justify;
-  justify-content: space-around;
-  padding: 0 0 50px 0;
+  @apply max-w-[1500px] w-[calc(100%-60px)] mx-auto flex flex-wrap justify-around pb-12;
 }
 .footerGroup {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 0 10px 10px 10px;
+  @apply flex-col items-start justify-start p-2.5 pb-2.5;
 }
 .footerGroupName {
+  @apply text-base font-bold mb-5 opacity-75;
   color: inherit;
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 1.25em;
-  opacity: 0.75;
 }
 .footerLink {
-  margin: 0;
-  padding: 0 0 14px 0;
+  @apply footer-link;
 }
 .bottom {
-  text-align: center;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  grid-area: bottom;
-  color: #afafaf;
+  @apply text-xs flex items-center justify-center text-gray-400;
 }
 .icebear {
-  padding: 0 10px;
+  @apply px-2.5;
 }
 .disabled-link {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
 }
 
 .coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
-  font-weight: normal;
+  @apply text-xs text-gray-500 mt-0.5 font-normal;
 }
 
 @media only screen and (max-width: 1100px) {
-  .footer {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 0.3fr 1fr 1fr 0.4fr;
-    grid-template-areas:
-      "Logo Logo"
-      "Info Info "
-      "Disclaimer Disclaimer"
-      "bottom bottom ";
-  }
   .navbar {
-    justify-content: space-between;
+    @apply justify-between;
   }
 }
 
 @media only screen and (max-width: 700px) {
   .maintenance-banner {
-    font-size: 14px;
-    padding: 8px 16px;
+    @apply text-sm px-4 py-2;
   }
   .maintenance-banner svg {
-    width: 20px;
-    height: 20px;
+    @apply w-5 h-5;
   }
 }
 </style>
