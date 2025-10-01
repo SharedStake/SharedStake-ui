@@ -1313,8 +1313,6 @@ export default {
   font-weight: 300;
   padding: 0px;
   color: rgba(255, 255, 255, 0.9);
-  /* text-align: justify; */
-  text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
   z-index: 1;
 }
@@ -1338,40 +1336,35 @@ export default {
   filter: brightness(500%);
 }
 
-.LearnButton {
+.LearnButton,
+.StakeButton {
   width: fit-content;
   margin: 24px auto 0;
   font-size: 21px;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #fff;
+  padding: 0.5rem 1.5rem;
   border-radius: 10px;
   text-align: center;
   transition: transform 0.5s ease-out;
   cursor: pointer;
   z-index: 3;
   grid-area: Button;
+}
+
+.LearnButton {
+  border: 2px solid #fff;
+}
+
+.StakeButton {
+  font-weight: 500;
+  color: black;
+  border: 2px solid #e6007a;
+  background-color: #e6007a;
+  width: 142px;
 }
 
 .LearnButton:hover,
 .StakeButton:hover {
   transform: scale(0.98);
-}
-
-.StakeButton {
-  font-size: 21px;
-  font-weight: 500;
-  color: black;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #e6007a;
-  background-color: #e6007a;
-  border-radius: 10px;
-  text-align: center;
-  width: 142px;
-  /* max-height: 25px; */
-  transition: transform 0.5s ease-out;
-  cursor: pointer;
-  z-index: 3;
-  grid-area: Button;
 }
 
 .background2 {
@@ -1419,9 +1412,7 @@ export default {
   position: relative;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.9);
-  -webkit-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.517);
-  -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
-  box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469);
+  box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.5);
 }
 
 .InfoHeader {
@@ -1456,15 +1447,12 @@ export default {
 .Exp {
   max-width: 200px;
   font-size: 16px;
-  padding: 0 10px 0 10px;
   line-height: 31px;
   font-weight: 300;
   padding: 0px;
   color: rgba(255, 255, 255, 0.9);
   z-index: 2;
   align-self: start;
-  /* text-align: justify; */
-  text-justify: inter-word;
 }
 
 .EthExp,
@@ -1544,7 +1532,6 @@ export default {
 
 .StatsHeader {
   color: rgb(255, 255, 255);
-  -webkit-box-align: center;
   padding: 0 0 50px 0;
   align-items: center;
   font-size: 50px;
@@ -1570,7 +1557,6 @@ export default {
 .StatsContent {
   display: flex;
   width: calc(100% - 60px);
-  -webkit-box-pack: justify;
   justify-content: space-between;
   max-width: 1500px;
   margin: 0px auto;
@@ -1700,13 +1686,10 @@ export default {
   width: 100%;
   padding-bottom: 0.5rem;
   overflow-x: auto;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
 .mainCon {
-  width: -webkit-max-content;
-  width: -moz-max-content;
   width: max-content;
 }
 
@@ -1731,9 +1714,6 @@ export default {
 }
 
 .mainCon .list {
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
   display: flex;
   position: relative;
   left: 0;
@@ -1743,12 +1723,7 @@ export default {
 
 .mainCon .list .item {
   width: 260px;
-  /**HERE */
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
-  -webkit-flex: none;
-  -moz-box-flex: 0;
-  -ms-flex: none;
   flex: none;
 }
 
@@ -1771,14 +1746,6 @@ export default {
   padding-left: 5rem;
 }
 
-/* body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
-  height: 5px;
-  background: #555;
-}
-body .roadMap .mainBox .main::-webkit-scrollbar {
-  background: #888;
-  height: 4px;
-} */
 .centertext {
   text-align: center;
 }
@@ -1795,39 +1762,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
 }
 
-@keyframes LogoEnter {
-  from {
-    transform: translate3d(-2rem, 0, 0);
-    opacity: 0;
-  }
-
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
-
-@keyframes Glow {
-  from {
-    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(120%);
-  }
-
-  to {
-    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
-  }
-}
-
-@keyframes TextEnter {
-  from {
-    transform: translate3d(0, 2rem, 0);
-    opacity: 0;
-  }
-
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
+/* Animations now in utilities.css */
 
 @media only screen and (max-width: 900px) {
   .first {

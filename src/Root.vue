@@ -384,6 +384,7 @@ export default {
   transform: translate3d(0, 0, 0);
   transition: 0.5s all ease-out;
 }
+
 .navbar.navbar--hidden {
   box-shadow: none;
   transform: translate3d(0, -100%, 0);
@@ -395,46 +396,47 @@ export default {
   display: flex;
   align-self: center;
   flex-direction: column;
-
   overflow: visible;
 }
+
 .shower {
   margin-bottom: 8px;
   height: 2px;
   transform-origin: center;
-  transition-duration: 250ms;
-  transition-property: transform;
-  transition-timing-function: linear;
+  transition: transform 250ms linear;
 }
+
 .cross1 {
   transform: rotate(45deg);
   position: relative;
   left: 1px;
   top: 10px;
 }
+
 .cross2 {
   transform: rotate(-45deg);
 }
+
 .LogoContainer {
   font-size: 24px;
   align-items: center;
   cursor: pointer;
-  /* grid-area: Logo; */
   justify-content: center;
 }
 
 .Logo {
   transition: all 0.25s ease 0s;
 }
+
 .FooterLogo,
 .Logo:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
   filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  /* Similar syntax to box-shadow */
 }
+
 .FooterLogo {
   margin-bottom: 50px;
 }
+
 .main {
   padding: 0 0 0 10px;
   font-weight: 400;
@@ -443,9 +445,7 @@ export default {
 .links {
   box-sizing: border-box;
   display: flex;
-  -webkit-box-align: center;
   align-items: center;
-  -webkit-box-pack: center;
   justify-content: center;
   padding-left: 10px;
   transition: right 0.25s ease 0s;
@@ -456,14 +456,11 @@ export default {
   bottom: 0;
   overflow-y: auto;
   width: 100%;
-  padding: 1.5rem;
-  padding-top: 0;
+  padding: 1.5rem 1.5rem 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  -webkit-box-align: center;
   align-items: flex-start;
-  -webkit-box-pack: center;
   justify-content: center;
   transition: right 0.25s ease 0s;
   animation: SidebarUp 0.5s ease-out 0s forwards;
@@ -471,16 +468,6 @@ export default {
   background: rgb(15, 16, 19);
 }
 
-@keyframes SidebarUp {
-  from {
-    transform: translate3d(0, -100%, 0);
-    opacity: 0;
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
 .link {
   text-decoration: none;
   margin: 0px;
@@ -507,76 +494,33 @@ export default {
 .link:hover {
   opacity: 1;
 }
-.ConnectButton {
-  padding: 0.5rem 1.5rem;
-  border: 3px double transparent;
-  border-radius: 80px;
-  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(
-      circle at left top,
-      rgb(250, 82, 160) 0%,
-      rgb(37, 167, 219) 100%
-    );
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  background-size: 100% 100%;
-  transition: filter 0.5s ease-out;
-  white-space: nowrap;
-}
-.animatedButton {
-  animation: animatedButton 3s ease-out backwards infinite;
-}
-.ConnectButton:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
-    brightness(200%);
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
-}
-@keyframes animatedButton {
-  from {
-    background-position: 0px;
-  }
-
-  to {
-    background-position: 168.6px;
-  }
-}
+/* Button styles now in utilities.css */
 .footer {
   padding: 40px 30px 10px 30px;
   background-color: rgb(24, 24, 24);
   color: rgb(255, 255, 255);
   min-height: 350px;
-  /* display: grid; */
-  /* grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.4fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Disclaimer Logo"
-    "Disclaimer Info"
-    "bottom bottom "; */
   align-items: center;
 }
 
 .disclaimer {
-  grid-area: Disclaimer;
   font-size: 14px;
   padding: 0 0 50px 0;
   text-align: center;
-  text-justify: inter-word;
   line-height: 22px;
   opacity: 0.5;
   transition: opacity 0.35s ease 0s;
 }
+
 .disclaimer:hover {
   opacity: 1;
 }
 .footerLinks {
-  grid-area: Info;
   max-width: 1500px;
   width: calc(100% - 60px);
   margin: 0px auto;
   display: flex;
   flex-wrap: wrap;
-  -webkit-box-pack: justify;
   justify-content: space-around;
   padding: 0 0 50px 0;
 }
@@ -584,15 +528,16 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: 0 10px 10px 10px;
+  padding: 0 10px 10px;
 }
+
 .footerGroupName {
-  color: inherit;
   font-weight: 700;
   font-size: 16px;
   margin-bottom: 1.25em;
   opacity: 0.75;
 }
+
 .footerLink {
   margin: 0;
   padding: 0 0 14px 0;
@@ -603,35 +548,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  grid-area: bottom;
   color: #afafaf;
 }
+
 .icebear {
   padding: 0 10px;
 }
-.disabled-link {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
 
-.coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
-  font-weight: normal;
-}
+/* disabled-link and coming-soon styles now in utilities.css */
 
 @media only screen and (max-width: 1100px) {
-  .footer {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 0.3fr 1fr 1fr 0.4fr;
-    grid-template-areas:
-      "Logo Logo"
-      "Info Info "
-      "Disclaimer Disclaimer"
-      "bottom bottom ";
-  }
   .navbar {
     justify-content: space-between;
   }

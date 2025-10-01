@@ -579,18 +579,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.disabled-link {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-  color: #999;
-}
-
-.coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
-  font-weight: normal;
-}
-</style>
+<!-- Styles now in utilities.css -->

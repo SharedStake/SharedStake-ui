@@ -1,0 +1,141 @@
+/* Shared utility classes and animations */
+
+/* Animations */
+@keyframes animatedButton {
+  from { background-position: 0px; }
+  to { background-position: 168.6px; }
+}
+
+@keyframes SidebarUp {
+  from {
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes LogoEnter {
+  from {
+    transform: translate3d(-2rem, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes TextEnter {
+  from {
+    transform: translate3d(0, 2rem, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes Glow {
+  from {
+    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(120%);
+  }
+  to {
+    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
+  }
+}
+
+/* Common utility classes */
+.flex_row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.flex_column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+/* Button styles */
+.btn-gradient {
+  padding: 0.5rem 1.5rem;
+  border: 3px double transparent;
+  border-radius: 80px;
+  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
+    radial-gradient(circle at left top, rgb(250, 82, 160) 0%, rgb(37, 167, 219) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-size: 100% 100%;
+  transition: filter 0.5s ease-out;
+  white-space: nowrap;
+}
+
+.btn-gradient:hover {
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
+}
+
+.btn-animated {
+  animation: animatedButton 3s ease-out backwards infinite;
+}
+
+/* Disabled and coming soon states */
+.disabled-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.coming-soon {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+  font-weight: normal;
+}
+
+.disabled-dropdown-item {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.disabled-dropdown-item.has-coming-soon {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Logo effects */
+.logo-hover {
+  transition: all 0.25s ease 0s;
+}
+
+.logo-hover:hover,
+.logo-glow {
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
+}
+
+/* Link styles */
+.nav-link {
+  text-decoration: none;
+  margin: 0px;
+  color: rgb(255, 255, 255);
+  opacity: 0.67;
+  padding: 15px 0px;
+  border-radius: 0.5rem;
+  font-weight: 400;
+  width: fit-content;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.35s ease 0s;
+}
+
+.nav-link:hover,
+.router-link-active {
+  opacity: 1;
+}
