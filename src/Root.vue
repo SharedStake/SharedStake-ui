@@ -37,7 +37,7 @@
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
       >
         <router-link to="/">
-          <div class="flex_row LogoContainer">
+          <div class="LogoContainer flex items-center justify-evenly">
             <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
             <div class="main">SharedStake</div>
           </div>
@@ -183,7 +183,7 @@
         </p>
         <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
-      <div class="flex_row LogoContainer">
+      <div class="LogoContainer flex items-center justify-evenly">
         <div class="footerLinks">
           <ImageVue
             :src="'logo-white.svg'"
@@ -417,10 +417,8 @@ export default {
 }
 .LogoContainer {
   font-size: 24px;
-  align-items: center;
   cursor: pointer;
   /* grid-area: Logo; */
-  justify-content: center;
 }
 
 .Logo {

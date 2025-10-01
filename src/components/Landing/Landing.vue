@@ -150,7 +150,7 @@
     <div class="downSign glow" v-show="scrolled >= 0">
       <ImageVue :src="'down.svg'" :size="'30px'" />
     </div>
-    <div class="flex_column Stats" v-show="scrolled >= 350">
+    <div class="Stats flex flex-col items-center justify-evenly" v-show="scrolled >= 350">
       <div class="StatsHeader">Capital efficient staking</div>
       <div class="StatsExp">Financial optimization at its finest.</div>
       <div class="StatsExp">
@@ -312,11 +312,11 @@
       </div>
     </div>
     <div
-      class="Container flex_column"
+      class="Container flex flex-col items-center justify-evenly"
       v-show="scrolled >= 2500"
       :style="{ paddingBottom: '5rem' }"
     >
-      <div class="flex_row vEth2PanelHeader">
+      <div class="vEth2PanelHeader flex flex-row items-center justify-evenly">
         <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
         <div class="StatsHeader">vEth2</div>
       </div>
@@ -398,12 +398,12 @@
       <Partners />
     </div>
     <div
-      class="BadgeContainer flex_column"
+      class="BadgeContainer flex flex-col items-center justify-evenly"
       v-show="scrolled >= 4400"
       :style="{ paddingBottom: '5rem' }"
     >
       <div class="StatsHeader">Audit</div>
-      <div class="flex_column">
+      <div class="flex flex-col items-center justify-evenly">
         <a
           href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
           target="_blank"

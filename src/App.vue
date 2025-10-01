@@ -29,18 +29,6 @@ body {
     "Segoe UI Symbol";
   font-weight: 300;
 }
-.flex_row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-}
-.flex_column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-}
 .bn-onboard-custom.bn-onboard-modal {
   z-index: 990;
 }
