@@ -2,11 +2,11 @@
   <button
     @click="$emit('click')"
     :disabled="disabled"
-    class="px-6 py-3 text-xl font-semibold transition-all border-2 border-white rounded-full md:font-medium md:px-8 whitespace-nowrap"
+    class="shared-button"
     :class="{
-      'md:text-3xl': big,
-      'cursor-not-allowed text-gray-400 border-gray-400': disabled,
-      'bg-brand-primary hover:bg-transparent hover:text-brand-primary hover:border-brand-primary': !disabled
+      'shared-button--big': big,
+      'shared-button--disabled': disabled,
+      'shared-button--primary': !disabled
     }"
     type="button"
   >
@@ -28,3 +28,39 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.shared-button {
+  @apply px-6 py-3 font-semibold border-2 border-white rounded-full whitespace-nowrap;
+  font-size: var(--font-size-xl);
+  transition: all var(--transition-normal);
+}
+
+.shared-button--big {
+  @apply md:px-8;
+  font-size: var(--font-size-3xl);
+}
+
+.shared-button--disabled {
+  @apply cursor-not-allowed text-gray-400 border-gray-400;
+  opacity: 0.5;
+}
+
+.shared-button--primary {
+  background-color: var(--color-brand-primary);
+  color: var(--color-white);
+}
+
+.shared-button--primary:hover:not(:disabled) {
+  background-color: transparent;
+  color: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+  transform: scale(0.98);
+}
+
+@media (min-width: 768px) {
+  .shared-button {
+    font-weight: 500;
+  }
+}
+</style>

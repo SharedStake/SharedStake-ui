@@ -372,18 +372,21 @@ export default {
 <style scoped>
 .Root {
   min-height: 100vh;
-  background: rgb(15, 16, 19);
+  background: var(--color-dark-bg);
 }
+
 .navbar,
 .footer {
   z-index: 100;
 }
+
 .navbar {
-  background: #0f1013;
-  color: rgb(255, 255, 255);
+  background: var(--color-dark-bg);
+  color: var(--color-white);
   transform: translate3d(0, 0, 0);
-  transition: 0.5s all ease-out;
+  transition: var(--transition-slow) all ease-out;
 }
+
 .navbar.navbar--hidden {
   box-shadow: none;
   transform: translate3d(0, -100%, 0);
@@ -416,27 +419,26 @@ export default {
   transform: rotate(-45deg);
 }
 .LogoContainer {
-  font-size: 24px;
-  align-items: center;
+  font-size: var(--font-size-2xl);
+  @apply flex items-center justify-center;
   cursor: pointer;
-  /* grid-area: Logo; */
-  justify-content: center;
 }
 
 .Logo {
-  transition: all 0.25s ease 0s;
+  transition: all var(--transition-normal);
 }
+
 .FooterLogo,
 .Logo:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  /* Similar syntax to box-shadow */
+  filter: drop-shadow(var(--shadow-glow));
 }
+
 .FooterLogo {
-  margin-bottom: 50px;
+  margin-bottom: var(--spacing-3xl);
 }
+
 .main {
-  padding: 0 0 0 10px;
+  padding: 0 0 0 var(--spacing-sm);
   font-weight: 400;
 }
 .footerGroup,
@@ -507,53 +509,13 @@ export default {
 .link:hover {
   opacity: 1;
 }
-.ConnectButton {
-  padding: 0.5rem 1.5rem;
-  border: 3px double transparent;
-  border-radius: 80px;
-  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(
-      circle at left top,
-      rgb(250, 82, 160) 0%,
-      rgb(37, 167, 219) 100%
-    );
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  background-size: 100% 100%;
-  transition: filter 0.5s ease-out;
-  white-space: nowrap;
-}
-.animatedButton {
-  animation: animatedButton 3s ease-out backwards infinite;
-}
-.ConnectButton:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
-    brightness(200%);
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
-}
-@keyframes animatedButton {
-  from {
-    background-position: 0px;
-  }
-
-  to {
-    background-position: 168.6px;
-  }
-}
+/* ConnectButton styles are now handled in the component itself */
 .footer {
-  padding: 40px 30px 10px 30px;
-  background-color: rgb(24, 24, 24);
-  color: rgb(255, 255, 255);
+  padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-sm) var(--spacing-2xl);
+  background-color: var(--color-dark-surface);
+  color: var(--color-white);
   min-height: 350px;
-  /* display: grid; */
-  /* grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.4fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Disclaimer Logo"
-    "Disclaimer Info"
-    "bottom bottom "; */
-  align-items: center;
+  @apply flex items-center;
 }
 
 .disclaimer {
@@ -622,26 +584,27 @@ export default {
   font-weight: normal;
 }
 
-@media only screen and (max-width: 1100px) {
+@media (max-width: 1100px) {
   .footer {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 0.3fr 1fr 1fr 0.4fr;
+    @apply grid grid-cols-2 grid-rows-4;
     grid-template-areas:
       "Logo Logo"
-      "Info Info "
+      "Info Info"
       "Disclaimer Disclaimer"
-      "bottom bottom ";
+      "bottom bottom";
   }
+  
   .navbar {
-    justify-content: space-between;
+    @apply justify-between;
   }
 }
 
-@media only screen and (max-width: 700px) {
+@media (max-width: 700px) {
   .maintenance-banner {
-    font-size: 14px;
-    padding: 8px 16px;
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
   }
+  
   .maintenance-banner svg {
     width: 20px;
     height: 20px;

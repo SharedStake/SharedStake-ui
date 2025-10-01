@@ -111,14 +111,13 @@ export default {
 }
 
 .disabled-dropdown-item.has-coming-soon {
-  flex-direction: column;
-  align-items: flex-start;
+  @apply flex flex-col items-start;
 }
 
 .coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  margin-top: var(--spacing-xs);
   font-weight: normal;
 }
 </style>
