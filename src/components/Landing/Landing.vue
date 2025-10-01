@@ -1269,12 +1269,14 @@ export default {
 }
 
 .mainTitle {
-  @apply max-w-[900px] text-6xl font-medium;
+  @apply text-6xl font-medium;
+  max-width: 900px;
   line-height: 1.05;
 }
 
 .exp {
-  @apply text-xl font-light p-0 text-white/90 animate-fade-in;
+  @apply text-xl font-light p-0 animate-fade-in;
+  color: rgba(255, 255, 255, 0.9);
   line-height: 31px;
   z-index: 1;
   text-justify: inter-word;
@@ -1335,7 +1337,8 @@ export default {
 }
 
 .Information {
-  @apply text-xl max-w-[1500px] relative overflow-hidden;
+  @apply text-xl relative overflow-hidden;
+  max-width: 1500px;
   margin-top: 2.5vh;
   padding: 5vh;
   width: 70%;
@@ -1443,7 +1446,8 @@ export default {
 }
 
 .Stats {
-  @apply min-h-auto max-w-[1500px] mx-auto relative overflow-hidden text-white justify-between;
+  @apply min-h-auto mx-auto relative overflow-hidden text-white justify-between;
+  max-width: 1500px;
   width: calc(100% - 60px);
   padding: 120px 0;
 }
@@ -1455,12 +1459,15 @@ export default {
 }
 
 .StatsExp {
-  @apply max-w-[800px] text-center mx-auto mb-8 text-2xl font-light p-0 text-white/75 animate-fade-in;
+  @apply text-center mx-auto mb-8 text-2xl font-light p-0 animate-fade-in;
+  max-width: 800px;
+  color: rgba(255, 255, 255, 0.75);
   line-height: 31px;
 }
 
 .StatsContent {
-  @apply flex justify-between max-w-[1500px] mx-auto animate-fade-in;
+  @apply flex justify-between mx-auto animate-fade-in;
+  max-width: 1500px;
   width: calc(100% - 60px);
   padding: 120px 0;
 }
@@ -1506,7 +1513,8 @@ export default {
 }
 
 .third {
-  @apply grid grid-cols-2 grid-rows-2 gap-8 max-w-[1500px] justify-center items-center;
+  @apply grid grid-cols-2 grid-rows-2 gap-8 justify-center items-center;
+  max-width: 1500px;
   width: 90%;
   height: 90%;
   padding-left: 5%;
@@ -1628,7 +1636,9 @@ export default {
   }
 
   .Logo {
-    @apply p-0 max-w-[145px] min-w-[100px];
+    @apply p-0;
+    max-width: 145px;
+    min-width: 100px;
   }
 
   .LogoContainer {
@@ -1640,7 +1650,9 @@ export default {
   }
 
   .Explanation {
-    @apply px-0 py-0 px-[23px] pb-[100px] animate-fade-in;
+    @apply px-0 py-0 animate-fade-in;
+    padding-left: 23px;
+    padding-bottom: 100px;
   }
 
   .StatsContent {
@@ -1648,10 +1660,11 @@ export default {
   }
 
   .StatsHeader {
-    @apply text-[42px];
+    font-size: 42px;
   }
   .InfoHeader {
-    @apply p-4 pl-0 text-[25px];
+    @apply p-4 pl-0;
+    font-size: 25px;
   }
 
   .third {
@@ -1664,7 +1677,9 @@ export default {
 
 @media only screen and (max-width: 770px) {
   .second {
-    @apply grid-cols-1 grid-rows-[2fr_2fr_1fr_0.2fr_0.2fr_1fr_0.2fr_0.2fr_1fr_0.2fr_0.2fr_1fr_0.2fr] pb-[15vh];
+    @apply grid-cols-1;
+    grid-template-rows: 2fr 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
+    padding-bottom: 15vh;
     grid-template-areas:
       "Information"
       "Information"
@@ -1682,17 +1697,20 @@ export default {
   }
 
   .certikLogo {
-    @apply max-w-[80%] text-center;
+    @apply text-center;
+    max-width: 80%;
   }
 
   .mainTitle {
-    @apply text-[46px] leading-[1.1] mb-8;
+    @apply mb-8;
+    font-size: 46px;
+    line-height: 1.1;
   }
 }
 
 @media only screen and (max-width: 375px) {
   .mainTitle {
-    @apply text-[36px];
+    font-size: 36px;
   }
 }
 </style>
