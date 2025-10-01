@@ -1255,7 +1255,7 @@ export default {
 .Container {
   position: relative;
   min-height: 100vh;
-  color: #fff;
+  color: var(--color-white);
   z-index: 1;
 }
 
@@ -1263,18 +1263,13 @@ export default {
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
   background-position: center;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  justify-content: center;
-  align-items: center;
+  @apply grid grid-cols-1 grid-rows-1 justify-center items-center;
 }
 
 .BadgeContainer {
   position: relative;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
+  @apply flex justify-center items-center;
+  color: var(--color-white);
   z-index: 1;
 }
 
@@ -1308,29 +1303,25 @@ export default {
 }
 
 .exp {
-  font-size: 21px;
-  line-height: 31px;
+  font-size: var(--font-size-xl);
+  line-height: 1.48;
   font-weight: 300;
-  padding: 0px;
+  padding: 0;
   color: rgba(255, 255, 255, 0.9);
-  /* text-align: justify; */
   text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
   z-index: 1;
 }
 
 .social {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  @apply flex flex-row items-center justify-between;
   animation: TextEnter 0.8s ease-out backwards;
-  margin-top: 30px;
+  margin-top: var(--spacing-2xl);
 }
 
 .socialLogo {
   filter: brightness(300%);
-  transition: filter 0.5s ease-out;
+  transition: filter var(--transition-slow);
   cursor: pointer;
 }
 
@@ -1340,13 +1331,13 @@ export default {
 
 .LearnButton {
   width: fit-content;
-  margin: 24px auto 0;
-  font-size: 21px;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #fff;
-  border-radius: 10px;
+  margin: var(--spacing-xl) auto 0;
+  font-size: var(--font-size-xl);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 2px solid var(--color-white);
+  border-radius: var(--radius-lg);
   text-align: center;
-  transition: transform 0.5s ease-out;
+  transition: transform var(--transition-slow);
   cursor: pointer;
   z-index: 3;
   grid-area: Button;
@@ -1358,17 +1349,16 @@ export default {
 }
 
 .StakeButton {
-  font-size: 21px;
+  font-size: var(--font-size-xl);
   font-weight: 500;
-  color: black;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #e6007a;
-  background-color: #e6007a;
-  border-radius: 10px;
+  color: var(--color-black);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 2px solid var(--color-brand-primary);
+  background-color: var(--color-brand-primary);
+  border-radius: var(--radius-lg);
   text-align: center;
   width: 142px;
-  /* max-height: 25px; */
-  transition: transform 0.5s ease-out;
+  transition: transform var(--transition-slow);
   cursor: pointer;
   z-index: 3;
   grid-area: Button;
