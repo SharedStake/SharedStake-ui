@@ -1,7 +1,7 @@
 <template>
   <div class="Landing">
     <div class="relative min-h-screen text-white z-[1] pt-40 grid grid-cols-1 md-large:grid-cols-2 gap-0" v-show="scrolled >= 0">
-      <div class="bg-[url('bg-1.png')] bg-no-repeat bg-center grid grid-cols-1 grid-rows-1 justify-center items-center">
+      <div class="bg-no-repeat bg-center grid grid-cols-1 grid-rows-1 justify-center items-center" style="background-image: url('bg-1.png');">
         <ImageVue
           class="self-center justify-self-center"
           :src="'logo-red.svg'"
@@ -139,10 +139,10 @@
     <div class="downSign glow" v-show="scrolled >= 0">
       <ImageVue :src="'down.svg'" :size="'30px'" />
     </div>
-    <div class="flex flex-col items-center justify-between w-[calc(100%-60px)] min-h-auto max-w-[1500px] mx-auto py-[120px] relative overflow-hidden text-white justify-between" v-show="scrolled >= 350">
-      <div class="text-white items-center pb-12 text-5xl leading-[1.16em] my-8 font-light animate-fade-in text-center">Capital efficient staking</div>
-      <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl leading-[31px] font-light p-0 text-white/75 animate-fade-in">Financial optimization at its finest.</div>
-      <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl leading-[31px] font-light p-0 text-white/75 animate-fade-in">
+    <div class="flex flex-col items-center justify-between min-h-auto max-w-[1500px] mx-auto relative overflow-hidden text-white justify-between" v-show="scrolled >= 350" style="width: calc(100% - 60px); padding: 120px 0;">
+      <div class="text-white items-center pb-12 my-8 font-light animate-fade-in text-center" style="font-size: 3rem; line-height: 1.16em;">Capital efficient staking</div>
+      <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl font-light p-0 text-white/75 animate-fade-in" style="line-height: 31px;">Financial optimization at its finest.</div>
+      <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl font-light p-0 text-white/75 animate-fade-in" style="line-height: 31px;">
         Better rewards, improved user experience, and more DeFi compatibility
         than any other Staking-as-a-Service model on the market.
       </div>
@@ -1238,15 +1238,18 @@ export default {
 }
 
 .Container {
-  @apply relative min-h-screen text-white z-[1];
+  @apply relative min-h-screen text-white;
+  z-index: 1;
 }
 
 .LogoContainer {
-  @apply bg-[url('bg-1.png')] bg-no-repeat bg-center grid grid-cols-1 grid-rows-1 justify-center items-center;
+  @apply bg-no-repeat bg-center grid grid-cols-1 grid-rows-1 justify-center items-center;
+  background-image: url('bg-1.png');
 }
 
 .BadgeContainer {
-  @apply relative justify-center items-center text-white z-[1];
+  @apply relative justify-center items-center text-white;
+  z-index: 1;
 }
 
 .first {
@@ -1254,7 +1257,9 @@ export default {
 }
 
 .Explanation {
-  @apply px-0 py-0 pr-[75px] pb-[200px] animate-fade-in;
+  @apply px-0 py-0 animate-fade-in;
+  padding-right: 75px;
+  padding-bottom: 200px;
 }
 
 .Exp,
@@ -1264,11 +1269,14 @@ export default {
 }
 
 .mainTitle {
-  @apply max-w-[900px] text-6xl font-medium leading-[1.05];
+  @apply max-w-[900px] text-6xl font-medium;
+  line-height: 1.05;
 }
 
 .exp {
-  @apply text-xl leading-[31px] font-light p-0 text-white/90 animate-fade-in z-[1];
+  @apply text-xl font-light p-0 text-white/90 animate-fade-in;
+  line-height: 31px;
+  z-index: 1;
   text-justify: inter-word;
 }
 
@@ -1277,28 +1285,33 @@ export default {
 }
 
 .socialLogo {
-  @apply brightness-[300%] transition-all duration-500 ease-out cursor-pointer;
+  @apply transition-all duration-500 ease-out cursor-pointer;
+  filter: brightness(300%);
 }
 
 .socialLogo:hover {
-  @apply brightness-[500%];
+  filter: brightness(500%);
 }
 
 .LearnButton {
-  @apply w-fit mx-auto mt-6 text-xl px-6 py-2 border-2 border-white rounded-lg text-center transition-transform duration-500 ease-out cursor-pointer z-[3];
+  @apply w-fit mx-auto mt-6 text-xl px-6 py-2 border-2 border-white rounded-lg text-center transition-transform duration-500 ease-out cursor-pointer;
+  z-index: 3;
 }
 
 .LearnButton:hover,
 .StakeButton:hover {
-  @apply scale-[0.98];
+  transform: scale(0.98);
 }
 
 .StakeButton {
-  @apply text-xl font-medium text-black px-6 py-2 border-2 border-brand-primary bg-brand-primary rounded-lg text-center w-[142px] transition-transform duration-500 ease-out cursor-pointer z-[3];
+  @apply text-xl font-medium text-black px-6 py-2 border-2 border-brand-primary bg-brand-primary rounded-lg text-center transition-transform duration-500 ease-out cursor-pointer;
+  width: 142px;
+  z-index: 3;
 }
 
 .background2 {
-  @apply bg-[url('bg-2.png')] absolute z-0 w-full h-full top-0 bg-cover bg-no-repeat bg-center;
+  @apply absolute z-0 w-full h-full top-0 bg-cover bg-no-repeat bg-center;
+  background-image: url('bg-2.png');
   mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 20%,
@@ -1307,7 +1320,14 @@ export default {
 }
 
 .second {
-  @apply w-[90%] h-[90%] mx-auto pt-[10%] px-[5%] grid grid-cols-[1fr_0.2fr_1fr_0.2fr_1fr_0.2fr_1fr] grid-rows-[0.6fr_0.4fr_1fr] gap-0 justify-center items-center;
+  @apply mx-auto grid gap-0 justify-center items-center;
+  width: 90%;
+  height: 90%;
+  padding-top: 10%;
+  padding-left: 5%;
+  padding-right: 5%;
+  grid-template-columns: 1fr 0.2fr 1fr 0.2fr 1fr 0.2fr 1fr;
+  grid-template-rows: 0.6fr 0.4fr 1fr;
   grid-template-areas:
     "Eth next1 vEth2 next2 reward next3 harvest"
     "EthExp . vEth2Exp . rewardExp . harvestExp"
@@ -1315,7 +1335,12 @@ export default {
 }
 
 .Information {
-  @apply mt-[2.5vh] p-[5vh] w-[70%] text-xl max-w-[1500px] bg-dark-card/85 relative overflow-hidden text-white/90;
+  @apply text-xl max-w-[1500px] relative overflow-hidden;
+  margin-top: 2.5vh;
+  padding: 5vh;
+  width: 70%;
+  background-color: rgba(20, 20, 20, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   grid-area: Information;
   -webkit-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.517);
   -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
@@ -1323,7 +1348,10 @@ export default {
 }
 
 .InfoHeader {
-  @apply text-[34px] font-light leading-[42px] mb-8 text-white/95 self-center;
+  @apply font-light mb-8 self-center;
+  font-size: 34px;
+  line-height: 42px;
+  color: rgba(255, 255, 255, 0.95);
   grid-area: Header;
 }
 
@@ -1343,7 +1371,11 @@ export default {
 }
 
 .Exp {
-  @apply max-w-[200px] text-base px-2.5 py-0 leading-[31px] font-light text-white/90 z-[2] self-start;
+  @apply text-base px-2.5 py-0 font-light self-start;
+  max-width: 200px;
+  line-height: 31px;
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 2;
   text-justify: inter-word;
 }
 
@@ -1360,7 +1392,8 @@ export default {
 
 .vEth2Exp,
 .vEth2 {
-  @apply opacity-0 brightness-[200%];
+  @apply opacity-0;
+  filter: brightness(200%);
   grid-area: vEth2;
   animation: LogoEnter 0.5s ease-out 0.6s forwards;
 }
@@ -1410,28 +1443,37 @@ export default {
 }
 
 .Stats {
-  @apply w-[calc(100%-60px)] min-h-auto max-w-[1500px] mx-auto py-[120px] relative overflow-hidden text-white justify-between;
+  @apply min-h-auto max-w-[1500px] mx-auto relative overflow-hidden text-white justify-between;
+  width: calc(100% - 60px);
+  padding: 120px 0;
 }
 
 .StatsHeader {
-  @apply text-white items-center pb-12 text-5xl leading-[1.16em] my-8 font-light animate-fade-in text-center;
+  @apply text-white items-center pb-12 my-8 font-light animate-fade-in text-center;
+  font-size: 3rem;
+  line-height: 1.16em;
 }
 
 .StatsExp {
-  @apply max-w-[800px] text-center mx-auto mb-8 text-2xl leading-[31px] font-light p-0 text-white/75 animate-fade-in;
+  @apply max-w-[800px] text-center mx-auto mb-8 text-2xl font-light p-0 text-white/75 animate-fade-in;
+  line-height: 31px;
 }
 
 .StatsContent {
-  @apply flex w-[calc(100%-60px)] justify-between max-w-[1500px] mx-auto py-[120px] animate-fade-in;
+  @apply flex justify-between max-w-[1500px] mx-auto animate-fade-in;
+  width: calc(100% - 60px);
+  padding: 120px 0;
 }
 
 .Stat {
-  @apply flex h-full flex-col items-center p-6 gap-2 rounded-[2rem] text-center;
+  @apply flex h-full flex-col items-center p-6 gap-2 text-center;
+  border-radius: 2rem;
   flex-basis: 1/3;
 }
 
 .Num {
-  @apply text-6xl leading-[1.125] font-semibold;
+  @apply text-6xl font-semibold;
+  line-height: 1.125;
 }
 .Num:after {
   content: "";
@@ -1439,7 +1481,8 @@ export default {
 }
 
 .NumExp {
-  @apply font-light text-xl leading-[1.25];
+  @apply font-light text-xl;
+  line-height: 1.25;
 }
 
 .NumDetail {
@@ -1447,7 +1490,8 @@ export default {
 }
 
 .background3 {
-  @apply bg-[url('bg-3.png')] absolute w-full h-full z-0 bg-cover bg-no-repeat bg-center;
+  @apply absolute w-full h-full z-0 bg-cover bg-no-repeat bg-center;
+  background-image: url('bg-3.png');
   mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 30%,
@@ -1456,18 +1500,31 @@ export default {
 }
 
 .vEth2PanelHeader {
-  @apply pt-[5vw] z-[5] animate-glow;
+  @apply animate-glow;
+  padding-top: 5vw;
+  z-index: 5;
 }
 
 .third {
-  @apply w-[90%] h-[90%] px-[5%] pb-[1%] z-[1] grid grid-cols-2 grid-rows-2 gap-8 max-w-[1500px] justify-center items-center;
+  @apply grid grid-cols-2 grid-rows-2 gap-8 max-w-[1500px] justify-center items-center;
+  width: 90%;
+  height: 90%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 1%;
+  z-index: 1;
   grid-template-areas:
     ". ."
     ". .";
 }
 
 .Bubble {
-  @apply min-h-[77%] text-xl bg-dark-card relative overflow-hidden text-white/90 self-stretch justify-self-stretch p-[45px] grid grid-cols-[1fr_0.3fr] grid-rows-[0.4fr_1fr] gap-0;
+  @apply text-xl bg-dark-card relative overflow-hidden self-stretch justify-self-stretch grid gap-0;
+  min-height: 77%;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 45px;
+  grid-template-columns: 1fr 0.3fr;
+  grid-template-rows: 0.4fr 1fr;
   grid-template-areas:
     "Header Icon"
     "Info Info ";
@@ -1482,7 +1539,8 @@ export default {
 }
 
 .mainBox {
-  @apply pb-[1.13rem] w-4/5;
+  @apply w-4/5;
+  padding-bottom: 1.13rem;
 }
 
 .titleBox {
@@ -1498,7 +1556,10 @@ export default {
 }
 
 .curve {
-  @apply w-full bg-[url('curve.png')] bg-[length:100%_auto] bg-no-repeat bg-center h-[90px] my-2.5 relative left-0 top-0 overflow-hidden;
+  @apply w-full bg-no-repeat bg-center my-2.5 relative left-0 top-0 overflow-hidden;
+  background-image: url('curve.png');
+  background-size: 100% auto;
+  height: 90px;
 }
 
 .mainCon .curve canvas {
@@ -1510,15 +1571,19 @@ export default {
 }
 
 .mainCon .list .item {
-  @apply w-[260px] box-content flex-none;
+  @apply box-content flex-none;
+  width: 260px;
 }
 
 .mainCon .list .item .date {
-  @apply text-[17px] text-brand-primary leading-[1.43em] pb-1;
+  @apply text-brand-primary pb-1;
+  font-size: 17px;
+  line-height: 1.43em;
 }
 
 .mainCon .list .item .text {
-  @apply text-xs text-white leading-[1.47em] w-3/5 pb-5;
+  @apply text-xs text-white w-3/5 pb-5;
+  line-height: 1.47em;
 }
 
 .mainCon .list.next {
@@ -1530,7 +1595,7 @@ export default {
 }
 
 .glow {
-  @apply brightness-[300%];
+  filter: brightness(300%);
 }
 
 .reverse {
@@ -1538,7 +1603,7 @@ export default {
 }
 
 .DropShadow {
-  @apply drop-shadow-[0px_0px_4px_rgba(255,255,255,1)] brightness-[500%];
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 1)) brightness(500%);
 }
 
 @keyframes LogoEnter {
@@ -1555,7 +1620,10 @@ export default {
 
 @media only screen and (max-width: 900px) {
   .first {
-    @apply pt-[125px] grid gap-0 bg-[url('bg-1.png')] bg-no-repeat bg-center grid-cols-1 grid-rows-[0.1fr_2fr] justify-center items-center;
+    @apply grid gap-0 bg-no-repeat bg-center grid-cols-1 justify-center items-center;
+    padding-top: 125px;
+    background-image: url('bg-1.png');
+    grid-template-rows: 0.1fr 2fr;
     grid-template-areas: ".";
   }
 

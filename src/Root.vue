@@ -365,7 +365,8 @@ export default {
 }
 
 .navbar {
-  @apply z-[100] bg-dark-bg text-white transform transition-all duration-500 ease-out;
+  @apply bg-dark-bg text-white transform transition-all duration-500 ease-out;
+  z-index: 100;
 }
 
 .navbar.navbar--hidden {
@@ -373,11 +374,15 @@ export default {
 }
 
 .ConnectButton {
-  @apply px-6 py-2 border-[3px] border-double border-transparent rounded-[80px] bg-gradient-to-r from-[#0d0e21] to-[#0d0e21] bg-gradient-to-r from-brand-accent to-brand-secondary bg-origin-border bg-clip-padding bg-[length:100%_100%] transition-all duration-500 ease-out whitespace-nowrap;
+  @apply px-6 py-2 border-double border-transparent bg-gradient-to-r from-brand-accent to-brand-secondary bg-origin-border bg-clip-padding transition-all duration-500 ease-out whitespace-nowrap;
+  border-width: 3px;
+  border-radius: 80px;
+  background-image: linear-gradient(#0d0e21, #0d0e21), radial-gradient(circle at left top, #fa52a0 0%, #25a7db 100%);
+  background-size: 100% 100%;
 }
 
 .ConnectButton:hover {
-  @apply drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)] brightness-[120%];
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
 }
 
 .animatedButton {

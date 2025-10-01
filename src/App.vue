@@ -24,7 +24,8 @@ export default {
 
 @layer base {
   body {
-    @apply scroll-smooth m-0 p-0 text-3xl antialiased font-inter font-light;
+    @apply m-0 p-0 text-3xl antialiased font-inter font-light;
+    scroll-behavior: smooth;
   }
   
   a {
@@ -42,7 +43,7 @@ export default {
   }
   
   .bn-onboard-custom.bn-onboard-modal {
-    @apply z-[990];
+    z-index: 990;
   }
   
   .my-notification {

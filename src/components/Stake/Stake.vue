@@ -607,20 +607,32 @@ export default {
 
 <style scoped>
 .stake {
-  @apply pt-[120px] pb-20 bg-[url('bg-1.png')] bg-no-repeat bg-center min-h-[800px];
+  @apply pb-20 bg-no-repeat bg-center;
+  padding-top: 120px;
+  min-height: 800px;
+  background-image: url('bg-1.png');
 }
 
 .staker {
-  @apply antialiased max-w-[375px] w-full bg-dark-footer h-[90%] max-h-[716px] overflow-visible shadow-[0_0_50px_rgba(0,0,0,0.1)] rounded-sm relative select-none min-h-[634px];
+  @apply antialiased w-full bg-dark-footer overflow-visible rounded-sm relative select-none;
+  max-width: 375px;
+  height: 90%;
+  max-height: 716px;
+  min-height: 634px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
 }
 .navbar {
-  @apply flex border border-gray-600 box-border rounded-[100px];
+  @apply flex border border-gray-600 box-border;
+  border-radius: 100px;
 }
 #gas {
   @apply px-1.5 text-base flex items-center justify-center text-white;
 }
 .stakePage {
-  @apply w-[calc(100%-20px)] p-2.5 h-[calc(80%-20px)] grid grid-cols-1 grid-rows-[1fr_0.2fr_1fr_0.5fr] gap-0 justify-center items-center;
+  @apply p-2.5 grid grid-cols-1 gap-0 justify-center items-center;
+  width: calc(100% - 20px);
+  height: calc(80% - 20px);
+  grid-template-rows: 1fr 0.2fr 1fr 0.5fr;
   grid-template-areas:
     "."
     "."
@@ -630,26 +642,36 @@ export default {
   @apply self-center justify-self-center text-white;
 }
 .input {
-  @apply rounded w-full h-[180px] max-w-[362px] overflow-hidden flex items-center justify-center bg-dark-bg border-0 font-medium;
+  @apply rounded w-full overflow-hidden flex items-center justify-center bg-dark-bg border-0 font-medium;
+  max-width: 362px;
+  height: 180px;
 }
 .inputBody {
   @apply relative h-full p-0 w-full flex flex-col justify-around items-center;
 }
 .StakeButton {
-  @apply w-full flex justify-center items-center border border-gray-600 box-border bg-dark-bg text-white px-5 text-base rounded-[100px] leading-6 shadow-[0_2px_0_rgba(0,0,0,0.02)] transition-all duration-300;
+  @apply w-full flex justify-center items-center border border-gray-600 box-border bg-dark-bg text-white px-5 text-base leading-6 transition-all duration-300;
+  border-radius: 100px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
 }
 .switch_active {
-  @apply border-2 border-brand-secondary rounded-[100px] text-white cursor-pointer font-bold;
+  @apply border-2 border-brand-secondary text-white cursor-pointer font-bold;
+  border-radius: 100px;
 }
 .switch_active:hover,
 .switch:hover {
-  @apply scale-[0.98];
+  transform: scale(0.98);
 }
 .balance {
-  @apply mt-2 text-xs leading-5 text-center tracking-[0.3px] flex justify-center items-center underline z-10 cursor-pointer font-bold;
+  @apply mt-2 text-xs leading-5 text-center flex justify-center items-center underline z-10 cursor-pointer font-bold;
+  letter-spacing: 0.3px;
 }
 .token-amount-input {
-  @apply box-border z-10 m-0 p-0 relative inline-block w-[70%] px-3 py-1 text-white bg-transparent outline-0 text-[34px] leading-10 text-right h-10 pb-0 rounded border-0;
+  @apply box-border z-10 m-0 p-0 relative inline-block px-3 py-1 text-white bg-transparent outline-0 text-right pb-0 rounded border-0;
+  width: 70%;
+  font-size: 34px;
+  line-height: 2.5rem;
+  height: 2.5rem;
   font-variant: tabular-nums;
   list-style: none;
   font-feature-settings: "tnum";
@@ -661,7 +683,13 @@ export default {
 }
 .background3,
 .background2 {
-  @apply bg-[url('Eth.png')] absolute z-0 w-[200%] h-[200%] -top-1/2 -left-1/2 bg-contain bg-no-repeat bg-center opacity-[0.05] transition-all duration-300;
+  @apply absolute z-0 bg-contain bg-no-repeat bg-center transition-all duration-300;
+  background-image: url('Eth.png');
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  opacity: 0.05;
   mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 20%,
@@ -669,10 +697,12 @@ export default {
   );
 }
 .background3 {
-  @apply bg-[url('vEth2.png')];
+  background-image: url('vEth2.png');
 }
 .notification {
-  @apply w-[90%] px-[5%] pb-[5%] text-center text-red-500 text-base;
+  @apply text-center text-red-500 text-base;
+  width: 90%;
+  padding: 0 5% 5% 5%;
 }
 .underline {
   @apply underline;

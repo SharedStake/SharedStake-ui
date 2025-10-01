@@ -1,7 +1,8 @@
 <template>
   <button
     type="button"
-    class="text-lg text-white px-6 py-2 border-[3px] border-double border-transparent rounded-[80px] bg-gradient-to-r from-[#0d0e21] to-[#0d0e21] bg-gradient-to-r from-brand-accent to-brand-secondary bg-origin-border bg-clip-padding bg-[length:100%_100%] transition-all duration-500 ease-out whitespace-nowrap hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)] hover:brightness-[120%]"
+    class="text-lg text-white px-6 py-2 border-double border-transparent bg-gradient-to-r from-brand-accent to-brand-secondary bg-origin-border bg-clip-padding transition-all duration-500 ease-out whitespace-nowrap"
+    style="border-width: 3px; border-radius: 80px; background-image: linear-gradient(#0d0e21, #0d0e21), radial-gradient(circle at left top, #fa52a0 0%, #25a7db 100%); background-size: 100% 100%;"
     :class="{ 'animate-button-shift': !userAddress }"
     @click="handleConnect"
   >
@@ -35,5 +36,7 @@ export default {
 </script>
 
 <style scoped>
-/* All styles are now handled by Tailwind classes in the template */
+button:hover {
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
+}
 </style>
