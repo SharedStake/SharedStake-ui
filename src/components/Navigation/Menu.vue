@@ -105,20 +105,14 @@ export default {
 
 <style scoped>
 .disabled-dropdown-item {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
 }
 
 .disabled-dropdown-item.has-coming-soon {
-  flex-direction: column;
-  align-items: flex-start;
+  @apply flex flex-col items-start;
 }
 
 .coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
-  font-weight: normal;
+  @apply text-xs text-gray-400 mt-0.5 font-normal;
 }
 </style>

@@ -1,16 +1,16 @@
 <template>
   <div class="Landing">
-    <div class="Container first" v-show="scrolled >= 0">
-      <div class="LogoContainer">
+    <div class="relative min-h-screen text-white z-[1] pt-40 grid grid-cols-1 md-large:grid-cols-2 gap-0" v-show="scrolled >= 0">
+      <div class="bg-no-repeat bg-center grid grid-cols-1 grid-rows-1 justify-center items-center" style="background-image: url('bg-1.png');">
         <ImageVue
-          class="align-self-center justify-self-center"
+          class="self-center justify-self-center"
           :src="'logo-red.svg'"
           :size="windowWidth > 900 ? '180px' : '20vw'"
         />
       </div>
       <div class="flex flex-col justify-center h-full p-4">
         <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
-          <h1 class="relative mb-6 mainTitle">
+          <h1 class="relative mb-6 max-w-[900px] text-6xl font-medium leading-[1.05]">
             <span
               title="Established in 2020"
               class="absolute p-1 px-2 text-xs font-semibold text-gray-800 transform -translate-x-1/2 bg-gray-300 rounded-sm -bottom-6 md:bottom-auto md:-top-6 md:left-0 left-1/2 md:translate-x-0"
@@ -19,7 +19,7 @@
             </span>
             ETHEREUM LIQUID STAKING DERIVATIVE! <br />
           </h1>
-          <div class="exp">
+          <div class="text-xl leading-[31px] font-light p-0 text-white/90 animate-fade-in z-[1]" style="text-justify: inter-word;">
             SharedStake is a decentralized Ethereum 2 staking solution that
             allows users to stake any amount of Ether and earn additional yield
             on top of their ETH2 rewards.
@@ -60,7 +60,7 @@
             <ImageVue
               :src="'socialmediaicons/Discord.svg'"
               size="24px"
-              class="socialLogo"
+              class="brightness-[300%] transition-all duration-500 ease-out cursor-pointer hover:brightness-[500%]"
             />
           </a>
 
@@ -68,21 +68,10 @@
             <ImageVue
               :src="'socialmediaicons/TG.svg'"
               size="24px"
-              class="socialLogo"
+              class="brightness-[300%] transition-all duration-500 ease-out cursor-pointer hover:brightness-[500%]"
             />
             <div class="text-xs mt-1 text-center">Coming Soon</div>
           </div>
-          <!-- <a
-            href="https://www.reddit.com/r/SharedStake/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Reddit.svg'"
-              size="24px"
-              class="socialLogo"
-            /> -->
-          <!-- </a> -->
           <a
             href="https://github.com/SharedStake"
             target="_blank"
@@ -91,7 +80,7 @@
             <ImageVue
               :src="'socialmediaicons/Git.svg'"
               size="24px"
-              class="socialLogo"
+              class="brightness-[300%] transition-all duration-500 ease-out cursor-pointer hover:brightness-[500%]"
             />
           </a>
           <a
@@ -102,7 +91,7 @@
             <ImageVue
               :src="'socialmediaicons/Medium.svg'"
               size="24px"
-              class="socialLogo"
+              class="brightness-[300%] transition-all duration-500 ease-out cursor-pointer hover:brightness-[500%]"
             />
           </a>
           <a
@@ -113,7 +102,7 @@
             <ImageVue
               :src="'socialmediaicons/Twitter.svg'"
               size="24px"
-              class="socialLogo"
+              class="brightness-[300%] transition-all duration-500 ease-out cursor-pointer hover:brightness-[500%]"
             />
           </a>
         </div>
@@ -150,10 +139,10 @@
     <div class="downSign glow" v-show="scrolled >= 0">
       <ImageVue :src="'down.svg'" :size="'30px'" />
     </div>
-    <div class="flex_column Stats" v-show="scrolled >= 350">
-      <div class="StatsHeader">Capital efficient staking</div>
-      <div class="StatsExp">Financial optimization at its finest.</div>
-      <div class="StatsExp">
+    <div class="flex flex-col items-center justify-between min-h-auto max-w-[1500px] mx-auto relative overflow-hidden text-white justify-between" v-show="scrolled >= 350" style="width: calc(100% - 60px); padding: 120px 0;">
+      <div class="text-white items-center pb-12 my-8 font-light animate-fade-in text-center" style="font-size: 3rem; line-height: 1.16em;">Capital efficient staking</div>
+      <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl font-light p-0 text-white/75 animate-fade-in" style="line-height: 31px;">Financial optimization at its finest.</div>
+      <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl font-light p-0 text-white/75 animate-fade-in" style="line-height: 31px;">
         Better rewards, improved user experience, and more DeFi compatibility
         than any other Staking-as-a-Service model on the market.
       </div>
@@ -1242,96 +1231,64 @@ export default {
 </script>
 
 <style scoped>
-/*this is ok until 900px */
+/* Custom styles that can't be easily replaced with Tailwind utilities */
 
 .downSign {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  bottom: 10px;
-  position: sticky;
+  @apply flex justify-center items-center bottom-2.5 sticky;
 }
 
 .Container {
-  position: relative;
-  min-height: 100vh;
-  color: #fff;
+  @apply relative min-h-screen text-white;
   z-index: 1;
 }
 
 .LogoContainer {
-  background-image: url(bg-1.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  justify-content: center;
-  align-items: center;
+  @apply bg-no-repeat bg-center grid grid-cols-1 grid-rows-1 justify-center items-center;
+  background-image: url('bg-1.png');
 }
 
 .BadgeContainer {
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
+  @apply relative justify-center items-center text-white;
   z-index: 1;
 }
 
 .first {
-  padding-top: 10rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas: ". .";
+  @apply pt-40 grid grid-cols-1 md-large:grid-cols-2 gap-0;
 }
 
 .Explanation {
-  padding: 0 75px 200px 0;
-  animation: TextEnter 0.4s ease-out backwards;
+  @apply px-0 py-0 animate-fade-in;
+  padding-right: 75px;
+  padding-bottom: 200px;
 }
 
 .Exp,
 .Explanation,
 .Logo {
-  align-self: center;
-  justify-self: center;
+  @apply self-center justify-self-center;
 }
 
 .mainTitle {
-  overflow-wrap: normal;
+  @apply text-6xl font-medium;
   max-width: 900px;
-  font-size: 64px;
-  font-weight: 500;
   line-height: 1.05;
 }
 
 .exp {
-  font-size: 21px;
-  line-height: 31px;
-  font-weight: 300;
-  padding: 0px;
+  @apply text-xl font-light p-0 animate-fade-in;
   color: rgba(255, 255, 255, 0.9);
-  /* text-align: justify; */
-  text-justify: inter-word;
-  animation: TextEnter 0.6s ease-out backwards 0.2s;
+  line-height: 31px;
   z-index: 1;
+  text-justify: inter-word;
 }
 
 .social {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  animation: TextEnter 0.8s ease-out backwards;
-  margin-top: 30px;
+  @apply flex flex-row items-center justify-between animate-fade-in mt-8;
 }
 
 .socialLogo {
+  @apply transition-all duration-500 ease-out cursor-pointer;
   filter: brightness(300%);
-  transition: filter 0.5s ease-out;
-  cursor: pointer;
 }
 
 .socialLogo:hover {
@@ -1339,17 +1296,8 @@ export default {
 }
 
 .LearnButton {
-  width: fit-content;
-  margin: 24px auto 0;
-  font-size: 21px;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #fff;
-  border-radius: 10px;
-  text-align: center;
-  transition: transform 0.5s ease-out;
-  cursor: pointer;
+  @apply w-fit mx-auto mt-6 text-xl px-6 py-2 border-2 border-white rounded-lg text-center transition-transform duration-500 ease-out cursor-pointer;
   z-index: 3;
-  grid-area: Button;
 }
 
 .LearnButton:hover,
@@ -1358,32 +1306,14 @@ export default {
 }
 
 .StakeButton {
-  font-size: 21px;
-  font-weight: 500;
-  color: black;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #e6007a;
-  background-color: #e6007a;
-  border-radius: 10px;
-  text-align: center;
+  @apply text-xl font-medium text-black px-6 py-2 border-2 border-brand-primary bg-brand-primary rounded-lg text-center transition-transform duration-500 ease-out cursor-pointer;
   width: 142px;
-  /* max-height: 25px; */
-  transition: transform 0.5s ease-out;
-  cursor: pointer;
   z-index: 3;
-  grid-area: Button;
 }
 
 .background2 {
-  background-image: url(bg-2.png);
-  position: absolute;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+  @apply absolute z-0 w-full h-full top-0 bg-cover bg-no-repeat bg-center;
+  background-image: url('bg-2.png');
   mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 20%,
@@ -1392,85 +1322,70 @@ export default {
 }
 
 .second {
+  @apply mx-auto grid gap-0 justify-center items-center;
   width: 90%;
   height: 90%;
-  margin: auto;
-  padding: 10% 5% 0 5%;
-  display: grid;
+  padding-top: 10%;
+  padding-left: 5%;
+  padding-right: 5%;
   grid-template-columns: 1fr 0.2fr 1fr 0.2fr 1fr 0.2fr 1fr;
   grid-template-rows: 0.6fr 0.4fr 1fr;
-  gap: 0px 0px;
   grid-template-areas:
     "Eth next1 vEth2 next2 reward next3 harvest"
     "EthExp . vEth2Exp . rewardExp . harvestExp"
     "Information Information Information Information Information Information Information";
-  justify-content: center;
-  align-items: center;
 }
 
 .Information {
+  @apply text-xl relative overflow-hidden;
+  max-width: 1500px;
   margin-top: 2.5vh;
   padding: 5vh;
   width: 70%;
-  grid-area: Information;
-  font-size: 1.2rem;
-  max-width: 1500px;
-  background-color: rgba(17, 26, 25, 0.85);
-  position: relative;
-  overflow: hidden;
+  background-color: rgba(20, 20, 20, 0.85);
   color: rgba(255, 255, 255, 0.9);
+  grid-area: Information;
   -webkit-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.517);
   -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
   box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469);
 }
 
 .InfoHeader {
+  @apply font-light mb-8 self-center;
   font-size: 34px;
-  font-weight: 300;
   line-height: 42px;
-  margin-bottom: 30px;
   color: rgba(255, 255, 255, 0.95);
   grid-area: Header;
-  align-self: center;
 }
 
 .Info {
-  margin-bottom: 10px;
-  font-size: 16px;
+  @apply mb-2.5 text-base;
   grid-area: Info;
 }
 
 .ICON {
+  @apply self-center justify-self-end;
   grid-area: Icon;
-  align-self: center;
-  justify-self: end;
 }
 
 .Information,
 .X {
-  justify-self: center;
-  align-self: center;
-  z-index: 10;
+  @apply justify-self-center self-center z-10;
 }
 
 .Exp {
+  @apply text-base px-2.5 py-0 font-light self-start;
   max-width: 200px;
-  font-size: 16px;
-  padding: 0 10px 0 10px;
   line-height: 31px;
-  font-weight: 300;
-  padding: 0px;
   color: rgba(255, 255, 255, 0.9);
   z-index: 2;
-  align-self: start;
-  /* text-align: justify; */
   text-justify: inter-word;
 }
 
 .EthExp,
 .Eth {
+  @apply opacity-0;
   grid-area: Eth;
-  opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.4s forwards;
 }
 
@@ -1480,10 +1395,10 @@ export default {
 
 .vEth2Exp,
 .vEth2 {
-  grid-area: vEth2;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 0.6s forwards;
+  @apply opacity-0;
   filter: brightness(200%);
+  grid-area: vEth2;
+  animation: LogoEnter 0.5s ease-out 0.6s forwards;
 }
 
 .vEth2Exp {
@@ -1492,8 +1407,8 @@ export default {
 
 .rewardExp,
 .reward {
+  @apply opacity-0;
   grid-area: reward;
-  opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.8s forwards;
 }
 
@@ -1503,8 +1418,8 @@ export default {
 
 .harvestExp,
 .harvest {
+  @apply opacity-0;
   grid-area: harvest;
-  opacity: 0;
   animation: LogoEnter 0.5s ease-out 1s forwards;
 }
 
@@ -1513,87 +1428,59 @@ export default {
 }
 
 .next1 {
+  @apply opacity-0;
   grid-area: next1;
-  opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.5s forwards;
 }
 
 .next2 {
+  @apply opacity-0;
   grid-area: next2;
-  opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.7s forwards;
 }
 
 .next3 {
+  @apply opacity-0;
   grid-area: next3;
-  opacity: 0;
   animation: LogoEnter 0.5s ease-out 0.9s forwards;
 }
 
 .Stats {
-  width: calc(100% - 60px);
-  min-height: auto;
+  @apply min-h-auto mx-auto relative overflow-hidden text-white justify-between;
   max-width: 1500px;
-  margin: 0px auto;
-  padding: 120px 0px;
-  position: relative;
-  overflow: hidden;
-  color: #fff;
-  justify-content: space-between;
+  width: calc(100% - 60px);
+  padding: 120px 0;
 }
 
 .StatsHeader {
-  color: rgb(255, 255, 255);
-  -webkit-box-align: center;
-  padding: 0 0 50px 0;
-  align-items: center;
-  font-size: 50px;
+  @apply text-white items-center pb-12 my-8 font-light animate-fade-in text-center;
+  font-size: 3rem;
   line-height: 1.16em;
-  margin: 30px;
-  font-weight: 300;
-  animation: TextEnter 0.4s ease-out backwards;
-  text-align: center;
 }
 
 .StatsExp {
+  @apply text-center mx-auto mb-8 text-2xl font-light p-0 animate-fade-in;
   max-width: 800px;
-  text-align: center;
-  margin: 0px auto 30px;
-  font-size: 22px;
-  line-height: 31px;
-  font-weight: 300;
-  padding: 0px;
   color: rgba(255, 255, 255, 0.75);
-  animation: TextEnter 0.4s ease-out backwards 0.2s;
+  line-height: 31px;
 }
 
 .StatsContent {
-  display: flex;
-  width: calc(100% - 60px);
-  -webkit-box-pack: justify;
-  justify-content: space-between;
+  @apply flex justify-between mx-auto animate-fade-in;
   max-width: 1500px;
-  margin: 0px auto;
-  padding: 120px 0px;
-  animation: TextEnter 0.4s ease-out backwards 0.4s;
+  width: calc(100% - 60px);
+  padding: 120px 0;
 }
 
 .Stat {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  gap: 0.5rem;
+  @apply flex h-full flex-col items-center p-6 gap-2 text-center;
   border-radius: 2rem;
-  text-align: center;
   flex-basis: 1/3;
 }
 
 .Num {
-  font-size: 64px;
+  @apply text-6xl font-semibold;
   line-height: 1.125;
-  font-weight: 600;
 }
 .Num:after {
   content: "";
@@ -1601,26 +1488,17 @@ export default {
 }
 
 .NumExp {
-  font-weight: 300;
-  font-size: 21px;
+  @apply font-light text-xl;
   line-height: 1.25;
 }
 
 .NumDetail {
-  font-weight: 300;
-  font-size: 14px;
-  color: rgb(143, 143, 143);
+  @apply font-light text-sm text-gray-400;
 }
 
 .background3 {
-  background-image: url(bg-3.png);
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+  @apply absolute w-full h-full z-0 bg-cover bg-no-repeat bg-center;
+  background-image: url('bg-3.png');
   mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 30%,
@@ -1629,158 +1507,99 @@ export default {
 }
 
 .vEth2PanelHeader {
+  @apply animate-glow;
   padding-top: 5vw;
   z-index: 5;
-  animation: Glow 1s linear alternate infinite;
 }
 
 .third {
+  @apply grid grid-cols-2 grid-rows-2 gap-8 justify-center items-center;
+  max-width: 1500px;
   width: 90%;
   height: 90%;
-  padding: 0% 5% 1% 5%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 1%;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 30px 30px;
   grid-template-areas:
     ". ."
     ". .";
-  max-width: 1500px;
-  justify-content: center;
-  align-items: center;
 }
 
 .Bubble {
-  min-height: calc(77%);
-  font-size: 1.2rem;
-  background-color: rgba(17, 26, 25, 1);
-  position: relative;
-  overflow: hidden;
+  @apply text-xl bg-dark-card relative overflow-hidden self-stretch justify-self-stretch grid gap-0;
+  min-height: 77%;
   color: rgba(255, 255, 255, 0.9);
-  align-self: stretch;
-  justify-self: stretch;
-  padding: 45px 45px 35px 45px;
-  display: grid;
+  padding: 45px;
   grid-template-columns: 1fr 0.3fr;
   grid-template-rows: 0.4fr 1fr;
-  gap: 0px 0px;
   grid-template-areas:
     "Header Icon"
     "Info Info ";
 }
 
 .mb30 {
-  margin-bottom: 30px;
+  @apply mb-8;
 }
 
 .roadMap {
-  padding-top: 2rem;
-  padding-bottom: 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply pt-8 pb-20 flex items-center justify-center;
 }
 
 .mainBox {
+  @apply w-4/5;
   padding-bottom: 1.13rem;
-  width: 80%;
 }
 
 .titleBox {
-  color: #ffffff;
-  font-size: 50px;
-  position: relative;
-  left: 0;
-  top: 0;
-  z-index: 10;
+  @apply text-white text-5xl relative left-0 top-0 z-10;
 }
 
 .main {
-  width: 100%;
-  padding-bottom: 0.5rem;
-  overflow-x: auto;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  @apply w-full pb-2 overflow-x-auto box-border;
 }
 
 .mainCon {
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
+  @apply w-max;
 }
 
 .curve {
-  width: 100%;
-  background-image: url(curve.png);
+  @apply w-full bg-no-repeat bg-center my-2.5 relative left-0 top-0 overflow-hidden;
+  background-image: url('curve.png');
   background-size: 100% auto;
-  background-repeat: no-repeat;
-  background-position: center;
   height: 90px;
-  margin: 0.6rem 0;
-  position: relative;
-  left: 0;
-  top: 0;
-  overflow: hidden;
 }
 
 .mainCon .curve canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
+  @apply absolute left-0 top-0;
 }
 
 .mainCon .list {
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  position: relative;
-  left: 0;
-  top: 0;
-  padding-left: 0.1rem;
+  @apply flex relative left-0 top-0 pl-0.5;
 }
 
 .mainCon .list .item {
+  @apply box-content flex-none;
   width: 260px;
-  /**HERE */
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  -webkit-flex: none;
-  -moz-box-flex: 0;
-  -ms-flex: none;
-  flex: none;
 }
 
 .mainCon .list .item .date {
+  @apply text-brand-primary pb-1;
   font-size: 17px;
-  color: #e6007a;
   line-height: 1.43em;
-  padding-bottom: 0.3rem;
 }
 
 .mainCon .list .item .text {
-  font-size: 12px;
-  color: #ffffff;
+  @apply text-xs text-white w-3/5 pb-5;
   line-height: 1.47em;
-  width: 60%;
-  padding-bottom: 20px;
 }
 
 .mainCon .list.next {
-  padding-left: 5rem;
+  @apply pl-20;
 }
 
-/* body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
-  height: 5px;
-  background: #555;
-}
-body .roadMap .mainBox .main::-webkit-scrollbar {
-  background: #888;
-  height: 4px;
-} */
 .centertext {
-  text-align: center;
+  @apply text-center;
 }
 
 .glow {
@@ -1788,11 +1607,11 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 }
 
 .reverse {
-  filter: invert(1);
+  @apply invert;
 }
 
 .DropShadow {
-  filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 1)) brightness(500%);
 }
 
 @keyframes LogoEnter {
@@ -1807,88 +1626,49 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 }
 
-@keyframes Glow {
-  from {
-    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(120%);
-  }
-
-  to {
-    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
-  }
-}
-
-@keyframes TextEnter {
-  from {
-    transform: translate3d(0, 2rem, 0);
-    opacity: 0;
-  }
-
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
-
 @media only screen and (max-width: 900px) {
   .first {
+    @apply grid gap-0 bg-no-repeat bg-center grid-cols-1 justify-center items-center;
     padding-top: 125px;
-    display: grid;
-    gap: 0px 0px;
-    grid-template-areas: ".";
-    background-image: url(bg-1.png);
-    background-repeat: no-repeat;
-    background-position: center;
-    display: grid;
-    grid-template-columns: 1fr;
+    background-image: url('bg-1.png');
     grid-template-rows: 0.1fr 2fr;
-    justify-content: center;
-    align-items: center;
+    grid-template-areas: ".";
   }
 
   .Logo {
-    padding: 0;
+    @apply p-0;
     max-width: 145px;
     min-width: 100px;
   }
 
   .LogoContainer {
-    background: transparent;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    justify-content: center;
-    align-items: center;
+    @apply bg-transparent bg-no-repeat bg-center grid grid-cols-1 grid-rows-1 justify-center items-center;
   }
 
   .mainTitle {
-    margin: 0 auto;
+    @apply mx-auto;
   }
 
   .Explanation {
-    padding: 0 23px 100px 23px;
-    animation: TextEnter 0.4s ease-out backwards;
+    @apply px-0 py-0 animate-fade-in;
+    padding-left: 23px;
+    padding-bottom: 100px;
   }
 
   .StatsContent {
-    flex-direction: column;
-    align-items: center;
-    padding: 0px;
+    @apply flex-col items-center p-0;
   }
 
   .StatsHeader {
     font-size: 42px;
   }
   .InfoHeader {
-    padding: 15px 15px 15px 0;
+    @apply p-4 pl-0;
     font-size: 25px;
   }
 
   .third {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    gap: 30px 30px;
+    @apply grid-cols-1 grid-rows-1 gap-8;
     grid-template-areas:
       "."
       ".";
@@ -1897,8 +1677,9 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
 @media only screen and (max-width: 770px) {
   .second {
-    grid-template-columns: 1fr;
+    @apply grid-cols-1;
     grid-template-rows: 2fr 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
+    padding-bottom: 15vh;
     grid-template-areas:
       "Information"
       "Information"
@@ -1913,18 +1694,17 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "next3"
       "harvest"
       "harvestExp";
-    padding-bottom: 15vh;
   }
 
   .certikLogo {
+    @apply text-center;
     max-width: 80%;
-    text-align: center;
   }
 
   .mainTitle {
+    @apply mb-8;
     font-size: 46px;
     line-height: 1.1;
-    margin-bottom: 32px;
   }
 }
 

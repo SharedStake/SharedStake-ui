@@ -607,195 +607,107 @@ export default {
 
 <style scoped>
 .stake {
+  @apply pb-20 bg-no-repeat bg-center;
   padding-top: 120px;
-  padding-bottom: 80px;
-  background-image: url(bg-1.png);
-  background-repeat: no-repeat;
-  background-position: center;
   min-height: 800px;
+  background-image: url('bg-1.png');
 }
+
 .staker {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  @apply antialiased w-full bg-dark-footer overflow-visible rounded-sm relative select-none;
   max-width: 375px;
-  width: 100%;
-  background-color: #181818;
   height: 90%;
   max-height: 716px;
-  overflow: visible;
-  box-shadow: 0 0 50px rgb(0 0 0 / 10%);
-  border-radius: 2px;
-  position: relative;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   min-height: 634px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
 }
 .navbar {
-  display: flex;
-  border: 1px solid #3c3c3c;
-  box-sizing: border-box;
+  @apply flex border border-gray-600 box-border;
   border-radius: 100px;
 }
 #gas {
-  padding: 0 5px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
+  @apply px-1.5 text-base flex items-center justify-center text-white;
 }
 .stakePage {
+  @apply p-2.5 grid grid-cols-1 gap-0 justify-center items-center;
   width: calc(100% - 20px);
-  padding: 10px;
   height: calc(80% - 20px);
-  display: grid;
-  grid-template-columns: 1fr;
   grid-template-rows: 1fr 0.2fr 1fr 0.5fr;
-  gap: 0px 0px;
   grid-template-areas:
     "."
     "."
     ".";
-  justify-content: center;
-  align-items: center;
 }
 .sPElement {
-  align-self: center;
-  justify-self: center;
-  color: #fff;
+  @apply self-center justify-self-center text-white;
 }
 .input {
-  border-radius: 4px;
-  width: 100%;
-  height: 180px;
+  @apply rounded w-full overflow-hidden flex items-center justify-center bg-dark-bg border-0 font-medium;
   max-width: 362px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgb(15, 16, 19);
-  border: none;
-  font-weight: 500;
+  height: 180px;
 }
 .inputBody {
-  position: relative;
-  height: 100%;
-  padding: 0 0 0 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+  @apply relative h-full p-0 w-full flex flex-col justify-around items-center;
 }
 .StakeButton {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #3c3c3c;
-  box-sizing: border-box;
-  background-color: rgb(15, 16, 19);
-  color: #fff;
-  padding: 0 20px;
-  font-size: 16px;
+  @apply w-full flex justify-center items-center border border-gray-600 box-border bg-dark-bg text-white px-5 text-base leading-6 transition-all duration-300;
   border-radius: 100px;
-  line-height: 24px;
-  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-  border-radius: 100px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
 }
 .switch_active {
-  border: 2px solid rgb(37, 167, 219);
+  @apply border-2 border-brand-secondary text-white cursor-pointer font-bold;
   border-radius: 100px;
-  color: #fff;
-  cursor: pointer;
-  font-weight: bold;
 }
 .switch_active:hover,
 .switch:hover {
   transform: scale(0.98);
 }
 .balance {
-  margin-top: 8px;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
+  @apply mt-2 text-xs leading-5 text-center flex justify-center items-center underline z-10 cursor-pointer font-bold;
   letter-spacing: 0.3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: underline;
-  z-index: 10;
-  cursor: pointer;
-  font-weight: bolder;
 }
 .token-amount-input {
-  box-sizing: border-box;
-  z-index: 10;
-  margin: 0;
-  padding: 0;
+  @apply box-border z-10 m-0 p-0 relative inline-block px-3 py-1 text-white bg-transparent outline-0 text-right pb-0 rounded border-0;
+  width: 70%;
+  font-size: 34px;
+  line-height: 2.5rem;
+  height: 2.5rem;
   font-variant: tabular-nums;
   list-style: none;
   font-feature-settings: "tnum";
-  position: relative;
-  display: inline-block;
-  width: 70%;
-  padding: 4px 11px;
-  color: #fff;
-  background-color: transparent;
-  outline-width: 0;
-  font-size: 34px;
-  line-height: 40px;
-  text-align: right;
-  height: 40px;
-  padding-bottom: 0;
   text-overflow: ellipsis;
-  border-radius: 2px;
-  border: none;
   touch-action: manipulation;
 }
 .ant-col {
-  box-sizing: border-box;
-  display: block;
-  box-sizing: border-box;
-  width: 50%;
+  @apply box-border block w-1/2;
 }
 .background3,
 .background2 {
-  background-image: url(Eth.png);
-  position: absolute;
-  z-index: 0;
+  @apply absolute z-0 bg-contain bg-no-repeat bg-center transition-all duration-300;
+  background-image: url('Eth.png');
   width: 200%;
   height: 200%;
   top: -50%;
   left: -50%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  opacity: 0.05;
   mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 20%,
     rgba(0, 0, 0, 0.4) 60%
   );
-  opacity: 0.05;
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .background3 {
-  background-image: url(vEth2.png);
+  background-image: url('vEth2.png');
 }
 .notification {
+  @apply text-center text-red-500 text-base;
   width: 90%;
   padding: 0 5% 5% 5%;
-  text-align: center;
-  color: tomato;
-  font-size: 16px;
 }
 .underline {
-  text-decoration: underline;
+  @apply underline;
 }
 .gauge {
-  padding-top: 1rem;
+  @apply pt-4;
 }
 </style>
