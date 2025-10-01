@@ -1,5 +1,5 @@
 <template>
-  <div class="flex_column stake">
+  <div class="stake flex flex-col items-center justify-evenly">
     <div class="staker">
       <Chooser
         :routes="[
@@ -12,7 +12,7 @@
       <div class="stakePage">
         <div class="sPElement input">
           <div class="inputBody">
-            <div class="flex_row">
+            <div class="flex flex-row items-center justify-evenly">
               <input
                 class="token-amount-input"
                 inputmode="decimal"
@@ -41,7 +41,7 @@
         <ImageVue class="sPElement" :src="'down.png'" :size="'30px'" />
         <div class="sPElement input">
           <div class="inputBody">
-            <div class="flex_row">
+            <div class="flex flex-row items-center justify-evenly">
               <input
                 class="token-amount-input"
                 inputmode="decimal"
