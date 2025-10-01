@@ -31,16 +31,14 @@
     </div>
     <div
       :class="{ 'navbar--hidden': !showNavbar }"
-      class="fixed top-16 w-full p-3 navbar"
+      class="fixed top-16 w-full p-3 navbar transition-all duration-500 ease-out bg-dark-bg text-white transform translate-z-0"
     >
       <div
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
       >
-        <router-link to="/">
-          <div class="flex_row LogoContainer">
-            <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
-            <div class="main">SharedStake</div>
-          </div>
+        <router-link to="/" class="flex items-center gap-2.5 text-2xl cursor-pointer">
+          <ImageVue :src="'logo-white.svg'" :size="'30px'" class="transition-all duration-250 ease-in-out hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)]" />
+          <div class="pl-2.5 font-normal">SharedStake</div>
         </router-link>
 
         <!-- Desktop menu -->
@@ -52,64 +50,64 @@
         <!-- Burger menu -->
         <div
           @click="showSidebar = !showSidebar"
-          class="showers"
+          class="w-max min-w-8 flex flex-col self-center overflow-visible"
           v-show="windowWidth < 960"
         >
           <svg
             viewBox="0 0 32 2"
             fill="white"
-            class="shower"
-            :class="{ cross1: showSidebar }"
+            class="h-0.5 mb-2 origin-center transition-all duration-250 ease-linear"
+            :class="{ 'rotate-45 relative left-0.5 top-2.5': showSidebar }"
           >
             <path fill="currentColor" d="M0 0h32v2H0z"></path></svg
           ><svg
             viewBox="0 0 32 2"
             fill="white"
-            class="shower"
-            :class="{ cross2: showSidebar }"
+            class="h-0.5 origin-center transition-all duration-250 ease-linear"
+            :class="{ '-rotate-45': showSidebar }"
           >
             <path fill="currentColor" d="M0 0h32v2H0z"></path>
           </svg>
         </div>
       </div>
     </div>
-    <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
+    <div class="fixed top-32 bottom-0 overflow-y-auto w-full p-6 pt-0 box-border flex flex-col items-start justify-center transition-all duration-250 ease-in-out animate-slide-up z-[99] bg-dark-bg" v-show="windowWidth < 960 && showSidebar">
       <ConnectButton />
 
-      <div class="link disabled-link flex flex-col items-start">
-        <span>Stake</span>
-        <div class="coming-soon">Coming Soon</div>
+      <div class="opacity-50 cursor-not-allowed pointer-events-none flex flex-col items-start py-2">
+        <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out">Stake</span>
+        <div class="text-xs text-gray-400 mt-0.5 font-normal">Coming Soon</div>
       </div>
-      <router-link class="link" to="/wrap" @click.native="showSidebar = false">
+      <router-link class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100" to="/wrap" @click.native="showSidebar = false">
         Wrap
       </router-link>
       <router-link
-        class="link"
+        class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100"
         to="/unwrap"
         @click.native="showSidebar = false"
       >
         Unwrap
       </router-link>
       <router-link
-        class="link"
+        class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100"
         to="/rollover"
         @click.native="showSidebar = false"
       >
         Rollover
       </router-link>
-      <div class="link disabled-link flex flex-col items-start">
-        <span>Withdraw</span>
-        <div class="coming-soon">Coming Soon</div>
+      <div class="opacity-50 cursor-not-allowed pointer-events-none flex flex-col items-start py-2">
+        <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out">Withdraw</span>
+        <div class="text-xs text-gray-400 mt-0.5 font-normal">Coming Soon</div>
       </div>
-      <router-link class="link" to="/earn" @click.native="showSidebar = false">
+      <router-link class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100" to="/earn" @click.native="showSidebar = false">
         Earn
       </router-link>
-      <router-link class="link" to="#Stats" @click.native="showSidebar = false">
+      <router-link class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100" to="#Stats" @click.native="showSidebar = false">
         <a href="#Stats">
           Stats
         </a>
       </router-link>
-      <span class="link">
+      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
         <a
           href="https://snapshot.page/#/sharedstake.eth"
           target="_blank"
@@ -117,7 +115,7 @@
           >DAO
         </a>
       </span>
-      <span class="link">
+      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
         <a
           href="https://docs.sharedstake.finance/"
           target="_blank"
@@ -125,7 +123,7 @@
           >Docs
         </a>
       </span>
-      <span class="link">
+      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
         <a
           href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
           target="_blank"
@@ -133,7 +131,7 @@
           >Dune
         </a>
       </span>
-      <span class="link">
+      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
         <a
           href="https://sharedtools.org"
           target="_blank"
@@ -141,7 +139,7 @@
           >Get veSGT
         </a>
       </span>
-      <span class="link">
+      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
         <a
           href="https://curve.fi/factory/49"
           target="_blank"
@@ -149,7 +147,7 @@
           >Get CRV-vETH2-LP
         </a>
       </span>
-      <span class="link">
+      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
         <a
           href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
           target="_blank"
@@ -161,11 +159,11 @@
     <!--App-->
     <router-view :scrolled="currentScrollPosition" :windowWidth="windowWidth" />
     <!--App-->
-    <div class="footer">
-      <div class="disclaimer">
+    <div class="z-[100] px-8 py-10 bg-dark-footer text-white min-h-[350px] flex items-center">
+      <div class="text-sm pb-12 text-center text-justify leading-[22px] opacity-50 transition-opacity duration-350 ease-in-out hover:opacity-100">
         <p>
           Please note that SharedStake protocol, its software, and all content
-          found on it are provided on an “as is” and “as available” basis.
+          found on it are provided on an "as is" and "as available" basis.
         </p>
         <p>
           While we have made reasonable efforts to ensure the security and
@@ -183,16 +181,16 @@
         </p>
         <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
-      <div class="flex_row LogoContainer">
-        <div class="footerLinks">
+      <div class="flex items-center justify-center">
+        <div class="max-w-[1500px] w-[calc(100%-60px)] mx-auto flex flex-wrap justify-around pb-12">
           <ImageVue
             :src="'logo-white.svg'"
             :size="'100px'"
-            class="FooterLogo"
+            class="mb-12 transition-all duration-250 ease-in-out hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)]"
           />
-          <div class="footerGroup">
-            <div class="footerGroupName">Community</div>
-            <span class="link footerLink">
+          <div class="flex flex-col items-start justify-start px-2.5 pb-2.5">
+            <div class="text-white font-bold text-base mb-5 opacity-75">Community</div>
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://twitter.com/ChimeraDefi"
                 target="_blank"
@@ -200,7 +198,7 @@
                 >Twitter
               </a></span
             >
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://discord.gg/C9GhCv86My"
                 target="_blank"
@@ -208,7 +206,7 @@
                 >Discord
               </a></span
             >
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://medium.com/@chimera_defi"
                 target="_blank"
@@ -216,18 +214,10 @@
                 >Medium
               </a></span
             >
-            <!-- <span class="link footerLink">
-              <a
-                href="https://www.reddit.com/r/SharedStake/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Reddit
-              </a></span 
-            > -->
           </div>
-          <div class="footerGroup">
-            <div class="footerGroupName">Developers</div>
-            <span class="link footerLink">
+          <div class="flex flex-col items-start justify-start px-2.5 pb-2.5">
+            <div class="text-white font-bold text-base mb-5 opacity-75">Developers</div>
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://github.com/SharedStake"
                 target="_blank"
@@ -235,7 +225,7 @@
                 >Github
               </a></span
             >
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://docs.sharedstake.finance/"
                 target="_blank"
@@ -243,7 +233,7 @@
                 >Documentation
               </a></span
             >
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://snapshot.page/#/sharedstake.eth"
                 target="_blank"
@@ -252,9 +242,9 @@
               </a>
             </span>
           </div>
-          <div class="footerGroup">
-            <div class="footerGroupName">About</div>
-            <span class="link footerLink">
+          <div class="flex flex-col items-start justify-start px-2.5 pb-2.5">
+            <div class="text-white font-bold text-base mb-5 opacity-75">About</div>
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://www.certik.org/projects/sharedstake"
                 target="_blank"
@@ -262,10 +252,10 @@
                 >Audit
               </a></span
             >
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <router-link to="/FAQ">FAQ </router-link>
             </span>
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <a
                 href="https://docs.sharedstake.org/risks"
                 target="_blank"
@@ -273,16 +263,16 @@
                 >Risks
               </a></span
             >
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <router-link to="/privacy">Privacy Policy </router-link>
             </span>
-            <span class="link footerLink">
+            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
               <router-link to="/terms">Terms of Service </router-link>
             </span>
           </div>
         </div>
       </div>
-      <div class="bottom">SharedStake © 2021</div>
+      <div class="text-center text-xs flex items-center justify-center text-[#afafaf]">SharedStake © 2021</div>
     </div>
   </div>
 </template>
@@ -371,104 +361,27 @@ export default {
 
 <style scoped>
 .Root {
-  min-height: 100vh;
-  background: rgb(15, 16, 19);
+  @apply min-h-screen bg-dark-bg;
 }
-.navbar,
-.footer {
-  z-index: 100;
-}
+
 .navbar {
-  background: #0f1013;
-  color: rgb(255, 255, 255);
-  transform: translate3d(0, 0, 0);
-  transition: 0.5s all ease-out;
+  @apply z-[100] bg-dark-bg text-white transform translate-z-0 transition-all duration-500 ease-out;
 }
+
 .navbar.navbar--hidden {
-  box-shadow: none;
-  transform: translate3d(0, -100%, 0);
+  @apply shadow-none transform -translate-y-full;
 }
 
-.showers {
-  width: max-content;
-  min-width: 32px;
-  display: flex;
-  align-self: center;
-  flex-direction: column;
-
-  overflow: visible;
-}
-.shower {
-  margin-bottom: 8px;
-  height: 2px;
-  transform-origin: center;
-  transition-duration: 250ms;
-  transition-property: transform;
-  transition-timing-function: linear;
-}
-.cross1 {
-  transform: rotate(45deg);
-  position: relative;
-  left: 1px;
-  top: 10px;
-}
-.cross2 {
-  transform: rotate(-45deg);
-}
-.LogoContainer {
-  font-size: 24px;
-  align-items: center;
-  cursor: pointer;
-  /* grid-area: Logo; */
-  justify-content: center;
+.ConnectButton {
+  @apply px-6 py-2 border-[3px] border-double border-transparent rounded-[80px] bg-gradient-dark bg-gradient-to-r from-brand-accent to-brand-secondary bg-origin-border bg-clip-padding bg-[length:100%_100%] transition-all duration-500 ease-out whitespace-nowrap;
 }
 
-.Logo {
-  transition: all 0.25s ease 0s;
+.ConnectButton:hover {
+  @apply drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)] brightness-120;
 }
-.FooterLogo,
-.Logo:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  /* Similar syntax to box-shadow */
-}
-.FooterLogo {
-  margin-bottom: 50px;
-}
-.main {
-  padding: 0 0 0 10px;
-  font-weight: 400;
-}
-.footerGroup,
-.links {
-  box-sizing: border-box;
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  padding-left: 10px;
-  transition: right 0.25s ease 0s;
-}
-.sidebar {
-  position: fixed;
-  top: 127px;
-  bottom: 0;
-  overflow-y: auto;
-  width: 100%;
-  padding: 1.5rem;
-  padding-top: 0;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  -webkit-box-align: center;
-  align-items: flex-start;
-  -webkit-box-pack: center;
-  justify-content: center;
-  transition: right 0.25s ease 0s;
-  animation: SidebarUp 0.5s ease-out 0s forwards;
-  z-index: 99;
-  background: rgb(15, 16, 19);
+
+.animatedButton {
+  @apply animate-button-shift;
 }
 
 @keyframes SidebarUp {
@@ -481,170 +394,13 @@ export default {
     opacity: 1;
   }
 }
-.link {
-  text-decoration: none;
-  margin: 0px;
-  --tw-space-x-reverse: 0;
-  margin-right: calc(2.5rem * var(--tw-space-x-reverse));
-  margin-left: calc(2.5rem * (1 - var(--tw-space-x-reverse)));
-  color: rgb(255, 255, 255);
-  opacity: 0.67;
-  padding: 15px 0px;
-  border-radius: 0.5rem;
-  font-weight: 400;
-  width: fit-content;
-  font-size: 16px;
-  cursor: pointer;
-  transition: opacity 0.35s ease 0s;
-}
-
-.sidebar .link {
-  padding: 8px 0;
-  font-size: 14px;
-}
-
-.router-link-active,
-.link:hover {
-  opacity: 1;
-}
-.ConnectButton {
-  padding: 0.5rem 1.5rem;
-  border: 3px double transparent;
-  border-radius: 80px;
-  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(
-      circle at left top,
-      rgb(250, 82, 160) 0%,
-      rgb(37, 167, 219) 100%
-    );
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  background-size: 100% 100%;
-  transition: filter 0.5s ease-out;
-  white-space: nowrap;
-}
-.animatedButton {
-  animation: animatedButton 3s ease-out backwards infinite;
-}
-.ConnectButton:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
-    brightness(200%);
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
-}
-@keyframes animatedButton {
-  from {
-    background-position: 0px;
-  }
-
-  to {
-    background-position: 168.6px;
-  }
-}
-.footer {
-  padding: 40px 30px 10px 30px;
-  background-color: rgb(24, 24, 24);
-  color: rgb(255, 255, 255);
-  min-height: 350px;
-  /* display: grid; */
-  /* grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.4fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Disclaimer Logo"
-    "Disclaimer Info"
-    "bottom bottom "; */
-  align-items: center;
-}
-
-.disclaimer {
-  grid-area: Disclaimer;
-  font-size: 14px;
-  padding: 0 0 50px 0;
-  text-align: center;
-  text-justify: inter-word;
-  line-height: 22px;
-  opacity: 0.5;
-  transition: opacity 0.35s ease 0s;
-}
-.disclaimer:hover {
-  opacity: 1;
-}
-.footerLinks {
-  grid-area: Info;
-  max-width: 1500px;
-  width: calc(100% - 60px);
-  margin: 0px auto;
-  display: flex;
-  flex-wrap: wrap;
-  -webkit-box-pack: justify;
-  justify-content: space-around;
-  padding: 0 0 50px 0;
-}
-.footerGroup {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 0 10px 10px 10px;
-}
-.footerGroupName {
-  color: inherit;
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 1.25em;
-  opacity: 0.75;
-}
-.footerLink {
-  margin: 0;
-  padding: 0 0 14px 0;
-}
-.bottom {
-  text-align: center;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  grid-area: bottom;
-  color: #afafaf;
-}
-.icebear {
-  padding: 0 10px;
-}
-.disabled-link {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
-  font-weight: normal;
-}
-
-@media only screen and (max-width: 1100px) {
-  .footer {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 0.3fr 1fr 1fr 0.4fr;
-    grid-template-areas:
-      "Logo Logo"
-      "Info Info "
-      "Disclaimer Disclaimer"
-      "bottom bottom ";
-  }
-  .navbar {
-    justify-content: space-between;
-  }
-}
 
 @media only screen and (max-width: 700px) {
   .maintenance-banner {
-    font-size: 14px;
-    padding: 8px 16px;
+    @apply text-sm px-4 py-2;
   }
   .maintenance-banner svg {
-    width: 20px;
-    height: 20px;
+    @apply w-5 h-5;
   }
 }
 </style>

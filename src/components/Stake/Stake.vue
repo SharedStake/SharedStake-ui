@@ -607,195 +607,75 @@ export default {
 
 <style scoped>
 .stake {
-  padding-top: 120px;
-  padding-bottom: 80px;
-  background-image: url(bg-1.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  min-height: 800px;
+  @apply pt-30 pb-20 bg-[url('bg-1.png')] bg-no-repeat bg-center min-h-[800px];
 }
+
 .staker {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  max-width: 375px;
-  width: 100%;
-  background-color: #181818;
-  height: 90%;
-  max-height: 716px;
-  overflow: visible;
-  box-shadow: 0 0 50px rgb(0 0 0 / 10%);
-  border-radius: 2px;
-  position: relative;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  min-height: 634px;
+  @apply antialiased max-w-[375px] w-full bg-dark-footer h-[90%] max-h-[716px] overflow-visible shadow-[0_0_50px_rgba(0,0,0,0.1)] rounded-sm relative select-none min-h-[634px];
 }
 .navbar {
-  display: flex;
-  border: 1px solid #3c3c3c;
-  box-sizing: border-box;
-  border-radius: 100px;
+  @apply flex border border-gray-600 box-border rounded-[100px];
 }
 #gas {
-  padding: 0 5px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
+  @apply px-1.5 text-base flex items-center justify-center text-white;
 }
 .stakePage {
-  width: calc(100% - 20px);
-  padding: 10px;
-  height: calc(80% - 20px);
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 0.2fr 1fr 0.5fr;
-  gap: 0px 0px;
+  @apply w-[calc(100%-20px)] p-2.5 h-[calc(80%-20px)] grid grid-cols-1 grid-rows-[1fr_0.2fr_1fr_0.5fr] gap-0 justify-center items-center;
   grid-template-areas:
     "."
     "."
     ".";
-  justify-content: center;
-  align-items: center;
 }
 .sPElement {
-  align-self: center;
-  justify-self: center;
-  color: #fff;
+  @apply self-center justify-self-center text-white;
 }
 .input {
-  border-radius: 4px;
-  width: 100%;
-  height: 180px;
-  max-width: 362px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgb(15, 16, 19);
-  border: none;
-  font-weight: 500;
+  @apply rounded w-full h-[180px] max-w-[362px] overflow-hidden flex items-center justify-center bg-dark-bg border-0 font-medium;
 }
 .inputBody {
-  position: relative;
-  height: 100%;
-  padding: 0 0 0 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+  @apply relative h-full p-0 w-full flex flex-col justify-around items-center;
 }
 .StakeButton {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #3c3c3c;
-  box-sizing: border-box;
-  background-color: rgb(15, 16, 19);
-  color: #fff;
-  padding: 0 20px;
-  font-size: 16px;
-  border-radius: 100px;
-  line-height: 24px;
-  box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-  border-radius: 100px;
+  @apply w-full flex justify-center items-center border border-gray-600 box-border bg-dark-bg text-white px-5 text-base rounded-[100px] leading-6 shadow-[0_2px_0_rgba(0,0,0,0.02)] transition-all duration-300;
 }
 .switch_active {
-  border: 2px solid rgb(37, 167, 219);
-  border-radius: 100px;
-  color: #fff;
-  cursor: pointer;
-  font-weight: bold;
+  @apply border-2 border-brand-secondary rounded-[100px] text-white cursor-pointer font-bold;
 }
 .switch_active:hover,
 .switch:hover {
-  transform: scale(0.98);
+  @apply scale-[0.98];
 }
 .balance {
-  margin-top: 8px;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
-  letter-spacing: 0.3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: underline;
-  z-index: 10;
-  cursor: pointer;
-  font-weight: bolder;
+  @apply mt-2 text-xs leading-5 text-center tracking-[0.3px] flex justify-center items-center underline z-10 cursor-pointer font-bold;
 }
 .token-amount-input {
-  box-sizing: border-box;
-  z-index: 10;
-  margin: 0;
-  padding: 0;
+  @apply box-border z-10 m-0 p-0 relative inline-block w-[70%] px-3 py-1 text-white bg-transparent outline-0 text-[34px] leading-10 text-right h-10 pb-0 text-ellipsis rounded border-0 touch-manipulation;
   font-variant: tabular-nums;
   list-style: none;
   font-feature-settings: "tnum";
-  position: relative;
-  display: inline-block;
-  width: 70%;
-  padding: 4px 11px;
-  color: #fff;
-  background-color: transparent;
-  outline-width: 0;
-  font-size: 34px;
-  line-height: 40px;
-  text-align: right;
-  height: 40px;
-  padding-bottom: 0;
-  text-overflow: ellipsis;
-  border-radius: 2px;
-  border: none;
-  touch-action: manipulation;
 }
 .ant-col {
-  box-sizing: border-box;
-  display: block;
-  box-sizing: border-box;
-  width: 50%;
+  @apply box-border block w-1/2;
 }
 .background3,
 .background2 {
-  background-image: url(Eth.png);
-  position: absolute;
-  z-index: 0;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  @apply bg-[url('Eth.png')] absolute z-0 w-[200%] h-[200%] -top-1/2 -left-1/2 bg-contain bg-no-repeat bg-center opacity-[0.05] transition-all duration-300;
   mask-image: radial-gradient(
     circle,
     rgba(0, 0, 0, 1) 20%,
     rgba(0, 0, 0, 0.4) 60%
   );
-  opacity: 0.05;
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .background3 {
-  background-image: url(vEth2.png);
+  @apply bg-[url('vEth2.png')];
 }
 .notification {
-  width: 90%;
-  padding: 0 5% 5% 5%;
-  text-align: center;
-  color: tomato;
-  font-size: 16px;
+  @apply w-[90%] px-[5%] pb-[5%] text-center text-red-500 text-base;
 }
 .underline {
-  text-decoration: underline;
+  @apply underline;
 }
 .gauge {
-  padding-top: 1rem;
+  @apply pt-4;
 }
 </style>

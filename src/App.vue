@@ -17,65 +17,56 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
 
-body {
-  scroll-behavior: smooth;
-  margin: 0;
-  padding: 0;
-  font-size: 30px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-family: "Inter", -apple-system, "Roboto", BlinkMacSystemFont, "Segoe UI",
-    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
-  font-weight: 300;
-}
-.flex_row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-}
-.flex_column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-}
-.bn-onboard-custom.bn-onboard-modal {
-  z-index: 990;
-}
-a {
-  text-decoration: none;
-  font-family: "Roboto";
-  color: #fff;
-}
-.my-notification {
-  margin: 10px 5px 5px;
-  padding: 10px;
-  font-size: 14px;
-  color: #ffffff;
+/* Global styles using Tailwind's @apply directive */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  background: #44a4fc;
-  border-left: 5px solid #187fe7;
-}
-.my-notification.success {
-  background: #68cd86;
-  border-left-color: #42a85f;
+@layer base {
+  body {
+    @apply scroll-smooth m-0 p-0 text-3xl antialiased font-inter font-light;
+  }
+  
+  a {
+    @apply no-underline font-roboto text-white;
+  }
 }
 
-.my-notification.warn {
-  background: #ffb648;
-  border-left-color: #f48a06;
-}
-
-.my-notification.error {
-  background: #e54d42;
-  border-left-color: #b82e24;
-}
-
-@media only screen and (max-width: 700px) {
+@layer components {
+  .flex_row {
+    @apply flex flex-row items-center justify-evenly;
+  }
+  
+  .flex_column {
+    @apply flex flex-col items-center justify-evenly;
+  }
+  
+  .bn-onboard-custom.bn-onboard-modal {
+    @apply z-[990];
+  }
+  
   .my-notification {
-    font-size: 10px;
+    @apply mx-2.5 my-2.5 p-2.5 text-sm text-white bg-blue-500 border-l-4 border-blue-600;
+  }
+  
+  .my-notification.success {
+    @apply bg-green-500 border-green-600;
+  }
+  
+  .my-notification.warn {
+    @apply bg-yellow-500 border-yellow-600;
+  }
+  
+  .my-notification.error {
+    @apply bg-red-500 border-red-600;
+  }
+}
+
+@layer utilities {
+  @media only screen and (max-width: 700px) {
+    .my-notification {
+      @apply text-xs;
+    }
   }
 }
 </style>
