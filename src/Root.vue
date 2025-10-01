@@ -511,11 +511,19 @@ export default {
 }
 /* ConnectButton styles are now handled in the component itself */
 .footer {
-  padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-sm) var(--spacing-2xl);
+  padding: 40px 30px 10px 30px;
   background-color: var(--color-dark-surface);
   color: var(--color-white);
   min-height: 350px;
-  @apply flex items-center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 0.4fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "Disclaimer Logo"
+    "Disclaimer Info"
+    "bottom bottom";
+  align-items: center;
 }
 
 .disclaimer {
@@ -586,7 +594,8 @@ export default {
 
 @media (max-width: 1100px) {
   .footer {
-    @apply grid grid-cols-2 grid-rows-4;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 0.3fr 1fr 1fr 0.4fr;
     grid-template-areas:
       "Logo Logo"
       "Info Info"
@@ -595,7 +604,7 @@ export default {
   }
   
   .navbar {
-    @apply justify-between;
+    justify-content: space-between;
   }
 }
 
