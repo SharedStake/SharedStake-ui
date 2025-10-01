@@ -10,7 +10,7 @@
       </div>
       <div class="flex flex-col justify-center h-full p-4">
         <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
-          <h1 class="relative mb-6 overflow-wrap-normal max-w-[900px] text-6xl font-medium leading-[1.05]">
+          <h1 class="relative mb-6 max-w-[900px] text-6xl font-medium leading-[1.05]">
             <span
               title="Established in 2020"
               class="absolute p-1 px-2 text-xs font-semibold text-gray-800 transform -translate-x-1/2 bg-gray-300 rounded-sm -bottom-6 md:bottom-auto md:-top-6 md:left-0 left-1/2 md:translate-x-0"
@@ -19,7 +19,7 @@
             </span>
             ETHEREUM LIQUID STAKING DERIVATIVE! <br />
           </h1>
-          <div class="text-xl leading-[31px] font-light p-0 text-white/90 text-justify animate-fade-in z-[1]">
+          <div class="text-xl leading-[31px] font-light p-0 text-white/90 animate-fade-in z-[1]" style="text-justify: inter-word;">
             SharedStake is a decentralized Ethereum 2 staking solution that
             allows users to stake any amount of Ether and earn additional yield
             on top of their ETH2 rewards.
@@ -139,7 +139,7 @@
     <div class="downSign glow" v-show="scrolled >= 0">
       <ImageVue :src="'down.svg'" :size="'30px'" />
     </div>
-    <div class="flex flex-col items-center justify-between w-[calc(100%-60px)] min-h-auto max-w-[1500px] mx-auto py-30 relative overflow-hidden text-white justify-between" v-show="scrolled >= 350">
+    <div class="flex flex-col items-center justify-between w-[calc(100%-60px)] min-h-auto max-w-[1500px] mx-auto py-[120px] relative overflow-hidden text-white justify-between" v-show="scrolled >= 350">
       <div class="text-white items-center pb-12 text-5xl leading-[1.16em] my-8 font-light animate-fade-in text-center">Capital efficient staking</div>
       <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl leading-[31px] font-light p-0 text-white/75 animate-fade-in">Financial optimization at its finest.</div>
       <div class="max-w-[800px] text-center mx-auto mb-8 text-2xl leading-[31px] font-light p-0 text-white/75 animate-fade-in">
@@ -1264,11 +1264,12 @@ export default {
 }
 
 .mainTitle {
-  @apply overflow-wrap-normal max-w-[900px] text-6xl font-medium leading-[1.05];
+  @apply max-w-[900px] text-6xl font-medium leading-[1.05];
 }
 
 .exp {
-  @apply text-xl leading-[31px] font-light p-0 text-white/90 text-justify animate-fade-in z-[1];
+  @apply text-xl leading-[31px] font-light p-0 text-white/90 animate-fade-in z-[1];
+  text-justify: inter-word;
 }
 
 .social {
@@ -1342,7 +1343,8 @@ export default {
 }
 
 .Exp {
-  @apply max-w-[200px] text-base px-2.5 py-0 leading-[31px] font-light text-white/90 z-[2] self-start text-justify;
+  @apply max-w-[200px] text-base px-2.5 py-0 leading-[31px] font-light text-white/90 z-[2] self-start;
+  text-justify: inter-word;
 }
 
 .EthExp,
@@ -1358,7 +1360,7 @@ export default {
 
 .vEth2Exp,
 .vEth2 {
-  @apply opacity-0 brightness-200;
+  @apply opacity-0 brightness-[200%];
   grid-area: vEth2;
   animation: LogoEnter 0.5s ease-out 0.6s forwards;
 }
@@ -1408,7 +1410,7 @@ export default {
 }
 
 .Stats {
-  @apply w-[calc(100%-60px)] min-h-auto max-w-[1500px] mx-auto py-30 relative overflow-hidden text-white justify-between;
+  @apply w-[calc(100%-60px)] min-h-auto max-w-[1500px] mx-auto py-[120px] relative overflow-hidden text-white justify-between;
 }
 
 .StatsHeader {
@@ -1420,11 +1422,12 @@ export default {
 }
 
 .StatsContent {
-  @apply flex w-[calc(100%-60px)] justify-between max-w-[1500px] mx-auto py-30 animate-fade-in;
+  @apply flex w-[calc(100%-60px)] justify-between max-w-[1500px] mx-auto py-[120px] animate-fade-in;
 }
 
 .Stat {
-  @apply flex h-full flex-col items-center p-6 gap-2 rounded-[2rem] text-center flex-basis-1/3;
+  @apply flex h-full flex-col items-center p-6 gap-2 rounded-[2rem] text-center;
+  flex-basis: 1/3;
 }
 
 .Num {

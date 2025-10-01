@@ -607,7 +607,7 @@ export default {
 
 <style scoped>
 .stake {
-  @apply pt-30 pb-20 bg-[url('bg-1.png')] bg-no-repeat bg-center min-h-[800px];
+  @apply pt-[120px] pb-20 bg-[url('bg-1.png')] bg-no-repeat bg-center min-h-[800px];
 }
 
 .staker {
@@ -649,10 +649,12 @@ export default {
   @apply mt-2 text-xs leading-5 text-center tracking-[0.3px] flex justify-center items-center underline z-10 cursor-pointer font-bold;
 }
 .token-amount-input {
-  @apply box-border z-10 m-0 p-0 relative inline-block w-[70%] px-3 py-1 text-white bg-transparent outline-0 text-[34px] leading-10 text-right h-10 pb-0 text-ellipsis rounded border-0 touch-manipulation;
+  @apply box-border z-10 m-0 p-0 relative inline-block w-[70%] px-3 py-1 text-white bg-transparent outline-0 text-[34px] leading-10 text-right h-10 pb-0 rounded border-0;
   font-variant: tabular-nums;
   list-style: none;
   font-feature-settings: "tnum";
+  text-overflow: ellipsis;
+  touch-action: manipulation;
 }
 .ant-col {
   @apply box-border block w-1/2;

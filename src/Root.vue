@@ -31,7 +31,7 @@
     </div>
     <div
       :class="{ 'navbar--hidden': !showNavbar }"
-      class="fixed top-16 w-full p-3 navbar transition-all duration-500 ease-out bg-dark-bg text-white transform translate-z-0"
+      class="fixed top-16 w-full p-3 navbar transition-all duration-500 ease-out bg-dark-bg text-white transform"
     >
       <div
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
@@ -75,39 +75,39 @@
       <ConnectButton />
 
       <div class="opacity-50 cursor-not-allowed pointer-events-none flex flex-col items-start py-2">
-        <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out">Stake</span>
+        <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out">Stake</span>
         <div class="text-xs text-gray-400 mt-0.5 font-normal">Coming Soon</div>
       </div>
-      <router-link class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100" to="/wrap" @click.native="showSidebar = false">
+      <router-link class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100" to="/wrap" @click.native="showSidebar = false">
         Wrap
       </router-link>
       <router-link
-        class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100"
+        class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100"
         to="/unwrap"
         @click.native="showSidebar = false"
       >
         Unwrap
       </router-link>
       <router-link
-        class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100"
+        class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100"
         to="/rollover"
         @click.native="showSidebar = false"
       >
         Rollover
       </router-link>
       <div class="opacity-50 cursor-not-allowed pointer-events-none flex flex-col items-start py-2">
-        <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out">Withdraw</span>
+        <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out">Withdraw</span>
         <div class="text-xs text-gray-400 mt-0.5 font-normal">Coming Soon</div>
       </div>
-      <router-link class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100" to="/earn" @click.native="showSidebar = false">
+      <router-link class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100" to="/earn" @click.native="showSidebar = false">
         Earn
       </router-link>
-      <router-link class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100" to="#Stats" @click.native="showSidebar = false">
+      <router-link class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100" to="#Stats" @click.native="showSidebar = false">
         <a href="#Stats">
           Stats
         </a>
       </router-link>
-      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+      <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
         <a
           href="https://snapshot.page/#/sharedstake.eth"
           target="_blank"
@@ -115,7 +115,7 @@
           >DAO
         </a>
       </span>
-      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+      <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
         <a
           href="https://docs.sharedstake.finance/"
           target="_blank"
@@ -123,7 +123,7 @@
           >Docs
         </a>
       </span>
-      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+      <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
         <a
           href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
           target="_blank"
@@ -131,7 +131,7 @@
           >Dune
         </a>
       </span>
-      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+      <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
         <a
           href="https://sharedtools.org"
           target="_blank"
@@ -139,7 +139,7 @@
           >Get veSGT
         </a>
       </span>
-      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+      <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
         <a
           href="https://curve.fi/factory/49"
           target="_blank"
@@ -147,7 +147,7 @@
           >Get CRV-vETH2-LP
         </a>
       </span>
-      <span class="text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+      <span class="text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
         <a
           href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
           target="_blank"
@@ -160,7 +160,7 @@
     <router-view :scrolled="currentScrollPosition" :windowWidth="windowWidth" />
     <!--App-->
     <div class="z-[100] px-8 py-10 bg-dark-footer text-white min-h-[350px] flex items-center">
-      <div class="text-sm pb-12 text-center text-justify leading-[22px] opacity-50 transition-opacity duration-350 ease-in-out hover:opacity-100">
+      <div class="text-sm pb-12 text-center leading-[22px] opacity-50 transition-opacity duration-[350ms] ease-in-out hover:opacity-100" style="text-justify: inter-word;">
         <p>
           Please note that SharedStake protocol, its software, and all content
           found on it are provided on an "as is" and "as available" basis.
@@ -189,8 +189,8 @@
             class="mb-12 transition-all duration-250 ease-in-out hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)]"
           />
           <div class="flex flex-col items-start justify-start px-2.5 pb-2.5">
-            <div class="text-white font-bold text-base mb-5 opacity-75">Community</div>
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <div class="text-white font-bold text-base mb-5 opacity-[0.75]">Community</div>
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://twitter.com/ChimeraDefi"
                 target="_blank"
@@ -198,7 +198,7 @@
                 >Twitter
               </a></span
             >
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://discord.gg/C9GhCv86My"
                 target="_blank"
@@ -206,7 +206,7 @@
                 >Discord
               </a></span
             >
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://medium.com/@chimera_defi"
                 target="_blank"
@@ -216,8 +216,8 @@
             >
           </div>
           <div class="flex flex-col items-start justify-start px-2.5 pb-2.5">
-            <div class="text-white font-bold text-base mb-5 opacity-75">Developers</div>
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <div class="text-white font-bold text-base mb-5 opacity-[0.75]">Developers</div>
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://github.com/SharedStake"
                 target="_blank"
@@ -225,7 +225,7 @@
                 >Github
               </a></span
             >
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://docs.sharedstake.finance/"
                 target="_blank"
@@ -233,7 +233,7 @@
                 >Documentation
               </a></span
             >
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://snapshot.page/#/sharedstake.eth"
                 target="_blank"
@@ -243,8 +243,8 @@
             </span>
           </div>
           <div class="flex flex-col items-start justify-start px-2.5 pb-2.5">
-            <div class="text-white font-bold text-base mb-5 opacity-75">About</div>
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <div class="text-white font-bold text-base mb-5 opacity-[0.75]">About</div>
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://www.certik.org/projects/sharedstake"
                 target="_blank"
@@ -252,10 +252,10 @@
                 >Audit
               </a></span
             >
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <router-link to="/FAQ">FAQ </router-link>
             </span>
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <a
                 href="https://docs.sharedstake.org/risks"
                 target="_blank"
@@ -263,10 +263,10 @@
                 >Risks
               </a></span
             >
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <router-link to="/privacy">Privacy Policy </router-link>
             </span>
-            <span class="m-0 pb-3.5 text-white opacity-67 py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-350 ease-in-out hover:opacity-100">
+            <span class="m-0 pb-3.5 text-white opacity-[0.67] py-2 rounded-lg font-normal w-fit text-base cursor-pointer transition-opacity duration-[350ms] ease-in-out hover:opacity-100">
               <router-link to="/terms">Terms of Service </router-link>
             </span>
           </div>
@@ -365,7 +365,7 @@ export default {
 }
 
 .navbar {
-  @apply z-[100] bg-dark-bg text-white transform translate-z-0 transition-all duration-500 ease-out;
+  @apply z-[100] bg-dark-bg text-white transform transition-all duration-500 ease-out;
 }
 
 .navbar.navbar--hidden {
@@ -373,11 +373,11 @@ export default {
 }
 
 .ConnectButton {
-  @apply px-6 py-2 border-[3px] border-double border-transparent rounded-[80px] bg-gradient-dark bg-gradient-to-r from-brand-accent to-brand-secondary bg-origin-border bg-clip-padding bg-[length:100%_100%] transition-all duration-500 ease-out whitespace-nowrap;
+  @apply px-6 py-2 border-[3px] border-double border-transparent rounded-[80px] bg-gradient-to-r from-[#0d0e21] to-[#0d0e21] bg-gradient-to-r from-brand-accent to-brand-secondary bg-origin-border bg-clip-padding bg-[length:100%_100%] transition-all duration-500 ease-out whitespace-nowrap;
 }
 
 .ConnectButton:hover {
-  @apply drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)] brightness-120;
+  @apply drop-shadow-[0px_0px_4px_rgba(255,255,255,0.7)] brightness-[120%];
 }
 
 .animatedButton {
