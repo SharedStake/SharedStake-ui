@@ -25,11 +25,11 @@
     <!-- Blog Post Content -->
     <div v-else>
       <!-- Hero Section -->
-      <div class="relative py-16 px-4">
+      <div class="relative py-12 md:py-16 px-4">
         <div class="max-w-4xl mx-auto">
           <!-- Breadcrumb -->
-          <nav class="mb-8">
-            <ol class="flex items-center space-x-2 text-sm text-gray-400">
+          <nav class="mb-6 md:mb-8">
+            <ol class="flex items-center space-x-2 text-xs md:text-sm text-gray-400 flex-wrap">
               <li>
                 <router-link to="/" class="hover:text-white transition-colors">Home</router-link>
               </li>
@@ -49,24 +49,24 @@
           </nav>
 
           <!-- Post Header -->
-          <div class="mb-8">
-            <div class="flex items-center gap-2 mb-4">
+          <div class="mb-6 md:mb-8">
+            <div class="flex items-center gap-2 mb-3 md:mb-4 flex-wrap">
               <span 
                 v-if="post.featured"
-                class="bg-brand-primary text-white px-3 py-1 rounded-full text-sm font-semibold"
+                class="bg-brand-primary text-white px-2 py-1 md:px-3 rounded-full text-xs md:text-sm font-semibold"
               >
                 Featured
               </span>
-              <span class="text-sm text-gray-400">{{ formatDate(post.publishDate) }}</span>
+              <span class="text-xs md:text-sm text-gray-400">{{ formatDate(post.publishDate) }}</span>
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">{{ post.title }}</h1>
-            <div class="flex items-center justify-between text-gray-400">
-              <span>By {{ post.author }}</span>
-              <div class="flex gap-2">
+            <h1 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight">{{ post.title }}</h1>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-gray-400 gap-2">
+              <span class="text-sm md:text-base">By {{ post.author }}</span>
+              <div class="flex gap-2 flex-wrap">
                 <span 
                   v-for="tag in post.tags" 
                   :key="tag"
-                  class="bg-gray-700 px-3 py-1 rounded-full text-sm"
+                  class="bg-gray-700 px-2 py-1 md:px-3 rounded-full text-xs md:text-sm"
                 >
                   {{ formatTag(tag) }}
                 </span>
@@ -77,17 +77,17 @@
       </div>
 
       <!-- Post Content -->
-      <div class="py-8 px-4">
+      <div class="py-6 md:py-8 px-4">
         <div class="max-w-4xl mx-auto">
           <article class="prose prose-lg prose-invert max-w-none">
             <div v-html="post.content" class="blog-content"></div>
           </article>
 
           <!-- Post Footer -->
-          <div class="mt-12 pt-8 border-t border-gray-700">
+          <div class="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-gray-700">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div class="flex items-center gap-4">
-                <span class="text-gray-400">Share this post:</span>
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <span class="text-gray-400 text-sm md:text-base">Share this post:</span>
                 <div class="flex gap-2">
                   <a 
                     :href="twitterShareUrl" 
@@ -96,7 +96,7 @@
                     class="bg-gray-700 hover:bg-blue-500 text-white p-2 rounded transition-colors"
                     title="Share on Twitter"
                   >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                     </svg>
                   </a>
@@ -107,7 +107,7 @@
                     class="bg-gray-700 hover:bg-blue-600 text-white p-2 rounded transition-colors"
                     title="Share on LinkedIn"
                   >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                     </svg>
                   </a>
@@ -115,7 +115,7 @@
               </div>
               <router-link 
                 to="/blog"
-                class="text-brand-primary hover:text-pink-400 font-semibold transition-colors"
+                class="text-brand-primary hover:text-pink-400 font-semibold transition-colors text-sm md:text-base"
               >
                 ← Back to Blog
               </router-link>
@@ -125,22 +125,22 @@
       </div>
 
       <!-- Related Posts -->
-      <div v-if="relatedPosts.length > 0" class="py-16 px-4 bg-gray-800">
+      <div v-if="relatedPosts.length > 0" class="py-12 md:py-16 px-4 bg-gray-800">
         <div class="max-w-6xl mx-auto">
-          <h2 class="text-3xl font-bold mb-8 text-center">Related Posts</h2>
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center">Related Posts</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             <article 
               v-for="relatedPost in relatedPosts" 
               :key="relatedPost.id"
-              class="bg-gray-700 rounded-lg p-6 hover:bg-gray-600 transition-colors"
+              class="bg-gray-700 rounded-lg p-4 md:p-6 hover:bg-gray-600 transition-colors"
             >
-              <h3 class="text-xl font-bold mb-3 hover:text-brand-primary transition-colors">
+              <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 hover:text-brand-primary transition-colors">
                 <router-link :to="`/blog/${relatedPost.slug}`">
                   {{ relatedPost.title }}
                 </router-link>
               </h3>
-              <p class="text-gray-300 mb-4 line-clamp-2">{{ relatedPost.excerpt }}</p>
-              <div class="flex items-center justify-between text-sm text-gray-400">
+              <p class="text-gray-300 mb-3 md:mb-4 line-clamp-2 text-sm md:text-base">{{ relatedPost.excerpt }}</p>
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs md:text-sm text-gray-400 gap-2">
                 <span>{{ formatDate(relatedPost.publishDate) }}</span>
                 <router-link 
                   :to="`/blog/${relatedPost.slug}`"
@@ -155,22 +155,22 @@
       </div>
 
       <!-- CTA Section -->
-      <div class="py-16 px-4 bg-gradient-to-r from-brand-primary to-pink-600">
+      <div class="py-12 md:py-16 px-4 bg-gradient-to-r from-brand-primary to-pink-600">
         <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Start Staking?</h2>
-          <p class="text-xl mb-8 text-white/90">
+          <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6">Ready to Start Staking?</h2>
+          <p class="text-lg md:text-xl mb-6 md:mb-8 text-white/90 px-4">
             Join thousands of users earning rewards with SharedStake's liquid staking protocol.
           </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
             <router-link 
               to="/stake"
-              class="bg-white text-brand-primary px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+              class="bg-white text-brand-primary px-6 py-3 md:px-8 rounded-full font-semibold hover:bg-gray-100 transition-colors text-sm md:text-base"
             >
               Start Staking
             </router-link>
             <router-link 
               to="/earn"
-              class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-brand-primary transition-colors"
+              class="border-2 border-white text-white px-6 py-3 md:px-8 rounded-full font-semibold hover:bg-white hover:text-brand-primary transition-colors text-sm md:text-base"
             >
               View Rewards
             </router-link>
@@ -357,382 +357,164 @@ export default {
   overflow: hidden;
 }
 
-/* Blog content styling - Enhanced for markdown */
+/* Blog content styling - Responsive with Tailwind classes */
 .blog-content {
-  line-height: 1.8;
-  color: #e5e7eb;
-  max-width: none;
+  @apply text-gray-300 leading-relaxed max-w-none;
 }
 
-/* Headings with better hierarchy and spacing */
+/* Headings with responsive sizing */
 .blog-content h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 3rem 0 1.5rem 0;
-  color: #ffffff;
-  border-bottom: 2px solid #e6007a;
-  padding-bottom: 0.5rem;
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 mt-12 pb-2 border-b-2 border-brand-primary;
 }
 
 .blog-content h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 2.5rem 0 1rem 0;
-  color: #e6007a;
-  position: relative;
+  @apply text-2xl md:text-3xl font-bold text-brand-primary mb-4 mt-8 relative pl-4;
 }
 
 .blog-content h2::before {
   content: '';
-  position: absolute;
-  left: -1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 1.5rem;
-  background: #e6007a;
-  border-radius: 2px;
+  @apply absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-brand-primary rounded;
 }
 
 .blog-content h3 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 2rem 0 1rem 0;
-  color: #ffffff;
+  @apply text-xl md:text-2xl font-bold text-white mb-3 mt-6;
 }
 
 .blog-content h4 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 1.5rem 0 0.75rem 0;
-  color: #f3f4f6;
+  @apply text-lg md:text-xl font-semibold text-gray-100 mb-2 mt-4;
 }
 
 .blog-content h5, .blog-content h6 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: 1.25rem 0 0.5rem 0;
-  color: #d1d5db;
+  @apply text-base md:text-lg font-semibold text-gray-300 mb-2 mt-3;
 }
 
-/* Paragraphs with better spacing */
+/* Paragraphs with responsive spacing */
 .blog-content p {
-  margin: 1.25rem 0;
-  color: #d1d5db;
-  font-size: 1.1rem;
+  @apply mb-4 text-gray-300 text-base md:text-lg;
 }
 
-/* Lists with better styling */
+/* Lists with responsive styling */
 .blog-content ul, .blog-content ol {
-  margin: 1.5rem 0;
-  padding-left: 2rem;
+  @apply mb-6 pl-6 space-y-2;
 }
 
 .blog-content li {
-  margin: 0.75rem 0;
-  color: #d1d5db;
-  line-height: 1.6;
+  @apply text-gray-300 leading-relaxed;
 }
 
 .blog-content ul li {
-  list-style-type: disc;
+  @apply list-disc;
 }
 
 .blog-content ol li {
-  list-style-type: decimal;
+  @apply list-decimal;
 }
 
 /* Nested lists */
 .blog-content ul ul, .blog-content ol ol, .blog-content ul ol, .blog-content ol ul {
-  margin: 0.5rem 0;
+  @apply mt-2 mb-2;
 }
 
 /* Strong and emphasis */
 .blog-content strong {
-  color: #ffffff;
-  font-weight: bold;
+  @apply text-white font-bold;
 }
 
 .blog-content em {
-  color: #f3f4f6;
-  font-style: italic;
+  @apply text-gray-100 italic;
 }
 
 /* Links */
 .blog-content a {
-  color: #e6007a;
-  text-decoration: underline;
-  transition: color 0.2s ease;
+  @apply text-brand-primary underline hover:text-pink-400 transition-colors duration-200;
 }
 
-.blog-content a:hover {
-  color: #f472b6;
-  text-decoration: none;
-}
-
-/* Code styling */
+/* Code styling with responsive design */
 .blog-content code {
-  background: rgba(17, 24, 39, 0.8);
-  color: #e6007a;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.875rem;
-  border: 1px solid rgba(75, 85, 99, 0.3);
+  @apply bg-gray-800 text-brand-primary px-2 py-1 rounded text-sm font-mono border border-gray-600;
 }
 
 .blog-content pre {
-  background: rgba(17, 24, 39, 0.9);
-  border: 1px solid rgba(75, 85, 99, 0.3);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  overflow-x: auto;
+  @apply bg-gray-800 border border-gray-600 rounded-lg p-4 md:p-6 my-4 md:my-6 overflow-x-auto;
 }
 
 .blog-content pre code {
-  background: none;
-  border: none;
-  padding: 0;
-  color: #e5e7eb;
-  font-size: 0.9rem;
+  @apply bg-transparent border-0 p-0 text-gray-200 text-sm;
 }
 
-/* Blockquotes */
+/* Blockquotes with responsive design */
 .blog-content blockquote {
-  border-left: 4px solid #e6007a;
-  background: rgba(230, 0, 122, 0.1);
-  margin: 2rem 0;
-  padding: 1.5rem;
-  border-radius: 0 8px 8px 0;
-  font-style: italic;
-  color: #d1d5db;
+  @apply border-l-4 border-brand-primary bg-pink-900 bg-opacity-10 my-6 p-4 md:p-6 italic text-gray-300 rounded-r-lg;
 }
 
 .blog-content blockquote p {
-  margin: 0;
+  @apply mb-0;
 }
 
-/* Tables */
+/* Tables with responsive design */
 .blog-content .table-wrapper {
-  overflow-x: auto;
-  margin: 2rem 0;
+  @apply overflow-x-auto my-6;
 }
 
 .blog-content table {
-  width: 100%;
-  border-collapse: collapse;
-  background: rgba(31, 41, 55, 0.5);
-  border-radius: 8px;
-  overflow: hidden;
+  @apply w-full border-collapse bg-gray-800 bg-opacity-50 rounded-lg overflow-hidden min-w-full;
 }
 
 .blog-content th, .blog-content td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+  @apply px-3 py-2 md:px-4 md:py-3 text-left border-b border-gray-600 text-sm md:text-base;
 }
 
 .blog-content th {
-  background: rgba(17, 24, 39, 0.8);
-  color: #e6007a;
-  font-weight: bold;
+  @apply bg-gray-900 bg-opacity-80 text-brand-primary font-bold;
 }
 
 .blog-content td {
-  color: #d1d5db;
+  @apply text-gray-300;
 }
 
 .blog-content tr:hover {
-  background: rgba(55, 65, 81, 0.3);
+  @apply bg-gray-700 bg-opacity-30;
 }
 
 /* Horizontal rules */
 .blog-content hr {
-  border: none;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #e6007a, transparent);
-  margin: 3rem 0;
+  @apply border-0 h-0.5 bg-gradient-to-r from-transparent via-brand-primary to-transparent my-8 md:my-12;
 }
 
 /* Lists with custom styling for better readability */
 .blog-content ul li::marker {
-  color: #e6007a;
+  @apply text-brand-primary;
 }
 
 .blog-content ol li::marker {
-  color: #e6007a;
-  font-weight: bold;
+  @apply text-brand-primary font-bold;
 }
 
-/* Enhanced styling for the expanded blog post */
-.blog-content .intro-section {
-  background: linear-gradient(135deg, rgba(230, 0, 122, 0.1), rgba(244, 114, 182, 0.1));
-  border-left: 4px solid #e6007a;
-  padding: 1.5rem;
-  margin: 2rem 0;
-  border-radius: 8px;
-}
-
-.blog-content .achievement-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.blog-content .achievement-card {
-  background: rgba(55, 65, 81, 0.5);
-  border: 1px solid rgba(75, 85, 99, 0.3);
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-}
-
-.blog-content .achievement-card:hover {
-  background: rgba(55, 65, 81, 0.8);
-  border-color: #e6007a;
-  transform: translateY(-2px);
-}
-
-.blog-content .achievement-card h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  color: #e6007a;
-}
-
-.blog-content .process-section {
-  background: rgba(31, 41, 55, 0.5);
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem 0;
-}
-
-.blog-content .process-section h3 {
-  color: #e6007a;
-  margin-top: 0;
-}
-
-.blog-content .metrics-section {
-  margin: 2rem 0;
-}
-
-.blog-content .metric-highlight {
-  background: rgba(17, 24, 39, 0.8);
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 1.5rem 0;
-  border: 1px solid rgba(75, 85, 99, 0.3);
-}
-
-.blog-content .metric-comparison {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.blog-content .metric-before,
-.blog-content .metric-after {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 120px;
-}
-
-.blog-content .metric-label {
-  font-size: 0.875rem;
-  color: #9ca3af;
-  margin-bottom: 0.5rem;
-}
-
-.blog-content .metric-value {
-  font-size: 1.125rem;
-  font-weight: bold;
-  color: #d1d5db;
-}
-
-.blog-content .metric-value.critical {
-  color: #ef4444;
-}
-
-.blog-content .metric-value.success {
-  color: #10b981;
-}
-
-.blog-content .metric-arrow {
-  font-size: 1.5rem;
-  color: #e6007a;
-  font-weight: bold;
-}
-
-.blog-content .roadmap-section {
-  background: rgba(31, 41, 55, 0.3);
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem 0;
-}
-
-.blog-content .roadmap-section h3 {
-  color: #e6007a;
-  margin-top: 0;
-}
-
-.blog-content .takeaways-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.blog-content .takeaway {
-  background: rgba(55, 65, 81, 0.3);
-  border-radius: 8px;
-  padding: 1.5rem;
-  border-left: 4px solid #e6007a;
-}
-
-.blog-content .takeaway h3 {
-  margin-top: 0;
-  color: #e6007a;
-  font-size: 1.125rem;
-}
-
-.blog-content .conclusion-section {
-  background: linear-gradient(135deg, rgba(230, 0, 122, 0.1), rgba(244, 114, 182, 0.1));
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem 0;
-  border: 1px solid rgba(230, 0, 122, 0.2);
-}
-
-.blog-content code {
-  background: rgba(17, 24, 39, 0.8);
-  color: #e6007a;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.875rem;
-}
-
-/* Responsive adjustments */
+/* Mobile-specific adjustments */
 @media (max-width: 768px) {
-  .blog-content .achievement-grid {
-    grid-template-columns: 1fr;
+  .blog-content h1 {
+    @apply text-2xl mt-8;
   }
   
-  .blog-content .metric-comparison {
-    flex-direction: column;
-    text-align: center;
+  .blog-content h2 {
+    @apply text-xl mt-6 pl-3;
   }
   
-  .blog-content .takeaways-section {
-    grid-template-columns: 1fr;
+  .blog-content h3 {
+    @apply text-lg mt-4;
+  }
+  
+  .blog-content table {
+    @apply text-xs;
+  }
+  
+  .blog-content th, .blog-content td {
+    @apply px-2 py-1;
   }
 }
+
+/* Enhanced styling for the expanded blog post - Using Tailwind classes */
+/* All styling now handled by Tailwind classes above */
 
 /* Prose styling for better readability */
 .prose {
