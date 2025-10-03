@@ -35,7 +35,8 @@ renderer.table = function(header, body) {
   return `<div class="table-wrapper"><table class="table">${header}${body}</table></div>`;
 };
 
-marked.use({ renderer });
+// Set the renderer
+marked.setOptions({ renderer });
 
 export const parseMarkdown = (markdown) => {
   if (!markdown) return '';
