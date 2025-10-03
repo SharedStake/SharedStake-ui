@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "setup": "nvm use 18",
+    "setup": "nvm use 20",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
@@ -61,6 +61,8 @@
     "not dead"
   ],
   "resolutions": {
-    "crypto-es": "2.1.0"
+    "crypto-es": "2.1.0",
+    "ws": ">=8.17.1",
+    "cross-spawn": ">=6.0.6"
   }
 }
