@@ -84,7 +84,7 @@ export default {
         formData.append('EMAIL', this.email);
         formData.append('b_6cb6b636781c4fcc0b7cbccf1_1e3ebab5ba', '');
         
-        const response = await fetch(
+        await fetch(
           'https://sharedstake.us1.list-manage.com/subscribe/post?u=6cb6b636781c4fcc0b7cbccf1&id=1e3ebab5ba',
           {
             method: 'POST',
