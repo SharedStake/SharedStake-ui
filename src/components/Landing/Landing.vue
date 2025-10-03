@@ -511,7 +511,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="flex_column" v-show="scrolled >= 5500">
+    <div class="flex_column" v-show="scrolled >= 5500">
       <div class="exp Information" v-show="scrolled >= 5500">
         <div class="InfoHeader centertext" v-show="scrolled >= 5500">
           Subscribe for updates from the team
@@ -520,7 +520,7 @@
           <MailingListSubscribeForm />
         </div>
       </div>
-    </div> -->
+    </div>
     <!-- <div class="Container" v-show="scrolled <= 5500"></div> -->
   </div>
 </template>

@@ -83,7 +83,7 @@ export default {
         formData.append('b_6cb6b636781c4fcc0b7cbccf1_1e3ebab5ba', '');
         
         // Submit to Mailchimp
-        const response = await fetch('https://sharedstake.us1.list-manage.com/subscribe/post?u=6cb6b636781c4fcc0b7cbccf1&id=1e3ebab5ba', {
+        await fetch('https://sharedstake.us1.list-manage.com/subscribe/post?u=6cb6b636781c4fcc0b7cbccf1&id=1e3ebab5ba', {
           method: 'POST',
           body: formData,
           mode: 'no-cors' // Required for cross-origin requests
