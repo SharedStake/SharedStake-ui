@@ -151,6 +151,48 @@ src/components/Blog/
 ### 🚀 READY TO USE
 The blog system is fully integrated and ready for content creation. Simply add new blog posts to the `blogPosts.js` file following the existing data structure.
 
+## Adding/Editing Posts (Human + AI Friendly)
+
+Location: `src/components/Blog/posts/`
+
+Each post is its own file and exports a default object with these fields:
+
+```
+export default {
+  id: 'unique-id-or-slug',
+  slug: 'url-friendly-slug',
+  title: 'Title',
+  excerpt: '1–2 sentence summary',
+  content: `...HTML content...`,
+  author: 'Name',
+  publishDate: 'YYYY-MM-DD',
+  tags: ['tag-a', 'tag-b'],
+  featured: false,
+  meta: {
+    description: 'SEO description',
+    keywords: 'comma, separated, keywords'
+  }
+};
+```
+
+Best practices:
+- **One file per post** under `src/components/Blog/posts/`
+- **Use ISO dates** (YYYY-MM-DD) so sorting is stable
+- **Keep `slug` unique**; it becomes the URL: `/blog/<slug>`
+- **Keep `content` simple HTML** for now (AI can generate clean blocks). If we adopt Markdown later, we can swap the renderer without changing post files’ API
+- **Short sections + lists** improve scannability and SEO
+
+Workflow to add a new post:
+1) Duplicate an existing post file in `src/components/Blog/posts/`
+2) Update `id`, `slug`, `title`, `excerpt`, `content`, `author`, `publishDate`, `tags`, `featured`, `meta`
+3) Save — no registry update needed. Posts auto-load via `require.context` in `src/components/Blog/data/index.js`
+4) Visit `/blog` (listing) or `/blog/<slug>` to verify
+
+Loader details:
+- Aggregation lives in `src/components/Blog/data/index.js`
+- Auto-discovers all `*.js` files in `posts/`
+- Exposes helpers: `blogPosts`, `getBlogPostBySlug`, `getFeaturedPosts`, `getPostsByTag`, `getAllTags`
+
 ## Future Enhancements
 - Content Management System integration
 - Comment system
