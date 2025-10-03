@@ -357,53 +357,212 @@ export default {
   overflow: hidden;
 }
 
-/* Blog content styling */
+/* Blog content styling - Enhanced for markdown */
 .blog-content {
   line-height: 1.8;
   color: #e5e7eb;
+  max-width: none;
+}
+
+/* Headings with better hierarchy and spacing */
+.blog-content h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 3rem 0 1.5rem 0;
+  color: #ffffff;
+  border-bottom: 2px solid #e6007a;
+  padding-bottom: 0.5rem;
 }
 
 .blog-content h2 {
   font-size: 2rem;
   font-weight: bold;
-  margin: 2rem 0 1rem 0;
-  color: #ffffff;
+  margin: 2.5rem 0 1rem 0;
+  color: #e6007a;
+  position: relative;
+}
+
+.blog-content h2::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 1.5rem;
+  background: #e6007a;
+  border-radius: 2px;
 }
 
 .blog-content h3 {
   font-size: 1.5rem;
   font-weight: bold;
-  margin: 1.5rem 0 1rem 0;
+  margin: 2rem 0 1rem 0;
   color: #ffffff;
 }
 
-.blog-content p {
-  margin: 1rem 0;
+.blog-content h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  color: #f3f4f6;
+}
+
+.blog-content h5, .blog-content h6 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem 0;
   color: #d1d5db;
 }
 
-.blog-content ul {
-  margin: 1rem 0;
+/* Paragraphs with better spacing */
+.blog-content p {
+  margin: 1.25rem 0;
+  color: #d1d5db;
+  font-size: 1.1rem;
+}
+
+/* Lists with better styling */
+.blog-content ul, .blog-content ol {
+  margin: 1.5rem 0;
   padding-left: 2rem;
 }
 
 .blog-content li {
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
   color: #d1d5db;
+  line-height: 1.6;
 }
 
+.blog-content ul li {
+  list-style-type: disc;
+}
+
+.blog-content ol li {
+  list-style-type: decimal;
+}
+
+/* Nested lists */
+.blog-content ul ul, .blog-content ol ol, .blog-content ul ol, .blog-content ol ul {
+  margin: 0.5rem 0;
+}
+
+/* Strong and emphasis */
 .blog-content strong {
   color: #ffffff;
   font-weight: bold;
 }
 
+.blog-content em {
+  color: #f3f4f6;
+  font-style: italic;
+}
+
+/* Links */
 .blog-content a {
   color: #e6007a;
   text-decoration: underline;
+  transition: color 0.2s ease;
 }
 
 .blog-content a:hover {
   color: #f472b6;
+  text-decoration: none;
+}
+
+/* Code styling */
+.blog-content code {
+  background: rgba(17, 24, 39, 0.8);
+  color: #e6007a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.875rem;
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.blog-content pre {
+  background: rgba(17, 24, 39, 0.9);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.blog-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+/* Blockquotes */
+.blog-content blockquote {
+  border-left: 4px solid #e6007a;
+  background: rgba(230, 0, 122, 0.1);
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #d1d5db;
+}
+
+.blog-content blockquote p {
+  margin: 0;
+}
+
+/* Tables */
+.blog-content .table-wrapper {
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.blog-content th, .blog-content td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.blog-content th {
+  background: rgba(17, 24, 39, 0.8);
+  color: #e6007a;
+  font-weight: bold;
+}
+
+.blog-content td {
+  color: #d1d5db;
+}
+
+.blog-content tr:hover {
+  background: rgba(55, 65, 81, 0.3);
+}
+
+/* Horizontal rules */
+.blog-content hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e6007a, transparent);
+  margin: 3rem 0;
+}
+
+/* Lists with custom styling for better readability */
+.blog-content ul li::marker {
+  color: #e6007a;
+}
+
+.blog-content ol li::marker {
+  color: #e6007a;
+  font-weight: bold;
 }
 
 /* Enhanced styling for the expanded blog post */

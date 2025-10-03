@@ -155,9 +155,36 @@ The blog system is fully integrated and ready for content creation. Simply add n
 
 Location: `src/components/Blog/posts/`
 
-Each post is its own file and exports a default object with these fields:
+**Recommended format: Markdown with frontmatter** (much more readable and maintainable)
 
+### Markdown Format (.md files)
+```markdown
+---
+id: "unique-id-or-slug"
+slug: "url-friendly-slug"
+title: "Title"
+excerpt: "1–2 sentence summary"
+author: "Name"
+publishDate: "YYYY-MM-DD"
+tags: ["tag-a", "tag-b"]
+featured: true
+meta:
+  description: "SEO description"
+  keywords: "comma, separated, keywords"
+---
+
+# Your Blog Post Title
+
+Your markdown content here with proper headings, lists, tables, etc.
+
+## Section Headers
+- Use proper markdown syntax
+- Tables, code blocks, blockquotes all supported
+- Much more readable than HTML
 ```
+
+### Legacy JavaScript Format (.js files)
+```javascript
 export default {
   id: 'unique-id-or-slug',
   slug: 'url-friendly-slug',
@@ -175,22 +202,28 @@ export default {
 };
 ```
 
-Best practices:
+### Best Practices
+- **Prefer Markdown** (.md files) for better readability and maintainability
 - **One file per post** under `src/components/Blog/posts/`
 - **Use ISO dates** (YYYY-MM-DD) so sorting is stable
 - **Keep `slug` unique**; it becomes the URL: `/blog/<slug>`
-- **Keep `content` simple HTML** for now (AI can generate clean blocks). If we adopt Markdown later, we can swap the renderer without changing post files’ API
+- **Use proper markdown syntax** for headings, lists, tables, code blocks
 - **Short sections + lists** improve scannability and SEO
+- **Frontmatter** contains all metadata (YAML format)
 
-Workflow to add a new post:
-1) Duplicate an existing post file in `src/components/Blog/posts/`
-2) Update `id`, `slug`, `title`, `excerpt`, `content`, `author`, `publishDate`, `tags`, `featured`, `meta`
-3) Save — no registry update needed. Posts auto-load via `require.context` in `src/components/Blog/data/index.js`
-4) Visit `/blog` (listing) or `/blog/<slug>` to verify
+### Workflow to add a new post:
+1) **For Markdown:** Create a new `.md` file in `src/components/Blog/posts/`
+2) **For JavaScript:** Duplicate an existing `.js` file
+3) Add frontmatter (markdown) or update the export object (JavaScript)
+4) Write content using markdown syntax (much easier to read and edit)
+5) Save — no registry update needed. Posts auto-load via `require.context`
+6) Visit `/blog` (listing) or `/blog/<slug>` to verify
 
-Loader details:
+### Loader details:
 - Aggregation lives in `src/components/Blog/data/index.js`
-- Auto-discovers all `*.js` files in `posts/`
+- Auto-discovers all `*.js` and `*.md` files in `posts/`
+- Markdown files use frontmatter + markdown content
+- JavaScript files use export objects
 - Exposes helpers: `blogPosts`, `getBlogPostBySlug`, `getFeaturedPosts`, `getPostsByTag`, `getAllTags`
 
 ## Future Enhancements
