@@ -246,6 +246,16 @@
         </p>
       </div>
     </div>
+    
+    <!-- Early Mailing List CTA -->
+    <div class="early-cta-container" v-show="scrolled >= 700">
+      <div class="early-cta-wrapper">
+        <h3 class="early-cta-title">Stay Updated</h3>
+        <p class="early-cta-subtitle">Get the latest updates on staking rewards and protocol developments</p>
+        <MailingListSubscribeForm />
+      </div>
+    </div>
+    
     <div class="Container" v-show="scrolled >= 1000">
       <div class="exp background2" />
       <div class="second">
@@ -1931,6 +1941,151 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 @media only screen and (max-width: 375px) {
   .mainTitle {
     font-size: 36px;
+  }
+}
+
+/* Mailing List CTA Improvements */
+:root {
+  --cta-padding: 100px 20px;
+  --cta-max-width: 600px;
+  --cta-bg-primary: rgba(17, 26, 25, 0.95);
+  --cta-bg-secondary: rgba(26, 38, 37, 0.95);
+  --cta-title-size: 36px;
+  --cta-subtitle-size: 20px;
+  --cta-mobile-padding: 40px 15px;
+  --cta-small-padding: 30px 10px;
+}
+
+/* Both CTA sections share these base styles */
+.flex_column,
+.early-cta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: var(--cta-padding);
+}
+
+/* Bottom Mailing List Section Styles */
+.flex_column .Information {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.flex_column .Info,
+.early-cta-wrapper {
+  width: 100%;
+  max-width: var(--cta-max-width);
+  display: flex;
+  justify-content: center;
+}
+
+/* Early CTA Specific Styles */
+.early-cta-container {
+  background: linear-gradient(135deg, var(--cta-bg-primary) 0%, var(--cta-bg-secondary) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.early-cta-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.early-cta-wrapper {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.early-cta-title {
+  font-size: var(--cta-title-size);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.early-cta-subtitle {
+  font-size: var(--cta-subtitle-size);
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 40px;
+  line-height: 1.6;
+  padding: 0 20px;
+}
+
+@media only screen and (max-width: 768px) {
+  .early-cta-container,
+  .flex_column {
+    padding: var(--cta-mobile-padding);
+  }
+  
+  .early-cta-title,
+  .flex_column .InfoHeader {
+    font-size: 26px;
+  }
+  
+  .early-cta-subtitle {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .early-cta-wrapper,
+  .flex_column .Info {
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  /* Bottom mailing list section specific mobile styles */
+  .flex_column .Information {
+    width: 100%;
+    padding: 30px 20px;
+    background-color: var(--cta-bg-primary);
+    border-radius: 12px;
+  }
+  
+  .flex_column .InfoHeader {
+    line-height: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Override the general .Information styles for mobile */
+  .Information {
+    width: 95%;
+    padding: 3vh 2vh;
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  .early-cta-title {
+    font-size: 24px;
+  }
+  
+  .early-cta-subtitle {
+    font-size: 14px;
+  }
+  
+  .flex_column {
+    padding: var(--cta-small-padding);
+  }
+  
+  .flex_column .Information {
+    padding: 20px 15px;
+  }
+  
+  .flex_column .InfoHeader {
+    font-size: 22px;
+    line-height: 28px;
   }
 }
 </style>
