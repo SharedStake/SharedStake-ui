@@ -406,6 +406,175 @@ export default {
   color: #f472b6;
 }
 
+/* Enhanced styling for the expanded blog post */
+.blog-content .intro-section {
+  background: linear-gradient(135deg, rgba(230, 0, 122, 0.1), rgba(244, 114, 182, 0.1));
+  border-left: 4px solid #e6007a;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border-radius: 8px;
+}
+
+.blog-content .achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.blog-content .achievement-card {
+  background: rgba(55, 65, 81, 0.5);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.blog-content .achievement-card:hover {
+  background: rgba(55, 65, 81, 0.8);
+  border-color: #e6007a;
+  transform: translateY(-2px);
+}
+
+.blog-content .achievement-card h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #e6007a;
+}
+
+.blog-content .process-section {
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.blog-content .process-section h3 {
+  color: #e6007a;
+  margin-top: 0;
+}
+
+.blog-content .metrics-section {
+  margin: 2rem 0;
+}
+
+.blog-content .metric-highlight {
+  background: rgba(17, 24, 39, 0.8);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.blog-content .metric-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.blog-content .metric-before,
+.blog-content .metric-after {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.blog-content .metric-label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.blog-content .metric-value {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #d1d5db;
+}
+
+.blog-content .metric-value.critical {
+  color: #ef4444;
+}
+
+.blog-content .metric-value.success {
+  color: #10b981;
+}
+
+.blog-content .metric-arrow {
+  font-size: 1.5rem;
+  color: #e6007a;
+  font-weight: bold;
+}
+
+.blog-content .roadmap-section {
+  background: rgba(31, 41, 55, 0.3);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.blog-content .roadmap-section h3 {
+  color: #e6007a;
+  margin-top: 0;
+}
+
+.blog-content .takeaways-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.blog-content .takeaway {
+  background: rgba(55, 65, 81, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border-left: 4px solid #e6007a;
+}
+
+.blog-content .takeaway h3 {
+  margin-top: 0;
+  color: #e6007a;
+  font-size: 1.125rem;
+}
+
+.blog-content .conclusion-section {
+  background: linear-gradient(135deg, rgba(230, 0, 122, 0.1), rgba(244, 114, 182, 0.1));
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  border: 1px solid rgba(230, 0, 122, 0.2);
+}
+
+.blog-content code {
+  background: rgba(17, 24, 39, 0.8);
+  color: #e6007a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .blog-content .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .blog-content .metric-comparison {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .blog-content .takeaways-section {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Prose styling for better readability */
 .prose {
   max-width: none;
