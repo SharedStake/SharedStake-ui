@@ -191,7 +191,8 @@
 </template>
 
 <script>
-import { blogPosts, getAllTags } from './data/blogPosts.js';
+import { blogPosts } from './data/index.js';
+import { getAllTags } from './data/index.js';
 
 export default {
   name: 'Blog',

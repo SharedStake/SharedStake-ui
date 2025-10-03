@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { blogPosts, getBlogPostBySlug } from './data/blogPosts.js';
+import { blogPosts, getBlogPostBySlug } from './data/index.js';
 
 export default {
   name: 'BlogPost',
