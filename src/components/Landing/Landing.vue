@@ -527,7 +527,7 @@
 
 <script>
 import ImageVue from "../Handlers/ImageVue";
-// import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
+import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
 import Partners from "./Partners";
 import axios from "axios";
 import BN from "bignumber.js";
@@ -537,7 +537,7 @@ import { priceInUsdAsync } from "@/utils/coingecko";
 export default {
   components: {
     ImageVue,
-    // MailingListSubscribeForm,
+    MailingListSubscribeForm,
     Partners,
   },
   props: ["scrolled", "windowWidth"],
