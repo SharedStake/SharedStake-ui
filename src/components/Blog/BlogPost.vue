@@ -1,7 +1,7 @@
 <template>
   <div class="BlogPost min-h-screen bg-gray-900 text-white">
     <!-- Loading State -->
-    <div v-if="loading" class="flex items-center justify-center min-h-screen">
+    <div v-if="loading" class="flex items-center justify-center min-h-screen pt-32">
       <div class="text-center">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mx-auto mb-4"></div>
         <p class="text-gray-400">Loading post...</p>
@@ -9,7 +9,7 @@
     </div>
 
     <!-- Post Not Found -->
-    <div v-else-if="!post" class="flex items-center justify-center min-h-screen">
+    <div v-else-if="!post" class="flex items-center justify-center min-h-screen pt-32">
       <div class="text-center">
         <h1 class="text-4xl font-bold mb-4">Post Not Found</h1>
         <p class="text-gray-400 mb-8">The blog post you're looking for doesn't exist.</p>
@@ -24,8 +24,8 @@
 
     <!-- Blog Post Content -->
     <div v-else>
-      <!-- Hero Section -->
-      <div class="relative py-12 md:py-16 px-4">
+      <!-- Hero Section - Added proper top padding to account for fixed header -->
+      <div class="relative pt-32 pb-12 md:pt-40 md:pb-16 px-4">
         <div class="max-w-4xl mx-auto">
           <!-- Breadcrumb -->
           <nav class="mb-6 md:mb-8">
@@ -362,44 +362,45 @@ export default {
   @apply text-gray-300 leading-relaxed max-w-none;
 }
 
-/* Headings with responsive sizing */
+/* Headings with responsive sizing and better section differentiation */
 .blog-content h1 {
-  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 mt-12 pb-2 border-b-2 border-brand-primary;
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 mt-12 pt-8 pb-4 border-b-2 border-brand-primary;
 }
 
 .blog-content h2 {
-  @apply text-2xl md:text-3xl font-bold text-brand-primary mb-4 mt-8 relative pl-4;
+  @apply text-2xl md:text-3xl font-bold text-brand-primary mb-6 mt-10 pt-6 relative pl-6 -mx-4 px-4 py-3 rounded-lg;
+  background: linear-gradient(to right, rgba(131, 24, 67, 0.1), transparent);
 }
 
 .blog-content h2::before {
   content: '';
-  @apply absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-brand-primary rounded;
+  @apply absolute left-2 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-brand-primary to-pink-500 rounded;
 }
 
 .blog-content h3 {
-  @apply text-xl md:text-2xl font-bold text-white mb-3 mt-6;
+  @apply text-xl md:text-2xl font-bold text-white mb-4 mt-8 pt-4 border-l-4 border-pink-500 pl-4;
 }
 
 .blog-content h4 {
-  @apply text-lg md:text-xl font-semibold text-gray-100 mb-2 mt-4;
+  @apply text-lg md:text-xl font-semibold text-gray-100 mb-3 mt-6 pt-2;
 }
 
 .blog-content h5, .blog-content h6 {
-  @apply text-base md:text-lg font-semibold text-gray-300 mb-2 mt-3;
+  @apply text-base md:text-lg font-semibold text-gray-300 mb-3 mt-4;
 }
 
-/* Paragraphs with responsive spacing */
+/* Paragraphs with responsive spacing and better readability */
 .blog-content p {
-  @apply mb-4 text-gray-300 text-base md:text-lg;
+  @apply mb-6 text-gray-300 text-base md:text-lg leading-relaxed;
 }
 
 /* Lists with responsive styling */
 .blog-content ul, .blog-content ol {
-  @apply mb-6 pl-6 space-y-2;
+  @apply mb-6 pl-4 md:pl-6 space-y-3;
 }
 
 .blog-content li {
-  @apply text-gray-300 leading-relaxed;
+  @apply text-gray-300 leading-relaxed text-base md:text-lg;
 }
 
 .blog-content ul li {
@@ -412,7 +413,11 @@ export default {
 
 /* Nested lists */
 .blog-content ul ul, .blog-content ol ol, .blog-content ul ol, .blog-content ol ul {
-  @apply mt-2 mb-2;
+  @apply mt-3 mb-3 ml-4 md:ml-6;
+}
+
+.blog-content li > p {
+  @apply mb-2;
 }
 
 /* Strong and emphasis */
@@ -431,15 +436,29 @@ export default {
 
 /* Code styling with responsive design */
 .blog-content code {
-  @apply bg-gray-800 text-brand-primary px-2 py-1 rounded text-sm font-mono border border-gray-600;
+  @apply bg-gray-800 bg-opacity-50 text-brand-primary px-2 py-0.5 rounded text-xs md:text-sm font-mono border border-gray-700;
+  word-break: break-word;
 }
 
 .blog-content pre {
-  @apply bg-gray-800 border border-gray-600 rounded-lg p-4 md:p-6 my-4 md:my-6 overflow-x-auto;
+  @apply bg-gray-800 bg-opacity-50 backdrop-blur-sm border border-gray-700 rounded-lg my-6 md:my-8;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .blog-content pre code {
-  @apply bg-transparent border-0 p-0 text-gray-200 text-sm;
+  @apply bg-transparent border-0 p-4 md:p-6 text-gray-200 text-xs md:text-sm block;
+  word-break: normal;
+  white-space: pre;
+}
+
+/* Add scroll indicator for code blocks on mobile */
+@media (max-width: 640px) {
+  .blog-content pre {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0;
+  }
 }
 
 /* Blockquotes with responsive design */
@@ -451,29 +470,73 @@ export default {
   @apply mb-0;
 }
 
-/* Tables with responsive design */
+/* Tables with responsive design - No horizontal scrolling on mobile */
 .blog-content .table-wrapper {
-  @apply overflow-x-auto my-6;
+  @apply my-8 -mx-4 px-4 md:mx-0 md:px-0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Create a shadow effect to indicate scrollable area */
+.blog-content .table-wrapper::before,
+.blog-content .table-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.blog-content .table-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(15, 16, 19, 1), transparent);
+}
+
+.blog-content .table-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(15, 16, 19, 1), transparent);
 }
 
 .blog-content table {
-  @apply w-full border-collapse bg-gray-800 bg-opacity-50 rounded-lg overflow-hidden min-w-full;
+  @apply border-collapse bg-gray-800 bg-opacity-30 backdrop-blur-sm rounded-lg overflow-hidden;
+  min-width: 100%;
+  width: max-content;
 }
 
 .blog-content th, .blog-content td {
-  @apply px-3 py-2 md:px-4 md:py-3 text-left border-b border-gray-600 text-sm md:text-base;
+  @apply text-left border-b border-gray-700;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+/* Responsive padding for mobile */
+@media (max-width: 640px) {
+  .blog-content th, .blog-content td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
 }
 
 .blog-content th {
-  @apply bg-gray-900 bg-opacity-80 text-brand-primary font-bold;
+  @apply bg-gray-900 bg-opacity-80 text-brand-primary font-bold uppercase tracking-wider text-xs md:text-sm;
 }
 
 .blog-content td {
-  @apply text-gray-300;
+  @apply text-gray-300 text-sm md:text-base;
 }
 
-.blog-content tr:hover {
-  @apply bg-gray-700 bg-opacity-30;
+.blog-content tbody tr {
+  @apply transition-colors duration-200;
+}
+
+.blog-content tbody tr:hover {
+  @apply bg-gray-700 bg-opacity-20;
+}
+
+.blog-content tbody tr:last-child td {
+  @apply border-b-0;
 }
 
 /* Horizontal rules */
@@ -483,33 +546,59 @@ export default {
 
 /* Lists with custom styling for better readability */
 .blog-content ul li::marker {
-  @apply text-brand-primary;
+  color: #e6007a;
 }
 
 .blog-content ol li::marker {
-  @apply text-brand-primary font-bold;
+  color: #e6007a;
+  font-weight: bold;
 }
 
 /* Mobile-specific adjustments */
 @media (max-width: 768px) {
   .blog-content h1 {
-    @apply text-2xl mt-8;
+    @apply text-2xl mt-8 pt-4;
   }
   
   .blog-content h2 {
-    @apply text-xl mt-6 pl-3;
+    @apply text-xl mt-6 pt-4 pl-4;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .blog-content h2::before {
+    left: 0.5rem;
   }
   
   .blog-content h3 {
-    @apply text-lg mt-4;
+    @apply text-lg mt-4 pt-2 pl-3;
   }
   
-  .blog-content table {
-    @apply text-xs;
+  .blog-content h4 {
+    @apply text-base;
   }
   
-  .blog-content th, .blog-content td {
-    @apply px-2 py-1;
+  .blog-content p {
+    @apply text-base;
+  }
+  
+  .blog-content li {
+    @apply text-base;
+  }
+  
+  /* Ensure content doesn't overflow on mobile */
+  .blog-content {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Better table wrapper positioning */
+  .blog-content .table-wrapper {
+    position: relative;
+    max-width: 100vw;
   }
 }
 
