@@ -61,6 +61,8 @@
     "not dead"
   ],
   "resolutions": {
-    "crypto-es": "2.1.0"
+    "crypto-es": "2.1.0",
+    "ws": ">=8.17.1",
+    "cross-spawn": ">=6.0.6"
   }
 }
