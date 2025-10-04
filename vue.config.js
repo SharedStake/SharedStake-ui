@@ -22,6 +22,13 @@ module.exports = {
               '@babel/plugin-syntax-bigint'
             ]
           });
+
+        // Add rule for markdown files
+        config.module
+          .rule('markdown')
+          .test(/\.md$/)
+          .use('raw-loader')
+          .loader('raw-loader');
       },
       transpileDependencies: [
         '@metamask/abi-utils',

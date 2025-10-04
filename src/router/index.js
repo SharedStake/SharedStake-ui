@@ -22,6 +22,8 @@ const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
 const Rollover = () => import("../components/Withdraw/Rollover.vue")
 const Wrap = () => import("../components/Stake/Wrap.vue");
 const Unwrap = () => import("../components/Stake/Unwrap.vue");
+const Blog = () => import("../components/Blog/Blog.vue");
+const BlogPost = () => import("../components/Blog/BlogPost.vue");
 // const Web3Test = () => import("../components/Web3Test.vue"); // Removed after Web3.js migration
 
 Vue.use(VueRouter);
@@ -79,6 +81,16 @@ let routes = [{
         path: "/unwrap",
         name: "Unwrap",
         component: Unwrap,
+    },
+    {
+        path: "/blog",
+        name: "Blog",
+        component: Blog,
+    },
+    {
+        path: "/blog/:slug",
+        name: "BlogPost",
+        component: BlogPost,
     },
     // {
     //     path: "/web3-test",

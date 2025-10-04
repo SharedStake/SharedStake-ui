@@ -125,6 +125,9 @@
           >Docs
         </a>
       </span>
+      <router-link class="link" to="/blog" @click.native="showSidebar = false">
+        Blog
+      </router-link>
       <span class="link">
         <a
           href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
@@ -243,6 +246,9 @@
                 >Documentation
               </a></span
             >
+            <span class="link footerLink">
+              <router-link to="/blog">Blog</router-link>
+            </span>
             <span class="link footerLink">
               <a
                 href="https://snapshot.page/#/sharedstake.eth"
