@@ -1,7 +1,7 @@
 <template>
   <div class="Blog min-h-screen bg-gray-900 text-white">
-    <!-- Hero Section -->
-    <div class="relative py-12 md:py-20 px-4 text-center">
+    <!-- Hero Section - Added proper top padding to account for fixed header -->
+    <div class="relative pt-32 pb-12 md:pt-40 md:pb-20 px-4 text-center">
       <div class="max-w-4xl mx-auto">
         <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-brand-primary to-pink-400 bg-clip-text text-transparent">
           SharedStake Blog
