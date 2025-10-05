@@ -406,7 +406,7 @@ export default {
 }
 
 .blog-content ul li {
-  @apply list-disc list-disc-brand-primary;
+  @apply list-disc;
 }
 
 .blog-content ol li {
@@ -456,7 +456,7 @@ export default {
 
 /* Blockquotes with responsive design and better visual appeal */
 .blog-content blockquote {
-  @apply border-l-4 border-brand-primary bg-gradient-to-r from-pink-900 bg-opacity-10 to-transparent my-6 p-4 md:p-6 italic text-gray-300 rounded-r-lg shadow-lg;
+  @apply border-l-4 border-brand-primary bg-gradient-to-r from-pink-900 bg-opacity-10 to-transparent my-6 p-4 md:p-6 italic text-gray-300 rounded-r-lg shadow-lg relative;
 }
 
 .blog-content blockquote p {
@@ -496,10 +496,6 @@ export default {
 }
 
 /* Responsive table improvements */
-.blog-content table {
-  @apply text-xs md:text-sm;
-}
-
 .blog-content th:first-child,
 .blog-content td:first-child {
   @apply pl-2 md:pl-4;
@@ -560,7 +556,7 @@ export default {
   }
   
   .blog-content blockquote::before {
-    @apply text-2xl -top-1 -left-1;
+    @apply text-2xl absolute -top-1 -left-1;
   }
   
   /* Better mobile spacing */
