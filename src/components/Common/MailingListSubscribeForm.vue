@@ -17,17 +17,23 @@
                 id="mce-EMAIL"
                 placeholder="Enter your email address"
                 required
+                aria-label="Email address"
+                aria-invalid="hasError"
+                aria-describedby="error-message"
                 @input="clearError"
               />
               <button
                 type="submit"
                 class="submit-button"
                 :disabled="isSubmitting"
+                :aria-busy="isSubmitting"
+                aria-label="Subscribe to mailing list"
               >
-                {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
+                <span v-if="isSubmitting" class="loading-spinner" aria-hidden="true"></span>
+                {{ buttonText }}
               </button>
             </div>
-            <div v-if="error" class="error-message">{{ error }}</div>
+            <div v-if="error" id="error-message" class="error-message" role="alert">{{ error }}</div>
           </div>
         </div>
       </form>
@@ -44,8 +50,36 @@
 </template>
 
 <script>
+// Configuration constants
+const CONFIG = {
+  MAILCHIMP_URL: 'https://sharedstake.us1.list-manage.com/subscribe/post',
+  MAILCHIMP_U: '6cb6b636781c4fcc0b7cbccf1',
+  MAILCHIMP_ID: '1e3ebab5ba',
+  SUCCESS_DISPLAY_DURATION: 5000,
+  EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+};
+
+const ERROR_MESSAGES = {
+  EMPTY_EMAIL: 'Please enter your email address',
+  INVALID_EMAIL: 'Please enter a valid email address',
+  SUBMISSION_ERROR: 'An error occurred. Please try again later.'
+};
+
 export default {
   name: 'MailingListSubscribeForm',
+  
+  props: {
+    // Allow customization from parent components
+    successDuration: {
+      type: Number,
+      default: CONFIG.SUCCESS_DISPLAY_DURATION
+    },
+    compactMode: {
+      type: Boolean,
+      default: false
+    }
+  },
+  
   data() {
     return {
       email: '',
@@ -54,58 +88,91 @@ export default {
       error: ''
     }
   },
+  
+  computed: {
+    // Computed properties for cleaner template
+    hasError() {
+      return Boolean(this.error);
+    },
+    buttonText() {
+      return this.isSubmitting ? 'Subscribing...' : 'Subscribe';
+    },
+    isValidEmail() {
+      return CONFIG.EMAIL_REGEX.test(this.email);
+    }
+  },
+  
   methods: {
     validateEmail(email) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
+      return CONFIG.EMAIL_REGEX.test(email);
     },
+    
     clearError() {
       this.error = '';
     },
+    
+    setError(errorKey) {
+      this.error = ERROR_MESSAGES[errorKey] || ERROR_MESSAGES.SUBMISSION_ERROR;
+    },
+    
+    resetForm() {
+      this.submitted = false;
+      this.email = '';
+      this.error = '';
+    },
+    
+    async submitToMailchimp() {
+      const formData = new FormData();
+      formData.append('EMAIL', this.email);
+      formData.append(`b_${CONFIG.MAILCHIMP_U}_${CONFIG.MAILCHIMP_ID}`, '');
+      
+      const url = `${CONFIG.MAILCHIMP_URL}?u=${CONFIG.MAILCHIMP_U}&id=${CONFIG.MAILCHIMP_ID}`;
+      
+      return fetch(url, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors' // Mailchimp doesn't allow CORS
+      });
+    },
+    
     async handleSubmit() {
+      // Clear any existing errors
+      this.clearError();
+      
       // Validate email
-      if (!this.email) {
-        this.error = 'Please enter your email address';
+      if (!this.email.trim()) {
+        this.setError('EMPTY_EMAIL');
         return;
       }
       
-      if (!this.validateEmail(this.email)) {
-        this.error = 'Please enter a valid email address';
+      if (!this.isValidEmail) {
+        this.setError('INVALID_EMAIL');
         return;
       }
 
       this.isSubmitting = true;
-      this.error = '';
 
       try {
-        // For now, we'll use the existing Mailchimp form action
-        // In production, you should implement a backend API endpoint
-        const formData = new FormData();
-        formData.append('EMAIL', this.email);
-        formData.append('b_6cb6b636781c4fcc0b7cbccf1_1e3ebab5ba', '');
-        
-        await fetch(
-          'https://sharedstake.us1.list-manage.com/subscribe/post?u=6cb6b636781c4fcc0b7cbccf1&id=1e3ebab5ba',
-          {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors' // Mailchimp doesn't allow CORS
-          }
-        );
+        await this.submitToMailchimp();
         
         // Since we're using no-cors, we can't read the response
         // We'll assume success if no error is thrown
         this.submitted = true;
         
-        // Reset form after 5 seconds
+        // Emit success event for parent components
+        this.$emit('subscribe-success', this.email);
+        
+        // Reset form after configured duration
         setTimeout(() => {
-          this.submitted = false;
-          this.email = '';
-        }, 5000);
+          this.resetForm();
+        }, this.successDuration);
         
       } catch (error) {
         console.error('Subscription error:', error);
-        this.error = 'An error occurred. Please try again later.';
+        this.setError('SUBMISSION_ERROR');
+        
+        // Emit error event for parent components
+        this.$emit('subscribe-error', error);
       } finally {
         this.isSubmitting = false;
       }
@@ -228,10 +295,27 @@ button {
 }
 
 .success-subtext {
-  font-size: 14px !important;
-  font-weight: 400 !important;
-  margin-top: 8px !important;
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 8px;
   opacity: 0.9;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @keyframes slideIn {
@@ -314,7 +398,7 @@ button {
   }
 
   .success-subtext {
-    font-size: 13px !important;
+    font-size: 13px;
   }
 }
 </style>
