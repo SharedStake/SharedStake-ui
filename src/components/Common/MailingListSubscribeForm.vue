@@ -119,6 +119,8 @@ export default {
   width: 100%;
   display: flex;
   justify-content: center;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 .subscribe {
@@ -131,6 +133,7 @@ export default {
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
+  box-sizing: border-box;
 }
 
 .subscribe:hover {
@@ -261,9 +264,15 @@ button {
 }
 
 @media only screen and (max-width: 768px) {
+  .mailing-list-container {
+    padding: 0;
+  }
+
   .subscribe {
-    max-width: 95%;
+    max-width: 100%;
     font-size: 16px;
+    margin: 0;
+    border-radius: 12px;
   }
 
   .input-container {
@@ -274,6 +283,7 @@ button {
     border-radius: 10px 10px 0 0;
     border: 2px solid #fff;
     width: 100%;
+    box-sizing: border-box;
   }
 
   .submit-button {
@@ -281,12 +291,30 @@ button {
     width: 100%;
     border: 2px solid #fff;
     border-top: none;
+    box-sizing: border-box;
   }
 
   input,
   button {
     font-size: 16px;
     padding: 1rem 1.5rem;
+  }
+
+  .error-message {
+    font-size: 13px;
+    padding: 0 8px;
+  }
+
+  .success-message {
+    padding: 1.5rem 1rem;
+  }
+
+  .success-message p {
+    font-size: 18px;
+  }
+
+  .success-subtext {
+    font-size: 13px !important;
   }
 }
 </style>
