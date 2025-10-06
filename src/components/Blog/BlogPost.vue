@@ -732,7 +732,6 @@ export default {
 
 .blog-content .responsive-table tbody tr:hover {
   background: rgba(55, 65, 81, 0.3);
-  transform: scale(1.01);
 }
 
 .blog-content .responsive-table tbody tr:last-child td {
@@ -797,7 +796,6 @@ export default {
 
 .blog-content .inline-code:hover {
   background: rgba(230, 0, 122, 0.2);
-  transform: translateY(-1px);
 }
 
 /* Markdown heading styles with enhanced visual separation */
@@ -1009,9 +1007,17 @@ export default {
 /* External link indicator with better styling */
 .blog-content .external-link,
 .blog-content a[target="_blank"] {
-  @apply text-brand-primary underline decoration-dotted underline-offset-2 hover:text-pink-400 hover:decoration-solid transition-all duration-200;
+  @apply text-brand-primary hover:text-pink-400 transition-all duration-200;
   position: relative;
   display: inline-block;
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+  padding-bottom: 1px;
+}
+
+.blog-content .external-link:hover,
+.blog-content a[target="_blank"]:hover {
+  border-bottom-style: solid;
 }
 
 .blog-content .external-link::after,
@@ -1019,12 +1025,14 @@ export default {
   content: ' ↗';
   @apply text-xs;
   display: inline-block;
-  transition: transform 0.2s;
+  transition: all 0.2s;
 }
 
 .blog-content .external-link:hover::after,
 .blog-content a[target="_blank"]:hover::after {
-  transform: translate(2px, -2px);
+  position: relative;
+  top: -2px;
+  left: 2px;
 }
 
 /* Internal links */
