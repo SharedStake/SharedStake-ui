@@ -546,14 +546,7 @@ export default {
 }
 
 /* Lists with custom styling for better readability */
-.blog-content ul li::marker {
-  color: #e6007a;
-}
-
-.blog-content ol li::marker {
-  color: #e6007a;
-  font-weight: bold;
-}
+/* Removed ::marker styles for compatibility */
 
 /* Mobile-specific adjustments */
 @media (max-width: 768px) {
@@ -662,11 +655,11 @@ export default {
 }
 
 .blog-content .responsive-table tbody tr:nth-child(even) {
-  @apply bg-gray-800 bg-opacity-50;
+  @apply bg-gray-800;
 }
 
 .blog-content .responsive-table tbody tr:hover {
-  @apply bg-gray-700 bg-opacity-50;
+  @apply bg-gray-700;
 }
 
 /* Mobile-specific table handling */
@@ -753,14 +746,10 @@ export default {
   @apply list-decimal text-gray-400;
 }
 
-/* Better list marker styling */
-.blog-content .unordered-list li::marker,
-.blog-content .ordered-list li::marker {
-  @apply text-brand-primary;
-}
+/* List styles use default markers */
 
 .blog-content .blockquote {
-  @apply border-l-4 border-brand-primary pl-6 my-8 italic text-gray-300 bg-gray-800 bg-opacity-30 py-4 pr-4 rounded-r-lg;
+  @apply border-l-4 border-brand-primary pl-6 my-8 italic text-gray-300 bg-gray-800 py-4 pr-4 rounded-r-lg;
 }
 
 .blog-content .blockquote p {
