@@ -350,6 +350,7 @@ export default {
 </script>
 
 <style scoped>
+/* Minimal custom utilities */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -362,9 +363,9 @@ export default {
   @apply text-gray-300 leading-relaxed max-w-none;
 }
 
-/* Headings with responsive sizing and better section differentiation */
+/* Simple heading styles */
 .blog-content h1 {
-  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 mt-12 pt-8 pb-4 border-b-2 border-brand-primary;
+  @apply text-3xl md:text-4xl font-bold text-white mb-6 mt-8;
 }
 
 .blog-content h2 {
@@ -638,547 +639,130 @@ export default {
   color: #f472b6;
 }
 
-/* Markdown-specific styles for tables rendered from .md files */
+/* Simple markdown table styles using Tailwind */
 .blog-content .table-wrapper {
-  @apply my-8 md:my-12 -mx-4 px-4 md:mx-0 md:px-0;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  position: relative;
-}
-
-/* Add visual indicators for scrollable tables */
-.blog-content .table-wrapper::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 20px;
-  background: linear-gradient(to right, rgba(15, 16, 19, 0.8), transparent);
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.blog-content .table-wrapper::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 20px;
-  background: linear-gradient(to left, rgba(15, 16, 19, 0.8), transparent);
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Show scroll indicators when needed */
-.blog-content .table-wrapper:hover::before,
-.blog-content .table-wrapper:hover::after {
-  opacity: 1;
+  @apply my-6 overflow-x-auto;
 }
 
 .blog-content .responsive-table {
-  @apply rounded-lg overflow-hidden;
-  min-width: 100%;
-  width: max-content;
-  background: rgba(31, 41, 55, 0.5);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.blog-content .responsive-table th,
-.blog-content .responsive-table td {
-  @apply text-left;
-  padding: 1rem 1.25rem;
-  white-space: nowrap;
-  border-bottom: 1px solid rgba(75, 85, 99, 0.2);
-}
-
-/* Responsive padding for mobile */
-@media (max-width: 640px) {
-  .blog-content .responsive-table th,
-  .blog-content .responsive-table td {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    white-space: normal;
-    word-break: break-word;
-  }
-  
-  /* Allow specific columns to wrap on mobile */
-  .blog-content .responsive-table td:first-child {
-    min-width: 120px;
-  }
-}
-
-.blog-content .responsive-table thead {
-  background: linear-gradient(to bottom, rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.7));
+  @apply min-w-full border-collapse;
 }
 
 .blog-content .responsive-table th {
-  @apply text-brand-primary font-bold uppercase tracking-wider text-xs md:text-sm;
-  border-bottom: 2px solid rgba(230, 0, 122, 0.3);
+  @apply bg-gray-800 text-brand-primary font-bold text-sm p-3 text-left border-b border-gray-700;
 }
 
 .blog-content .responsive-table td {
-  @apply text-gray-300 text-sm md:text-base;
-}
-
-.blog-content .responsive-table tbody tr {
-  @apply transition-all duration-200;
+  @apply bg-gray-900 text-gray-300 text-sm p-3 border-b border-gray-800;
 }
 
 .blog-content .responsive-table tbody tr:hover {
-  background: rgba(55, 65, 81, 0.3);
+  @apply bg-gray-800;
 }
 
-.blog-content .responsive-table tbody tr:last-child td {
-  @apply border-b-0;
-}
-
-/* Add alternating row colors for better readability */
-.blog-content .responsive-table tbody tr:nth-child(even) {
-  background: rgba(31, 41, 55, 0.2);
-}
-
-/* Markdown-specific code block styles with better demarcation */
+/* Simple code block styles using Tailwind */
 .blog-content .code-block {
-  @apply my-8 md:my-12 rounded-xl overflow-hidden;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(31, 41, 55, 0.95));
-  border: 1px solid rgba(230, 0, 122, 0.2);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Add a header bar to code blocks */
-.blog-content .code-block::before {
-  content: 'CODE';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(to right, rgba(230, 0, 122, 0.1), transparent);
-  border-bottom: 1px solid rgba(230, 0, 122, 0.2);
-  color: rgba(230, 0, 122, 0.8);
-  font-size: 0.75rem;
-  font-weight: bold;
-  letter-spacing: 0.1em;
-  font-family: monospace;
+  @apply bg-gray-800 rounded-lg my-6 p-4 overflow-x-auto;
 }
 
 .blog-content .code-block code {
-  @apply bg-transparent border-0 text-gray-200 text-xs md:text-sm block font-mono;
-  padding: 3rem 1.5rem 1.5rem;
-  word-break: normal;
-  white-space: pre;
-  line-height: 1.6;
+  @apply text-gray-200 text-sm font-mono;
 }
 
-/* Syntax highlighting colors for code */
-.blog-content .code-block .language-javascript,
-.blog-content .code-block .language-js {
-  color: #93c5fd;
-}
-
-/* Inline code styling */
 .blog-content .inline-code {
-  @apply text-brand-primary px-2 py-1 rounded text-xs md:text-sm font-mono;
-  background: rgba(230, 0, 122, 0.1);
-  border: 1px solid rgba(230, 0, 122, 0.3);
-  word-break: break-word;
-  transition: all 0.2s;
+  @apply bg-gray-800 text-brand-primary px-1 py-0.5 rounded text-sm font-mono;
 }
 
-.blog-content .inline-code:hover {
-  background: rgba(230, 0, 122, 0.2);
-}
-
-/* Markdown heading styles with enhanced visual separation */
+/* Simple heading styles using Tailwind */
 .blog-content .heading-1 {
-  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-10 mt-16 pt-8 pb-6;
-  border-bottom: 3px solid transparent;
-  background: linear-gradient(to bottom, transparent, rgba(230, 0, 122, 0.05));
-  border-image: linear-gradient(to right, #e6007a, transparent) 1;
-  letter-spacing: -0.02em;
+  @apply text-3xl md:text-4xl font-bold text-white mb-6 mt-8 pb-4 border-b border-gray-700;
 }
 
-/* Major section headers (H2) with strong visual separation */
 .blog-content .heading-2,
 .blog-content .section-header {
-  @apply text-2xl md:text-3xl lg:text-4xl font-bold mb-8 mt-16 pt-8 pb-4 relative;
-  color: #ffffff;
-  background: linear-gradient(135deg, rgba(230, 0, 122, 0.08), transparent);
-  border-radius: 0.75rem;
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  box-shadow: 0 4px 20px rgba(230, 0, 122, 0.1);
-  position: relative;
-  overflow: hidden;
+  @apply text-2xl md:text-3xl font-bold text-white mb-4 mt-8;
 }
 
-/* Add decorative element to H2 */
-.blog-content .heading-2::before,
-.blog-content .section-header::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(to bottom, #e6007a, #f472b6);
-  border-radius: 0 4px 4px 0;
-}
-
-/* Add section number or icon */
-.blog-content .heading-2::after,
-.blog-content .section-header::after {
-  content: '§';
-  position: absolute;
-  right: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(230, 0, 122, 0.2);
-  font-size: 3rem;
-  font-weight: bold;
-}
-
-/* Sub-sections (H3) with clear distinction */
 .blog-content .heading-3,
 .blog-content .subsection-header {
-  @apply text-xl md:text-2xl font-bold text-white mb-6 mt-10 pt-6 pb-3 pl-6;
-  border-left: 3px solid #f472b6;
-  background: linear-gradient(to right, rgba(244, 114, 182, 0.05), transparent);
-  margin-left: -0.5rem;
-  position: relative;
+  @apply text-xl md:text-2xl font-bold text-white mb-3 mt-6;
 }
 
-/* Add subsection indicator */
-.blog-content .heading-3::before,
-.blog-content .subsection-header::before {
-  content: '▸';
-  position: absolute;
-  left: 0;
-  color: #f472b6;
-  font-size: 1.2rem;
-}
-
-/* Smaller headers with subtle styling */
 .blog-content .heading-4 {
-  @apply text-lg md:text-xl font-semibold text-gray-100 mb-4 mt-8 pt-4;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px dashed rgba(230, 0, 122, 0.2);
+  @apply text-lg md:text-xl font-semibold text-gray-100 mb-2 mt-4;
 }
 
 .blog-content .heading-5,
 .blog-content .heading-6 {
-  @apply text-base md:text-lg font-semibold text-gray-200 mb-3 mt-6;
-  opacity: 0.9;
+  @apply text-base md:text-lg font-semibold text-gray-200 mb-2 mt-3;
 }
 
-/* Markdown paragraph styles for better readability */
+/* Simple paragraph and list styles */
 .blog-content p {
-  @apply mb-6 text-gray-300 text-base md:text-lg leading-relaxed;
-  line-height: 1.8;
+  @apply mb-4 text-gray-300 text-base leading-relaxed;
 }
 
-/* Add more space after paragraphs that precede headers */
-.blog-content p + .heading-2,
-.blog-content p + .section-header {
-  margin-top: 3rem;
-}
-
-.blog-content p + .heading-3,
-.blog-content p + .subsection-header {
-  margin-top: 2.5rem;
-}
-
-/* Markdown list styles with better spacing */
 .blog-content .unordered-list,
 .blog-content .ordered-list {
-  @apply my-8 pl-4 md:pl-8 space-y-3;
-  background: linear-gradient(to right, rgba(230, 0, 122, 0.02), transparent);
-  border-left: 2px solid rgba(230, 0, 122, 0.1);
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  margin-left: 0;
-}
-
-.blog-content .unordered-list li,
-.blog-content .ordered-list li {
-  @apply text-gray-300 leading-relaxed text-base md:text-lg;
-  line-height: 1.8;
-  position: relative;
+  @apply my-4 pl-6 space-y-2;
 }
 
 .blog-content .unordered-list li {
-  @apply list-disc;
+  @apply list-disc text-gray-300;
 }
 
 .blog-content .ordered-list li {
-  @apply list-decimal;
+  @apply list-decimal text-gray-300;
 }
 
-.blog-content .unordered-list li::marker {
-  color: #e6007a;
-  font-size: 1.2em;
-}
-
-.blog-content .ordered-list li::marker {
-  color: #e6007a;
-  font-weight: bold;
-}
-
-/* Enhanced blockquote styles */
 .blog-content .blockquote {
-  @apply my-10 p-6 md:p-8 italic rounded-lg;
-  background: linear-gradient(135deg, rgba(230, 0, 122, 0.05), rgba(244, 114, 182, 0.02));
-  border-left: 4px solid #e6007a;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Add quotation marks */
-.blog-content .blockquote::before {
-  content: '"';
-  position: absolute;
-  top: -10px;
-  left: 10px;
-  font-size: 4rem;
-  color: rgba(230, 0, 122, 0.1);
-  font-family: serif;
+  @apply border-l-4 border-brand-primary pl-4 my-6 italic text-gray-300;
 }
 
 .blog-content .blockquote p {
-  @apply mb-0 text-gray-200 text-lg md:text-xl;
-  line-height: 1.6;
+  @apply mb-0;
 }
 
-/* Strong and emphasis text styling */
-.blog-content strong,
-.blog-content .font-bold {
+/* Simple text styles */
+.blog-content strong {
   @apply text-white font-bold;
-  text-shadow: 0 0 20px rgba(230, 0, 122, 0.2);
 }
 
-.blog-content em,
-.blog-content .italic {
-  @apply text-gray-100 italic;
-  opacity: 0.95;
+.blog-content em {
+  @apply italic;
 }
 
-/* Section divider with enhanced styling */
-.blog-content .section-divider,
 .blog-content hr {
-  @apply my-12 md:my-16;
-  height: 1px;
-  background: linear-gradient(to right, 
-    transparent, 
-    rgba(230, 0, 122, 0.2), 
-    rgba(230, 0, 122, 0.4),
-    rgba(230, 0, 122, 0.2),
-    transparent);
-  border: none;
-  position: relative;
-  overflow: visible;
+  @apply my-8 border-t border-gray-700;
 }
 
-/* Add decorative element to divider */
-.blog-content .section-divider::after,
-.blog-content hr::after {
-  content: '◆';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background: rgb(15, 16, 19);
-  color: rgba(230, 0, 122, 0.4);
-  padding: 0 1rem;
-  font-size: 1.5rem;
+/* Simple link styles */
+.blog-content a {
+  @apply text-brand-primary hover:text-pink-400 underline;
 }
 
-/* External link indicator with better styling */
-.blog-content .external-link,
-.blog-content a[target="_blank"] {
-  @apply text-brand-primary hover:text-pink-400 transition-all duration-200;
-  position: relative;
-  display: inline-block;
-  text-decoration: none;
-  border-bottom: 1px dotted currentColor;
-  padding-bottom: 1px;
-}
-
-.blog-content .external-link:hover,
-.blog-content a[target="_blank"]:hover {
-  border-bottom-style: solid;
-}
-
-.blog-content .external-link::after,
-.blog-content a[target="_blank"]::after {
-  content: ' ↗';
-  @apply text-xs;
-  display: inline-block;
-  transition: all 0.2s;
-}
-
-.blog-content .external-link:hover::after,
-.blog-content a[target="_blank"]:hover::after {
-  position: relative;
-  top: -2px;
-  left: 2px;
-}
-
-/* Internal links */
-.blog-content a:not([target="_blank"]):not(.external-link) {
-  @apply text-brand-primary hover:text-pink-400 transition-colors duration-200;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(230, 0, 122, 0.3);
-}
-
-.blog-content a:not([target="_blank"]):not(.external-link):hover {
-  border-bottom-color: rgba(244, 114, 182, 0.5);
-}
-
-/* Mobile-specific adjustments for markdown content */
+/* Keep mobile styles minimal */
 @media (max-width: 768px) {
   .blog-content .heading-1 {
-    @apply text-2xl mt-12 pt-6 mb-6;
+    @apply text-2xl;
   }
   
   .blog-content .heading-2,
   .blog-content .section-header {
-    @apply text-xl mt-12 pt-6 pb-3 mb-6;
-    margin-left: -1rem;
-    margin-right: -1rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    font-size: 1.5rem;
-  }
-  
-  .blog-content .heading-2::after,
-  .blog-content .section-header::after {
-    display: none;
-  }
-  
-  .blog-content .heading-3,
-  .blog-content .subsection-header {
-    @apply text-lg mt-8 pt-4 pl-4 mb-4;
-    margin-left: -0.5rem;
-    font-size: 1.25rem;
-  }
-  
-  .blog-content .heading-4 {
-    @apply text-base mt-6 mb-3;
-  }
-  
-  /* Code blocks full width on mobile */
-  .blog-content .code-block {
-    margin-left: -1rem;
-    margin-right: -1rem;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-  }
-  
-  .blog-content .code-block code {
-    padding: 2.5rem 1rem 1rem;
-    font-size: 0.8rem;
-  }
-  
-  /* Tables with better mobile spacing */
-  .blog-content .table-wrapper {
-    margin-left: -1rem;
-    margin-right: -1rem;
-    padding: 0;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-  
-  .blog-content .responsive-table {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-  }
-  
-  /* Lists with adjusted spacing */
-  .blog-content .unordered-list,
-  .blog-content .ordered-list {
-    @apply pl-6 my-6;
-  }
-  
-  /* Blockquotes with mobile padding */
-  .blog-content .blockquote {
-    @apply p-4 my-6;
-    margin-left: -0.5rem;
-    margin-right: -0.5rem;
-  }
-  
-  .blog-content .blockquote p {
-    @apply text-base;
-  }
-  
-  /* Inline code mobile adjustments */
-  .blog-content .inline-code {
-    @apply text-xs px-1;
-  }
-  
-  /* Paragraph spacing on mobile */
-  .blog-content p {
-    @apply mb-4 text-base;
-    line-height: 1.7;
-  }
-}
-
-/* Additional enhancements for ultra-wide screens */
-@media (min-width: 1536px) {
-  .blog-content .heading-1 {
-    @apply text-5xl;
-  }
-  
-  .blog-content .heading-2,
-  .blog-content .section-header {
-    @apply text-4xl;
-  }
-  
-  .blog-content .heading-3,
-  .blog-content .subsection-header {
-    @apply text-3xl;
-  }
-  
-  .blog-content p {
     @apply text-xl;
   }
   
-  .blog-content .responsive-table th,
-  .blog-content .responsive-table td {
-    padding: 1.25rem 1.5rem;
-  }
-}
-
-/* Print styles for better readability */
-@media print {
-  .blog-content {
-    color: #000;
-    background: #fff;
+  .blog-content .heading-3,
+  .blog-content .subsection-header {
+    @apply text-lg;
   }
   
-  .blog-content .heading-1,
-  .blog-content .heading-2,
-  .blog-content .heading-3 {
-    color: #000;
-    page-break-after: avoid;
+  .blog-content p {
+    @apply text-sm;
   }
   
-  .blog-content .responsive-table,
   .blog-content .code-block {
-    page-break-inside: avoid;
+    @apply rounded-none mx-0;
   }
 }
 </style>
