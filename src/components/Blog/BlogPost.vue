@@ -637,4 +637,178 @@ export default {
 .prose a:hover {
   color: #f472b6;
 }
+
+/* Markdown-specific styles for tables rendered from .md files */
+.blog-content .responsive-table {
+  @apply border-collapse bg-gray-800 bg-opacity-30 backdrop-blur-sm rounded-lg overflow-hidden;
+  min-width: 100%;
+  width: max-content;
+}
+
+.blog-content .responsive-table th,
+.blog-content .responsive-table td {
+  @apply text-left border-b border-gray-700;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+/* Responsive padding for mobile */
+@media (max-width: 640px) {
+  .blog-content .responsive-table th,
+  .blog-content .responsive-table td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+.blog-content .responsive-table th {
+  @apply bg-gray-900 bg-opacity-80 text-brand-primary font-bold uppercase tracking-wider text-xs md:text-sm;
+}
+
+.blog-content .responsive-table td {
+  @apply text-gray-300 text-sm md:text-base;
+}
+
+.blog-content .responsive-table tbody tr {
+  @apply transition-colors duration-200;
+}
+
+.blog-content .responsive-table tbody tr:hover {
+  @apply bg-gray-700 bg-opacity-20;
+}
+
+.blog-content .responsive-table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+/* Markdown-specific code block styles */
+.blog-content .code-block {
+  @apply bg-gray-800 bg-opacity-50 backdrop-blur-sm border border-gray-700 rounded-lg my-6 md:my-8;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.blog-content .code-block code {
+  @apply bg-transparent border-0 p-4 md:p-6 text-gray-200 text-xs md:text-sm block;
+  word-break: normal;
+  white-space: pre;
+}
+
+.blog-content .inline-code {
+  @apply bg-gray-800 bg-opacity-50 text-brand-primary px-2 py-0.5 rounded text-xs md:text-sm font-mono border border-gray-700;
+  word-break: break-word;
+}
+
+/* Markdown heading styles */
+.blog-content .heading-1 {
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 mt-12 pt-8 pb-4 border-b-2 border-brand-primary;
+}
+
+.blog-content .heading-2,
+.blog-content .section-header {
+  @apply text-2xl md:text-3xl font-bold text-brand-primary mb-6 mt-10 pt-6 relative pl-6 -mx-4 px-4 py-3 rounded-lg;
+  background: linear-gradient(to right, rgba(131, 24, 67, 0.1), transparent);
+}
+
+.blog-content .heading-2::before,
+.blog-content .section-header::before {
+  content: '';
+  @apply absolute left-2 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-brand-primary to-pink-500 rounded;
+}
+
+.blog-content .heading-3,
+.blog-content .subsection-header {
+  @apply text-xl md:text-2xl font-bold text-white mb-4 mt-8 pt-4 border-l-4 border-pink-500 pl-4;
+}
+
+.blog-content .heading-4 {
+  @apply text-lg md:text-xl font-semibold text-gray-100 mb-3 mt-6 pt-2;
+}
+
+.blog-content .heading-5,
+.blog-content .heading-6 {
+  @apply text-base md:text-lg font-semibold text-gray-300 mb-3 mt-4;
+}
+
+/* Markdown list styles */
+.blog-content .unordered-list {
+  @apply mb-6 pl-4 md:pl-6 space-y-3;
+}
+
+.blog-content .ordered-list {
+  @apply mb-6 pl-4 md:pl-6 space-y-3;
+}
+
+.blog-content .unordered-list li {
+  @apply list-disc text-gray-300 leading-relaxed text-base md:text-lg;
+}
+
+.blog-content .ordered-list li {
+  @apply list-decimal text-gray-300 leading-relaxed text-base md:text-lg;
+}
+
+.blog-content .unordered-list li::marker {
+  color: #e6007a;
+}
+
+.blog-content .ordered-list li::marker {
+  color: #e6007a;
+  font-weight: bold;
+}
+
+/* Markdown blockquote styles */
+.blog-content .blockquote {
+  @apply border-l-4 border-brand-primary bg-pink-900 bg-opacity-10 my-6 p-4 md:p-6 italic text-gray-300 rounded-r-lg;
+}
+
+.blog-content .blockquote p {
+  @apply mb-0;
+}
+
+/* Section divider */
+.blog-content .section-divider {
+  @apply border-0 h-0.5 bg-gradient-to-r from-transparent via-brand-primary to-transparent my-8 md:my-12;
+}
+
+/* External link indicator */
+.blog-content .external-link {
+  @apply text-brand-primary underline hover:text-pink-400 transition-colors duration-200;
+}
+
+.blog-content .external-link::after {
+  content: ' ↗';
+  @apply text-xs;
+}
+
+/* Mobile-specific adjustments for markdown content */
+@media (max-width: 768px) {
+  .blog-content .heading-1 {
+    @apply text-2xl mt-8 pt-4;
+  }
+  
+  .blog-content .heading-2,
+  .blog-content .section-header {
+    @apply text-xl mt-6 pt-4 pl-4;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .blog-content .heading-2::before,
+  .blog-content .section-header::before {
+    left: 0.5rem;
+  }
+  
+  .blog-content .heading-3,
+  .blog-content .subsection-header {
+    @apply text-lg mt-4 pt-2 pl-3;
+  }
+  
+  .blog-content .code-block {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0;
+  }
+}
 </style>
