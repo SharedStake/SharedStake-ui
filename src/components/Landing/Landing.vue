@@ -1944,6 +1944,30 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 }
 
+/* Bottom Mailing List Section Styles */
+.flex_column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 60px 20px;
+}
+
+.flex_column .Information {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.flex_column .Info {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+}
+
 /* Early CTA Styles */
 .early-cta-container {
   width: 100%;
@@ -2010,14 +2034,33 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
   
   /* Fix for bottom mailing list section on mobile */
+  .flex_column {
+    padding: 40px 15px;
+  }
+  
+  .flex_column .Information {
+    width: 100%;
+    padding: 30px 20px;
+    background-color: rgba(17, 26, 25, 0.95);
+    border-radius: 12px;
+  }
+  
+  .flex_column .InfoHeader {
+    font-size: 26px;
+    line-height: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .flex_column .Info {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Override the general .Information styles for mobile */
   .Information {
     width: 95%;
     padding: 3vh 2vh;
-  }
-  
-  .flex_column {
-    width: 100%;
-    padding: 0;
   }
 }
 
@@ -2028,6 +2071,19 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   
   .early-cta-subtitle {
     font-size: 14px;
+  }
+  
+  .flex_column {
+    padding: 30px 10px;
+  }
+  
+  .flex_column .Information {
+    padding: 20px 15px;
+  }
+  
+  .flex_column .InfoHeader {
+    font-size: 22px;
+    line-height: 28px;
   }
 }
 </style>
