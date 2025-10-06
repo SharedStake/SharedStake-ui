@@ -639,88 +639,132 @@ export default {
   color: #f472b6;
 }
 
-/* Simple markdown table styles using Tailwind */
+/* Markdown table styles with better mobile handling */
 .blog-content .table-wrapper {
-  @apply my-6 overflow-x-auto;
+  @apply my-8 -mx-4 px-4 md:mx-0 md:px-0 overflow-x-auto;
 }
 
 .blog-content .responsive-table {
-  @apply min-w-full border-collapse;
+  @apply min-w-full border-collapse text-sm;
+}
+
+.blog-content .responsive-table thead {
+  @apply bg-gray-800 border-b-2 border-brand-primary;
 }
 
 .blog-content .responsive-table th {
-  @apply bg-gray-800 text-brand-primary font-bold text-sm p-3 text-left border-b border-gray-700;
+  @apply text-brand-primary font-bold text-xs md:text-sm p-2 md:p-3 text-left;
+  white-space: nowrap;
 }
 
 .blog-content .responsive-table td {
-  @apply bg-gray-900 text-gray-300 text-sm p-3 border-b border-gray-800;
+  @apply bg-gray-900 text-gray-300 text-xs md:text-sm p-2 md:p-3 border-b border-gray-800;
+}
+
+.blog-content .responsive-table tbody tr:nth-child(even) {
+  @apply bg-gray-800 bg-opacity-50;
 }
 
 .blog-content .responsive-table tbody tr:hover {
-  @apply bg-gray-800;
+  @apply bg-gray-700 bg-opacity-50;
 }
 
-/* Simple code block styles using Tailwind */
+/* Mobile-specific table handling */
+@media (max-width: 640px) {
+  .blog-content .responsive-table {
+    font-size: 0.75rem;
+  }
+  
+  .blog-content .responsive-table th,
+  .blog-content .responsive-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* Enhanced code block styles for better readability */
 .blog-content .code-block {
-  @apply bg-gray-800 rounded-lg my-6 p-4 overflow-x-auto;
+  @apply bg-gray-900 border border-gray-700 rounded-lg my-8 overflow-x-auto;
 }
 
 .blog-content .code-block code {
-  @apply text-gray-200 text-sm font-mono;
+  @apply text-gray-200 text-xs md:text-sm font-mono block p-4;
+  line-height: 1.6;
 }
 
 .blog-content .inline-code {
-  @apply bg-gray-800 text-brand-primary px-1 py-0.5 rounded text-sm font-mono;
+  @apply bg-gray-800 text-brand-primary px-1 py-0.5 rounded text-xs md:text-sm font-mono;
 }
 
-/* Simple heading styles using Tailwind */
+/* Mobile-specific code block handling */
+@media (max-width: 640px) {
+  .blog-content .code-block {
+    @apply -mx-4 rounded-none border-x-0;
+  }
+  
+  .blog-content .code-block code {
+    @apply text-xs p-3;
+  }
+}
+
+/* Enhanced heading styles with better visual hierarchy */
 .blog-content .heading-1 {
-  @apply text-3xl md:text-4xl font-bold text-white mb-6 mt-8 pb-4 border-b border-gray-700;
+  @apply text-3xl md:text-4xl font-bold text-white mb-6 mt-12 pb-4 border-b-2 border-brand-primary;
 }
 
 .blog-content .heading-2,
 .blog-content .section-header {
-  @apply text-2xl md:text-3xl font-bold text-white mb-4 mt-8;
+  @apply text-2xl md:text-3xl font-bold text-white mb-6 mt-12 pt-8 pb-2 border-t border-gray-800;
 }
 
 .blog-content .heading-3,
 .blog-content .subsection-header {
-  @apply text-xl md:text-2xl font-bold text-white mb-3 mt-6;
+  @apply text-lg md:text-xl font-bold text-brand-primary mb-4 mt-8 pl-4 border-l-4 border-brand-primary;
 }
 
 .blog-content .heading-4 {
-  @apply text-lg md:text-xl font-semibold text-gray-100 mb-2 mt-4;
+  @apply text-base md:text-lg font-semibold text-gray-100 mb-3 mt-6;
 }
 
 .blog-content .heading-5,
 .blog-content .heading-6 {
-  @apply text-base md:text-lg font-semibold text-gray-200 mb-2 mt-3;
+  @apply text-sm md:text-base font-semibold text-gray-300 mb-2 mt-4;
 }
 
-/* Simple paragraph and list styles */
+/* Paragraph styles with adjusted sizing */
 .blog-content p {
-  @apply mb-4 text-gray-300 text-base leading-relaxed;
+  @apply mb-4 text-gray-400 text-sm md:text-base leading-relaxed;
+}
+
+/* Add spacing after horizontal rules */
+.blog-content hr {
+  @apply my-12 border-t border-gray-700;
 }
 
 .blog-content .unordered-list,
 .blog-content .ordered-list {
-  @apply my-4 pl-6 space-y-2;
+  @apply my-6 pl-6 space-y-2 text-sm md:text-base;
 }
 
 .blog-content .unordered-list li {
-  @apply list-disc text-gray-300;
+  @apply list-disc text-gray-400;
 }
 
 .blog-content .ordered-list li {
-  @apply list-decimal text-gray-300;
+  @apply list-decimal text-gray-400;
+}
+
+/* Better list marker styling */
+.blog-content .unordered-list li::marker,
+.blog-content .ordered-list li::marker {
+  @apply text-brand-primary;
 }
 
 .blog-content .blockquote {
-  @apply border-l-4 border-brand-primary pl-4 my-6 italic text-gray-300;
+  @apply border-l-4 border-brand-primary pl-6 my-8 italic text-gray-300 bg-gray-800 bg-opacity-30 py-4 pr-4 rounded-r-lg;
 }
 
 .blog-content .blockquote p {
-  @apply mb-0;
+  @apply mb-0 text-sm md:text-base;
 }
 
 /* Simple text styles */
