@@ -290,7 +290,7 @@
           </div>
         </div>
       </div>
-      <div class="bottom">SharedStake © 2021</div>
+      <div class="bottom">SharedStake © 2025</div>
     </div>
   </div>
 </template>
