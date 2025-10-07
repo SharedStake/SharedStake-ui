@@ -1,5 +1,4 @@
 module.exports = {
-  preset: '@vue/cli-plugin-unit-jest/presets/no-babel',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': '<rootDir>/tests/__mocks__/styleMock.js',
