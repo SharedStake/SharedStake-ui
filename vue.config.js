@@ -28,7 +28,10 @@ module.exports = {
           .rule('markdown')
           .test(/\.md$/)
           .use('raw-loader')
-          .loader('raw-loader');
+          .loader('raw-loader')
+          .options({
+            esModule: false  // Return string directly, not ES module
+          });
       },
       transpileDependencies: [
         '@metamask/abi-utils',
