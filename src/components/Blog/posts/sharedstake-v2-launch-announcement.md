@@ -29,9 +29,9 @@ meta:
 
 ## 🎯 The Big Announcement
 
-After months of development and rigorous testing, we're thrilled to announce the launch of **SharedStake V2**. This major upgrade brings significant improvements to our liquid staking protocol, making it more secure, user-friendly, and profitable for our community.
+After months of development and rigorous testing, we're thrilled to announce **SharedStake V2** — a complete reimagination of liquid staking that delivers enhanced security, better UX, and improved yields.
 
-V2 isn't just an upgrade — it's a complete reimagination of what liquid staking can be. We've listened to our community, learned from the ecosystem, and built something truly special.
+V2 transforms what was once a complex process into something truly special, built from community feedback and ecosystem learnings.
 
 <br/>
 <br/>
