@@ -1,0 +1,280 @@
+name: QA Testing Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run tests daily at 2 AM UTC to catch any issues early
+    - cron: '0 2 * * *'
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run lint
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run unit tests with coverage
+        run: npm run test:unit:coverage
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  e2e-tests:
+    name: E2E Tests - ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, edge]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: test
+      
+      - name: Start application server
+        run: |
+          npm run serve &
+          npx wait-on http://localhost:8080 -t 60000
+        env:
+          NODE_ENV: test
+      
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v5
+        with:
+          browser: ${{ matrix.browser }}
+          command: npm run test:e2e:headless
+          wait-on: 'http://localhost:8080'
+          wait-on-timeout: 60
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-screenshots-${{ matrix.browser }}
+          path: cypress/screenshots
+      
+      - name: Upload Cypress videos
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-videos-${{ matrix.browser }}
+          path: cypress/videos
+
+  blockchain-integration-tests:
+    name: Blockchain Integration Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run blockchain-specific tests
+        run: |
+          # Run specific test suites for blockchain interactions
+          npm run test:e2e -- --spec "cypress/e2e/stake.cy.js"
+          npm run test:e2e -- --spec "cypress/e2e/withdraw.cy.js"
+          npm run test:e2e -- --spec "cypress/e2e/rollover.cy.js"
+          npm run test:e2e -- --spec "cypress/e2e/earn.cy.js"
+          npm run test:e2e -- --spec "cypress/e2e/wrap-unwrap.cy.js"
+        env:
+          CYPRESS_TEST_WALLET_ADDRESS: ${{ secrets.TEST_WALLET_ADDRESS }}
+          CYPRESS_NETWORK: mainnet
+
+  blog-tests:
+    name: Blog Functionality Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Start application server
+        run: |
+          npm run serve &
+          npx wait-on http://localhost:8080 -t 60000
+      
+      - name: Run blog-specific tests
+        run: npm run test:e2e -- --spec "cypress/e2e/blog.cy.js"
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: blog-test-results
+          path: |
+            cypress/screenshots
+            cypress/videos
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:8080
+            http://localhost:8080/stake
+            http://localhost:8080/earn
+            http://localhost:8080/blog
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate || true
+      
+      - name: Run security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  notify-results:
+    name: Notify Test Results
+    needs: [lint, unit-tests, e2e-tests, blockchain-integration-tests, blog-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Check test results
+        run: |
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Unit Tests: ${{ needs.unit-tests.result }}"
+          echo "E2E Tests: ${{ needs.e2e-tests.result }}"
+          echo "Blockchain Tests: ${{ needs.blockchain-integration-tests.result }}"
+          echo "Blog Tests: ${{ needs.blog-tests.result }}"
+          
+          if [ "${{ needs.lint.result }}" != "success" ] || \
+             [ "${{ needs.unit-tests.result }}" != "success" ] || \
+             [ "${{ needs.e2e-tests.result }}" != "success" ] || \
+             [ "${{ needs.blockchain-integration-tests.result }}" != "success" ] || \
+             [ "${{ needs.blog-tests.result }}" != "success" ]; then
+            echo "::error::One or more test suites failed"
+            exit 1
+          fi
+      
+      - name: Post to Slack (optional)
+        if: failure() && github.event_name == 'push'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'QA Tests Failed on ${{ github.ref }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        continue-on-error: true
