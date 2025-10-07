@@ -94,7 +94,7 @@
       <div class="py-6 md:py-8 px-4">
         <div class="max-w-4xl mx-auto">
           <article class="prose prose-lg prose-invert max-w-none overflow-hidden">
-            <div v-html="post.content" class="blog-content"></div>
+            <div v-html="post.content" class="blog-content" ref="blogContent"></div>
           </article>
 
           <!-- Post Footer -->
@@ -198,11 +198,16 @@
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
 import BlogStyles from './BlogStyles.vue';
+import { useSEO } from '@/composables/useSEO.js';
 
 export default {
   name: 'BlogPost',
   components: {
     BlogStyles
+  },
+  setup() {
+    const seo = useSEO();
+    return { seo };
   },
   data() {
     return {
@@ -255,6 +260,9 @@ export default {
         
         if (this.post) {
           this.setPageMeta();
+          this.$nextTick(() => {
+            this.optimizeImages();
+          });
         }
       }, 300);
     },
@@ -274,27 +282,10 @@ export default {
     setPageMeta() {
       if (!this.post) return;
       
-      // Set page title
-      document.title = `${this.post.title} - SharedStake Blog`;
+      // Use the SEO composable for better meta tag management
+      this.seo.setBlogPostSEO(this.post);
       
-      // Set meta description
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute('content', this.post.meta.description);
-      } else {
-        const meta = document.createElement('meta');
-        meta.name = 'description';
-        meta.content = this.post.meta.description;
-        document.head.appendChild(meta);
-      }
-      
-      // Set Open Graph tags
-      this.setOpenGraphTags();
-      
-      // Set canonical URL
-      this.setCanonicalURL();
-      
-      // Set structured data
+      // Set additional structured data
       this.setStructuredData();
     },
     setOpenGraphTags() {
@@ -434,6 +425,44 @@ export default {
           document.head.appendChild(faqScript);
         }
       }
+    },
+    optimizeImages() {
+      if (!this.$refs.blogContent) return;
+      
+      const images = this.$refs.blogContent.querySelectorAll('img');
+      images.forEach((img, index) => {
+        // Add alt text if missing
+        if (!img.alt) {
+          img.alt = this.generateAltText(img, index);
+        }
+        
+        // Add loading="lazy" for below-the-fold images
+        if (index > 0) {
+          img.loading = 'lazy';
+        }
+        
+        // Add error handling
+        img.onerror = () => {
+          img.style.display = 'none';
+        };
+      });
+    },
+    generateAltText(img, index) {
+      const postTitle = this.post.title;
+      const postSlug = this.post.slug;
+      
+      // Generate contextual alt text based on post content
+      const altTextMap = {
+        'ethereum-staking-guide-2024': 'Ethereum staking guide illustration showing staking rewards and process',
+        'understanding-liquid-staking-benefits': 'Liquid staking benefits diagram showing liquidity and yield advantages',
+        'defi-integration-opportunities': 'DeFi integration strategies showing multiple yield sources',
+        'security-audit-results-certik': 'Security audit results showing CertiK partnership and protection levels',
+        'sharedstake-v2-launch-announcement': 'SharedStake V2 launch announcement with new features and improvements',
+        'how-we-updated-sharedstake-ui-with-ai': 'AI-powered UI transformation showing before and after improvements',
+        'ethereum-node-made-simple-eth2-quickstart': 'Ethereum node setup process simplified with eth2-quickstart tool'
+      };
+      
+      return altTextMap[postSlug] || `${postTitle} - Image ${index + 1}`;
     }
   }
 };

@@ -4,6 +4,17 @@ module.exports = {
     devServer: {
         port: 8080
     },
+    // SEO and Performance Optimizations
+    publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
+    productionSourceMap: false, // Disable source maps in production for smaller bundles
+    configureWebpack: {
+        // Performance optimizations
+        performance: {
+            hints: 'warning',
+            maxEntrypointSize: 512000,
+            maxAssetSize: 512000
+        }
+    },
     chainWebpack: config => {
         config.module
           .rule('js')

@@ -1,0 +1,37 @@
+# OG Image Placeholder - Need to Create
+
+## Required: og-image.jpg (1200x630px)
+
+### Design Specifications:
+- **Dimensions**: 1200x630px
+- **Format**: JPG or PNG
+- **File Size**: < 1MB
+- **Content**: 
+  - SharedStake logo
+  - "Ethereum Liquid Staking Platform"
+  - "Earn 4-8% APR Rewards"
+  - "Start with 0.01 ETH"
+  - Brand colors (red/pink gradient background)
+
+### Text Content:
+- **Main Headline**: "SharedStake"
+- **Subheadline**: "Ethereum Liquid Staking Platform"
+- **Value Prop**: "Earn 4-8% APR Rewards"
+- **CTA**: "Start with 0.01 ETH"
+- **URL**: "sharedstake.org"
+
+### Design Elements:
+- Background: Gradient from brand red to pink
+- Logo: White SharedStake logo
+- Text: White or dark text for contrast
+- Icons: Ethereum logo, staking icons
+- Style: Modern, clean, professional
+
+## Required: twitter-card.jpg (1200x630px)
+Same specifications as og-image.jpg but optimized for Twitter's display requirements.
+
+## Required: blog-{slug}.jpg for each post
+- **Dimensions**: 1200x630px
+- **Format**: JPG
+- **Content**: Post-specific imagery with title overlay
+- **Style**: Consistent with brand guidelines
