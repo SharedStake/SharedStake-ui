@@ -2,8 +2,12 @@
 
 ## 📅 Upgrade Date: October 7, 2025
 
+## ⚠️ Amplify Compatibility Note
+Due to GLIBC version limitations in Amplify's Amazon Linux 2 environment, we're using Node.js 20 LTS instead of 22 LTS.
+**To use Node.js 22**: Update Amplify build settings to use Amazon Linux 2023.
+
 ## 🎯 Upgrade Objectives
-1. Migrate to Node.js 22 LTS (latest LTS version)
+1. Migrate to Node.js 20 LTS (Amplify compatible)
 2. Update all outdated dependencies
 3. Reduce security vulnerabilities
 4. Migrate to PostCSS 8 and Tailwind CSS 3
@@ -14,7 +18,7 @@
 
 ### Node.js Migration
 - **Previous**: Node.js 18.x LTS (in config files)
-- **Current**: Node.js 22.x LTS (Jod)
+- **Current**: Node.js 20.x LTS (Iron) - Amplify Amazon Linux 2 compatible
 - **Files Updated**:
   - `.nvmrc`: 18 → 22
   - `.github/workflows/node.js.yml`: 18.x → 22.x
