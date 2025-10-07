@@ -1,7 +1,7 @@
 ---
 id: "eth2-quickstart-introduction"
 slug: "ethereum-node-made-simple-eth2-quickstart"
-title: "Running Your Own Ethereum Node Made Simple: Introduction to eth2-quickstart"
+title: "Part 1: Running Your Own Ethereum Node Made Simple - Introduction to eth2-quickstart"
 excerpt: "Discover how eth2-quickstart transforms the complex process of setting up an Ethereum node into a streamlined experience that can be completed in hours."
 author: "SharedStake Team"
 publishDate: "2024-10-07"
@@ -14,7 +14,7 @@ meta:
 
 <br/>
 
-# 🚀 Running Your Own Ethereum Node Made Simple: Introduction to eth2-quickstart
+# 🚀 Part 1: Running Your Own Ethereum Node Made Simple - Introduction to eth2-quickstart
 
 <br/>
 
@@ -503,11 +503,11 @@ With eth2-quickstart, anyone with basic Linux knowledge and the right hardware c
 
 **This is part 1 of a 5-part series on eth2-quickstart:**
 
-1. **🚀 Introduction to eth2-quickstart** (You are here)
-2. **🔧 Step-by-Step Installation Guide** (Next)
-3. **⚙️ Advanced Features and Optimization**
-4. **🔍 Monitoring and Maintenance**
-5. **🌈 Client Diversity Deep Dive**
+1. **🚀 Part 1: Introduction to eth2-quickstart** (You are here)
+2. **🔧 Part 2: Step-by-Step Installation Guide** (Next)
+3. **🌈 Part 3: Client Diversity Deep Dive**
+4. **⚙️ Part 4: Advanced Features and Optimization**
+5. **🔍 Part 5: Monitoring and Maintenance**
 
 <br/>
 
