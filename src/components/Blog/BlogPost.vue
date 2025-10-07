@@ -28,7 +28,7 @@
     <!-- Blog Post Content -->
     <div v-else>
       <!-- Hero Section -->
-      <div class="relative pt-20 pb-12 md:pt-24 md:pb-16 px-4">
+      <div class="relative pt-32 pb-12 md:pt-36 md:pb-16 px-4">
         <div class="max-w-4xl mx-auto">
           <!-- Breadcrumb -->
           <nav class="mb-6 md:mb-8">

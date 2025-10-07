@@ -1,7 +1,7 @@
 <template>
   <div class="Blog min-h-screen bg-gray-900 text-white">
     <!-- Hero Section -->
-    <div class="relative pt-20 pb-12 md:pt-24 md:pb-20 px-4 text-center">
+    <div class="relative pt-32 pb-12 md:pt-36 md:pb-20 px-4 text-center">
       <div class="max-w-4xl mx-auto">
         <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-brand-primary to-pink-400 bg-clip-text text-transparent">
           SharedStake Blog
@@ -139,7 +139,7 @@
 
           <!-- Sidebar -->
           <div class="lg:w-1/3">
-            <div class="bg-gray-800 rounded-lg p-4 md:p-6 sticky top-8">
+            <div class="bg-gray-800 rounded-lg p-4 md:p-6 sticky top-40">
               <h3 class="text-lg md:text-xl font-bold mb-4 md:mb-6">About Our Blog</h3>
               <p class="text-gray-300 mb-4 md:mb-6 text-sm md:text-base">
                 Stay informed about the latest developments in Ethereum liquid staking, 
