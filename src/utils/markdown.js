@@ -16,6 +16,18 @@ const renderer = new marked.Renderer();
 // Helper to generate IDs from text
 const makeId = (text) => text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim();
 
+// Helper to escape HTML
+const escapeHtml = (text) => {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, m => map[m]);
+};
+
 // Headings with classes
 renderer.heading = (text, level) => 
   `<h${level} id="${makeId(text)}" class="blog-h${level}">${text}</h${level}>\n`;
@@ -56,62 +68,46 @@ renderer.list = (body, ordered, start) => {
   return `<${tag} class="${cls}"${startAttr}>${body}</${tag}>\n`;
 };
 
-renderer.listitem = (text, task, checked) => {
-  if (task) {
-    const checkbox = `<input type="checkbox" class="blog-task-checkbox"${checked ? ' checked' : ''} disabled>`;
-    return `<li class="blog-list-item blog-task-item">${checkbox} ${text}</li>\n`;
-  }
-  return `<li class="blog-list-item">${text}</li>\n`;
-};
+renderer.listitem = (text) => `<li class="blog-list-item">${text}</li>\n`;
 
 // Paragraphs
-renderer.paragraph = (text) => 
-  text.startsWith('<img') ? text + '\n' : `<p class="blog-paragraph">${text}</p>\n`;
+renderer.paragraph = (text) => `<p class="blog-paragraph">${text}</p>\n`;
 
-// Links with external detection
+// Links
 renderer.link = (href, title, text) => {
-  const isExternal = href?.startsWith('http');
-  const attrs = [
-    `href="${href}"`,
-    `class="blog-link${isExternal ? ' blog-link-external' : ''}"`,
-    title ? `title="${title}"` : '',
-    isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''
-  ].filter(Boolean).join(' ');
-  return `<a ${attrs}>${text}</a>`;
+  const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
+  const external = href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
+  return `<a href="${escapeHtml(href)}"${titleAttr}${external} class="blog-link">${text}</a>`;
 };
 
-// Images with figure wrapper
-renderer.image = (href, title, text) => `<figure class="blog-figure">
-  <img src="${href}" alt="${text || title || 'Image'}" class="blog-image" loading="lazy"${title ? ` title="${title}"` : ''}>
-  ${title ? `<figcaption class="blog-figcaption">${title}</figcaption>` : ''}
-</figure>\n`;
+// Images
+renderer.image = (href, title, text) => {
+  const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
+  return `<img src="${escapeHtml(href)}" alt="${escapeHtml(text)}"${titleAttr} class="blog-image" loading="lazy" />`;
+};
 
-// Text formatting
-renderer.hr = () => '<hr class="blog-divider">\n';
+// Horizontal rules
+renderer.hr = () => '<hr class="blog-divider" />\n';
+
+// Strong (bold)
 renderer.strong = (text) => `<strong class="blog-strong">${text}</strong>`;
+
+// Emphasis (italic)
 renderer.em = (text) => `<em class="blog-emphasis">${text}</em>`;
+
+// Strikethrough
 renderer.del = (text) => `<del class="blog-strikethrough">${text}</del>`;
 
-// Helper to escape HTML
-const escapeHtml = (text) => {
-  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-  return text.replace(/[&<>"']/g, m => map[m]);
-};
-
-// Set renderer
-marked.setOptions({ renderer });
-
-// Export parser
-export const parseMarkdown = (markdown) => {
-  if (!markdown) return '';
+// Export the parsing function
+export function parseMarkdown(markdown) {
   try {
-    // Clean up extra line breaks
-    const processed = markdown.replace(/\n\n<br\/>\n\n/g, '\n\n').replace(/<br\/>\n/g, '\n\n');
-    return marked(processed);
+    return marked(markdown, { renderer });
   } catch (error) {
     console.error('Error parsing markdown:', error);
-    return '<div class="blog-error">Error rendering content</div>';
+    // Return escaped content as fallback
+    return `<pre>${escapeHtml(markdown)}</pre>`;
   }
-};
+}
 
-export default parseMarkdown;
+// Export marked for direct use if needed
+export { marked };
