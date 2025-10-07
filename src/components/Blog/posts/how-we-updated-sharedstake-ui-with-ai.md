@@ -16,7 +16,7 @@ meta:
 
 # 🚀 How We Transformed SharedStake's UI with AI in Just 48 Hours
 
-**🆕 Updated October 7, 2025:** Added Round 2 improvements including PostCSS 8, Tailwind 3, ESLint 8, and Node.js 20 LTS migration. [Jump to update](#october-2025-update-the-upgrade-continues)
+**🆕 Updated October 7, 2025:** Added Round 2 improvements including PostCSS 8, Tailwind 3, ESLint 8, and Node.js 22 LTS migration.
 
 <br/>
 
@@ -572,19 +572,11 @@ This isn't the future of development. This is happening right now. And if you're
 
 ---
 
-<br/>
-
 ## 📅 October 2025 Update: The Upgrade Continues
-
-<br/>
 
 *Five days after our initial upgrade, we partnered with AI again to take things further. Here's what we accomplished in just 30 minutes:*
 
-<br/>
-
 ### 🚀 Round 2 Achievements
-
-<br/>
 
 | Category | What We Did | Impact |
 |----------|------------|--------|
@@ -595,28 +587,27 @@ This isn't the future of development. This is happening right now. And if you're
 | **Marked** | Upgraded from 4 to 16 | Major security fix |
 | **Documentation** | Created comprehensive upgrade report | Future maintainability |
 
-<br/>
-
 ### 🔧 Technical Highlights
 
-<br/>
-
 **Major Dependency Upgrades:**
-```json
+
+```javascript
 // Before
-"postcss": "7.0.39",
-"tailwindcss": "2.2.17",
-"eslint": "7.32.0",
-"marked": "^4.3.0"
+{
+  "postcss": "7.0.39",
+  "tailwindcss": "2.2.17",
+  "eslint": "7.32.0",
+  "marked": "^4.3.0"
+}
 
 // After
-"postcss": "^8.4.49",
-"tailwindcss": "^3.4.17",
-"eslint": "^8.57.1",
-"marked": "^16.0.0"
+{
+  "postcss": "^8.4.49",
+  "tailwindcss": "^3.4.17",
+  "eslint": "^8.57.1",
+  "marked": "^16.0.0"
+}
 ```
-
-<br/>
 
 **Security Improvements:**
 - Vulnerabilities reduced from 16 → 12 (25% reduction)
@@ -624,22 +615,14 @@ This isn't the future of development. This is happening right now. And if you're
 - Marked security issues resolved
 - All builds passing with zero lint errors
 
-<br/>
-
 ### 💡 Lessons Learned (Round 2)
-
-<br/>
 
 1. **Documentation Matters**: AI initially missed updating docs — human review caught this
 2. **Environment Compatibility**: Required upgrading Amplify to Amazon Linux 2023 for Node.js 22 support
 3. **Iterative Improvement**: Each upgrade round builds on the previous success
 4. **AI + Human = Best Results**: AI executes fast, humans provide context and catch oversights
 
-<br/>
-
 ### 🎯 The Power of Continuous Improvement
-
-<br/>
 
 This second round of upgrades demonstrates the power of the AI-human partnership:
 - **Speed**: 30 minutes from start to finish
@@ -651,11 +634,7 @@ This second round of upgrades demonstrates the power of the AI-human partnership
 
 The key? We didn't try to do everything at once. We built on our previous success, tackled new challenges, and maintained stability throughout.
 
-<br/>
-
 ---
-
-<br/>
 
 ### 🤝 Want to Learn More?
 
