@@ -1,5 +1,8 @@
 <template>
   <div class="BlogPost min-h-screen bg-gray-900 text-white">
+    <!-- Import global blog styles -->
+    <BlogStyles />
+    
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
       <div class="text-center">
@@ -183,9 +186,13 @@
 
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
+import BlogStyles from './BlogStyles.vue';
 
 export default {
   name: 'BlogPost',
+  components: {
+    BlogStyles
+  },
   data() {
     return {
       post: null,
@@ -350,286 +357,11 @@ export default {
 </script>
 
 <style scoped>
+/* Utility class for truncating text */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* Blog content styling - Responsive with Tailwind classes */
-.blog-content {
-  @apply text-gray-300 leading-relaxed max-w-none;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-}
-
-/* Headings with responsive sizing and better section differentiation */
-.blog-content h1 {
-  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 mt-12 pb-3 border-b-2 border-brand-primary;
-}
-
-.blog-content h2 {
-  @apply text-2xl md:text-3xl font-bold text-brand-primary mb-4 mt-10 relative pl-4 bg-gray-800 bg-opacity-30 py-2 rounded-r-lg;
-}
-
-.blog-content h2::before {
-  content: '';
-  @apply absolute left-0 top-0 bottom-0 w-1 bg-brand-primary rounded-l-lg;
-}
-
-.blog-content h3 {
-  @apply text-xl md:text-2xl font-bold text-white mb-3 mt-8 pl-3 border-l-4 border-gray-600;
-}
-
-.blog-content h4 {
-  @apply text-lg md:text-xl font-semibold text-gray-100 mb-2 mt-6 pl-2;
-}
-
-.blog-content h5, .blog-content h6 {
-  @apply text-base md:text-lg font-semibold text-gray-300 mb-2 mt-4 pl-2;
-}
-
-/* Paragraphs with responsive spacing and better readability */
-.blog-content p {
-  @apply mb-4 text-gray-300 text-base md:text-lg leading-relaxed;
-}
-
-/* Lists with responsive styling and better visual hierarchy */
-.blog-content ul, .blog-content ol {
-  @apply mb-6 pl-6 space-y-3 bg-gray-800 bg-opacity-20 py-4 rounded-lg;
-}
-
-.blog-content li {
-  @apply text-gray-300 leading-relaxed mb-2;
-}
-
-.blog-content ul li {
-  @apply list-disc;
-}
-
-.blog-content ol li {
-  @apply list-decimal;
-}
-
-/* Nested lists with proper indentation */
-.blog-content ul ul, .blog-content ol ol, .blog-content ul ol, .blog-content ol ul {
-  @apply mt-2 mb-2 ml-4 bg-transparent py-0 rounded-none;
-}
-
-/* Custom list markers for better visual appeal */
-.blog-content ul li::marker {
-  @apply text-brand-primary;
-}
-
-.blog-content ol li::marker {
-  @apply text-brand-primary font-bold;
-}
-
-/* Strong and emphasis */
-.blog-content strong {
-  @apply text-white font-bold;
-}
-
-.blog-content em {
-  @apply text-gray-100 italic;
-}
-
-/* Links */
-.blog-content a {
-  @apply text-brand-primary underline hover:text-pink-400 transition-colors duration-200;
-}
-
-/* Code styling with responsive design */
-.blog-content code {
-  @apply bg-gray-800 text-brand-primary px-2 py-1 rounded text-sm font-mono border border-gray-600;
-}
-
-.blog-content pre {
-  @apply bg-gray-800 border border-gray-600 rounded-lg p-4 md:p-6 my-4 md:my-6 overflow-x-auto;
-}
-
-.blog-content pre code {
-  @apply bg-transparent border-0 p-0 text-gray-200 text-sm;
-}
-
-/* Blockquotes with responsive design and better visual appeal */
-.blog-content blockquote {
-  @apply border-l-4 border-brand-primary bg-gradient-to-r from-pink-900 bg-opacity-10 to-transparent my-6 p-4 md:p-6 italic text-gray-300 rounded-r-lg shadow-lg relative;
-}
-
-.blog-content blockquote p {
-  @apply mb-0 text-gray-200;
-}
-
-.blog-content blockquote::before {
-  content: '"';
-  @apply text-brand-primary text-4xl font-bold absolute -top-2 -left-2;
-}
-
-/* Tables with responsive design */
-.blog-content .table-wrapper {
-  @apply overflow-x-auto my-6 rounded-lg border border-gray-600;
-}
-
-.blog-content table {
-  @apply w-full border-collapse bg-gray-800 bg-opacity-50 min-w-full;
-}
-
-.blog-content th, .blog-content td {
-  @apply px-2 py-2 md:px-4 md:py-3 text-left border-b border-gray-600 text-xs md:text-sm lg:text-base;
-  word-break: break-word;
-  hyphens: auto;
-}
-
-.blog-content th {
-  @apply bg-gray-900 bg-opacity-80 text-brand-primary font-bold whitespace-nowrap;
-}
-
-.blog-content td {
-  @apply text-gray-300;
-}
-
-.blog-content tr:hover {
-  @apply bg-gray-700 bg-opacity-30;
-}
-
-/* Responsive table improvements */
-.blog-content th:first-child,
-.blog-content td:first-child {
-  @apply pl-2 md:pl-4;
-}
-
-.blog-content th:last-child,
-.blog-content td:last-child {
-  @apply pr-2 md:pr-4;
-}
-
-/* Horizontal rules */
-.blog-content hr {
-  @apply border-0 h-0.5 bg-gradient-to-r from-transparent via-brand-primary to-transparent my-8 md:my-12;
-}
-
-/* Lists with custom styling for better readability */
-.blog-content ul li::marker {
-  @apply text-brand-primary;
-}
-
-.blog-content ol li::marker {
-  @apply text-brand-primary font-bold;
-}
-
-/* Mobile-specific adjustments */
-@media (max-width: 768px) {
-  .blog-content h1 {
-    @apply text-2xl mt-8;
-  }
-  
-  .blog-content h2 {
-    @apply text-xl mt-6 pl-3 py-1;
-  }
-  
-  .blog-content h3 {
-    @apply text-lg mt-4 pl-2;
-  }
-  
-  .blog-content table {
-    @apply text-xs;
-  }
-  
-  .blog-content th, .blog-content td {
-    @apply px-1 py-1 text-xs;
-  }
-  
-  /* Ensure no horizontal scrolling on mobile */
-  .blog-content {
-    @apply overflow-x-hidden;
-  }
-  
-  .blog-content pre {
-    @apply text-xs overflow-x-auto;
-  }
-  
-  .blog-content blockquote {
-    @apply p-3 text-sm;
-  }
-  
-  .blog-content blockquote::before {
-    @apply text-2xl absolute -top-1 -left-1;
-  }
-  
-  /* Better mobile spacing */
-  .blog-content p {
-    @apply mb-3 text-sm;
-  }
-  
-  .blog-content ul, .blog-content ol {
-    @apply pl-4 space-y-1 py-2;
-  }
-  
-  /* Adjust list markers for mobile */
-  .blog-content ul li::marker {
-    @apply text-brand-primary text-sm;
-  }
-}
-
-/* Enhanced styling for the expanded blog post - Using Tailwind classes */
-/* All styling now handled by Tailwind classes above */
-
-/* Prose styling for better readability */
-.prose {
-  max-width: none;
-}
-
-/* Additional responsive improvements */
-.blog-content img {
-  @apply max-w-full h-auto rounded-lg shadow-lg my-4;
-}
-
-.blog-content a {
-  @apply break-words;
-}
-
-/* Ensure proper text wrapping for long URLs and code */
-.blog-content code {
-  @apply break-all;
-}
-
-/* Better spacing for nested content */
-.blog-content > *:first-child {
-  @apply mt-0;
-}
-
-.blog-content > *:last-child {
-  @apply mb-0;
-}
-
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  color: #ffffff;
-}
-
-.prose p {
-  color: #d1d5db;
-}
-
-.prose ul, .prose ol {
-  color: #d1d5db;
-}
-
-.prose li {
-  color: #d1d5db;
-}
-
-.prose strong {
-  color: #ffffff;
-}
-
-.prose a {
-  color: #e6007a;
-}
-
-.prose a:hover {
-  color: #f472b6;
 }
 </style>
