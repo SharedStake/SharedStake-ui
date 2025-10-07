@@ -1435,13 +1435,14 @@ export default {
 }
 
 .InfoHeader {
-  font-size: 34px;
+  font-size: 36px;  /* Slightly larger on desktop */
   font-weight: 300;
-  line-height: 42px;
-  margin-bottom: 30px;
+  line-height: 44px;
+  margin-bottom: 40px;  /* More space before form */
   color: rgba(255, 255, 255, 0.95);
   grid-area: Header;
   align-self: center;
+  padding: 0 20px;  /* Add some horizontal padding */
 }
 
 .Info {
@@ -1946,12 +1947,12 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
 /* Shared CTA Section Styles - Using CSS custom properties for consistency */
 :root {
-  --cta-padding: 60px 20px;
+  --cta-padding: 100px 20px;  /* Increased from 60px for better desktop spacing */
   --cta-max-width: 600px;
   --cta-bg-primary: rgba(17, 26, 25, 0.95);
   --cta-bg-secondary: rgba(26, 38, 37, 0.95);
-  --cta-title-size: 32px;
-  --cta-subtitle-size: 18px;
+  --cta-title-size: 36px;  /* Slightly larger for desktop */
+  --cta-subtitle-size: 20px;  /* Slightly larger for desktop */
   --cta-mobile-padding: 40px 15px;
   --cta-small-padding: 30px 10px;
 }
@@ -2018,8 +2019,9 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 .early-cta-subtitle {
   font-size: var(--cta-subtitle-size);
   color: rgba(255, 255, 255, 0.75);
-  margin-bottom: 30px;
-  line-height: 1.5;
+  margin-bottom: 40px;  /* More space before form */
+  line-height: 1.6;
+  padding: 0 20px;  /* Add horizontal padding for better readability */
 }
 
 @media only screen and (max-width: 768px) {
@@ -2056,6 +2058,15 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     line-height: 32px;
     margin-bottom: 20px;
     text-align: center;
+  }
+  
+  /* Ensure consistent padding on mobile */
+  .early-cta-container {
+    padding: var(--cta-mobile-padding);
+  }
+  
+  .flex_column {
+    padding: var(--cta-mobile-padding);
   }
   
   /* Override the general .Information styles for mobile */

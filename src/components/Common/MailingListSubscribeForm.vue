@@ -198,6 +198,7 @@ export default {
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
+  padding: 4px;  /* Add inner padding for better visual balance */
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   box-sizing: border-box;
@@ -215,12 +216,12 @@ export default {
 
 input,
 button {
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.75rem;  /* Increased padding for better desktop appearance */
   margin: 0;
   text-decoration: none;
   font-family: "Roboto", system-ui, -apple-system, sans-serif;
   border: none;
-  font-size: 16px;
+  font-size: 17px;  /* Slightly larger for desktop */
   transition: all 0.3s ease;
 }
 
@@ -250,8 +251,9 @@ button {
   border-radius: 0 10px 10px 0;
   font-weight: 600;
   letter-spacing: 0.5px;
-  padding: 0.75rem 2rem;
+  padding: 1rem 2.5rem;  /* More padding for better desktop button */
   transition: all 0.3s ease;
+  white-space: nowrap;  /* Prevent text wrapping */
 }
 
 .submit-button:hover:not(:disabled) {
@@ -275,7 +277,7 @@ button {
 
 .success-message {
   text-align: center;
-  padding: 2rem;
+  padding: 3rem 2rem;  /* More vertical padding on desktop */
   color: #fff;
   animation: fadeIn 0.5s ease;
 }
@@ -347,6 +349,25 @@ button {
   }
 }
 
+/* Desktop-first improvements */
+@media only screen and (min-width: 769px) {
+  .mailing-list-container {
+    padding: 0 2rem;  /* Add side padding on desktop */
+  }
+  
+  .subscribe {
+    padding: 6px;  /* More inner padding on desktop */
+  }
+  
+  .email {
+    font-size: 18px;
+  }
+  
+  .submit-button {
+    font-size: 18px;
+  }
+}
+
 @media only screen and (max-width: 768px) {
   .mailing-list-container {
     padding: 0;
@@ -357,6 +378,7 @@ button {
     font-size: 16px;
     margin: 0;
     border-radius: 12px;
+    padding: 3px;  /* Less padding on mobile */
   }
 
   .input-container {
