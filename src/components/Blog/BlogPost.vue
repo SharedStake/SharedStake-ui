@@ -320,23 +320,37 @@ export default {
         "@type": "BlogPosting",
         "headline": this.post.title,
         "description": this.post.meta.description,
+        "image": `${window.location.origin}/images/blog-${this.post.slug}.jpg`,
         "author": {
           "@type": "Organization",
-          "name": this.post.author
+          "name": this.post.author,
+          "url": "https://sharedstake.org"
         },
         "publisher": {
           "@type": "Organization",
           "name": "SharedStake",
           "logo": {
             "@type": "ImageObject",
-            "url": `${window.location.origin}/logo-white.svg`
-          }
+            "url": `${window.location.origin}/logo-white.svg`,
+            "width": 200,
+            "height": 60
+          },
+          "url": "https://sharedstake.org"
         },
         "datePublished": this.post.publishDate,
         "dateModified": this.post.publishDate,
         "mainEntityOfPage": {
           "@type": "WebPage",
           "@id": window.location.href
+        },
+        "keywords": this.post.meta.keywords,
+        "articleSection": this.post.tags ? this.post.tags.join(", ") : "DeFi",
+        "wordCount": this.post.rawContent ? this.post.rawContent.split(' ').length : 0,
+        "inLanguage": "en-US",
+        "isPartOf": {
+          "@type": "Blog",
+          "name": "SharedStake Blog",
+          "url": `${window.location.origin}/blog`
         }
       };
       
@@ -351,6 +365,46 @@ export default {
       script.type = 'application/ld+json';
       script.textContent = JSON.stringify(structuredData);
       document.head.appendChild(script);
+      
+      // Add FAQ structured data if post contains FAQ section
+      this.addFAQStructuredData();
+    },
+    addFAQStructuredData() {
+      // Check if post content contains FAQ section
+      if (this.post.content && this.post.content.includes('Frequently Asked Questions')) {
+        const faqData = {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": []
+        };
+        
+        // Extract FAQ questions and answers from content
+        const faqMatches = this.post.rawContent.match(/### (.+?)\n\n(.+?)(?=### |$)/gs);
+        if (faqMatches) {
+          faqMatches.forEach(match => {
+            const lines = match.split('\n');
+            const question = lines[0].replace('### ', '').trim();
+            const answer = lines.slice(2).join(' ').trim();
+            
+            if (question && answer) {
+              faqData.mainEntity.push({
+                "@type": "Question",
+                "name": question,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": answer
+                }
+              });
+            }
+          });
+          
+          // Add FAQ structured data
+          const faqScript = document.createElement('script');
+          faqScript.type = 'application/ld+json';
+          faqScript.textContent = JSON.stringify(faqData);
+          document.head.appendChild(faqScript);
+        }
+      }
     }
   }
 };
