@@ -160,7 +160,7 @@
 
       <!-- <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
       <div
-        class="grid items-center justify-center gap-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3"
+        class="grid items-center justify-center gap-8 md:grid-cols-2 lg:grid-cols-3"
       >
         <div class="Stat">
           <div class="Num">{{ TVL }}</div>
