@@ -38,14 +38,19 @@ border-bottom: 1px dotted currentColor;
 
 ### 3. **Unsupported Tailwind Classes (v2.2.17)**
 ```css
-/* ❌ NOT AVAILABLE */
-@apply decoration-dotted underline-offset-2;
-@apply border-x-0;  /* border-x utilities don't exist in v2 */
+/* ❌ NOT AVAILABLE IN v2 */
+@apply border-x-0;           /* No x/y axis utilities */
+@apply gap-y-8;              /* No axis-specific gap */
+@apply space-x-4;            /* space-x/y actually IS available */
+@apply decoration-dotted;    /* No decoration utilities */
+@apply underline-offset-2;   /* No underline offset */
 
 /* ✅ USE INSTEAD */
-@apply underline;
-@apply border-l-0 border-r-0;  /* Use individual sides */
-/* Then add custom CSS if needed */
+@apply border-l-0 border-r-0;  /* Individual sides */
+@apply gap-8;                  /* All sides only */
+@apply space-x-4;              /* This works in v2! */
+@apply underline;              /* Basic underline only */
+/* Add custom CSS for advanced styling */
 ```
 
 ### 4. **Complex Opacity Utilities**
@@ -194,6 +199,11 @@ timeout 30 npm run build 2>&1 | grep -i error
 - **Cause**: Used border-x-0 which doesn't exist in Tailwind v2.2.17
 - **Fix**: Replaced with border-l-0 border-r-0
 - **Lesson**: Tailwind v2 doesn't have x/y axis utilities - use individual sides
+
+### Failure 5: gap-y-12 utility
+- **Cause**: Used gap-y-12 which doesn't exist in Tailwind v2.2.17
+- **Fix**: Removed gap-y-12, kept gap-8 for uniform spacing
+- **Lesson**: No axis-specific gap utilities (gap-x, gap-y) in v2 - only gap for all sides
 
 ---
 
