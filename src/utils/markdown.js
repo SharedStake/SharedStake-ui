@@ -1,202 +1,116 @@
 import { marked } from 'marked';
 
-// Configure marked for GitHub-flavored markdown with better defaults
+// Configure marked for GitHub-flavored markdown
 marked.setOptions({
-  breaks: true,           // Convert \n to <br>
-  gfm: true,             // GitHub Flavored Markdown
-  headerIds: true,       // Add IDs to headers for anchoring
-  mangle: false,         // Don't mangle email addresses
-  sanitize: false,       // We trust our content
-  smartLists: true,      // Better list behavior
-  smartypants: true,     // Smart quotes and dashes
-  xhtml: false          // HTML5 output
+  breaks: true,
+  gfm: true,
+  headerIds: true,
+  sanitize: false,
+  smartLists: true,
+  smartypants: true
 });
 
-// Custom renderer for enhanced styling
+// Custom renderer for blog styling
 const renderer = new marked.Renderer();
 
-// Enhanced heading renderer with anchors and better structure
-renderer.heading = function(text, level, raw) {
-  const id = raw.toLowerCase()
-    .replace(/[^\w\s-]/g, '') // Remove special chars
-    .replace(/\s+/g, '-')      // Replace spaces with dashes
-    .replace(/-+/g, '-')       // Replace multiple dashes with single
-    .trim();
-  
-  // Add appropriate classes for styling
-  const levelClasses = {
-    1: 'blog-h1',
-    2: 'blog-h2', 
-    3: 'blog-h3',
-    4: 'blog-h4',
-    5: 'blog-h5',
-    6: 'blog-h6'
-  };
-  
-  return `<h${level} id="${id}" class="${levelClasses[level] || ''}">${text}</h${level}>\n`;
-};
+// Helper to generate IDs from text
+const makeId = (text) => text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim();
 
-// Enhanced code renderer with language support
-renderer.code = function(code, language, isEscaped) {
-  const lang = language || 'plaintext';
-  const escapedCode = isEscaped ? code : escapeHtml(code);
-  
-  return `<div class="blog-code-block">
-    ${language ? `<div class="blog-code-lang">${language}</div>` : ''}
-    <pre><code class="language-${lang}">${escapedCode}</code></pre>
-  </div>\n`;
-};
+// Headings with classes
+renderer.heading = (text, level) => 
+  `<h${level} id="${makeId(text)}" class="blog-h${level}">${text}</h${level}>\n`;
 
-// Enhanced inline code
-renderer.codespan = function(code) {
-  return `<code class="blog-inline-code">${escapeHtml(code)}</code>`;
-};
+// Code blocks with language labels
+renderer.code = (code, language) => `<div class="blog-code-block">
+  ${language ? `<div class="blog-code-lang">${language}</div>` : ''}
+  <pre><code class="language-${language || 'plaintext'}">${escapeHtml(code)}</code></pre>
+</div>\n`;
 
-// Enhanced blockquote with better styling
-renderer.blockquote = function(quote) {
-  return `<blockquote class="blog-blockquote">
-    ${quote}
-  </blockquote>\n`;
-};
+// Inline code
+renderer.codespan = (code) => `<code class="blog-inline-code">${escapeHtml(code)}</code>`;
 
-// Enhanced table with responsive wrapper and better structure
-renderer.table = function(header, body) {
-  return `<div class="blog-table-wrapper">
-    <table class="blog-table">
-      <thead class="blog-table-head">
-        ${header}
-      </thead>
-      <tbody class="blog-table-body">
-        ${body}
-      </tbody>
-    </table>
-  </div>\n`;
-};
+// Blockquotes
+renderer.blockquote = (quote) => `<blockquote class="blog-blockquote">${quote}</blockquote>\n`;
 
-// Enhanced table row
-renderer.tablerow = function(content) {
-  return `<tr class="blog-table-row">${content}</tr>\n`;
-};
+// Tables with wrapper
+renderer.table = (header, body) => `<div class="blog-table-wrapper">
+  <table class="blog-table">
+    <thead class="blog-table-head">${header}</thead>
+    <tbody class="blog-table-body">${body}</tbody>
+  </table>
+</div>\n`;
 
-// Enhanced table cell
-renderer.tablecell = function(content, flags) {
-  const type = flags.header ? 'th' : 'td';
-  const className = flags.header ? 'blog-table-header' : 'blog-table-cell';
+renderer.tablerow = (content) => `<tr class="blog-table-row">${content}</tr>\n`;
+renderer.tablecell = (content, flags) => {
+  const tag = flags.header ? 'th' : 'td';
+  const cls = flags.header ? 'blog-table-header' : 'blog-table-cell';
   const align = flags.align ? ` style="text-align: ${flags.align}"` : '';
-  
-  return `<${type} class="${className}"${align}>${content}</${type}>`;
+  return `<${tag} class="${cls}"${align}>${content}</${tag}>`;
 };
 
-// Enhanced list rendering
-renderer.list = function(body, ordered, start) {
-  const type = ordered ? 'ol' : 'ul';
-  const className = ordered ? 'blog-ordered-list' : 'blog-unordered-list';
+// Lists
+renderer.list = (body, ordered, start) => {
+  const tag = ordered ? 'ol' : 'ul';
+  const cls = ordered ? 'blog-ordered-list' : 'blog-unordered-list';
   const startAttr = ordered && start !== 1 ? ` start="${start}"` : '';
-  
-  return `<${type} class="${className}"${startAttr}>
-    ${body}
-  </${type}>\n`;
+  return `<${tag} class="${cls}"${startAttr}>${body}</${tag}>\n`;
 };
 
-// Enhanced list item
-renderer.listitem = function(text, task, checked) {
-  let className = 'blog-list-item';
-  
+renderer.listitem = (text, task, checked) => {
   if (task) {
-    className += ' blog-task-item';
-    const checkbox = checked 
-      ? '<input type="checkbox" class="blog-task-checkbox" checked disabled>'
-      : '<input type="checkbox" class="blog-task-checkbox" disabled>';
-    return `<li class="${className}">${checkbox} ${text}</li>\n`;
+    const checkbox = `<input type="checkbox" class="blog-task-checkbox"${checked ? ' checked' : ''} disabled>`;
+    return `<li class="blog-list-item blog-task-item">${checkbox} ${text}</li>\n`;
   }
-  
-  return `<li class="${className}">${text}</li>\n`;
+  return `<li class="blog-list-item">${text}</li>\n`;
 };
 
-// Enhanced paragraph
-renderer.paragraph = function(text) {
-  // Don't wrap images in paragraphs
-  if (text.startsWith('<img')) {
-    return text + '\n';
-  }
-  return `<p class="blog-paragraph">${text}</p>\n`;
+// Paragraphs
+renderer.paragraph = (text) => 
+  text.startsWith('<img') ? text + '\n' : `<p class="blog-paragraph">${text}</p>\n`;
+
+// Links with external detection
+renderer.link = (href, title, text) => {
+  const isExternal = href?.startsWith('http');
+  const attrs = [
+    `href="${href}"`,
+    `class="blog-link${isExternal ? ' blog-link-external' : ''}"`,
+    title ? `title="${title}"` : '',
+    isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''
+  ].filter(Boolean).join(' ');
+  return `<a ${attrs}>${text}</a>`;
 };
 
-// Enhanced links with external link handling
-renderer.link = function(href, title, text) {
-  const isExternal = href && (href.startsWith('http://') || href.startsWith('https://'));
-  const titleAttr = title ? ` title="${title}"` : '';
-  const targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
-  const className = isExternal ? 'blog-link blog-link-external' : 'blog-link';
-  
-  return `<a href="${href}" class="${className}"${titleAttr}${targetAttr}>${text}</a>`;
-};
+// Images with figure wrapper
+renderer.image = (href, title, text) => `<figure class="blog-figure">
+  <img src="${href}" alt="${text || title || 'Image'}" class="blog-image" loading="lazy"${title ? ` title="${title}"` : ''}>
+  ${title ? `<figcaption class="blog-figcaption">${title}</figcaption>` : ''}
+</figure>\n`;
 
-// Enhanced image rendering with lazy loading
-renderer.image = function(href, title, text) {
-  const titleAttr = title ? ` title="${title}"` : '';
-  const altText = text || title || 'Image';
-  
-  return `<figure class="blog-figure">
-    <img src="${href}" alt="${altText}" class="blog-image" loading="lazy"${titleAttr}>
-    ${title ? `<figcaption class="blog-figcaption">${title}</figcaption>` : ''}
-  </figure>\n`;
-};
+// Text formatting
+renderer.hr = () => '<hr class="blog-divider">\n';
+renderer.strong = (text) => `<strong class="blog-strong">${text}</strong>`;
+renderer.em = (text) => `<em class="blog-emphasis">${text}</em>`;
+renderer.del = (text) => `<del class="blog-strikethrough">${text}</del>`;
 
-// Enhanced horizontal rule
-renderer.hr = function() {
-  return '<hr class="blog-divider">\n';
-};
-
-// Enhanced strong/bold
-renderer.strong = function(text) {
-  return `<strong class="blog-strong">${text}</strong>`;
-};
-
-// Enhanced emphasis/italic
-renderer.em = function(text) {
-  return `<em class="blog-emphasis">${text}</em>`;
-};
-
-// Enhanced strikethrough
-renderer.del = function(text) {
-  return `<del class="blog-strikethrough">${text}</del>`;
-};
-
-// Helper function to escape HTML
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  };
+// Helper to escape HTML
+const escapeHtml = (text) => {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
   return text.replace(/[&<>"']/g, m => map[m]);
-}
+};
 
-// Set the custom renderer
+// Set renderer
 marked.setOptions({ renderer });
 
-// Main parsing function with error handling
+// Export parser
 export const parseMarkdown = (markdown) => {
   if (!markdown) return '';
-  
   try {
-    // Pre-process to handle special cases
-    let processed = markdown;
-    
-    // Handle line breaks better for readability
-    processed = processed.replace(/\n\n<br\/>\n\n/g, '\n\n');
-    processed = processed.replace(/<br\/>\n/g, '\n\n');
-    
-    // Parse with marked
-    const html = marked(processed);
-    
-    return html;
+    // Clean up extra line breaks
+    const processed = markdown.replace(/\n\n<br\/>\n\n/g, '\n\n').replace(/<br\/>\n/g, '\n\n');
+    return marked(processed);
   } catch (error) {
     console.error('Error parsing markdown:', error);
-    return `<div class="blog-error">Error rendering content</div>`;
+    return '<div class="blog-error">Error rendering content</div>';
   }
 };
 
