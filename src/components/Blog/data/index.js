@@ -23,25 +23,50 @@ const loadedPosts = requirePost.keys().map((key) => {
     let contentStart = 0;
     
     if (lines[0] === '---') {
+      let inMeta = false;
+      let metaContent = '';
+      
       for (let i = 1; i < lines.length; i++) {
         if (lines[i] === '---') {
           contentStart = i + 1;
           break;
         }
-        const [key, ...valueParts] = lines[i].split(':');
-        if (key && valueParts.length > 0) {
-          let value = valueParts.join(':').trim();
-          // Parse arrays and booleans
-          if (value.startsWith('[') && value.endsWith(']')) {
-            value = value.slice(1, -1).split(',').map(v => v.trim().replace(/['"]/g, ''));
-          } else if (value === 'true') {
-            value = true;
-          } else if (value === 'false') {
-            value = false;
-          } else if (value.startsWith('"') && value.endsWith('"')) {
-            value = value.slice(1, -1);
+        
+        // Handle meta section with nested content
+        if (lines[i].trim() === 'meta:') {
+          inMeta = true;
+          frontmatter.meta = {};
+          continue;
+        }
+        
+        const line = lines[i];
+        const indentLevel = line.search(/\S/);
+        
+        if (inMeta && indentLevel >= 2) {
+          // Parse meta properties
+          const [key, ...valueParts] = line.trim().split(':');
+          if (key && valueParts.length > 0) {
+            let value = valueParts.join(':').trim();
+            value = value.replace(/^["']|["']$/g, ''); // Remove quotes
+            frontmatter.meta[key.trim()] = value;
           }
-          frontmatter[key.trim()] = value;
+        } else {
+          inMeta = false;
+          const [key, ...valueParts] = line.split(':');
+          if (key && valueParts.length > 0) {
+            let value = valueParts.join(':').trim();
+            // Parse arrays and booleans
+            if (value.startsWith('[') && value.endsWith(']')) {
+              value = value.slice(1, -1).split(',').map(v => v.trim().replace(/['"]/g, ''));
+            } else if (value === 'true') {
+              value = true;
+            } else if (value === 'false') {
+              value = false;
+            } else if (value.startsWith('"') && value.endsWith('"')) {
+              value = value.slice(1, -1);
+            }
+            frontmatter[key.trim()] = value;
+          }
         }
       }
     }
