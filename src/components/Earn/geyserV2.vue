@@ -247,7 +247,7 @@
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 import { mapGetters } from "vuex";
 import { notifyHandler } from "@/utils/common";
 import BN from "bignumber.js";

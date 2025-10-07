@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 import { airdrop } from "@/contracts";
 import { notify } from "@/utils/common";
 import { ethers } from "ethers";

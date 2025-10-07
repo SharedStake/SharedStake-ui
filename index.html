@@ -14,7 +14,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="icon" href="logo.svg">
+  <link rel="icon" href="/public/logo.svg">
   <title>SharedStake | Eth Staking</title>
 
   <script type="text/javascript" async src="https://pm.geniusmonkey.com/gm.js?id=1028350907&z=1"></script>
@@ -32,20 +32,18 @@
     fbq('init', '1126681497816633');
     fbq('track', 'PageView');
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1126681497816633&ev=PageView&noscript=1" />
-  </noscript>
   <!-- End Facebook Pixel Code -->
 </head>
 
 <body>
   <noscript>
-    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+    <strong>We're sorry but SharedStake doesn't work properly without JavaScript enabled.
         Please enable it to continue.</strong>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1126681497816633&ev=PageView&noscript=1" />
   </noscript>
   <div id="app"></div>
-  <!-- built files will be auto injected -->
+  <script type="module" src="/src/main.js"></script>
 </body>
 
 </html>

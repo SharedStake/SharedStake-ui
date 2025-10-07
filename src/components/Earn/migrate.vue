@@ -94,7 +94,7 @@
 <script>
 import { migrator, SGT } from "@/contracts";
 import { mapGetters } from "vuex";
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 // import { timeout } from "@/utils/helpers";
 // import web3 from "web3";
 import { notifyHandler } from "@/utils/common";

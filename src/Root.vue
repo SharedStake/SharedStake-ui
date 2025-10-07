@@ -296,7 +296,7 @@
 </template>
 
 <script>
-import ImageVue from "./components/Handlers/ImageVue";
+import ImageVue from "./components/Handlers/ImageVue.vue";
 import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";

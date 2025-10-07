@@ -526,9 +526,9 @@
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 // import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
-import Partners from "./Partners";
+import Partners from "./Partners.vue";
 import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";

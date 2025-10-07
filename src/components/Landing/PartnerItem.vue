@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 
 export default {
   components: { ImageVue },
