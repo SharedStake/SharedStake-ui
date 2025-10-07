@@ -691,7 +691,7 @@ export default {
 /* Mobile-specific code block handling */
 @media (max-width: 640px) {
   .blog-content .code-block {
-    @apply -mx-4 rounded-none border-x-0;
+    @apply -mx-4 rounded-none border-l-0 border-r-0;
   }
   
   .blog-content .code-block code {

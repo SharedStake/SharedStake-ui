@@ -40,9 +40,11 @@ border-bottom: 1px dotted currentColor;
 ```css
 /* ❌ NOT AVAILABLE */
 @apply decoration-dotted underline-offset-2;
+@apply border-x-0;  /* border-x utilities don't exist in v2 */
 
 /* ✅ USE INSTEAD */
 @apply underline;
+@apply border-l-0 border-r-0;  /* Use individual sides */
 /* Then add custom CSS if needed */
 ```
 
@@ -187,6 +189,11 @@ timeout 30 npm run build 2>&1 | grep -i error
 - **Cause**: Mixed opacity syntax causing PostCSS issues
 - **Fix**: Used explicit bg-opacity-* classes or removed opacity
 - **Lesson**: Use simple, explicit Tailwind utilities
+
+### Failure 4: border-x-0 utility
+- **Cause**: Used border-x-0 which doesn't exist in Tailwind v2.2.17
+- **Fix**: Replaced with border-l-0 border-r-0
+- **Lesson**: Tailwind v2 doesn't have x/y axis utilities - use individual sides
 
 ---
 
