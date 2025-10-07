@@ -1,7 +1,7 @@
 ---
 id: "eth2-quickstart-advanced-features"
 slug: "ethereum-node-advanced-features-mev-optimization"
-title: "Advanced Features: MEV-Boost, RPC Endpoints, and Performance Optimization"
+title: "Part 4: Advanced Features - MEV-Boost, RPC Endpoints, and Performance Optimization"
 excerpt: "Master advanced node operation with MEV-Boost integration, professional RPC endpoints, and performance optimization techniques."
 author: "SharedStake Team"
 publishDate: "2024-10-10"
@@ -14,7 +14,7 @@ meta:
 
 <br/>
 
-# ⚙️ Advanced Features: MEV-Boost, RPC Endpoints, and Performance Optimization
+# ⚙️ Part 4: Advanced Features - MEV-Boost, RPC Endpoints, and Performance Optimization
 
 <br/>
 
@@ -354,16 +354,11 @@ nano exports.sh
 
 # Set your domain
 export SERVER_NAME="rpc.yourdomain.com"
-```
 
-#### Step 3: Set Up SSL
-
-```bash
-# Using ACME (recommended)
-./install_acme_ssl.sh
-
-# Or using Certbot
-./install_ssl_certbot.sh
+# Set up SSL (choose one method)
+./install_acme_ssl.sh        # Recommended: ACME
+# OR
+./install_ssl_certbot.sh     # Alternative: Certbot
 ```
 
 ### Advanced Nginx Configuration
@@ -895,4 +890,16 @@ With these advanced features properly configured, your node is ready for any cha
 
 ---
 
-*This is part 4 of a 5-part series on eth2-quickstart. Next up: "Troubleshooting, Maintenance, and Long-term Node Management"*
+**This is part 4 of our 5-part eth2-quickstart series:**
+
+1. 🚀 Part 1: Introduction to eth2-quickstart ✓
+2. 🔧 Part 2: Step-by-Step Installation Guide ✓
+3. 🌈 Part 3: Client Diversity Deep Dive ✓
+4. **⚙️ Part 4: Advanced Features and Optimization** (You are here)
+5. **🔍 Part 5: Monitoring and Maintenance** (Next)
+
+**Ready to master node maintenance? Let's ensure long-term reliability! 🚀**
+
+---
+
+*This is part 4 of a 5-part series on eth2-quickstart. Next up: "Part 5: Troubleshooting, Maintenance, and Long-term Node Management"*

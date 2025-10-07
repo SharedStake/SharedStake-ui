@@ -1,7 +1,7 @@
 ---
 id: "eth2-quickstart-installation-guide"
 slug: "ethereum-node-step-by-step-installation"
-title: "Step-by-Step Installation Guide: From Zero to Ethereum Node"
+title: "Part 2: Step-by-Step Installation Guide - From Zero to Ethereum Node"
 excerpt: "A comprehensive walkthrough of setting up your Ethereum node using eth2-quickstart, from initial server configuration to running validator."
 author: "SharedStake Team"
 publishDate: "2024-10-08"
@@ -14,7 +14,7 @@ meta:
 
 <br/>
 
-# 🔧 Step-by-Step Installation Guide: From Zero to Ethereum Node
+# 🔧 Part 2: Step-by-Step Installation Guide - From Zero to Ethereum Node
 
 <br/>
 
@@ -159,15 +159,7 @@ Let's transform your server into an Ethereum powerhouse! 🚀
 ```bash
 # Connect to your server
 ssh root@YOUR_SERVER_IP
-```
 
-<br/>
-
-**Clone the eth2-quickstart repository:**
-
-<br/>
-
-```bash
 # Get the magic scripts
 cd /root
 git clone https://github.com/chimera-defi/eth2-quickstart
@@ -1163,12 +1155,12 @@ Running a node is an **ongoing responsibility**:
 
 **This is part 2 of our 5-part eth2-quickstart series:**
 
-1. 🚀 Introduction to eth2-quickstart ✓
-2. **🔧 Step-by-Step Installation Guide** (You are here)
-3. **⚙️ Advanced Features and Optimization** (Next)
-4. 🔍 Monitoring and Maintenance
-5. 🌈 Client Diversity Deep Dive
+1. 🚀 Part 1: Introduction to eth2-quickstart ✓
+2. **🔧 Part 2: Step-by-Step Installation Guide** (You are here)
+3. **🌈 Part 3: Client Diversity Deep Dive** (Next)
+4. ⚙️ Part 4: Advanced Features and Optimization
+5. 🔍 Part 5: Monitoring and Maintenance
 
 <br/>
 
-**Ready to optimize your node? Let's dive into advanced features! 🚀**
+**Ready to choose your clients? Let's dive into client diversity! 🚀**
