@@ -15,17 +15,12 @@ const loadedPosts = requirePost.keys().map((key) => {
   
   // Handle .md files (markdown with frontmatter)
   if (key.endsWith('.md')) {
-    // Get the raw content from the module
+    // With esModule: false, raw-loader returns the string directly
     let content = mod;
-    
-    // If mod has a default export, use that
-    if (mod && typeof mod === 'object' && 'default' in mod) {
-      content = mod.default;
-    }
     
     // Ensure content is a string
     if (typeof content !== 'string') {
-      console.error('Invalid markdown content for', key, 'Type:', typeof content, 'Content:', content);
+      console.error('Markdown content is not a string for', key, 'Type:', typeof content);
       return null;
     }
     const lines = content.split('\n');
