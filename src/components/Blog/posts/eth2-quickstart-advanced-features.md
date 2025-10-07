@@ -12,115 +12,196 @@ meta:
   keywords: "mev-boost, ethereum rpc, node optimization, performance tuning, prometheus, grafana, nginx"
 ---
 
-# Advanced Features: MEV-Boost, RPC Endpoints, and Performance Optimization
+<br/>
 
-## Introduction: Beyond Basic Node Operation
+# ⚙️ Advanced Features: MEV-Boost, RPC Endpoints, and Performance Optimization
 
-Running an Ethereum node is just the beginning. To maximize your node's potential – whether for profit, performance, or providing services – you need to understand and implement advanced features. This guide covers three critical areas that can transform your node from a basic validator to a professional-grade operation:
+<br/>
 
-1. **MEV-Boost Integration**: Maximize your validator rewards
-2. **RPC Endpoint Configuration**: Provide blockchain access services
-3. **Performance Optimization**: Squeeze every bit of efficiency from your hardware
+**Transform your basic Ethereum node into a professional-grade operation with advanced features that maximize profits, performance, and service capabilities.**
 
-Let's dive deep into each of these areas and unlock your node's full potential.
+<br/>
 
-## Part 1: Mastering MEV-Boost
+---
 
-### Understanding MEV (Maximal Extractable Value)
+<br/>
+<br/>
 
-MEV represents the additional value that can be extracted from block production beyond standard rewards. This includes:
+## 🎯 Beyond Basic Node Operation
 
-- **Priority fees** from users wanting faster inclusion
-- **Arbitrage profits** from DEX price differences
-- **Liquidation bonuses** from lending protocols
-- **NFT minting opportunities**
-- **Sandwich attack profits** (controversial but real)
+<br/>
 
-Without MEV-Boost, validators only receive:
-- Block rewards (currently ~0.05 ETH)
-- Priority fees from regular transactions
+Running an Ethereum node is just the beginning. To maximize your node's potential, you need to understand and implement advanced features:
 
-With MEV-Boost, validators can earn:
-- All of the above PLUS
-- MEV profits shared by searchers/builders
-- Potentially 2-10x higher rewards per block
+<br/>
 
-### How MEV-Boost Works
+| Feature | Purpose | Potential Impact |
+|---------|---------|------------------|
+| **💰 MEV-Boost** | Maximize validator rewards | +25-50% APR |
+| **🌐 RPC Endpoints** | Provide blockchain services | Revenue stream |
+| **⚡ Performance Tuning** | Optimize hardware usage | 2-3x efficiency |
+| **📊 Monitoring Stack** | Proactive management | 99.9% uptime |
+| **🔒 Advanced Security** | Enterprise-grade protection | Zero breaches |
 
-```
+<br/>
+
+> **🚀 Goal:** Transform your node from a basic validator to a **professional-grade operation** that maximizes both profit and performance.
+
+<br/>
+
+Let's unlock your node's full potential! 🔓
+
+<br/>
+<br/>
+
+## 💰 Part 1: Mastering MEV-Boost
+
+<br/>
+
+### 🎯 Understanding MEV (Maximal Extractable Value)
+
+<br/>
+
+MEV represents the additional value that can be extracted from block production beyond standard rewards:
+
+<br/>
+
+| MEV Type | Source | Typical Value | Frequency |
+|----------|--------|---------------|------------|
+| **Priority Fees** | Users wanting faster inclusion | 0.001-0.01 ETH | Every block |
+| **Arbitrage** | DEX price differences | 0.01-0.5 ETH | Common |
+| **Liquidations** | Lending protocol bonuses | 0.1-5 ETH | During volatility |
+| **NFT Mints** | Popular drops | 0.05-1 ETH | Launch events |
+| **Sandwich Attacks** | Trading inefficiencies | 0.01-0.1 ETH | Controversial |
+
+<br/>
+
+### 📊 The Revenue Difference
+
+<br/>
+
+| Configuration | Block Reward | Priority Fees | MEV Profits | Total per Block |
+|---------------|--------------|---------------|-------------|------------------|
+| **Without MEV-Boost** | ~0.05 ETH | ~0.01 ETH | 0 ETH | **~0.06 ETH** |
+| **With MEV-Boost** | ~0.05 ETH | ~0.01 ETH | ~0.05-0.5 ETH | **~0.11-0.56 ETH** |
+
+<br/>
+
+> **💰 Impact:** MEV-Boost can increase your validator rewards by **25-50%** annually!
+
+<br/>
+
+### 🔄 How MEV-Boost Works
+
+<br/>
+
+```mermaid
 Validator → MEV-Boost → Relays → Builders → Searchers
 ```
 
-1. **Searchers** find profitable opportunities
-2. **Builders** construct optimal blocks
-3. **Relays** auction blocks to validators
-4. **MEV-Boost** connects your validator to relays
-5. **Your validator** proposes the most profitable block
+<br/>
 
-### Installing MEV-Boost with eth2-quickstart
+| Step | Actor | Action | Result |
+|------|-------|--------|--------|
+| **1️⃣** | Searchers | Find profitable opportunities | Submit bundles |
+| **2️⃣** | Builders | Construct optimal blocks | Create full blocks |
+| **3️⃣** | Relays | Auction blocks to validators | Highest bid wins |
+| **4️⃣** | MEV-Boost | Connect validator to relays | Receive bids |
+| **5️⃣** | Your Validator | Propose most profitable block | Earn MEV rewards |
 
-The installation is automated:
+<br/>
+
+### 🚀 Installing MEV-Boost with eth2-quickstart
+
+<br/>
+
+**The installation is automated:**
 
 ```bash
 ./install_mev_boost.sh
 ```
 
-This script:
-1. Installs Go language support
-2. Clones MEV-Boost repository
-3. Builds from source (stable branch)
-4. Configures systemd service
-5. Sets up relay connections
+<br/>
 
-### Configuring MEV Relays
+**🔧 What This Script Does:**
 
-#### Understanding Relay Selection
+<br/>
 
-Not all relays are created equal. Consider these factors:
+| Step | Action | Time | Result |
+|------|--------|------|--------|
+| **1** | Install Go language | 3 min | Build environment |
+| **2** | Clone MEV-Boost repo | 30s | Latest stable code |
+| **3** | Build from source | 2 min | Optimized binary |
+| **4** | Configure systemd | 10s | Auto-start service |
+| **5** | Setup relay connections | 5s | Ready to earn |
 
-**1. Censorship Resistance**
-- Some relays filter OFAC-sanctioned addresses
-- Others provide uncensored blocks
-- Your choice impacts Ethereum's neutrality
+<br/>
 
-**2. Performance and Reliability**
-- Relay uptime affects your proposal success
-- Network latency impacts bid competitiveness
-- Geographic distribution matters
+### 🌐 Configuring MEV Relays
 
-**3. Profit Maximization**
-- Different relays access different builders
-- More relays generally mean higher bids
-- But too many can cause timeout issues
+<br/>
 
-#### Configuring Relays in exports.sh
+#### 🎯 Understanding Relay Selection
+
+<br/>
+
+**Not all relays are created equal. Consider these factors:**
+
+<br/>
+
+| Factor | Consideration | Impact | Your Decision |
+|--------|---------------|--------|---------------|
+| **🔓 Censorship** | OFAC filtering vs uncensored | Network neutrality | Ethics vs compliance |
+| **⚡ Performance** | Uptime and latency | Proposal success | Reliability priority |
+| **💰 Profitability** | Builder diversity | Bid competitiveness | Maximum returns |
+| **🌐 Geography** | Server locations | Network speed | Regional optimization |
+
+<br/>
+
+> **💡 Best Practice:** Use 3-5 relays for optimal balance between diversity and performance
+
+<br/>
+
+#### 🔧 Configuring Relays in exports.sh
+
+<br/>
 
 ```bash
 # Edit your configuration
 nano ~/eth2-quickstart/exports.sh
+```
 
-# Flashbots relay (censoring, high performance)
+<br/>
+
+**🎯 Recommended Relay Configuration:**
+
+```bash
+# 🔴 Flashbots relay (censoring, high performance)
 export MEV_RELAYS='https://0xac6e77dfe25ecd6110b8e780608cce0dab71fdd5ebea22a16c0205200f2f8e2e3ad3b71d3499c54ad14d6c21b41a37ae@boost-relay.flashbots.net'
 
-# Add Ultra Sound relay (uncensored)
+# 🟢 Add Ultra Sound relay (uncensored)
 MEV_RELAYS=$MEV_RELAYS',https://0xa1559ace749633b997cb3fdacffb890aeebdb0f5a3b6aaa7eeeaf1a38af0a8fe88b9e4b1f61f236d2e64d95733327a62@relay.ultrasound.money'
 
-# Add Agnostic relay (uncensored)
+# 🟢 Add Agnostic relay (uncensored)
 MEV_RELAYS=$MEV_RELAYS',https://0xa7ab7a996c8584251c8f925da3170bdfd6ebc75d50f5ddc4050a6fdc77f2a3b5fce2cc750d0865e05d7228af97d69561@agnostic-relay.net'
 
-# Add Eden Network (partial filtering)
+# 🟡 Add Eden Network (partial filtering)
 MEV_RELAYS=$MEV_RELAYS',https://0xb3ee7afcf27f1f1259ac1787876318c6584ee353097a50ed84f51a1f21a323b3736f271a895c7ce918c038e4265918be@relay.edennetwork.io'
 ```
 
-#### Relay Performance Comparison
+<br/>
 
-| Relay | Censoring | Avg Bid | Uptime | Latency |
-|-------|-----------|---------|---------|---------|
-| Flashbots | Yes | High | 99.9% | Low |
-| Ultra Sound | No | High | 99.5% | Medium |
-| Agnostic | No | Medium | 99% | Low |
-| Eden | Partial | Medium | 98% | Medium |
-| Blocknative | Yes | High | 99% | Low |
+#### 📊 Relay Performance Comparison
+
+<br/>
+
+| Relay | Censoring | Avg Bid | Uptime | Latency | Recommendation |
+|-------|-----------|---------|---------|---------|----------------|
+| **Flashbots** | 🔴 Yes | 💰 High | 99.9% | ⚡ Low | Performance |
+| **Ultra Sound** | 🟢 No | 💰 High | 99.5% | 🟡 Medium | Balanced |
+| **Agnostic** | 🟢 No | 💵 Medium | 99% | ⚡ Low | Censorship-resistant |
+| **Eden** | 🟡 Partial | 💵 Medium | 98% | 🟡 Medium | Moderate |
+| **Blocknative** | 🔴 Yes | 💰 High | 99% | ⚡ Low | High profit |
 
 ### Advanced MEV Configuration
 
