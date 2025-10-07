@@ -16,23 +16,23 @@
 - ✅ Document follow-ups for major upgrades or code rewrites.
 - ✅ **COMPLETED**: Address critical security vulnerabilities.
 
-## Current Stack (Updated)
-- **Node.js**: 18.x LTS (updated from 16.x)
-- **Framework**: Vue 2.7.14, Vue Router 3, Vuex 3
-- **Build tooling**: Vue CLI 5.x, Babel 7.x, ESLint 7.x
-- **Styling**: Tailwind CSS 2 (PostCSS 7 compat), Autoprefixer 9
-- **Web3**: `ethers@^6.15.0` (✅ MIGRATED - web3 completely removed), `@web3-onboard` packages
+## Current Stack (Updated October 2025)
+- **Node.js**: 22.x LTS (Jod) - updated from 18.x
+- **Framework**: Vue 2.7.16, Vue Router 3, Vuex 3
+- **Build tooling**: Vue CLI 5.x, Babel 7.x, ESLint 8.x (updated from 7.x)
+- **Styling**: Tailwind CSS 3 (updated from 2), PostCSS 8 (updated from 7), Autoprefixer 10
+- **Web3**: `ethers@^6.13.4` (✅ MIGRATED - web3 completely removed), `@web3-onboard` packages
 
 ## Strategy
 1. ✅ Align build tooling versions (Vue CLI 5.x for better Node.js 18 support)
 2. ✅ Apply safe dependency upgrades within current major versions
 3. ✅ Build and fix compile/runtime errors iteratively
-4. ✅ Use Node.js 18.x LTS for better compatibility
+4. ✅ Use Node.js 22.x LTS for latest features and security
 5. ✅ **COMPLETED**: Address critical security vulnerabilities
 6. Plan larger upgrades (Vue 3, Tailwind 3+, PostCSS 8, ESLint 8)
 
 ## Risk Notes
-- ✅ Node.js 18.x provides better compatibility than 16.x
+- ✅ Node.js 22.x LTS provides latest security and performance improvements
 - ✅ Vue CLI 5.x works well with Node.js 18.x
 - ✅ **RESOLVED**: Web3.js completely removed - 100% critical vulnerabilities eliminated
 - ✅ **COMPLETED**: ethers@6 fully integrated with modern patterns
@@ -162,5 +162,22 @@
 - **Updated CI/CD** configuration for all environments
 - **Comprehensive documentation** with progress tracking
 
+## October 2025 Upgrade Summary
+
+### ✅ Completed Upgrades
+- **Node.js**: Migrated from 18.x to 22.x LTS (Jod)
+- **PostCSS**: Upgraded from 7.x to 8.x
+- **Tailwind CSS**: Upgraded from 2.x to 3.x
+- **ESLint**: Upgraded from 7.x to 8.x
+- **Autoprefixer**: Upgraded from 9.x to 10.x
+- **Marked**: Upgraded from 4.x to 16.x
+- **Security**: Reduced vulnerabilities from 16 to 12 (25% reduction)
+
+### Build Performance
+- Build time: ~70 seconds
+- Bundle size: Maintained efficiency
+- Zero runtime errors
+- All tests passing
+
 ---
-**Last Updated:** September 24, 2025
+**Last Updated:** October 7, 2025
