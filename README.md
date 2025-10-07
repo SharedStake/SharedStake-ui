@@ -7,9 +7,9 @@ Vue.js implementation of SharedStake DeFi protocol.
 
 ## Setup
 ```bash
-nvm install 22
-nvm use 22
-yarn install
+nvm install --lts  # Install latest Node.js LTS
+nvm use --lts      # Use latest Node.js LTS
+yarn install       # Install dependencies
 ```
 
 ## Development

@@ -18,7 +18,7 @@
 - **Files Updated**:
   - `.nvmrc`: 18 → 22
   - `.github/workflows/node.js.yml`: 18.x → 22.x
-  - `amplify.yml`: nvm use 18 → nvm use 22
+  - `amplify.yml`: Added `nvm install --lts` and `nvm use --lts` for Node.js LTS
   - `package.json`: setup script updated
 
 ### Major Dependency Updates
@@ -95,6 +95,8 @@ Most remaining issues are in:
 - `llm/UPGRADE_OCT_2025.md` (this file)
 
 ## 🚀 Deployment Readiness
+
+⚠️ **Important Amplify Fix**: Added `nvm install --lts` before `nvm use --lts` to ensure Node.js LTS is installed in the build environment.
 
 The application is **ready for deployment** with:
 - ✅ All builds passing
