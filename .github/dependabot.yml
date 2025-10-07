@@ -1,0 +1,50 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "sharedstake-team"
+    assignees:
+      - "sharedstake-team"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    ignore:
+      # Ignore major version updates for Vue 2 (will be handled by Vue 3 migration)
+      - dependency-name: "vue"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vue-router"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vuex"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vue-template-compiler"
+        update-types: ["version-update:semver-major"]
+      # Ignore @web3-onboard updates until we can test them thoroughly
+      - dependency-name: "@web3-onboard/*"
+        update-types: ["version-update:semver-major"]
+    # Group minor and patch updates
+    groups:
+      vue-ecosystem:
+        patterns:
+          - "vue*"
+          - "@vue/*"
+      web3-onboard:
+        patterns:
+          - "@web3-onboard/*"
+      build-tools:
+        patterns:
+          - "@vue/cli*"
+          - "webpack*"
+          - "postcss*"
+          - "tailwindcss*"
+          - "eslint*"
+          - "babel*"
