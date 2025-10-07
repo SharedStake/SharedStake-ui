@@ -577,70 +577,48 @@ export default {
   }
 }
 .footer {
-  padding: 40px 30px 10px 30px;
-  background-color: rgb(24, 24, 24);
-  color: rgb(255, 255, 255);
-  min-height: 350px;
-  /* display: grid; */
-  /* grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.4fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Disclaimer Logo"
-    "Disclaimer Info"
-    "bottom bottom "; */
-  align-items: center;
+  @apply py-12 px-8;
+  background: linear-gradient(to bottom, rgb(24, 24, 24), rgb(15, 16, 19));
+  color: #fff;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .disclaimer {
-  grid-area: Disclaimer;
-  font-size: 14px;
-  padding: 0 0 50px 0;
-  text-align: center;
-  text-justify: inter-word;
-  line-height: 22px;
-  opacity: 0.5;
-  transition: opacity 0.35s ease 0s;
+  @apply text-sm text-center mb-12 max-w-4xl mx-auto;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.8;
+  transition: color 0.3s ease;
 }
+
 .disclaimer:hover {
-  opacity: 1;
+  color: rgba(255, 255, 255, 0.8);
 }
+
 .footerLinks {
-  grid-area: Info;
-  max-width: 1500px;
-  width: calc(100% - 60px);
-  margin: 0px auto;
-  display: flex;
-  flex-wrap: wrap;
-  -webkit-box-pack: justify;
-  justify-content: space-around;
-  padding: 0 0 50px 0;
+  @apply max-w-6xl mx-auto flex flex-wrap justify-around gap-8 mb-12;
 }
+
 .footerGroup {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 0 10px 10px 10px;
+  @apply flex flex-col items-start gap-3;
 }
+
 .footerGroupName {
-  color: inherit;
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 1.25em;
-  opacity: 0.75;
+  @apply font-semibold text-base mb-2;
+  color: rgba(255, 255, 255, 0.9);
 }
+
 .footerLink {
-  margin: 0;
-  padding: 0 0 14px 0;
+  @apply text-sm transition-colors duration-300;
+  color: rgba(255, 255, 255, 0.6);
 }
+
+.footerLink:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .bottom {
-  text-align: center;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  grid-area: bottom;
-  color: #afafaf;
+  @apply text-center text-xs;
+  color: rgba(255, 255, 255, 0.4);
 }
 .icebear {
   padding: 0 10px;

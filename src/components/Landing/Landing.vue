@@ -1,1936 +1,726 @@
 <template>
-  <div class="Landing">
-    <div class="Container first" v-show="scrolled >= 0">
-      <div class="LogoContainer">
-        <ImageVue
-          class="align-self-center justify-self-center"
-          :src="'logo-red.svg'"
-          :size="windowWidth > 900 ? '180px' : '20vw'"
-        />
-      </div>
-      <div class="flex flex-col justify-center h-full p-4">
-        <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
-          <h1 class="relative mb-6 mainTitle">
-            <span
-              title="Established in 2020"
-              class="absolute p-1 px-2 text-xs font-semibold text-gray-800 transform -translate-x-1/2 bg-gray-300 rounded-sm -bottom-6 md:bottom-auto md:-top-6 md:left-0 left-1/2 md:translate-x-0"
+  <div class="landing">
+    <!-- Hero Section -->
+    <section class="hero-section" v-show="scrolled >= 0">
+      <div class="hero-container">
+        <!-- Logo -->
+        <div class="logo-wrapper">
+          <ImageVue
+            :src="'logo-red.svg'"
+            :size="windowWidth > 900 ? '160px' : '120px'"
+            class="hero-logo"
+          />
+        </div>
+
+        <!-- Content -->
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">
+              <span class="hero-badge">EST. 2020</span>
+              Ethereum Liquid Staking Derivative
+            </h1>
+            <p class="hero-description">
+              SharedStake is a decentralized Ethereum 2 staking solution that
+              allows users to stake any amount of Ether and earn additional yield
+              on top of their ETH2 rewards.
+            </p>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="hero-actions">
+            <button class="btn btn-disabled">
+              <span>STAKE V2</span>
+              <span class="btn-subtitle">Coming Soon</span>
+            </button>
+            <a
+              href="https://app.passch.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline"
             >
-              EST. 2020
-            </span>
-            ETHEREUM LIQUID STAKING DERIVATIVE! <br />
-          </h1>
-          <div class="exp">
-            SharedStake is a decentralized Ethereum 2 staking solution that
-            allows users to stake any amount of Ether and earn additional yield
-            on top of their ETH2 rewards.
+              MINT NFT
+            </a>
           </div>
-        </div>
-        <div
-          class="flex items-center justify-center gap-6 mb-8 md-large:justify-start"
-        >
-          <div
-            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gray-500 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center"
-          >
-            <span>STAKE V2</span>
-            <div class="text-xs mt-1">Coming Soon</div>
+
+          <!-- Social Links -->
+          <div class="social-section">
+            <p class="social-label">Join the conversation:</p>
+            <div class="social-links">
+              <a href="https://discord.gg/C9GhCv86My" target="_blank" rel="noopener noreferrer" class="social-link">
+                <ImageVue :src="'socialmediaicons/Discord.svg'" size="24px" />
+              </a>
+              <div class="social-link social-disabled">
+                <ImageVue :src="'socialmediaicons/TG.svg'" size="24px" />
+                <span class="social-soon">Soon</span>
+              </div>
+              <a href="https://github.com/SharedStake" target="_blank" rel="noopener noreferrer" class="social-link">
+                <ImageVue :src="'socialmediaicons/Git.svg'" size="24px" />
+              </a>
+              <a href="https://medium.com/@chimera_defi" target="_blank" rel="noopener noreferrer" class="social-link">
+                <ImageVue :src="'socialmediaicons/Medium.svg'" size="24px" />
+              </a>
+              <a href="https://twitter.com/ChimeraDefi" target="_blank" rel="noopener noreferrer" class="social-link">
+                <ImageVue :src="'socialmediaicons/Twitter.svg'" size="24px" />
+              </a>
+            </div>
           </div>
-          <a
-            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
-            rel="noopener noreferrer nofollow"
-            href="https://app.passch.com/"
-            target="_blank"
-          >
-            MINT NFT
-          </a>
-        </div>
 
-        <div class="flex items-center justify-center md-large:justify-start">
-          <p class="gap-8 mb-3 text-lg">
-            Join the conversation:
-          </p>
-        </div>
-        <div
-          class="flex items-center justify-center gap-8 mb-8 md-large:justify-start"
-        >
-          <a
-            href="https://discord.gg/C9GhCv86My"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Discord.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
-
-          <div class="cursor-not-allowed opacity-50 flex flex-col items-center">
-            <ImageVue
-              :src="'socialmediaicons/TG.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-            <div class="text-xs mt-1 text-center">Coming Soon</div>
-          </div>
-          <!-- <a
-            href="https://www.reddit.com/r/SharedStake/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Reddit.svg'"
-              size="24px"
-              class="socialLogo"
-            /> -->
-          <!-- </a> -->
-          <a
-            href="https://github.com/SharedStake"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Git.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
-          <a
-            href="https://medium.com/@chimera_defi"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Medium.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
-          <a
-            href="https://twitter.com/ChimeraDefi"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Twitter.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
-        </div>
-
-        <div class="flex items-center justify-center md-large:justify-start">
-          <p class="mb-3 text-lg">
-            vETH2 Redemptions:
-          </p>
-        </div>
-        <div
-          class="flex items-center justify-center gap-4 mb-8 md-large:justify-start"
-        >
-          <!-- <router-link
-            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
-            to="/rollover"
-          >
-            Rollover (Returning soon!)
-          </router-link> -->
-          <span
-            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
-            to="/rollover"
-          >
-            Rollover (Returning soon!)
-        </span>
-          <div
-            class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center"
-          >
-            <span>Withdraw</span>
-            <div class="text-xs mt-1">Coming Soon</div>
+          <!-- Redemption Options -->
+          <div class="redemption-section">
+            <p class="redemption-label">vETH2 Redemptions:</p>
+            <div class="redemption-links">
+              <span class="btn btn-small btn-outline">
+                Rollover (Returning soon!)
+              </span>
+              <button class="btn btn-small btn-disabled">
+                <span>Withdraw</span>
+                <span class="btn-subtitle">Coming Soon</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator" v-show="scrolled >= 0">
+      <ImageVue :src="'down.svg'" :size="'24px'" />
     </div>
-    <div class="downSign glow" v-show="scrolled >= 0">
-      <ImageVue :src="'down.svg'" :size="'30px'" />
-    </div>
-    <div class="Stats flex flex-col items-center justify-evenly" v-show="scrolled >= 350">
-      <div class="StatsHeader">Capital efficient staking</div>
-      <div class="StatsExp">Financial optimization at its finest.</div>
-      <div class="StatsExp">
-        Better rewards, improved user experience, and more DeFi compatibility
-        than any other Staking-as-a-Service model on the market.
-      </div>
 
-      <!-- <div class="StatsHeader" id="stats" ref="stats">Dashboard</div>
-      <div
-        class="grid items-center justify-center gap-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3"
-      >
-        <div class="Stat">
-          <div class="Num">{{ TVL }}</div>
-          <div class="NumExp">Ether Staked with SharedStake</div>
-          <div class="NumDetail">
-            It's
-            {{
-              TVLinUsd.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })
-            }}! Liquid & Incentivised
-          </div>
-        </div>
-        <div class="Stat">
-          <div class="Num">{{ validatorApr }}%</div>
-          <div class="NumExp">Validator APR</div>
-          <div class="NumDetail">
-            Validator APR based on avg activation epoch of
-            <a href="https://beaconscan.com/epoch/25205" target="_blank"
-              >25205</a
-            >.
-          </div>
-        </div>
-        <template v-if="!isMobile()">
-          <div class="Stat">
-            <div class="Num">{{ validatorTotalBalance }}</div>
-            <div class="NumExp">Total Validator Balance</div>
-            <div class="NumDetail">
-              Including ETH rewards accrued by SharedStake validators
-            </div>
-          </div>
-          <div class="Stat">
-            <div class="Num">{{ profit }}</div>
-            <div class="NumExp">Total profit</div>
-            <div class="NumDetail">
-              ETH Profits generated by SharedStake validators
-            </div>
-          </div>
-          <div class="Stat">
-            <div class="Num">{{ validatorsOnline }}</div>
-            <div class="NumExp">Validators online</div>
-            <div class="NumDetail">SharedStake validator current status</div>
-          </div>
-
-          <div class="Stat">
-            <div class="Num">{{ validatorsSlashed }}</div>
-            <div class="NumExp">Validators slashed</div>
-            <div class="NumDetail">
-              SharedStake validator that have been slashed
-            </div>
-          </div>
-
-          <div class="Stat">
-            <div class="Num">{{ validatorVirtualPrice }}</div>
-            <div class="NumExp">Virtual price</div>
-            <div class="NumDetail">Redemption price of 1 vETH2 at merge</div>
-          </div>
-          <div class="Stat">
-            <div class="Num">{{ vpPostFees }}</div>
-            <div class="NumExp">Virtual Price post fees</div>
-            <div class="NumDetail">
-              vETH2 redemption price at merge post fees based on
-              <a
-                href="https://snapshot.org/#/sharedstake.eth/proposal/QmQBWBsAucwB7vtxMhYmsn7nQ1J3VWvGD3knrdQP3knjou"
-                target="_blank"
-                >SIP-22</a
-              >.
-            </div>
-          </div>
-          <div class="Stat">
-            <div class="Num">{{ elapsed }}</div>
-            <div class="NumExp">Total uptime (months)</div>
-            <div class="NumDetail">Uptime so far at SharedStake in months</div>
-          </div>
-        </template>
-      </div> -->
-      <div v-if="isMobile()">
-        <p class="text-center">
-          More detailed dashboard available on desktops with an ETH RPC provider
+    <!-- Stats Section -->
+    <section class="stats-section" v-show="scrolled >= 350">
+      <div class="section-container">
+        <h2 class="section-title">Capital Efficient Staking</h2>
+        <p class="section-subtitle">Financial optimization at its finest.</p>
+        <p class="section-description">
+          Better rewards, improved user experience, and more DeFi compatibility
+          than any other Staking-as-a-Service model on the market.
         </p>
+        
+        <div v-if="isMobile()" class="mobile-notice">
+          <p>More detailed dashboard available on desktop with an ETH RPC provider</p>
+        </div>
       </div>
-    </div>
-    <div class="Container" v-show="scrolled >= 1000">
-      <div class="exp background2" />
-      <div class="second">
-        <div class="X Eth">
-          <ImageVue :src="'eth.png'" :size="'90px'" />
+    </section>
+
+    <!-- Process Section -->
+    <section class="process-section" v-show="scrolled >= 1000">
+      <div class="section-container">
+        <div class="process-grid">
+          <ProcessStep
+            v-for="(step, index) in processSteps"
+            :key="index"
+            :image="step.image"
+            :size="step.size"
+            :title="step.title"
+            :description="step.description"
+            :delay="index * 0.2"
+          />
         </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next1"
-        />
-        <div class="X vEth2">
-          <ImageVue :src="'vEth2.png'" :size="'163px'" />
-        </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next2"
-        />
-        <div class="X reward">
-          <ImageVue :src="'Reward.png'" :size="'127px'" />
-        </div>
-        <ImageVue
-          :src="windowWidth > 900 ? 'next.svg' : 'down.svg'"
-          :size="'15px'"
-          class="X next3"
-        />
-        <div class="X harvest">
-          <ImageVue :src="'Harvest.png'" :size="'92px'" />
-        </div>
-        <div class="Exp EthExp">Stake any amount of Eth</div>
-        <div class="Exp vEth2Exp">Receive your vEth2 token</div>
-        <div class="Exp rewardExp">
-          Simply holding vEth2 entitles you to staking rewards
-        </div>
-        <div class="Exp harvestExp">
-          Harvest more yield with your vEth2 in supported DeFi protocols!
-        </div>
-        <div class="exp Information" v-show="scrolled >= 1500">
-          <div class="InfoHeader centertext" v-show="scrolled >= 1500">
-            Staking with SharedStake
-          </div>
-          <div class="exp Info" v-show="scrolled >= 1500">
+
+        <div class="info-card" v-show="scrolled >= 1500">
+          <h3 class="info-title">Staking with SharedStake</h3>
+          <p class="info-text">
             SharedStake users earn staking rewards every block, whether you hodl
             your stake or decide to invest your vEth2 in supported Ethereum
             dapps like Uniswap, SushiSwap, Curve, Maker, Compound, Aave, and
             many more...
-          </div>
-          <div class="exp Info" v-show="scrolled >= 1500">
+          </p>
+          <p class="info-text">
             vEth2 is designed for DeFi compatibility. It is a yield bearing
             token with a 1:1 price ratio with Ether. vEth2 staking is also
             incentivized further with SGT, the SharedStake Governance Token.
-          </div>
-          <div class="LearnButton">
-            <a
-              href="https://docs.sharedstake.finance/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn More
-            </a>
-          </div>
+          </p>
+          <a
+            href="https://docs.sharedstake.finance/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-primary"
+          >
+            Learn More
+          </a>
         </div>
       </div>
-    </div>
-    <div
-      class="Container flex flex-col items-center justify-evenly"
-      v-show="scrolled >= 2500"
-      :style="{ paddingBottom: '5rem' }"
-    >
-      <div class="vEth2PanelHeader flex flex-row items-center justify-evenly">
-        <ImageVue :src="'vEth2.png'" :size="'123px'" class="exp" />
-        <div class="StatsHeader">vEth2</div>
-      </div>
-      <div class="exp InfoHeader DropShadow centertext">
-        Yield Bearing Wrapped Ether
-      </div>
-      <div class="exp background3" />
-      <div class="third">
-        <div class="Bubble">
-          <div class="exp InfoHeader">Financially Optimized</div>
-          <div class="exp Info mb30">
-            SharedStake optimizes Eth2 staking profits by creating an off-chain
-            yield bearing stable token (vEth2 has a 1:1 price ratio with Ether).
-            Ethereum2 profit distribution will start with the Eth2 launch so
-            until then, track your Eth2 profits in the SharedStake Dashboard.
-          </div>
-          <ImageVue
-            :src="'discount.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
+    </section>
+
+    <!-- vETH2 Features Section -->
+    <section class="features-section" v-show="scrolled >= 2500">
+      <div class="section-container">
+        <div class="features-header">
+          <ImageVue :src="'vEth2.png'" :size="'100px'" class="features-logo" />
+          <h2 class="section-title">vETH2</h2>
+        </div>
+        <p class="section-subtitle text-gradient">
+          Yield Bearing Wrapped Ether
+        </p>
+
+        <div class="features-grid">
+          <FeatureCard
+            v-for="(feature, index) in features"
+            :key="index"
+            :icon="feature.icon"
+            :title="feature.title"
+            :description="feature.description"
           />
         </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">DeFi Compatible</div>
-          <div class="exp Info mb30">
-            By using vEth2 instead of other wrapped Ether tokens, DeFi users
-            gain an extra 8-9% yearly growth with off-chain profit distribution.
-            <br />
-            Since vEth2 doesn't contain any 'imaginary' staking rewards, its
-            stability is derived from its peg to Ether's value, practically
-            eliminating concerns with Impermanent Loss.
-          </div>
-          <ImageVue
-            :src="'diamond.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
-        </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">Incentivized Staking</div>
-          <div class="exp Info mb30">
-            On top of Ethereum2 staking profits, holding vEth2 and leveraging it
-            on other Decentralized Finance applications is further incentivized
-            with SGT, used as a Proof of Participation token within the
-            SharedStake Protocol.
-          </div>
-          <ImageVue
-            :src="'dowload.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
-        </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">Built-in Exit Pool</div>
-          <div class="exp Info mb30">
-            10% of all staked Ether remains in the staking contract, creating a
-            liquidity bridge between all users, old and new. <br />
-            SharedStakers can un-stake their Ether at anytime by burning their
-            vEth2 through the staking contract, subject to the pooled amount.
-          </div>
-          <ImageVue
-            :src="'balance.svg'"
-            :size="'70px'"
-            class="exp ICON reverse"
-          />
-        </div>
-      </div>
-      <div class="LearnButton">
+
         <a
           href="https://sips.sharedstake.org/SIPS/sip-3.html"
           target="_blank"
           rel="noopener noreferrer"
+          class="btn btn-primary"
         >
-          Learn More</a
-        >
+          Learn More
+        </a>
       </div>
-    </div>
+    </section>
+
+    <!-- Partners Section -->
     <div v-show="scrolled > 3800">
       <Partners />
     </div>
-    <div
-      class="BadgeContainer flex flex-col items-center justify-evenly"
-      v-show="scrolled >= 4400"
-      :style="{ paddingBottom: '5rem' }"
-    >
-      <div class="StatsHeader">Audit</div>
-      <div class="flex flex-col items-center justify-evenly">
+
+    <!-- Audit Section -->
+    <section class="audit-section" v-show="scrolled >= 4400">
+      <div class="section-container">
+        <h2 class="section-title">Audit</h2>
         <a
           href="https://github.com/SharedStake/SharedStake-ui/blob/main/public/assets/static/AuditReport.pdf?raw=true"
           target="_blank"
           rel="noopener noreferrer"
-          class="certikLogo"
+          class="audit-link"
         >
           <ImageVue
             :src="'certik-foundation-logo-white.png'"
-            :size="'400px'"
-            class="certikLogo"
+            :size="windowWidth > 768 ? '350px' : '250px'"
+            class="audit-logo"
           />
         </a>
       </div>
-    </div>
-    <!-- <div class="exp roadMap" v-show="scrolled > 4700"> -->
-      <!-- disable the roadmap as its outdated TODO: new roadmap -->
-    <div class="exp roadMap" v-show="false">
-      <div class="mainBox">
-        <div class="exp titleBox">
-          <div class="X">Roadmap</div>
-        </div>
-        <div class="main">
-          <div class="mainCon">
-            <div class="list">
-              <div class="item">
-                <div class="date">2020 Q4</div>
-                <div class="text">Protocol Launch</div>
-              </div>
-
-              <div class="item">
-                <div class="date">2021 Q1</div>
-                <div class="text">
-                  Smart Contract Security Audit by Certik &amp; SGT Airdrop
-                </div>
-              </div>
-
-              <div class="item">
-                <div class="date">2021 Q2</div>
-                <div class="text">500 Validators Created</div>
-              </div>
-
-              <div class="item">
-                <div class="date">2021 Q3</div>
-                <div class="text">Leveraged Eth2 Staking with Ruler</div>
-              </div>
-
-              <div class="item">
-                <div class="date">2021 Q4</div>
-                <div class="text">Decentralized Validators Backed by SGT</div>
-              </div>
-
-              <div class="item">
-                <div class="date">2022</div>
-                <div class="text">
-                  vEth2-backed AMM Provides Eth2 Staking Profits to LPs
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">2023</div>
-                <div class="text">
-                  SGT-based Decentralized Automated Staking Mechanism on Mainnet
-                </div>
-              </div>
-            </div>
-            <div class="curve"></div>
-            <div class="list next">
-              <div class="item">
-                <div class="date">2021 Q1</div>
-                <div class="text">DAO Launched</div>
-              </div>
-              <div class="item">
-                <div class="date">2021 Q2</div>
-                <div class="text">
-                  First Incentivized Pools for vEth2 on Saddle
-                </div>
-              </div>
-              <!-- <div class="item">
-                <div class="date">2021 Q2</div>
-                <div class="text">DeFi Support with Barbecue.js</div>
-              </div>
-              <div class="item">
-                <div class="date">2021 Q3</div>
-                <div class="text">
-                  More Integrations with DeFi Protocols through Sauce.js...
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">2022</div>
-                <div class="text">
-                  Staked Ether in Use on Multiple Blockchains
-                </div>
-              </div> -->
-              <div class="item">
-                <div class="date">2023</div>
-                <div class="text">Ethereum2 Deployed</div>
-              </div>
-              <div class="item">
-                <div class="date">Eth2 &amp; Beyond</div>
-                <div class="text">
-                  Ethereum2 is just the beginning for SharedStake...
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="flex_column" v-show="scrolled >= 5500">
-      <div class="exp Information" v-show="scrolled >= 5500">
-        <div class="InfoHeader centertext" v-show="scrolled >= 5500">
-          Subscribe for updates from the team
-        </div>
-        <div class="exp Info" v-show="scrolled >= 5500">
-          <MailingListSubscribeForm />
-        </div>
-      </div>
-    </div> -->
-    <!-- <div class="Container" v-show="scrolled <= 5500"></div> -->
+    </section>
   </div>
 </template>
 
 <script>
 import ImageVue from "../Handlers/ImageVue";
-// import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
 import Partners from "./Partners";
-import axios from "axios";
-import BN from "bignumber.js";
-import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
-import { priceInUsdAsync } from "@/utils/coingecko";
+
+// Process Step Component
+const ProcessStep = {
+  props: ['image', 'size', 'title', 'description', 'delay'],
+  components: { ImageVue },
+  template: `
+    <div class="process-step" :style="{ animationDelay: delay + 's' }">
+      <ImageVue :src="image" :size="size" class="process-icon" />
+      <h4 class="process-title">{{ title }}</h4>
+      <p class="process-description">{{ description }}</p>
+    </div>
+  `
+};
+
+// Feature Card Component
+const FeatureCard = {
+  props: ['icon', 'title', 'description'],
+  components: { ImageVue },
+  template: `
+    <div class="feature-card">
+      <h3 class="feature-title">{{ title }}</h3>
+      <p class="feature-description">{{ description }}</p>
+      <ImageVue :src="icon" size="60px" class="feature-icon" />
+    </div>
+  `
+};
 
 export default {
   components: {
     ImageVue,
-    // MailingListSubscribeForm,
     Partners,
+    ProcessStep,
+    FeatureCard
   },
   props: ["scrolled", "windowWidth"],
   data() {
     return {
-      TVL: 16000,
-      TVLinUsd: 0,
-      APY: "",
-      validatorTotalBalance: 16543,
-      validatorVirtualPrice: 1.0377,
-      validatorsSlashed: 0,
-      validatorApr: 6,
-      vpPostFees: 1.03,
-      elapsed: 1,
-      validatorsOnline: 500,
-      profit: 543,
-      indices: [
-        "91086",
-        "99502",
-        "99532",
-        "99506",
-        "99645",
-        "99643",
-        "99544",
-        "99540",
-        "99539",
-        "99512",
-        "99652",
-        "91090",
-        "99549",
-        "99518",
-        "99589",
-        "99644",
-        "91063",
-        "99492",
-        "99513",
-        "99606",
-        "91084",
-        "91135",
-        "99538",
-        "99507",
-        "99639",
-        "91083",
-        "99522",
-        "99520",
-        "99594",
-        "99592",
-        "99636",
-        "99533",
-        "99529",
-        "99516",
-        "91081",
-        "99554",
-        "99552",
-        "99530",
-        "99601",
-        "99634",
-        "99627",
-        "91089",
-        "91085",
-        "99543",
-        "99524",
-        "99614",
-        "99597",
-        "99587",
-        "99651",
-        "99629",
-        "99555",
-        "99600",
-        "99607",
-        "99619",
-        "99630",
-        "99503",
-        "99631",
-        "99632",
-        "91050",
-        "99494",
-        "99525",
-        "99511",
-        "99655",
-        "91053",
-        "99491",
-        "99583",
-        "99654",
-        "91082",
-        "99493",
-        "99548",
-        "99505",
-        "99586",
-        "99576",
-        "99650",
-        "99547",
-        "99535",
-        "99534",
-        "99637",
-        "99541",
-        "99528",
-        "99519",
-        "99613",
-        "99605",
-        "99653",
-        "99635",
-        "99626",
-        "91049",
-        "99608",
-        "99648",
-        "99640",
-        "99641",
-        "99638",
-        "91088",
-        "91052",
-        "99584",
-        "99633",
-        "99628",
-        "99615",
-        "99498",
-        "99537",
-        "99610",
-        "99595",
-        "99591",
-        "99588",
-        "99617",
-        "99623",
-        "91087",
-        "99510",
-        "99579",
-        "99497",
-        "99527",
-        "99514",
-        "99521",
-        "99596",
-        "99581",
-        "99577",
-        "99649",
-        "99647",
-        "99536",
-        "99609",
-        "99612",
-        "99582",
-        "99621",
-        "99620",
-        "99509",
-        "99602",
-        "99578",
-        "99658",
-        "99496",
-        "99504",
-        "99515",
-        "99642",
-        "99551",
-        "99545",
-        "99604",
-        "99598",
-        "99656",
-        "99495",
-        "99542",
-        "99526",
-        "99603",
-        "99599",
-        "99646",
-        "91047",
-        "99523",
-        "99517",
-        "99616",
-        "99622",
-        "99590",
-        "99585",
-        "99657",
-        "99553",
-        "99546",
-        "99508",
-        "99611",
-        "99593",
-        "99618",
-        "99624",
-        "99575",
-        "99574",
-        "99566",
-        "99571",
-        "99564",
-        "99570",
-        "99568",
-        "99563",
-        "99567",
-        "99565",
-        "99572",
-        "99569",
-        "115084",
-        "115048",
-        "115059",
-        "115064",
-        "115074",
-        "115099",
-        "115101",
-        "115102",
-        "115038",
-        "115045",
-        "115076",
-        "115041",
-        "115054",
-        "115063",
-        "115070",
-        "115071",
-        "115080",
-        "115092",
-        "115028",
-        "115029",
-        "115051",
-        "115078",
-        "115088",
-        "115098",
-        "115030",
-        "115052",
-        "115073",
-        "115077",
-        "115090",
-        "115095",
-        "115106",
-        "115032",
-        "115061",
-        "115081",
-        "115097",
-        "115039",
-        "115068",
-        "115060",
-        "115067",
-        "115075",
-        "115086",
-        "115094",
-        "115105",
-        "115053",
-        "115057",
-        "115055",
-        "115044",
-        "115050",
-        "115066",
-        "115093",
-        "115103",
-        "115027",
-        "115037",
-        "115040",
-        "115065",
-        "115069",
-        "115079",
-        "115091",
-        "115104",
-        "115033",
-        "115035",
-        "115036",
-        "115046",
-        "115058",
-        "115082",
-        "115042",
-        "115043",
-        "115056",
-        "115062",
-        "115087",
-        "115034",
-        "115049",
-        "115072",
-        "115083",
-        "115085",
-        "115089",
-        "115096",
-        "115100",
-        "115031",
-        "115047",
-        "115282",
-        "115149",
-        "115212",
-        "115202",
-        "115289",
-        "115350",
-        "115359",
-        "115156",
-        "115177",
-        "115351",
-        "115365",
-        "115251",
-        "115276",
-        "115117",
-        "115304",
-        "115248",
-        "115279",
-        "115297",
-        "115303",
-        "115317",
-        "115328",
-        "115151",
-        "115205",
-        "115226",
-        "115249",
-        "115265",
-        "115321",
-        "115128",
-        "115172",
-        "115313",
-        "115349",
-        "115363",
-        "115267",
-        "115293",
-        "115284",
-        "115285",
-        "115220",
-        "115224",
-        "115228",
-        "115142",
-        "115179",
-        "115319",
-        "115244",
-        "115259",
-        "115233",
-        "115239",
-        "115258",
-        "115281",
-        "115296",
-        "115334",
-        "115165",
-        "115188",
-        "115342",
-        "115133",
-        "115158",
-        "115252",
-        "115268",
-        "115292",
-        "115298",
-        "115141",
-        "115214",
-        "115236",
-        "115126",
-        "115199",
-        "115335",
-        "115343",
-        "115352",
-        "115225",
-        "115324",
-        "115196",
-        "115294",
-        "115235",
-        "115253",
-        "115347",
-        "115184",
-        "115245",
-        "115169",
-        "115195",
-        "115201",
-        "115355",
-        "115153",
-        "115168",
-        "115280",
-        "115193",
-        "115210",
-        "115204",
-        "115264",
-        "115312",
-        "115358",
-        "115163",
-        "115185",
-        "115190",
-        "115367",
-        "115125",
-        "115131",
-        "115256",
-        "115339",
-        "115118",
-        "115132",
-        "115260",
-        "115307",
-        "115152",
-        "115240",
-        "115221",
-        "115291",
-        "115364",
-        "115139",
-        "115181",
-        "115208",
-        "115144",
-        "115150",
-        "115330",
-        "115160",
-        "115217",
-        "115242",
-        "115277",
-        "115301",
-        "115302",
-        "115306",
-        "115348",
-        "115136",
-        "115162",
-        "115299",
-        "115275",
-        "115194",
-        "115269",
-        "115340",
-        "115366",
-        "115166",
-        "115290",
-        "115287",
-        "115145",
-        "115237",
-        "115333",
-        "115219",
-        "115274",
-        "115211",
-        "115241",
-        "115261",
-        "115272",
-        "115273",
-        "115283",
-        "115171",
-        "115200",
-        "115305",
-        "115322",
-        "115310",
-        "115344",
-        "115122",
-        "115206",
-        "115356",
-        "115134",
-        "115222",
-        "115254",
-        "115320",
-        "115137",
-        "115154",
-        "115130",
-        "115255",
-        "115341",
-        "115138",
-        "115174",
-        "115246",
-        "115270",
-        "115327",
-        "115123",
-        "115209",
-        "115189",
-        "115243",
-        "115309",
-        "115121",
-        "115170",
-        "115215",
-        "115247",
-        "115311",
-        "115326",
-        "115135",
-        "115263",
-        "115198",
-        "115223",
-        "115250",
-        "115286",
-        "115300",
-        "115161",
-        "115213",
-        "115353",
-        "115357",
-        "115187",
-        "115191",
-        "115227",
-        "115176",
-        "115180",
-        "115148",
-        "115331",
-        "115119",
-        "115147",
-        "115257",
-        "115271",
-        "115323",
-        "115146",
-        "115173",
-        "115316",
-        "115329",
-        "115155",
-        "115182",
-        "115164",
-        "115175",
-        "115192",
-        "115216",
-        "115232",
-        "115345",
-        "115120",
-        "115143",
-        "115238",
-        "115278",
-        "115325",
-        "115360",
-        "115207",
-        "115229",
-        "115218",
-        "115346",
-        "115361",
-        "115183",
-        "115186",
-        "115315",
-        "115362",
-        "115178",
-        "115197",
-        "115140",
-        "115234",
-        "115332",
-        "115230",
-        "115262",
-        "115157",
-        "115295",
-        "115318",
-        "115337",
-        "115159",
-        "115266",
-        "115354",
-        "115129",
-        "115336",
-        "115338",
-        "115288",
-        "115308",
-        "115167",
-        "115203",
-        "115314",
-        "115124",
-        "115127",
+      processSteps: [
+        {
+          image: 'eth.png',
+          size: '80px',
+          title: 'Stake ETH',
+          description: 'Stake any amount of Eth'
+        },
+        {
+          image: 'vEth2.png',
+          size: '140px',
+          title: 'Receive vETH2',
+          description: 'Receive your vEth2 token'
+        },
+        {
+          image: 'Reward.png',
+          size: '110px',
+          title: 'Earn Rewards',
+          description: 'Simply holding vEth2 entitles you to staking rewards'
+        },
+        {
+          image: 'Harvest.png',
+          size: '80px',
+          title: 'Maximize Yield',
+          description: 'Harvest more yield with your vEth2 in supported DeFi protocols!'
+        }
       ],
+      features: [
+        {
+          icon: 'discount.svg',
+          title: 'Financially Optimized',
+          description: 'SharedStake optimizes Eth2 staking profits by creating an off-chain yield bearing stable token (vEth2 has a 1:1 price ratio with Ether). Ethereum2 profit distribution will start with the Eth2 launch so until then, track your Eth2 profits in the SharedStake Dashboard.'
+        },
+        {
+          icon: 'diamond.svg',
+          title: 'DeFi Compatible',
+          description: 'By using vEth2 instead of other wrapped Ether tokens, DeFi users gain an extra 8-9% yearly growth with off-chain profit distribution. Since vEth2 doesn\'t contain any \'imaginary\' staking rewards, its stability is derived from its peg to Ether\'s value, practically eliminating concerns with Impermanent Loss.'
+        },
+        {
+          icon: 'dowload.svg',
+          title: 'Incentivized Staking',
+          description: 'On top of Ethereum2 staking profits, holding vEth2 and leveraging it on other Decentralized Finance applications is further incentivized with SGT, used as a Proof of Participation token within the SharedStake Protocol.'
+        },
+        {
+          icon: 'balance.svg',
+          title: 'Built-in Exit Pool',
+          description: '10% of all staked Ether remains in the staking contract, creating a liquidity bridge between all users, old and new. SharedStakers can un-stake their Ether at anytime by burning their vEth2 through the staking contract, subject to the pooled amount.'
+        }
+      ]
     };
-  },
-  async mounted() {
-    this.setupTvl();
-    if (!this.isMobile()) {
-      this.setupApy();
-      this.getValidatorInfo();
-    }
   },
   methods: {
     isMobile() {
-      // https://stackoverflow.com/questions/48515023/display-different-vuejs-components-for-mobile-browsers
-      if (
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        )
-      ) {
-        return true || window.ethereum; // mobile browsers will load if eth rpc available.
-      } else {
-        return false;
-      }
-    },
-    async setupTvl() {
-      try {
-        this.TVL = await this.fetchTvlFromEtherscan();
-      } catch (e) {
-        const STATIC_TVL = 17688; // Updated 1 feb 2023
-
-        if (!this.isMobile()) {
-          try {
-            this.TVL = await this.fetchTvlWithWallet();
-          } catch (e) {
-            this.TVL = BN(STATIC_TVL).toString();
-          }
-        } else {
-          this.TVL = BN(STATIC_TVL).toString();
-        }
-      } finally {
-        this.setTvlInUsd(this.TVL);
-      }
-    },
-    async getValidatorInfo() {
-      let results = [];
-      let reqUrl = "https://beaconcha.in/api/v1/validator/";
-      let chunkArray = (array, size) => {
-        if (array.length <= size) {
-          return [array];
-        }
-        return [array.slice(0, size), ...chunkArray(array.slice(size), size)];
-      };
-      async function getAllValidatorInfo(indices) {
-        // disable the dashboard, exit early for now with just 1 validator
-        indices = indices[0];
-        // beacon chain api supports 100 indices per call, and a max of 10 calls/min for free tier
-        await Promise.all(
-          chunkArray(indices, 100).map(async (chunk) => {
-            let url = reqUrl.concat(chunk.toString());
-            let res = await axios.get(url);
-            results = results.concat(res.data.data);
-          })
-        );
-      }
-      await getAllValidatorInfo(this.indices);
-
-      let startTime = 1616502743000;
-      let elapsed = Date.now() - startTime;
-      let msInYr = 1000 * 60 * 60 * 24 * 365;
-
-      let totalBal = 0;
-      let effectiveBal = 0;
-      let status = 0;
-      let slashed = 0;
-      results.forEach((validator) => {
-        totalBal += validator.balance;
-        effectiveBal += validator.effectivebalance;
-        if (validator.status == "active_online") status++;
-        if (validator.slashed) slashed++;
-      });
-      this.validatorsSlashed = slashed;
-      this.validatorsOnline = status;
-      this.validatorVirtualPrice = BN(totalBal / effectiveBal)
-        .toFixed(4)
-        .toString();
-      this.validatorTotalBalance = BN(totalBal)
-        .div(1e9)
-        .toFixed(0)
-        .toString();
-      this.profit = BN(totalBal - effectiveBal)
-        .div(1e9)
-        .toFixed(2)
-        .toString();
-      this.validatorApr = (((this.profit / elapsed) * msInYr) / this.TVL) * 100;
-      this.validatorApr = this.validatorApr.toFixed(2);
-      this.vpPostFees =
-        this.validatorVirtualPrice - (this.validatorVirtualPrice - 1) * 0.2;
-      this.vpPostFees = this.vpPostFees.toFixed(4);
-      this.elapsed = ((12 * elapsed) / msInYr).toFixed(2);
-
-    },
-    async setupApy() {
-      try {
-        this.getAPY();
-      } catch (e) {
-        this.APY = await BN(6).toString();
-      }
-    },
-    async getAPY() {
-      // Temporary till defi mining starts again
-      this.APY = 5;
-      try {
-        let token = SGT_uniswap();
-        let tokenGeyser = geyser_SGT_uniswap();
-        if (!token || !tokenGeyser) {
-          console.error("Contracts not available");
-          return;
-        }
-        let reserves = await token.getReserves();
-        let Sgt = reserves[0];
-        let totalSupply = await token.totalSupply();
-        let tokenPerSgt = totalSupply / (Sgt * 2n);
-        let totalStaked = await tokenGeyser.totalSupply();
-        totalStaked = BN(totalStaked.toString());
-        let now = Math.floor(Date.now() / 1000);
-        let until = await tokenGeyser.periodFinish();
-        let remDays = BN(Number(until) - now).div(60).div(60).div(24); //get remaining days
-        let stakedSchedule = remDays;
-        let duration = await tokenGeyser.rewardsDuration(); //in second
-        let remRewards = BN(remDays).times(
-          BN(75000).div(
-            BN(Number(duration))
-              .div(60)
-              .div(60)
-              .div(24)
-          )
-        );
-        let locked = BN(remRewards);
-        let APY = Math.round(
-          BN(
-            100 *
-              tokenPerSgt *
-              ((locked * 1e18) / totalStaked) *
-              (360 / stakedSchedule)
-          )
-        ).toString();
-        this.APY = APY;
-        return await Promise.resolve(APY);
-      } catch {
-        this.APY = BN(6).toString();
-        return await Promise.resolve(BN(6).toString());
-      }
-    },
-    async fetchTvlFromEtherscan() {
-      let response = await axios.get(
-        "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
-      );
-      return BN(response.data.result)
-        .div(1e18)
-        .toFixed(0)
-        .toString();
-    },
-    async fetchTvlWithWallet() {
-      if (!window.ethereum) {
-        throw "Window doesn't have ethereum enabled";
-      }
-
-      const vEth2Contract = vEth2();
-      if (!vEth2Contract) {
-        console.error("vETH2 contract not available");
-        return "0";
-      }
-      const vETH2TotalSupply = await vEth2Contract.totalSupply();
-
-      return BN(vETH2TotalSupply.toString())
-        .div(1e18)
-        .toFixed(0)
-        .toString();
-    },
-    async setTvlInUsd(tvlInETH) {
-      const etherPrice = await priceInUsdAsync("ethereum");
-      this.TVLinUsd = etherPrice * tvlInETH;
-    },
-  },
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) && !window.ethereum;
+    }
+  }
 };
 </script>
 
 <style scoped>
-/*this is ok until 900px */
-
-.downSign {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  bottom: 10px;
-  position: sticky;
-}
-
-.Container {
-  position: relative;
+/* Base Layout */
+.landing {
   min-height: 100vh;
-  color: #fff;
-  z-index: 1;
+  background: rgb(15, 16, 19);
+  position: relative;
+  overflow-x: hidden;
 }
 
-.LogoContainer {
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Hero Section */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 6rem 0 4rem;
   background-image: url(bg-1.png);
   background-repeat: no-repeat;
   background-position: center;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  justify-content: center;
-  align-items: center;
-}
-
-.BadgeContainer {
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  z-index: 1;
-}
-
-.first {
-  padding-top: 10rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas: ". .";
-}
-
-.Explanation {
-  padding: 0 75px 200px 0;
-  animation: TextEnter 0.4s ease-out backwards;
-}
-
-.Exp,
-.Explanation,
-.Logo {
-  align-self: center;
-  justify-self: center;
-}
-
-.mainTitle {
-  overflow-wrap: normal;
-  max-width: 900px;
-  font-size: 64px;
-  font-weight: 500;
-  line-height: 1.05;
-}
-
-.exp {
-  font-size: 21px;
-  line-height: 31px;
-  font-weight: 300;
-  padding: 0px;
-  color: rgba(255, 255, 255, 0.9);
-  /* text-align: justify; */
-  text-justify: inter-word;
-  animation: TextEnter 0.6s ease-out backwards 0.2s;
-  z-index: 1;
-}
-
-.social {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  animation: TextEnter 0.8s ease-out backwards;
-  margin-top: 30px;
-}
-
-.socialLogo {
-  filter: brightness(300%);
-  transition: filter 0.5s ease-out;
-  cursor: pointer;
-}
-
-.socialLogo:hover {
-  filter: brightness(500%);
-}
-
-.LearnButton {
-  width: fit-content;
-  margin: 24px auto 0;
-  font-size: 21px;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #fff;
-  border-radius: 10px;
-  text-align: center;
-  transition: transform 0.5s ease-out;
-  cursor: pointer;
-  z-index: 3;
-  grid-area: Button;
-}
-
-.LearnButton:hover,
-.StakeButton:hover {
-  transform: scale(0.98);
-}
-
-.StakeButton {
-  font-size: 21px;
-  font-weight: 500;
-  color: black;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
-  border: 2px solid #e6007a;
-  background-color: #e6007a;
-  border-radius: 10px;
-  text-align: center;
-  width: 142px;
-  /* max-height: 25px; */
-  transition: transform 0.5s ease-out;
-  cursor: pointer;
-  z-index: 3;
-  grid-area: Button;
-}
-
-.background2 {
-  background-image: url(bg-2.png);
-  position: absolute;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  top: 0;
   background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  mask-image: radial-gradient(
-    circle,
-    rgba(0, 0, 0, 1) 20%,
-    rgba(0, 0, 0, 0.4) 60%
-  );
 }
 
-.second {
-  width: 90%;
-  height: 90%;
-  margin: auto;
-  padding: 10% 5% 0 5%;
+.hero-container {
+  @apply max-w-6xl mx-auto px-6;
   display: grid;
-  grid-template-columns: 1fr 0.2fr 1fr 0.2fr 1fr 0.2fr 1fr;
-  grid-template-rows: 0.6fr 0.4fr 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Eth next1 vEth2 next2 reward next3 harvest"
-    "EthExp . vEth2Exp . rewardExp . harvestExp"
-    "Information Information Information Information Information Information Information";
-  justify-content: center;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 4rem;
   align-items: center;
 }
 
-.Information {
-  margin-top: 2.5vh;
-  padding: 5vh;
-  width: 70%;
-  grid-area: Information;
-  font-size: 1.2rem;
-  max-width: 1500px;
-  background-color: rgba(17, 26, 25, 0.85);
-  position: relative;
-  overflow: hidden;
-  color: rgba(255, 255, 255, 0.9);
-  -webkit-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.517);
-  -moz-box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.619);
-  box-shadow: inset 0px 0px 100px -60px rgba(255, 255, 255, 0.469);
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.6s ease-out;
 }
 
-.InfoHeader {
-  font-size: 34px;
-  font-weight: 300;
-  line-height: 42px;
-  margin-bottom: 30px;
-  color: rgba(255, 255, 255, 0.95);
-  grid-area: Header;
-  align-self: center;
+.hero-logo {
+  filter: drop-shadow(0 0 30px rgba(230, 0, 122, 0.3));
 }
 
-.Info {
-  margin-bottom: 10px;
-  font-size: 16px;
-  grid-area: Info;
+.hero-content {
+  animation: slideUp 0.8s ease-out;
 }
 
-.ICON {
-  grid-area: Icon;
-  align-self: center;
-  justify-self: end;
+.hero-text {
+  margin-bottom: 3rem;
 }
 
-.Information,
-.X {
-  justify-self: center;
-  align-self: center;
-  z-index: 10;
-}
-
-.Exp {
-  max-width: 200px;
-  font-size: 16px;
-  padding: 0 10px 0 10px;
-  line-height: 31px;
-  font-weight: 300;
-  padding: 0px;
-  color: rgba(255, 255, 255, 0.9);
-  z-index: 2;
-  align-self: start;
-  /* text-align: justify; */
-  text-justify: inter-word;
-}
-
-.EthExp,
-.Eth {
-  grid-area: Eth;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 0.4s forwards;
-}
-
-.EthExp {
-  grid-area: EthExp;
-}
-
-.vEth2Exp,
-.vEth2 {
-  grid-area: vEth2;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 0.6s forwards;
-  filter: brightness(200%);
-}
-
-.vEth2Exp {
-  grid-area: vEth2Exp;
-}
-
-.rewardExp,
-.reward {
-  grid-area: reward;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 0.8s forwards;
-}
-
-.rewardExp {
-  grid-area: rewardExp;
-}
-
-.harvestExp,
-.harvest {
-  grid-area: harvest;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 1s forwards;
-}
-
-.harvestExp {
-  grid-area: harvestExp;
-}
-
-.next1 {
-  grid-area: next1;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 0.5s forwards;
-}
-
-.next2 {
-  grid-area: next2;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 0.7s forwards;
-}
-
-.next3 {
-  grid-area: next3;
-  opacity: 0;
-  animation: LogoEnter 0.5s ease-out 0.9s forwards;
-}
-
-.Stats {
-  width: calc(100% - 60px);
-  min-height: auto;
-  max-width: 1500px;
-  margin: 0px auto;
-  padding: 120px 0px;
-  position: relative;
-  overflow: hidden;
+.hero-title {
+  @apply text-5xl md:text-6xl font-light leading-tight mb-6;
   color: #fff;
-  justify-content: space-between;
-}
-
-.StatsHeader {
-  color: rgb(255, 255, 255);
-  -webkit-box-align: center;
-  padding: 0 0 50px 0;
-  align-items: center;
-  font-size: 50px;
-  line-height: 1.16em;
-  margin: 30px;
-  font-weight: 300;
-  animation: TextEnter 0.4s ease-out backwards;
-  text-align: center;
-}
-
-.StatsExp {
-  max-width: 800px;
-  text-align: center;
-  margin: 0px auto 30px;
-  font-size: 22px;
-  line-height: 31px;
-  font-weight: 300;
-  padding: 0px;
-  color: rgba(255, 255, 255, 0.75);
-  animation: TextEnter 0.4s ease-out backwards 0.2s;
-}
-
-.StatsContent {
-  display: flex;
-  width: calc(100% - 60px);
-  -webkit-box-pack: justify;
-  justify-content: space-between;
-  max-width: 1500px;
-  margin: 0px auto;
-  padding: 120px 0px;
-  animation: TextEnter 0.4s ease-out backwards 0.4s;
-}
-
-.Stat {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  gap: 0.5rem;
-  border-radius: 2rem;
-  text-align: center;
-  flex-basis: 1/3;
-}
-
-.Num {
-  font-size: 64px;
-  line-height: 1.125;
-  font-weight: 600;
-}
-.Num:after {
-  content: "";
-  @apply bg-brand-primary h-1 w-16 block mx-auto my-1;
-}
-
-.NumExp {
-  font-weight: 300;
-  font-size: 21px;
-  line-height: 1.25;
-}
-
-.NumDetail {
-  font-weight: 300;
-  font-size: 14px;
-  color: rgb(143, 143, 143);
-}
-
-.background3 {
-  background-image: url(bg-3.png);
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  mask-image: radial-gradient(
-    circle,
-    rgba(0, 0, 0, 1) 30%,
-    rgba(0, 0, 0, 0.5) 100%
-  );
-}
-
-.vEth2PanelHeader {
-  padding-top: 5vw;
-  z-index: 5;
-  animation: Glow 1s linear alternate infinite;
-}
-
-.third {
-  width: 90%;
-  height: 90%;
-  padding: 0% 5% 1% 5%;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 30px 30px;
-  grid-template-areas:
-    ". ."
-    ". .";
-  max-width: 1500px;
-  justify-content: center;
-  align-items: center;
-}
-
-.Bubble {
-  min-height: calc(77%);
-  font-size: 1.2rem;
-  background-color: rgba(17, 26, 25, 1);
   position: relative;
-  overflow: hidden;
-  color: rgba(255, 255, 255, 0.9);
-  align-self: stretch;
-  justify-self: stretch;
-  padding: 45px 45px 35px 45px;
-  display: grid;
-  grid-template-columns: 1fr 0.3fr;
-  grid-template-rows: 0.4fr 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Header Icon"
-    "Info Info ";
 }
 
-.mb30 {
-  margin-bottom: 30px;
+.hero-badge {
+  @apply absolute -top-8 left-0 px-3 py-1 text-xs font-semibold;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.roadMap {
-  padding-top: 2rem;
-  padding-bottom: 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.hero-description {
+  @apply text-xl leading-relaxed;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 600px;
 }
 
-.mainBox {
-  padding-bottom: 1.13rem;
-  width: 80%;
+.hero-actions {
+  @apply flex flex-wrap gap-4 mb-8;
 }
 
-.titleBox {
-  color: #ffffff;
-  font-size: 50px;
-  position: relative;
-  left: 0;
-  top: 0;
-  z-index: 10;
+/* Buttons */
+.btn {
+  @apply px-6 py-3 rounded-full font-medium transition-all duration-300;
+  @apply inline-flex flex-col items-center justify-center;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
-.main {
-  width: 100%;
-  padding-bottom: 0.5rem;
-  overflow-x: auto;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+.btn-primary {
+  @apply bg-brand-primary text-white;
+  border-color: #e6007a;
 }
 
-.mainCon {
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(230, 0, 122, 0.3);
 }
 
-.curve {
-  width: 100%;
-  background-image: url(curve.png);
-  background-size: 100% auto;
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 90px;
-  margin: 0.6rem 0;
-  position: relative;
-  left: 0;
-  top: 0;
-  overflow: hidden;
+.btn-outline {
+  @apply text-white;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: transparent;
 }
 
-.mainCon .curve canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.mainCon .list {
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  position: relative;
-  left: 0;
-  top: 0;
-  padding-left: 0.1rem;
-}
-
-.mainCon .list .item {
-  width: 260px;
-  /**HERE */
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  -webkit-flex: none;
-  -moz-box-flex: 0;
-  -ms-flex: none;
-  flex: none;
-}
-
-.mainCon .list .item .date {
-  font-size: 17px;
+.btn-outline:hover {
+  border-color: #e6007a;
   color: #e6007a;
-  line-height: 1.43em;
-  padding-bottom: 0.3rem;
+  background: rgba(230, 0, 122, 0.1);
 }
 
-.mainCon .list .item .text {
-  font-size: 12px;
-  color: #ffffff;
-  line-height: 1.47em;
-  width: 60%;
-  padding-bottom: 20px;
+.btn-disabled {
+  @apply opacity-50 cursor-not-allowed;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.mainCon .list.next {
-  padding-left: 5rem;
+.btn-small {
+  @apply px-4 py-2 text-sm;
 }
 
-/* body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
-  height: 5px;
-  background: #555;
-}
-body .roadMap .mainBox .main::-webkit-scrollbar {
-  background: #888;
-  height: 4px;
-} */
-.centertext {
-  text-align: center;
+.btn-subtitle {
+  @apply text-xs mt-1 opacity-75;
 }
 
-.glow {
-  filter: brightness(300%);
+/* Social Section */
+.social-section {
+  @apply mb-8;
 }
 
-.reverse {
+.social-label,
+.redemption-label {
+  @apply text-lg mb-3;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.social-links {
+  @apply flex gap-6 items-center;
+}
+
+.social-link {
+  @apply transition-all duration-300;
+  filter: brightness(100%);
+  position: relative;
+}
+
+.social-link:hover {
+  filter: brightness(150%);
+  transform: translateY(-2px);
+}
+
+.social-disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.social-soon {
+  @apply absolute -bottom-4 left-1/2 transform -translate-x-1/2;
+  @apply text-xs text-gray-400;
+}
+
+/* Redemption Section */
+.redemption-section {
+  margin-top: 2rem;
+}
+
+.redemption-links {
+  @apply flex flex-wrap gap-3;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  @apply fixed bottom-8 left-1/2 transform -translate-x-1/2;
+  @apply animate-bounce;
+  filter: brightness(200%);
+  z-index: 10;
+}
+
+/* Section Styles */
+.stats-section,
+.process-section,
+.features-section,
+.audit-section {
+  @apply py-24;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.section-title {
+  @apply text-4xl md:text-5xl font-light text-center mb-6;
+  color: #fff;
+}
+
+.section-subtitle {
+  @apply text-xl md:text-2xl text-center mb-4;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.section-description {
+  @apply text-lg text-center max-w-3xl mx-auto;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.8;
+}
+
+/* Process Section */
+.process-section {
+  background-image: url(bg-2.png);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.process-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16;
+}
+
+.process-step {
+  @apply text-center p-6;
+  animation: slideUp 0.6s ease-out backwards;
+}
+
+.process-icon {
+  @apply mb-4 mx-auto;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.process-title {
+  @apply text-xl font-medium mb-2;
+  color: #fff;
+}
+
+.process-description {
+  @apply text-sm;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Info Card */
+.info-card {
+  @apply p-8 rounded-2xl max-w-4xl mx-auto;
+  background: rgba(17, 26, 25, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.8s ease-out;
+}
+
+.info-title {
+  @apply text-3xl font-light mb-6 text-center;
+  color: #fff;
+}
+
+.info-text {
+  @apply text-base mb-4 leading-relaxed;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Features Section */
+.features-section {
+  background-image: url(bg-3.png);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.features-header {
+  @apply flex items-center justify-center gap-6 mb-8;
+}
+
+.features-logo {
+  filter: drop-shadow(0 0 20px rgba(230, 0, 122, 0.4));
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+.features-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-5xl mx-auto;
+}
+
+.feature-card {
+  @apply p-8 rounded-2xl relative overflow-hidden;
+  background: rgba(17, 26, 25, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(230, 0, 122, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.feature-title {
+  @apply text-2xl font-medium mb-4;
+  color: #fff;
+}
+
+.feature-description {
+  @apply text-sm leading-relaxed mb-6;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.feature-icon {
+  @apply absolute bottom-4 right-4 opacity-20;
   filter: invert(1);
 }
 
-.DropShadow {
-  filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
+/* Audit Section */
+.audit-section {
+  @apply text-center;
 }
 
-@keyframes LogoEnter {
+.audit-link {
+  @apply inline-block transition-all duration-300;
+}
+
+.audit-logo {
+  @apply mx-auto;
+  transition: all 0.3s ease;
+}
+
+.audit-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+}
+
+/* Mobile Notice */
+.mobile-notice {
+  @apply mt-8 p-4 rounded-lg text-center;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(135deg, #e6007a 0%, #e2539e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animations */
+@keyframes fadeIn {
   from {
-    transform: translate3d(-2rem, 0, 0);
     opacity: 0;
   }
-
   to {
-    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
-@keyframes Glow {
+@keyframes slideUp {
   from {
-    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(120%);
-  }
-
-  to {
-    filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(200%);
-  }
-}
-
-@keyframes TextEnter {
-  from {
-    transform: translate3d(0, 2rem, 0);
+    transform: translateY(2rem);
     opacity: 0;
   }
-
   to {
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
-@media only screen and (max-width: 900px) {
-  .first {
-    padding-top: 125px;
-    display: grid;
-    gap: 0px 0px;
-    grid-template-areas: ".";
-    background-image: url(bg-1.png);
-    background-repeat: no-repeat;
-    background-position: center;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 0.1fr 2fr;
-    justify-content: center;
-    align-items: center;
+@keyframes glow {
+  0% {
+    filter: brightness(100%) drop-shadow(0 0 10px rgba(230, 0, 122, 0.2));
   }
-
-  .Logo {
-    padding: 0;
-    max-width: 145px;
-    min-width: 100px;
-  }
-
-  .LogoContainer {
-    background: transparent;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .mainTitle {
-    margin: 0 auto;
-  }
-
-  .Explanation {
-    padding: 0 23px 100px 23px;
-    animation: TextEnter 0.4s ease-out backwards;
-  }
-
-  .StatsContent {
-    flex-direction: column;
-    align-items: center;
-    padding: 0px;
-  }
-
-  .StatsHeader {
-    font-size: 42px;
-  }
-  .InfoHeader {
-    padding: 15px 15px 15px 0;
-    font-size: 25px;
-  }
-
-  .third {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    gap: 30px 30px;
-    grid-template-areas:
-      "."
-      ".";
+  100% {
+    filter: brightness(120%) drop-shadow(0 0 25px rgba(230, 0, 122, 0.5));
   }
 }
 
-@media only screen and (max-width: 770px) {
-  .second {
+/* Responsive Design */
+@media (max-width: 900px) {
+  .hero-container {
     grid-template-columns: 1fr;
-    grid-template-rows: 2fr 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
-    grid-template-areas:
-      "Information"
-      "Information"
-      "Eth"
-      "EthExp"
-      "next1"
-      "vEth2"
-      "vEth2Exp"
-      "next2"
-      "reward"
-      "rewardExp"
-      "next3"
-      "harvest"
-      "harvestExp";
-    padding-bottom: 15vh;
-  }
-
-  .certikLogo {
-    max-width: 80%;
+    gap: 2rem;
     text-align: center;
   }
 
-  .mainTitle {
-    font-size: 46px;
-    line-height: 1.1;
-    margin-bottom: 32px;
+  .hero-badge {
+    @apply left-1/2 transform -translate-x-1/2;
+  }
+
+  .hero-title {
+    @apply text-4xl md:text-5xl;
+  }
+
+  .hero-description {
+    @apply mx-auto;
+  }
+
+  .hero-actions,
+  .social-links,
+  .redemption-links {
+    @apply justify-center;
+  }
+
+  .social-label,
+  .redemption-label {
+    @apply text-center;
+  }
+
+  .process-grid {
+    @apply grid-cols-1;
+  }
+
+  .features-grid {
+    @apply grid-cols-1;
   }
 }
 
-@media only screen and (max-width: 375px) {
-  .mainTitle {
-    font-size: 36px;
+@media (max-width: 640px) {
+  .hero-title {
+    @apply text-3xl;
+  }
+
+  .hero-description {
+    @apply text-base;
+  }
+
+  .section-title {
+    @apply text-3xl;
+  }
+
+  .btn {
+    @apply px-4 py-2 text-sm;
   }
 }
 </style>

@@ -68,68 +68,61 @@ export default {
 </script>
 
 <style scoped>
+/* Partners Section Layout */
 .header {
-  color: rgb(255, 255, 255);
-  align-items: center;
-  font-size: 50px;
-  line-height: 1.16em;
-  margin: 30px;
-  font-weight: 300;
-  -webkit-animation: EnterFromBelow 0.4s ease-out backwards;
-  animation: EnterFromBelow 0.4s ease-out backwards;
-  text-align: center;
-  margin-bottom: 10vh;
+  @apply text-4xl md:text-5xl font-light text-center mb-12;
+  color: #fff;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .partner-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-
-  margin: 0px auto 30px;
-  padding: 0px;
-  -webkit-animation: EnterFromBelow 0.4s ease-out backwards 0.2s;
-  animation: EnterFromBelow 0.4s ease-out backwards 0.2s;
+  @apply flex justify-center flex-wrap gap-8 max-w-6xl mx-auto px-6;
+  animation: slideUp 0.6s ease-out 0.2s backwards;
 }
 
-.partner-item {
-  margin-bottom: 3vh;
-  width: 30%;
+.partner-item,
+.partner-item-quad {
+  @apply transition-all duration-300;
+  flex-basis: calc(33.333% - 2rem);
 }
 
 .partner-item-quad {
-  margin-bottom: 3vh;
-  width: 35%;
+  flex-basis: calc(25% - 2rem);
 }
 
-@media only screen and (max-width: 1024px) {
-  .partner-item {
-    width: 45%;
-    margin-bottom: 7vh;
-  }
-}
-
-@media only screen and (max-width: 768px) {
-  .partner-item {
-    width: 80%;
-    margin-bottom: 3vh;
-  }
-
-  .partner-item-quad {
-    width: 80%;
-    margin-bottom: 3vh;
-  }
-}
-
-@keyframes EnterFromBelow {
+/* Animations */
+@keyframes fadeIn {
   from {
-    transform: translate3d(0, 2rem, 0);
     opacity: 0;
   }
-
   to {
-    transform: translate3d(0, 0, 0);
     opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .partner-item,
+  .partner-item-quad {
+    flex-basis: calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .partner-item,
+  .partner-item-quad {
+    flex-basis: 100%;
   }
 }
 </style>

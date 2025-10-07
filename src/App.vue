@@ -11,31 +11,61 @@ export default {
 };
 </script>
 <style lang="css">
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
+/* Optimized font imports - only what we need */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap");
 
-body {
-  scroll-behavior: smooth;
+/* CSS Reset and Base Styles */
+* {
   margin: 0;
   padding: 0;
-  font-size: 30px;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: "Inter", -apple-system, "Roboto", BlinkMacSystemFont, "Segoe UI",
-    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
-  font-weight: 300;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  color: #fff;
+  background: rgb(15, 16, 19);
 }
+/* Global Styles */
 .bn-onboard-custom.bn-onboard-modal {
   z-index: 990;
 }
+
 a {
   text-decoration: none;
-  font-family: "Roboto";
-  color: #fff;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(135deg, #e6007a 0%, #e2539e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .my-notification {
   margin: 10px 5px 5px;

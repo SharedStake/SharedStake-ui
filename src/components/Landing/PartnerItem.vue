@@ -25,26 +25,36 @@ export default {
 
 <style scoped>
 .partner {
-  color: rgba(255, 255, 255, 0.95);
-  display: flex;
-  /* justify-content: center; */
-  flex-direction: column;
-  align-items: center;
+  @apply flex flex-col items-center p-6 rounded-xl transition-all duration-300;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.partner:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(230, 0, 122, 0.3);
+  transform: translateY(-4px);
 }
 
 .header {
-  font-size: 22px;
-  line-height: 31px;
-  font-weight: 300;
-  margin-bottom: 1rem;
+  @apply text-xl font-medium mb-3;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .partner-text {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: rgb(143, 143, 143);
-  width: 60%;
-  text-align: center;
-  min-height: 40px;
+  @apply text-sm text-center mb-4 px-4;
+  color: rgba(255, 255, 255, 0.6);
+  min-height: 48px;
+  line-height: 1.6;
+}
+
+.link {
+  @apply transition-all duration-300;
+  opacity: 0.6;
+}
+
+.link:hover {
+  opacity: 1;
+  transform: translateY(2px);
 }
 </style>
