@@ -3,7 +3,8 @@
   <div class="Root">
     <!-- Maintenance Banner -->
     <div
-      class="maintenance-banner fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4 text-lg font-bold text-center text-white bg-red-600 shadow-lg"
+      :class="{ 'element-hidden': !maintenanceBannerVisible }"
+      class="maintenance-banner fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4 text-lg font-bold text-center text-white bg-red-600 shadow-lg transition-transform duration-500"
     >
       <div class="flex items-center space-x-2">
         <svg class="w-6 h-6 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
@@ -16,7 +17,8 @@
       </div>
     </div>
     <div
-      class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary"
+      :class="{ 'element-hidden-bottom': !footerBannerVisible }"
+      class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary transition-transform duration-500"
     >
       🚀 v2 - Sepolia testnet live now! 🚀 Switch network to Sepolia and try staking/unstaking now for a chance to get an airdrop! 🚀
       <p
@@ -299,9 +301,30 @@ import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
 import ConnectButton from "./components/Common/ConnectButton.vue";
+import { useScrollVisibility } from "./composables/useScrollVisibility";
 
 export default {
   components: { ImageVue, Menu, ConnectButton },
+  setup() {
+    // Use the composable for maintenance banner
+    const { isVisible: maintenanceBannerVisible } = useScrollVisibility({
+      threshold: 50,
+      hideOnScrollDown: true,
+      showOnScrollUp: true
+    });
+
+    // Use the composable for footer banner
+    const { isVisible: footerBannerVisible } = useScrollVisibility({
+      threshold: 50,
+      hideOnScrollDown: true,
+      showOnScrollUp: true
+    });
+
+    return {
+      maintenanceBannerVisible,
+      footerBannerVisible
+    };
+  },
   data() {
     return {
       showNavbar: true,
@@ -393,6 +416,15 @@ export default {
 .navbar.navbar--hidden {
   box-shadow: none;
   transform: translate3d(0, -100%, 0);
+}
+
+/* Shared transition styles for scroll-based hiding */
+.element-hidden {
+  transform: translate3d(0, -100%, 0);
+}
+
+.element-hidden-bottom {
+  transform: translate3d(0, 100%, 0);
 }
 
 .showers {
