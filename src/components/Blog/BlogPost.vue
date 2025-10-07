@@ -198,16 +198,11 @@
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
 import BlogStyles from './BlogStyles.vue';
-import { useSEO } from '@/composables/useSEO.js';
 
 export default {
   name: 'BlogPost',
   components: {
     BlogStyles
-  },
-  setup() {
-    const seo = useSEO();
-    return { seo };
   },
   data() {
     return {
@@ -282,10 +277,27 @@ export default {
     setPageMeta() {
       if (!this.post) return;
       
-      // Use the SEO composable for better meta tag management
-      this.seo.setBlogPostSEO(this.post);
+      // Set page title
+      document.title = `${this.post.title} - SharedStake Blog`;
       
-      // Set additional structured data
+      // Set meta description
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', this.post.meta.description);
+      } else {
+        const meta = document.createElement('meta');
+        meta.name = 'description';
+        meta.content = this.post.meta.description;
+        document.head.appendChild(meta);
+      }
+      
+      // Set Open Graph tags
+      this.setOpenGraphTags();
+      
+      // Set canonical URL
+      this.setCanonicalURL();
+      
+      // Set structured data
       this.setStructuredData();
     },
     setOpenGraphTags() {
