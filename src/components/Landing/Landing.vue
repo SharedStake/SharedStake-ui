@@ -419,7 +419,7 @@
       </div>
     </div>
     <!-- <div class="exp roadMap" v-show="scrolled > 4700"> -->
-      <!-- disable the roadmap as its outdated TODO: new roadmap -->
+      <!-- Roadmap section disabled - outdated content -->
     <div class="exp roadMap" v-show="false">
       <div class="mainBox">
         <div class="exp titleBox">
