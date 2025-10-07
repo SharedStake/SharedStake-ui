@@ -30,23 +30,34 @@
       <!-- Hero Section -->
       <div class="relative pt-32 pb-12 md:pt-36 md:pb-16 px-4">
         <div class="max-w-4xl mx-auto">
-          <!-- Breadcrumb -->
-          <nav class="mb-6 md:mb-8">
+          <!-- Breadcrumb with Schema Markup -->
+          <nav class="mb-6 md:mb-8" itemscope itemtype="https://schema.org/BreadcrumbList">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-gray-400 flex-wrap">
-              <li>
-                <router-link to="/" class="hover:text-white transition-colors">Home</router-link>
+              <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <router-link to="/" class="hover:text-white transition-colors" itemprop="item">
+                  <span itemprop="name">Home</span>
+                </router-link>
+                <meta itemprop="position" content="1" />
               </li>
               <li class="flex items-center">
                 <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                 </svg>
-                <router-link to="/blog" class="hover:text-white transition-colors">Blog</router-link>
+              </li>
+              <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <router-link to="/blog" class="hover:text-white transition-colors" itemprop="item">
+                  <span itemprop="name">Blog</span>
+                </router-link>
+                <meta itemprop="position" content="2" />
               </li>
               <li class="flex items-center">
                 <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                 </svg>
-                <span class="text-white">{{ post.title }}</span>
+              </li>
+              <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span class="text-white" itemprop="name">{{ post.title }}</span>
+                <meta itemprop="position" content="3" />
               </li>
             </ol>
           </nav>
@@ -280,6 +291,9 @@ export default {
       // Set Open Graph tags
       this.setOpenGraphTags();
       
+      // Set canonical URL
+      this.setCanonicalURL();
+      
       // Set structured data
       this.setStructuredData();
     },
@@ -313,6 +327,21 @@ export default {
         meta.content = window.location.href;
         document.head.appendChild(meta);
       }
+    },
+    setCanonicalURL() {
+      const canonicalUrl = `https://sharedstake.org/blog/${this.post.slug}`;
+      
+      // Remove existing canonical link
+      const existingCanonical = document.querySelector('link[rel="canonical"]');
+      if (existingCanonical) {
+        existingCanonical.remove();
+      }
+      
+      // Add new canonical link
+      const canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      canonical.href = canonicalUrl;
+      document.head.appendChild(canonical);
     },
     setStructuredData() {
       const structuredData = {
