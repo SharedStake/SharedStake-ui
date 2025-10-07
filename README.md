@@ -7,9 +7,9 @@ Vue.js implementation of SharedStake DeFi protocol.
 
 ## Setup
 ```bash
-nvm install 20  # Install Node.js 20 LTS
-nvm use 20      # Use Node.js 20 LTS
-yarn install    # Install dependencies
+nvm install --lts  # Install latest Node.js LTS
+nvm use --lts      # Use latest Node.js LTS  
+yarn install       # Install dependencies
 ```
 
 ## Development
@@ -20,7 +20,7 @@ yarn lint     # Code linting
 ```
 
 ## Current Status
-- **Node.js**: 20 LTS (Iron) - Compatible with Amplify
+- **Node.js**: 22 LTS (Jod) - Latest LTS with Amplify Amazon Linux 2023
 - **Framework**: Vue 2.7.16 with Vue CLI 5.x
 - **Web3**: ethers.js v6 (Web3.js fully deprecated)
 - **Build Tools**: PostCSS 8, Tailwind CSS 3, ESLint 8

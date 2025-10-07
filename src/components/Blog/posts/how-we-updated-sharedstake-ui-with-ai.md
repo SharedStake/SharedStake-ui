@@ -588,7 +588,7 @@ This isn't the future of development. This is happening right now. And if you're
 
 | Category | What We Did | Impact |
 |----------|------------|--------|
-| **Node.js** | Migrated from 18 to 20 LTS | Latest stable version, Amplify compatible |
+| **Node.js** | Migrated from 18 to 22 LTS | Latest LTS version with Amplify Amazon Linux 2023 |
 | **PostCSS** | Upgraded from 7 to 8 | Eliminated security vulnerabilities |
 | **Tailwind CSS** | Upgraded from 2 to 3 | Modern utility classes, better performance |
 | **ESLint** | Upgraded from 7 to 8 | Better code quality checks |
@@ -631,7 +631,7 @@ This isn't the future of development. This is happening right now. And if you're
 <br/>
 
 1. **Documentation Matters**: AI initially missed updating docs — human review caught this
-2. **Environment Compatibility**: Node.js 22 wasn't compatible with Amplify's Amazon Linux 2 (GLIBC version issue)
+2. **Environment Compatibility**: Required upgrading Amplify to Amazon Linux 2023 for Node.js 22 support
 3. **Iterative Improvement**: Each upgrade round builds on the previous success
 4. **AI + Human = Best Results**: AI executes fast, humans provide context and catch oversights
 
