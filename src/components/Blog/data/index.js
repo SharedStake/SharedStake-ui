@@ -24,7 +24,6 @@ const loadedPosts = requirePost.keys().map((key) => {
     
     if (lines[0] === '---') {
       let inMeta = false;
-      let metaContent = '';
       
       for (let i = 1; i < lines.length; i++) {
         if (lines[i] === '---') {

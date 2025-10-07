@@ -1,5 +1,7 @@
 <template>
-  <!-- This component only provides global styles for blog posts -->
+  <div style="display: none;">
+    <!-- This component only provides global styles for blog posts -->
+  </div>
 </template>
 
 <script>
@@ -103,7 +105,8 @@ export default {
 
 .blog-link-external::after {
   content: ' ↗';
-  @apply text-xs align-super;
+  @apply text-xs;
+  vertical-align: super;
 }
 
 /* ============================================
@@ -113,7 +116,7 @@ export default {
 .blog-unordered-list,
 .blog-ordered-list {
   @apply mb-6 pl-6 space-y-2;
-  @apply bg-gray-800 bg-opacity-30;
+  background-color: rgba(31, 41, 55, 0.3); /* bg-gray-800 with 30% opacity */
   @apply py-4 pr-4 rounded-lg;
 }
 
@@ -206,7 +209,8 @@ export default {
 .blog-blockquote::before {
   content: '"';
   @apply text-brand-primary text-4xl font-bold;
-  @apply absolute -top-2 left-2 opacity-50;
+  @apply absolute -top-2 left-2;
+  opacity: 0.5;
 }
 
 .blog-blockquote p {
@@ -224,7 +228,7 @@ export default {
 .blog-table-wrapper {
   @apply my-6 overflow-x-auto;
   @apply rounded-lg border border-gray-700;
-  @apply bg-gray-800 bg-opacity-50;
+  background-color: rgba(31, 41, 55, 0.5); /* bg-gray-800 with 50% opacity */
 }
 
 .blog-table {
@@ -234,7 +238,7 @@ export default {
 }
 
 .blog-table-head {
-  @apply bg-gray-900 bg-opacity-80;
+  background-color: rgba(17, 24, 39, 0.8); /* bg-gray-900 with 80% opacity */
 }
 
 .blog-table-header {
@@ -266,7 +270,7 @@ export default {
 }
 
 .blog-table-row:hover {
-  @apply bg-gray-700 bg-opacity-30;
+  background-color: rgba(55, 65, 81, 0.3); /* bg-gray-700 with 30% opacity */
 }
 
 /* ============================================
@@ -303,7 +307,7 @@ export default {
 
 .blog-error {
   @apply p-4 my-4;
-  @apply bg-red-900 bg-opacity-30;
+  background-color: rgba(127, 29, 29, 0.3); /* bg-red-900 with 30% opacity */
   @apply border border-red-700 rounded-lg;
   @apply text-red-400;
 }
