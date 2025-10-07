@@ -15,7 +15,19 @@ const loadedPosts = requirePost.keys().map((key) => {
   
   // Handle .md files (markdown with frontmatter)
   if (key.endsWith('.md')) {
-    const content = mod.default || mod;
+    // Get the raw content from the module
+    let content = mod;
+    
+    // If mod has a default export, use that
+    if (mod && typeof mod === 'object' && 'default' in mod) {
+      content = mod.default;
+    }
+    
+    // Ensure content is a string
+    if (typeof content !== 'string') {
+      console.error('Invalid markdown content for', key, 'Type:', typeof content, 'Content:', content);
+      return null;
+    }
     const lines = content.split('\n');
     
     // Find frontmatter (between --- markers)
@@ -82,7 +94,7 @@ const loadedPosts = requirePost.keys().map((key) => {
   }
   
   return mod;
-});
+}).filter(post => post !== null && post !== undefined);
 
 // Sort by publishDate desc by default
 loadedPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
