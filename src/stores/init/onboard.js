@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
-import { useWalletStore } from '../../stores/wallet'
-
+import { useWalletStore } from '../wallet'
 
 // import { init, useOnboard } from '@web3-onboard/vue'
 import injectedModule from '@web3-onboard/injected-wallets'
@@ -14,6 +13,7 @@ import Onboard from '@web3-onboard/core'
 // const CONTACT_EMAIL = "chimera_defi@protonmail.com";
 // export const RPC_URL = `https://mainnet.infura.io/v3/${INFURA_KEY}`;
 export const RPC_URL = process.env.VUE_APP_RPC_URL || "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd"
+
 // const APP_NAME = "SharedStake";
 const injected = injectedModule()
 // init({
@@ -90,6 +90,7 @@ const onboard = Onboard({
 
 // const onboard = Onboard({
 //   dappId: "5f2bd7eb-6a4d-43d0-8569-8de42386cb2d", // [String] The API key created by step one above
+
 //   networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
 //   darkMode: true,
 //   subscriptions: {

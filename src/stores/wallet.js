@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { changeWallets } from '../store/init/onboard'
+import { changeWallets } from './init/onboard'
 
 const networks = {
     0: "Olympic",
