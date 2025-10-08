@@ -15,14 +15,7 @@ const loadedPosts = requirePost.keys().map((key) => {
   
   // Handle .md files (markdown with frontmatter)
   if (key.endsWith('.md')) {
-    // With esModule: false, raw-loader returns the string directly
-    let content = mod;
-    
-    // Ensure content is a string
-    if (typeof content !== 'string') {
-      console.error('Markdown content is not a string for', key, 'Type:', typeof content);
-      return null;
-    }
+    const content = mod.default || mod;
     const lines = content.split('\n');
     
     // Find frontmatter (between --- markers)
@@ -38,25 +31,28 @@ const loadedPosts = requirePost.keys().map((key) => {
           break;
         }
         
+        const line = lines[i];
+        const trimmedLine = line.trim();
+        
         // Handle meta section with nested content
-        if (lines[i].trim() === 'meta:') {
+        if (trimmedLine === 'meta:') {
           inMeta = true;
           frontmatter.meta = {};
           continue;
         }
         
-        const line = lines[i];
+        // Check if this line is indented (part of meta section)
         const indentLevel = line.search(/\S/);
-        
         if (inMeta && indentLevel >= 2) {
           // Parse meta properties
-          const [key, ...valueParts] = line.trim().split(':');
+          const [key, ...valueParts] = trimmedLine.split(':');
           if (key && valueParts.length > 0) {
             let value = valueParts.join(':').trim();
             value = value.replace(/^["']|["']$/g, ''); // Remove quotes
             frontmatter.meta[key.trim()] = value;
           }
         } else {
+          // Not in meta section, parse as regular frontmatter
           inMeta = false;
           const [key, ...valueParts] = line.split(':');
           if (key && valueParts.length > 0) {
