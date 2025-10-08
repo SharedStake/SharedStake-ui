@@ -52,6 +52,7 @@ module.exports = {
         },
         resolve: {
             alias: {
+                '@': path.resolve(__dirname, 'src'),
                 '@web3-onboard/core': path.resolve(__dirname, 'node_modules/@web3-onboard/core/dist/index.js'),
                 '@web3-onboard/vue': path.resolve(__dirname, 'node_modules/@web3-onboard/vue/dist/index.js'),
                 '@ethereumjs/util': path.resolve(__dirname, 'node_modules/@ethereumjs/util/dist/index.browser.js'),
