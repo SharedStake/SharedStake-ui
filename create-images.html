@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Missing Images</title>
+</head>
+<body>
+    <canvas id="ogCanvas" width="1200" height="630" style="border: 1px solid #ccc;"></canvas>
+    <canvas id="twitterCanvas" width="1200" height="630" style="border: 1px solid #ccc;"></canvas>
+    <canvas id="faviconCanvas" width="32" height="32" style="border: 1px solid #ccc;"></canvas>
+    
+    <script>
+        // Create OG Image (1200x630)
+        const ogCanvas = document.getElementById('ogCanvas');
+        const ogCtx = ogCanvas.getContext('2d');
+        
+        // Dark background
+        ogCtx.fillStyle = '#1f2937';
+        ogCtx.fillRect(0, 0, 1200, 630);
+        
+        // Add title
+        ogCtx.fillStyle = '#ffffff';
+        ogCtx.font = 'bold 48px Arial';
+        ogCtx.textAlign = 'center';
+        ogCtx.fillText('SharedStake', 600, 200);
+        
+        // Add subtitle
+        ogCtx.font = '32px Arial';
+        ogCtx.fillText('Ethereum Liquid Staking Platform', 600, 280);
+        
+        // Add value proposition
+        ogCtx.font = '24px Arial';
+        ogCtx.fillText('Earn 4-8% APR • No 32 ETH Minimum • Full Liquidity', 600, 350);
+        
+        // Add ETH symbol
+        ogCtx.font = 'bold 72px Arial';
+        ogCtx.fillStyle = '#ef4444';
+        ogCtx.fillText('Ξ', 600, 450);
+        
+        // Create Twitter Card Image (1200x630)
+        const twitterCanvas = document.getElementById('twitterCanvas');
+        const twitterCtx = twitterCanvas.getContext('2d');
+        
+        // Dark background
+        twitterCtx.fillStyle = '#1f2937';
+        twitterCtx.fillRect(0, 0, 1200, 630);
+        
+        // Add title
+        twitterCtx.fillStyle = '#ffffff';
+        twitterCtx.font = 'bold 52px Arial';
+        twitterCtx.textAlign = 'center';
+        twitterCtx.fillText('SharedStake', 600, 200);
+        
+        // Add subtitle
+        twitterCtx.font = '36px Arial';
+        twitterCtx.fillText('Ethereum Liquid Staking', 600, 280);
+        
+        // Add value proposition
+        twitterCtx.font = '28px Arial';
+        twitterCtx.fillText('4-8% APR • No 32 ETH Minimum • Full Liquidity', 600, 350);
+        
+        // Add ETH symbol
+        twitterCtx.font = 'bold 80px Arial';
+        twitterCtx.fillStyle = '#ef4444';
+        twitterCtx.fillText('Ξ', 600, 450);
+        
+        // Create Favicon (32x32)
+        const faviconCanvas = document.getElementById('faviconCanvas');
+        const faviconCtx = faviconCanvas.getContext('2d');
+        
+        // Dark background
+        faviconCtx.fillStyle = '#1f2937';
+        faviconCtx.fillRect(0, 0, 32, 32);
+        
+        // Add ETH symbol
+        faviconCtx.fillStyle = '#ef4444';
+        faviconCtx.font = 'bold 20px Arial';
+        faviconCtx.textAlign = 'center';
+        faviconCtx.fillText('Ξ', 16, 22);
+        
+        // Function to download canvas as image
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Add download buttons
+        setTimeout(() => {
+            downloadCanvas(ogCanvas, 'og-image.jpg');
+            downloadCanvas(twitterCanvas, 'twitter-card.jpg');
+            downloadCanvas(faviconCanvas, 'favicon.ico');
+        }, 1000);
+    </script>
+</body>
+</html>
