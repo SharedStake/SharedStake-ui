@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Optimized CI Pipeline
 
 on:
   push:
@@ -6,37 +6,14 @@ on:
   pull_request:
     branches: [ main, develop ]
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [22.x]
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-        
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-      
-    - name: Run linting
-      run: yarn lint
-      
-    - name: Run type checking
-      run: yarn type-check
-      
-    - name: Build application
-      run: yarn build
+env:
+  NODE_VERSION: '22.x'
+  YARN_CACHE_FOLDER: ~/.yarn-cache
 
-  security:
+jobs:
+  # Fast feedback job - runs linting and type checking in parallel
+  quality-checks:
+    name: Quality Checks
     runs-on: ubuntu-latest
     
     steps:
@@ -46,12 +23,130 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22.x'
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
         
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: yarn install --frozen-lockfile --prefer-offline
+      
+    # Run linting and type checking in parallel
+    - name: Run linting
+      run: yarn lint
+      
+    - name: Run type checking
+      run: yarn type-check
+
+  # Build job - only runs if quality checks pass
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
+        
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile --prefer-offline
+      
+    - name: Build application
+      run: yarn build
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+        retention-days: 7
+
+  # Security audit - runs in parallel with other jobs
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
+        
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile --prefer-offline
       
     - name: Run security audit
       run: yarn audit --level moderate
       continue-on-error: true
+      
+    - name: Check for known vulnerabilities
+      run: |
+        if yarn audit --level moderate --json | jq -e '.vulnerabilities | length > 0' > /dev/null; then
+          echo "⚠️ Security vulnerabilities found. Please review and update dependencies."
+          yarn audit --level moderate
+          exit 1
+        else
+          echo "✅ No security vulnerabilities found."
+        fi
+      continue-on-error: true
+
+  # Performance check - only for main branch
+  performance:
+    name: Performance Check
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: Install http-server
+      run: npm install -g http-server
+      
+    - name: Start server and check bundle size
+      run: |
+        # Start server in background
+        http-server dist -p 8080 &
+        SERVER_PID=$!
+        
+        # Wait for server to start
+        sleep 3
+        
+        # Check if server is running
+        if curl -f http://localhost:8080 > /dev/null 2>&1; then
+          echo "✅ Build is serving correctly"
+          
+          # Check bundle size
+          BUNDLE_SIZE=$(du -sh dist/ | cut -f1)
+          echo "📦 Bundle size: $BUNDLE_SIZE"
+          
+          # Kill server
+          kill $SERVER_PID
+        else
+          echo "❌ Build failed to serve"
+          kill $SERVER_PID
+          exit 1
+        fi

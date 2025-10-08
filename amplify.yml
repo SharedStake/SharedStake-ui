@@ -3,17 +3,88 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install --lts
-        - nvm use --lts
-        - npm install -g yarn
-        - yarn install
+        # Use Node.js 22 LTS (matches CI and package.json engines)
+        - nvm install 22
+        - nvm use 22
+        
+        # Install yarn globally with version pinning
+        - npm install -g yarn@1.22.22
+        
+        # Clear any existing cache issues
+        - yarn cache clean
+        
+        # Install dependencies with optimizations
+        - yarn install --frozen-lockfile --prefer-offline --network-timeout 100000
+        
+        # Verify installation
+        - yarn --version
+        - node --version
+        
     build:
       commands:
+        # Run linting first (fail fast on code quality issues)
+        - echo "🔍 Running linting checks..."
+        - yarn lint
+        
+        # Run type checking (catch TypeScript errors early)
+        - echo "🔧 Running type checking..."
+        - yarn type-check
+        
+        # Build the application with optimizations
+        - echo "🏗️ Building application..."
         - yarn build
+        
+        # Verify build output
+        - echo "✅ Build completed successfully"
+        - ls -la dist/
+        
+    postBuild:
+      commands:
+        # Generate build report
+        - echo "📊 Build Summary:"
+        - echo "Build size: $(du -sh dist/ | cut -f1)"
+        - echo "Number of files: $(find dist/ -type f | wc -l)"
+        
+        # Health check - ensure index.html exists
+        - test -f dist/index.html && echo "✅ index.html found" || (echo "❌ index.html missing" && exit 1)
+        
+        # Optional: Run basic accessibility check if pa11y is available
+        - |
+          if command -v pa11y >/dev/null 2>&1; then
+            echo "🔍 Running accessibility check..."
+            pa11y http://localhost:8080 --reporter cli || echo "⚠️ Accessibility check failed (non-blocking)"
+          else
+            echo "ℹ️ Accessibility check skipped (pa11y not installed)"
+          fi || true
+
   artifacts:
     baseDirectory: dist
     files:
       - '**/*'
+    
   cache:
     paths:
       - node_modules/**/*
+      - ~/.yarn-cache/**/*
+      - ~/.npm/**/*
+      
+  environment:
+    variables:
+      # Optimize build performance
+      NODE_OPTIONS: '--max-old-space-size=4096'
+      
+      # Skip source maps for faster builds in production
+      GENERATE_SOURCEMAP: 'false'
+      
+      # Optimize webpack builds
+      NODE_ENV: 'production'
+      
+      # Enable build optimizations
+      VUE_CLI_SKIP_ESLINT: 'false'  # Keep ESLint for quality
+      
+      # Memory optimization for large builds
+      UV_THREADPOOL_SIZE: '16'
+      
+      # Yarn optimizations
+      YARN_CACHE_FOLDER: '~/.yarn-cache'
+      YARN_ENABLE_IMMUTABLE_INSTALLS: 'false'
