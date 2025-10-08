@@ -35,12 +35,12 @@
         <DropdownArrow />
       </DropdownItemAnchor>
       <DropdownGroup>
-        <DropdownItemAnchor href="https://docs.sharedstake.finance/">
-          Docs
-        </DropdownItemAnchor>
         <DropdownItemRouter to="/blog">
           Blog
         </DropdownItemRouter>
+        <DropdownItemAnchor href="https://docs.sharedstake.finance/">
+          Docs
+        </DropdownItemAnchor>
         <DropdownItemAnchor href="https://snapshot.org/#/sharedstake.eth">
           DAO
         </DropdownItemAnchor>
