@@ -2,14 +2,14 @@
   <div class="Landing">
     <!-- Animated background elements -->
     <div class="animated-bg">
-      <div class="gradient-orb orb-1"></div>
-      <div class="gradient-orb orb-2"></div>
-      <div class="gradient-orb orb-3"></div>
+      <div class="gradient-orb orb-1" />
+      <div class="gradient-orb orb-2" />
+      <div class="gradient-orb orb-3" />
       <div class="floating-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-        <div class="shape shape-4"></div>
+        <div class="shape shape-1" />
+        <div class="shape shape-2" />
+        <div class="shape shape-3" />
+        <div class="shape shape-4" />
       </div>
     </div>
     <div
