@@ -5,44 +5,43 @@
     >
       <span
         class="absolute p-1 px-3 text-sm font-bold text-gray-200 transform -translate-x-1/2 rounded-full opacity-95 left-1/2 -top-3 bg-brand-primary"
-        >Beta</span
-      >
+      >Beta</span>
 
       <Chooser
-        :routes="this.routes"
-        :currentActive="this.title == 'Wrap' ? 0 : 1"
+        :routes="routes"
+        :current-active="title == 'Wrap' ? 0 : 1"
       />
 
       <div class="flex flex-col items-center justify-center">
         <header class="pb-3 my-4 text-center">
           <h1 class="text-3xl font-semibold">
-            {{ this.title }}
+            {{ title }}
           </h1>
           <p class="text-sm text-gray-300">
-            {{ this.descr }}
+            {{ descr }}
           </p>
         </header>
 
         <!-- Progress - show completed steps status -->
         <div
-          class="pb-3 mb-6 border-b border-gray-700"
           v-if="userWalletIsConnected"
+          class="pb-3 mb-6 border-b border-gray-700"
         >
           <aside class="flex flex-wrap justify-center gap-3 md:gap-6">
             <Step
               :title="`Approve ${inputTokenName}`"
-              :completed="this.depositStage"
+              :completed="depositStage"
               step="1"
             />
             <Step
               :title="`Wrap ${inputTokenName}`"
-              :completed="this.completed"
+              :completed="completed"
               step="2"
             />
           </aside>
         </div>
 
-        <label v-if="this.depositStage || this.approvalStage">
+        <label v-if="depositStage || approvalStage">
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
             How much {{ inputTokenName }} would you like to stake for
             {{ outputTokenName }}?
@@ -54,7 +53,7 @@
               :value="amount"
               class="max-w-xs ml-2 text-white bg-transparent border-none outline-none"
               :placeholder="
-                this.userTokenBalance
+                userTokenBalance
                   .div(10 ** 18)
                   .decimalPlaces(6)
                   .toString()
@@ -64,14 +63,14 @@
                   ? 0
                   : $event.target.value
               "
-            />
+            >
             <span class="text-sm">
               {{ inputTokenName }}
             </span>
             <button
-              @click="handleFillMaxAmount"
               v-if="true"
               class=" px-1 py-0.5 text-xs font-semibold bg-white rounded text-brand-primary"
+              @click="handleFillMaxAmount"
             >
               max
             </button>
@@ -83,9 +82,15 @@
         </label>
 
         <!-- Action buttons -->
-        <div class="my-6" v-if="!completed">
+        <div
+          v-if="!completed"
+          class="my-6"
+        >
           <p v-if="loading">
-            <ImageVue :src="'loading.svg'" :size="'45px'" />
+            <ImageVue
+              :src="'loading.svg'"
+              :size="'45px'"
+            />
           </p>
 
           <ConnectButton v-else-if="!userConnectedWalletAddress" />
@@ -103,7 +108,7 @@
               v-else-if="stage == 'approvalStage'"
               :ABI_token="sgETH"
               :ABI_spender="wsgETH"
-              :amount="this.amount"
+              :amount="amount"
               :cb="getUserApproved"
             />
 
@@ -111,7 +116,7 @@
               v-else-if="stage == 'depositStage'"
               :click="handleDeposit"
             >
-              <span> {{ this.title }}</span>
+              <span> {{ title }}</span>
             </dapp-tx-btn>
           </template>
         </div>
@@ -123,7 +128,7 @@
 <script>
 import BN from "bignumber.js";
 import { wsgETH, sgETH } from "@/contracts";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
@@ -148,6 +153,12 @@ export default {
     ApprovalButton,
     Chooser,
     DappTxBtn,
+  },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
   },
 
   data() {
@@ -174,22 +185,10 @@ export default {
     };
   },
 
-  watch: {
-    userConnectedWalletAddress: {
-      immediate: true,
-      async handler(address) {
-        // log the amount of veth2 the user has deposited for withdrawal
-        if (address) {
-          this.loading = true;
-          await this.refreshBalances();
-          this.loading = false;
-        }
-      },
-    },
-  },
-
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
 
     userHasTokenBalance() {
       return this.userTokenBalance.gt(0);
@@ -243,6 +242,20 @@ export default {
       if (this.dev) console.log("State :", state);
       if (state.depositStage && !state.approvalStage) return "depositStage";
       return "approvalStage";
+    },
+  },
+
+  watch: {
+    userConnectedWalletAddress: {
+      immediate: true,
+      async handler(address) {
+        // log the amount of veth2 the user has deposited for withdrawal
+        if (address) {
+          this.loading = true;
+          await this.refreshBalances();
+          this.loading = false;
+        }
+      },
     },
   },
 

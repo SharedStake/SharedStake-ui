@@ -1,17 +1,24 @@
 <template>
   <span>
     <ConnectButton v-if="!userConnectedWalletAddress" />
-    <SharedButton v-else-if="!loading" @click="execTx" :disabled="disabled">
+    <SharedButton
+      v-else-if="!loading"
+      :disabled="disabled"
+      @click="execTx"
+    >
       <slot />
     </SharedButton>
     <p v-else-if="loading">
-      <ImageVue :src="'loading.svg'" :size="'45px'" />
+      <ImageVue
+        :src="'loading.svg'"
+        :size="'45px'"
+      />
     </p>
   </span>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import SharedButton from "./SharedButton.vue";
 import {
   notifyHandler,
@@ -27,8 +34,14 @@ BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "DappTxBtn",
-  props: ["click", "cb", "chosenGas", "defaultGas", "disabled"],
   components: { SharedButton, ImageVue, ConnectButton },
+  props: ["click", "cb", "chosenGas", "defaultGas", "disabled"],
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data() {
     return {
       gasPrices: {},
@@ -37,16 +50,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
     gasPrice() {
       return this.chosenGas
         ? this.chosenGas
         : this.gasPrices[this.defaultGas ? this.defaultGas : "medium"];
     },
-  },
-
-  mounted: async function () {
-    this.gasPrices = await getCurrentGasPrices();
   },
 
   watch: {
@@ -56,6 +67,10 @@ export default {
         this.gasPrices = await getCurrentGasPrices();
       },
     },
+  },
+
+  mounted: async function () {
+    this.gasPrices = await getCurrentGasPrices();
   },
 
   methods: {

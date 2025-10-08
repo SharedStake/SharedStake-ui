@@ -1,12 +1,17 @@
 <template>
-  <div class="gauge" v-show="showGauge">
+  <div
+    v-show="showGauge"
+    class="gauge"
+  >
     <div class="explanation">
-      <div class="title">SharedStaked SGEth</div>
+      <div class="title">
+        SharedStaked SGEth
+      </div>
       <div class="content">
         Total of {{ ethDeposited }}ETH has been staked to SharedStake so far.
-        <br />
+        <br>
         {{ contractEtherLimit }}ETH is required (for
-        {{ numOfValidators }} validators).<br />
+        {{ numOfValidators }} validators).<br>
         When ETH is deposited into the SharedDeposit contract, a
         Validator-Share-ETH2 / SharedStake Governed Ether token (SGEth) is
         minted. SGEth is then optionally wrapped into wsgETH to earn interest
@@ -17,7 +22,7 @@
       :loading="loading"
       :progress="contractDepositRatio"
       :legend-value="ethDeposited"
-      :legendFormatter="
+      :legend-formatter="
         ({ currentValue }) =>
           new Intl.NumberFormat('en-US').format(currentValue)
       "
@@ -28,26 +33,34 @@
       color-fill="#181818"
       empty-color="#181818"
       empty-color-fill="#181818"
-      lineMode="in"
+      line-mode="in"
       animation="reverse 700 400"
-      fontSize="2rem"
+      font-size="2rem"
       font-color="white"
- 
     >
-      <div slot="legend-value" class=" text-sm">
-        / {{ maxEthDepositOnContract.toLocaleString("en-US") }}
-      </div>
+      <template #legend-value>
+        <div class=" text-sm">
+          / {{ maxEthDepositOnContract.toLocaleString("en-US") }}
+        </div>
+      </template>
 
-      <div slot="legend-caption" class="flex flex-row gap-2">
-        <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
-        <div class="blue">ETH Staked</div>
-      </div>
+      <template #legend-caption>
+        <div class="flex flex-row gap-2">
+          <ImageVue
+            :src="'tokens/eth-logo.png'"
+            :size="'20px'"
+          />
+          <div class="blue">
+            ETH Staked
+          </div>
+        </div>
+      </template>
     </vep>
   </div>
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 import { validator } from "@/contracts";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });

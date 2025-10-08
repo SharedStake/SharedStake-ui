@@ -2,45 +2,47 @@
   <div>
     <div id="mc_embed_signup">
       <form
+        id="mc-embedded-subscribe-form"
         action="https://sharedstake.us1.list-manage.com/subscribe/post?u=6cb6b636781c4fcc0b7cbccf1&amp;id=1e3ebab5ba"
         method="post"
-        id="mc-embedded-subscribe-form"
         name="mc-embedded-subscribe-form"
         class="validate"
         target="_blank"
         novalidate
       >
         <div id="mc_embed_signup_scroll">
-          
           <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-          <div style="position: absolute; left: -5000px" aria-hidden="true">
+          <div
+            style="position: absolute; left: -5000px"
+            aria-hidden="true"
+          >
             <input
               type="text"
               name="b_6cb6b636781c4fcc0b7cbccf1_1e3ebab5ba"
               tabindex="-1"
               value=""
-            />
+            >
           </div>
-            <div class="subscribe">
-                <div class="input-container">
-                    <input
-                        type="email"
-                        value=""
-                        name="EMAIL"
-                        class="email"
-                        id="mce-EMAIL"
-                        placeholder="email address"
-                        required
-                    />
-                    <input
-                        type="submit"
-                        value="Subscribe"
-                        name="subscribe"
-                        id="mc-embedded-subscribe"
-                        class="submit-button"
-                    />
-                </div>
+          <div class="subscribe">
+            <div class="input-container">
+              <input
+                id="mce-EMAIL"
+                type="email"
+                value=""
+                name="EMAIL"
+                class="email"
+                placeholder="email address"
+                required
+              >
+              <input
+                id="mc-embedded-subscribe"
+                type="submit"
+                value="Subscribe"
+                name="subscribe"
+                class="submit-button"
+              >
             </div>
+          </div>
         </div>
       </form>
     </div>

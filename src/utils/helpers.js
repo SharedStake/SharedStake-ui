@@ -36,5 +36,5 @@ class Interval {
         }
     }
 }
-module.exports.interval = new Interval();
-module.exports.timeout = timeout;
+export const interval = new Interval();
+export { timeout };

@@ -6,7 +6,7 @@
           { text: 'Stake', cb: chooseCb },
           { text: 'Unstake', cb: chooseCb },
         ]"
-        :currentActive="0"
+        :current-active="0"
       />
 
       <div class="stakePage">
@@ -16,6 +16,7 @@
               <input
                 class="token-amount-input"
                 inputmode="decimal"
+                v-model="Damount"
                 title="Token Amount"
                 autocomplete="off"
                 autocorrect="off"
@@ -26,19 +27,26 @@
                 maxlength="39"
                 spellcheck="false"
                 value=""
-                v-model="Damount"
-              />
+              >
               <div class="ant-col">
                 {{ isDeposit ? " ETH" : get_wsgETH ? "wsgETH" : "sgETH" }}
               </div>
             </div>
-            <div class="balance" id="balance" @click="onMAX">
+            <div
+              id="balance"
+              class="balance"
+              @click="onMAX"
+            >
               wallet: {{ balance }}
             </div>
             <div :class="isDeposit ? 'background2' : 'background3'" />
           </div>
         </div>
-        <ImageVue class="sPElement" :src="'down.png'" :size="'30px'" />
+        <ImageVue
+          class="sPElement"
+          :src="'down.png'"
+          :size="'30px'"
+        />
         <div class="sPElement input">
           <div class="inputBody">
             <div class="flex flex-row items-center justify-evenly">
@@ -60,16 +68,20 @@
                       ? ethTowsgETH
                       : (Damount / 32) * 32
                     : get_wsgETH
-                    ? willGet
-                    : (Damount / 32) * (32 + adminFee)
+                      ? willGet
+                      : (Damount / 32) * (32 + adminFee)
                 "
                 readonly
-              />
+              >
               <div class="ant-col">
                 {{ isDeposit ? (get_wsgETH ? "wsgETH" : "sgETH") : "ETH" }}
               </div>
             </div>
-            <div class="balance" id="balance" @click="onMAX">
+            <div
+              id="balance"
+              class="balance"
+              @click="onMAX"
+            >
               wallet: {{ otherBalance }}
             </div>
             <div :class="isDeposit ? 'background3' : 'background2'" />
@@ -100,7 +112,7 @@
                 cb: updateGasCb,
               },
             ]"
-            :currentActive="1" 
+            :current-active="1" 
           />
           <!-- Default to medium gas -->
         </div>
@@ -108,14 +120,12 @@
           <span id="gas">
             <input
               id="get-wsgETH"
+              v-model="get_wsgETH"
               type="checkbox"
               name="get-wsgETH"
-              v-model="get_wsgETH"
-            />
-            <label for="get-wsgETH"
-              >{{ isDeposit ? "Get" : "Use" }} Wrapped SgETH (interest
-              bearing)</label
             >
+            <label for="get-wsgETH">{{ isDeposit ? "Get" : "Use" }} Wrapped SgETH (interest
+              bearing)</label>
           </span>
         </div>
 
@@ -123,13 +133,13 @@
           v-if="
             !isDeposit &&
               get_wsgETH &&
-              this.enoughFundsInExitPool &&
-              !this.enoughApproved
+              enoughFundsInExitPool &&
+              !enoughApproved
           "
           :ABI_token="wsgETH"
           :ABI_spender="validator"
-          :amount="this.Damount"
-          :cb="this.getUserApprovedwsgEth"
+          :amount="Damount"
+          :cb="getUserApprovedwsgEth"
           class="StakeButton"
         />
         <dapp-tx-btn
@@ -188,12 +198,12 @@ import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ DECIMAL_PLACES: 5 })
 BN.config({ EXPONENTIAL_AT: 100 });
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 
 import { validator, sgETH, wsgETH } from "@/contracts";
 
-import ImageVue from "../Handlers/ImageVue";
-import StakeGauge from "./StakeGauge";
+import ImageVue from "../Handlers/ImageVue.vue";
+import StakeGauge from "./StakeGauge.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
@@ -203,6 +213,12 @@ const enableStaking = true;
 
 export default {
   components: { ImageVue, StakeGauge, ApprovalButton, Chooser, DappTxBtn },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data: () => ({
     buttonText: enableStaking ? "Enter an amount" : "Currently disabled",
     BNamount: BN(0),
@@ -238,15 +254,10 @@ export default {
     userWSGETHBal: BN(0),
     wsgETHRedemptionPrice: BN(0),
   }),
-  mounted: async function() {
-    // Polling blocknative gas API
-    this.gas = await getCurrentGasPrices();
-    this.chosenGas = this.gas.medium;
-    this.loading = false;
-    await this.initializeData();
-  },
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
     enoughFundsInExitPool() {
       return this.BNamount.lte(this.contractBal);
     },
@@ -270,6 +281,89 @@ export default {
         .toFixed(6);
       return c;
     },
+  },
+  watch: {
+    Damount: function(newValue, oldVal) {
+      if (newValue.length > 40) {
+        this.Damount = oldVal;
+        this.amountCheck();
+        return;
+      }
+      if (newValue[newValue.length - 1] == 0) {
+        this.Damount = newValue;
+        this.BNamount = BN(this.Damount).multipliedBy(1e18);
+        this.amountCheck();
+        return;
+      }
+      if (
+        newValue[newValue.length - 1] === "." &&
+        newValue[newValue.length - 2] !== "."
+      ) {
+        this.Damount = newValue;
+        // this.BNamount =    BN(0);
+        this.amountCheck();
+        return;
+      }
+      if (isNaN(newValue)) {
+        this.Damount = this.BNamount.dividedBy(1e18).toString();
+        return;
+      }
+      if (!newValue) {
+        this.Damount = 0;
+      } else {
+        this.Damount = newValue;
+      }
+      this.BNamount = BN(this.Damount).multipliedBy(1e18);
+      this.Damount = this.BNamount.dividedBy(1e18).toString();
+      this.amountCheck();
+    },
+    get_wsgETH: async function() {
+      await this.initializeData();
+    },
+    isDeposit: function(val) {
+      let balance = val ? this.EthBal : this.vEth2Bal;
+      this.balance = balance.dividedBy(1e18).toFixed(6);
+      let otherBalance = val ? this.vEth2Bal : this.EthBal;
+      this.otherBalance = otherBalance.dividedBy(1e18).toFixed(6);
+      this.Damount = "";
+      
+      this.buttonText = enableStaking ? "Enter an amount" : "Currently disabled";
+      // this.buttonText = "Enter an amount";
+
+      // this.buttonText = "Currently disabled";
+    },
+    validInput: function(val) {
+      if (!val) {
+        if (this.Damount == 0) {
+          this.buttonText = "Enter an amount";
+        }
+        if (this.Damount < 0) {
+          this.buttonText = "input is too small";
+          return;
+        }
+      // this.buttonText = "Currently disabled";
+      }
+      if (val) {
+        if (this.isDeposit) this.buttonText = "Stake";
+        else this.buttonText = "Unstake";
+      }
+    },
+    async userAddress(newVal) {
+      if (newVal) {
+        this.buttonText = "Enter an amount";
+        // this.buttonText = "Currently disabled";
+        await this.initializeData();
+      } else {
+        this.buttonText = "Connect to wallet ↗";
+      }
+    },
+  },
+  mounted: async function() {
+    // Polling blocknative gas API
+    this.gas = await getCurrentGasPrices();
+    this.chosenGas = this.gas.medium;
+    this.loading = false;
+    await this.initializeData();
   },
   methods: {
     async chooseCb(index) {
@@ -524,82 +618,6 @@ export default {
       }
       let userApproved = await wsgETHContract.allowance(this.userAddress, validatorContract.target);
       this.userApprovedwsgETH = BN(userApproved);
-    },
-  },
-  watch: {
-    Damount: function(newValue, oldVal) {
-      if (newValue.length > 40) {
-        this.Damount = oldVal;
-        this.amountCheck();
-        return;
-      }
-      if (newValue[newValue.length - 1] == 0) {
-        this.Damount = newValue;
-        this.BNamount = BN(this.Damount).multipliedBy(1e18);
-        this.amountCheck();
-        return;
-      }
-      if (
-        newValue[newValue.length - 1] === "." &&
-        newValue[newValue.length - 2] !== "."
-      ) {
-        this.Damount = newValue;
-        // this.BNamount =    BN(0);
-        this.amountCheck();
-        return;
-      }
-      if (isNaN(newValue)) {
-        this.Damount = this.BNamount.dividedBy(1e18).toString();
-        return;
-      }
-      if (!newValue) {
-        this.Damount = 0;
-      } else {
-        this.Damount = newValue;
-      }
-      this.BNamount = BN(this.Damount).multipliedBy(1e18);
-      this.Damount = this.BNamount.dividedBy(1e18).toString();
-      this.amountCheck();
-    },
-    get_wsgETH: async function() {
-      await this.initializeData();
-    },
-    isDeposit: function(val) {
-      let balance = val ? this.EthBal : this.vEth2Bal;
-      this.balance = balance.dividedBy(1e18).toFixed(6);
-      let otherBalance = val ? this.vEth2Bal : this.EthBal;
-      this.otherBalance = otherBalance.dividedBy(1e18).toFixed(6);
-      this.Damount = "";
-      
-      this.buttonText = enableStaking ? "Enter an amount" : "Currently disabled";
-      // this.buttonText = "Enter an amount";
-
-      // this.buttonText = "Currently disabled";
-    },
-    validInput: function(val) {
-      if (!val) {
-        if (this.Damount == 0) {
-          this.buttonText = "Enter an amount";
-        }
-        if (this.Damount < 0) {
-          this.buttonText = "input is too small";
-          return;
-        }
-      // this.buttonText = "Currently disabled";
-      }
-      if (val) {
-        if (this.isDeposit) this.buttonText = "Stake";
-        else this.buttonText = "Unstake";
-      }
-    },
-    async userAddress(newVal) {
-      if (newVal) {
-        this.buttonText = "Enter an amount";
-        // this.buttonText = "Currently disabled";
-        await this.initializeData();
-      } else {
-        this.buttonText = "Connect to wallet ↗";
-      }
     },
   },
 };

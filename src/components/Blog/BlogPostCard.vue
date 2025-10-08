@@ -7,14 +7,21 @@
         : 'bg-gray-800/50 hover:bg-gray-800/80 rounded-xl p-6'
     ]"
   >
-    <div v-if="variant === 'featured'" class="p-6">
+    <div
+      v-if="variant === 'featured'"
+      class="p-6"
+    >
       <div class="flex items-center mb-4">
         <span class="bg-brand-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
           Featured
         </span>
       </div>
-      <h3 class="text-xl font-bold mb-3 line-clamp-2">{{ post.title }}</h3>
-      <p class="text-gray-300 mb-4 line-clamp-3">{{ post.excerpt }}</p>
+      <h3 class="text-xl font-bold mb-3 line-clamp-2">
+        {{ post.title }}
+      </h3>
+      <p class="text-gray-300 mb-4 line-clamp-3">
+        {{ post.excerpt }}
+      </p>
       <div class="flex items-center justify-between text-sm text-gray-400">
         <span>{{ formatDate(post.publishDate) }}</span>
         <span>{{ post.author }}</span>
@@ -27,7 +34,10 @@
       </router-link>
     </div>
 
-    <div v-else-if="variant === 'list'" class="flex flex-col md:flex-row md:items-start gap-4">
+    <div
+      v-else-if="variant === 'list'"
+      class="flex flex-col md:flex-row md:items-start gap-4"
+    >
       <div class="flex-1">
         <div class="flex items-center gap-2 mb-3">
           <span 
@@ -43,7 +53,9 @@
             {{ post.title }}
           </router-link>
         </h3>
-        <p class="text-gray-300 mb-4 line-clamp-2">{{ post.excerpt }}</p>
+        <p class="text-gray-300 mb-4 line-clamp-2">
+          {{ post.excerpt }}
+        </p>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4 text-sm text-gray-400">
             <span>By {{ post.author }}</span>
@@ -67,7 +79,10 @@
       </div>
     </div>
 
-    <div v-else-if="variant === 'related'" class="group">
+    <div
+      v-else-if="variant === 'related'"
+      class="group"
+    >
       <div class="flex items-center gap-2 mb-3">
         <span 
           v-for="tag in post.tags.slice(0, 2)" 

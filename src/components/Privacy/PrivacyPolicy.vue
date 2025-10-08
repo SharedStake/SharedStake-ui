@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <div class="max-w-2xl mx-auto text-gray-300">
-      <h1 class="text-2xl font-medium text-center border-b border-b-white pb-3 mb-6">Privacy Policy</h1>
+      <h1 class="text-2xl font-medium text-center border-b border-b-white pb-3 mb-6">
+        Privacy Policy
+      </h1>
       <h2>What information do we collect?</h2>
       <div>We collect information from you when you register on our site and gather data when you participate in the forum by reading, writing, and evaluating the content shared here.</div>
       <div>When registering on our site, you may be asked to enter your name and e-mail address. You may, however, visit our site without registering. Your e-mail address will be verified by an email containing a unique link. If that link is visited, we know that you control the e-mail address.</div>
@@ -37,7 +39,12 @@
       <div>Occasionally, at our discretion, we may include or offer third party products or services on our site. These third party sites have separate and independent privacy policies. We therefore have no responsibility or liability for the content and activities of these linked sites. Nonetheless, we seek to protect the integrity of our site and welcome any feedback about these sites.</div>
 
       <h2>Children’s Online Privacy Protection Act Compliance</h2>
-      <div>Our site, products and services are all directed to people who are at least 13 years old or older. If this server is in the USA, and you are under the age of 13, per the requirements of COPPA (<a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act" rel="noopener noreferrer">Children’s Online Privacy Protection Act</a>), do not use this site.</div>
+      <div>
+        Our site, products and services are all directed to people who are at least 13 years old or older. If this server is in the USA, and you are under the age of 13, per the requirements of COPPA (<a
+          href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act"
+          rel="noopener noreferrer"
+        >Children’s Online Privacy Protection Act</a>), do not use this site.
+      </div>
 
       <h2>Online Privacy Policy Only</h2>
       <div>This online privacy policy applies only to information collected through our site and not to information collected offline.</div>

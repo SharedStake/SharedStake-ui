@@ -20,8 +20,7 @@
             target="_blank"
             rel="noopener noreferrer"
           >
-            bunni.pro</a
-          >
+            bunni.pro</a>
           for new farming pools!
         </div>
         <div class="notification">
@@ -45,19 +44,21 @@
         </div>
       </div>
       <newGeyser
-        class="geyser"
         v-for="pool in newPools"
+        :key="pool.name"
+        class="geyser"
         :pool="pool"
-        v-bind:key="pool.name"
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
-      <div class="notification">Old farms - please withdraw ASAP</div>
+      <div class="notification">
+        Old farms - please withdraw ASAP
+      </div>
       <geyser
-        class="geyser geyser-old"
         v-for="pool in pools"
+        :key="pool.name"
+        class="geyser geyser-old"
         :pool="pool"
-        v-bind:key="pool.name"
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
@@ -68,7 +69,7 @@
 
 <script>
 import BN from "bignumber.js";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import geyser from "./geyser.vue";
 import newGeyser from "./geyserV2.vue";
 // import migrator from "./migrate.vue";
@@ -92,6 +93,12 @@ import { vEth2Price } from "@/utils/veth2.js";
 
 export default {
   components: { geyser, Claim, newGeyser },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data: () => ({
     chosen: null,
     pools: [
@@ -208,15 +215,17 @@ export default {
     ],
   }),
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
-  },
-  mounted: async function() {
-    await this.mounted();
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
   },
   watch: {
     async userAddress(newVal) {
       if (newVal) await this.mounted;
     },
+  },
+  mounted: async function() {
+    await this.mounted();
   },
   methods: {
     async mounted() {
