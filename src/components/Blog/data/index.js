@@ -1,14 +1,14 @@
 // Dynamic loader for blog posts stored in individual files.
 // Supports both .js files (with exports) and .md files (with frontmatter)
 
-// Use marked directly for better compatibility
+// Use marked directly with simple configuration
 import { marked } from 'marked';
 
-// Configure marked for basic markdown parsing
+// Configure marked for basic markdown parsing without custom renderer
 marked.setOptions({
   breaks: true,
   gfm: true,
-  headerIds: true,
+  headerIds: false, // Disable header IDs to avoid the error
   sanitize: false
 });
 
