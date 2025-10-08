@@ -474,6 +474,7 @@ export default {
           );
           this.locked = BN(remRewards);
         } catch (err) {
+        if (this.dev) console.log(err);
           // Silently handle error
         }
     },
@@ -497,6 +498,7 @@ export default {
           notifyHandler(tx.hash);
           await tx.wait();
         } catch (err) {
+        if (this.dev) console.log(err);
           approval = false;
         }
         await timeout(6000);
@@ -508,6 +510,7 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
+        if (this.dev) console.log(err);
           // Silently handle error
         }
       }
@@ -528,6 +531,7 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
+        if (this.dev) console.log(err);
           // Silently handle error
         }
       } else {
@@ -544,6 +548,7 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
+        if (this.dev) console.log(err);
           // Silently handle error
         }
       }
@@ -562,6 +567,7 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
+        if (this.dev) console.log(err);
         console.error("Error in harvest:", err);
       }
     },
@@ -579,6 +585,7 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
+        if (this.dev) console.log(err);
         console.error("Error in exit old pool:", err);
       }
     },

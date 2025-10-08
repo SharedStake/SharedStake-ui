@@ -1,20 +1,13 @@
 <template>
-  <BaseLink
-    type="router"
+  <router-link
+    class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap hover:text-brand-primary"
     :to="to"
-    variant="dropdown"
-    size="medium"
   >
     <slot></slot>
-  </BaseLink>
+  </router-link>
 </template>
 <script>
-import BaseLink from "../Common/BaseLink.vue";
-
 export default {
-  components: {
-    BaseLink
-  },
   props: {
     to: {
       type: String,
