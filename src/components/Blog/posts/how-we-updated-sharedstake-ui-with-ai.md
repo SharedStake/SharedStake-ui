@@ -132,15 +132,15 @@ The traditional approach? A 3-6 month refactor with a team of developers. Our ap
 | Tool/Process | Status | Impact |
 |--------------|--------|--------|
 | **Linting** | ✅ Zero errors | Clean, maintainable code |
-| **Node.js** | 22 LTS | Better compatibility |
-| **Vue CLI** | 5.x | Modern build tools |
+| **Bun** | 1.2.23 | Faster installs and scripts |
+| **Vite** | 7.1.9 | Modern Vue 3 tooling |
 | **Documentation** | Comprehensive | Faster onboarding |
 
 <br/>
 
 **DX Improvements:**
 - 🎯 **Zero lint errors** across the entire codebase
-- 🔧 **Node.js 22 LTS** with Vue CLI 5 compatibility
+- ⚡ **Bun runtime + Vite** for faster DX and builds
 - 📋 **Reproducible builds** with pinned dependencies
 - 📚 **Comprehensive documentation** in /llm folder
 
@@ -271,9 +271,9 @@ Before:
   - Bundle size: 2.46 MiB
   - Chunks: Monolithic
 
-After:
+After (Vite + Vue 3 + Bun):
   - Build time: ~60 seconds (33% faster)
-  - Bundle size: 1.2 MiB (51% smaller)
+  - Bundle size: ~1.2 MiB (51% smaller)
   - Chunks: Optimized splitting
 ```
 
@@ -284,11 +284,11 @@ After:
 <br/>
 
 ```bash
-Before: yarn audit
+Before: npm/yarn audit
   250 vulnerabilities found
   Severity: 46 Critical | 89 High | 76 Moderate | 39 Low
 
-After: yarn audit  
+After: bun audit
   8 vulnerabilities found
   Severity: 0 Critical | 3 High | 5 Moderate | 0 Low
 ```
@@ -347,10 +347,10 @@ This transformation is just the beginning. Our roadmap includes:
 
 <br/>
 
-**Phase 2: Vue 3 Migration**
-- Composition API adoption
-- Better TypeScript support
-- Enhanced performance
+**Phase 2: Post-Migration Hardening (Complete)**
+- Migrated to **Vue 3 + Router 4 + Pinia**
+- Adopted **Composition API** patterns
+- Migrated from **Vue CLI → Vite**
 
 <br/>
 

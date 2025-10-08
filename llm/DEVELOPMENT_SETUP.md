@@ -50,17 +50,19 @@ bun run optimize:images # Optimize images
 ```
 
 ### **Project Structure**
-- **Package Manager**: Bun (bun.lock file)
-- **Build Tool**: Vue CLI Service (via Bun)
-- **Framework**: Vue 2.7.16
-- **Styling**: Tailwind CSS
+- **Package Manager**: Bun (bun.lockb)
+- **Build Tool**: Vite 7.1.9
+- **Framework**: Vue 3.5.22 + Router 4 + Pinia 2.3.1
+- **Styling**: Tailwind CSS 3.4.x
 - **TypeScript**: Supported
 
 ### **Troubleshooting**
-If you see errors about missing modules:
-1. Make sure you're using `bun` not `npm`
+If you see errors about missing modules or build failures:
+1. Ensure you're using `bun` not `npm`/`yarn`
 2. Run `bun install` to install dependencies
-3. Check that bun is in your PATH: `bun --version`
+3. Verify Bun is available: `bun --version`
+4. Clear caches if needed: `rm -rf node_modules .vite cache` then `bun install`
+5. Vite dev server issues: ensure ports 5173/5174 are free
 
 ### **Remember**
 - ✅ **Use**: `bun install`, `bun run build`, `bun run dev`
