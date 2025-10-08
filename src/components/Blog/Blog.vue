@@ -193,9 +193,13 @@
 <script>
 import { blogPosts } from './data/index.js';
 import { getAllTags } from './data/index.js';
+import LazyImage from '../Common/LazyImage.vue';
 
 export default {
   name: 'Blog',
+  components: {
+    LazyImage
+  },
   data() {
     return {
       posts: blogPosts,
@@ -229,6 +233,49 @@ export default {
       return tag.split('-').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
+    },
+    addBlogStructuredData() {
+      // Remove existing blog structured data
+      const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
+      existingScripts.forEach(script => {
+        if (script.textContent.includes('Blog')) {
+          script.remove();
+        }
+      });
+      
+      // Create Blog structured data
+      const blogSchema = {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "SharedStake Blog",
+        "description": "Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.",
+        "url": "https://sharedstake.org/blog",
+        "publisher": {
+          "@type": "Organization",
+          "name": "SharedStake",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://sharedstake.org/logo-white.svg"
+          }
+        },
+        "blogPost": this.posts.slice(0, 10).map(post => ({
+          "@type": "BlogPosting",
+          "headline": post.title,
+          "description": post.excerpt,
+          "url": `https://sharedstake.org/blog/${post.slug}`,
+          "datePublished": post.publishDate,
+          "author": {
+            "@type": "Organization",
+            "name": post.author || "SharedStake Team"
+          }
+        }))
+      };
+      
+      // Insert Blog schema
+      const blogScript = document.createElement('script');
+      blogScript.type = 'application/ld+json';
+      blogScript.textContent = JSON.stringify(blogSchema);
+      document.head.appendChild(blogScript);
     }
   },
   mounted() {
@@ -238,6 +285,9 @@ export default {
     if (metaDescription) {
       metaDescription.setAttribute('content', 'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.');
     }
+    
+    // Add structured data for blog listing
+    this.addBlogStructuredData();
   }
 };
 </script>

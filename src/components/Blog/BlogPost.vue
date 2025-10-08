@@ -30,6 +30,27 @@
       <!-- Hero Section -->
       <div class="relative pt-32 pb-12 md:pt-36 md:pb-16 px-4">
         <div class="max-w-4xl mx-auto">
+          <!-- Breadcrumb Navigation -->
+          <nav class="mb-6" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2 text-sm text-gray-400">
+              <li>
+                <router-link to="/" class="hover:text-brand-primary transition-colors">Home</router-link>
+              </li>
+              <li class="flex items-center">
+                <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <router-link to="/blog" class="hover:text-brand-primary transition-colors">Blog</router-link>
+              </li>
+              <li class="flex items-center">
+                <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-gray-300" aria-current="page">{{ post.title }}</span>
+              </li>
+            </ol>
+          </nav>
+          
           <!-- Post Header -->
           <div class="mb-6 md:mb-8">
             <div class="flex items-center gap-2 mb-3 md:mb-4 flex-wrap">
@@ -135,11 +156,13 @@
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
 import BlogStyles from './BlogStyles.vue';
+import LazyImage from '../Common/LazyImage.vue';
 
 export default {
   name: 'BlogPost',
   components: {
-    BlogStyles
+    BlogStyles,
+    LazyImage
   },
   data() {
     return {
@@ -188,6 +211,12 @@ export default {
         if (this.post) {
           // Set page title
           document.title = `${this.post.title} - SharedStake Blog`;
+          
+          // Process content for lazy loading
+          this.processContentForLazyLoading();
+          
+          // Add structured data
+          this.addStructuredData();
         }
       }, 300);
     },
@@ -203,6 +232,176 @@ export default {
       return tag.split('-').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
+    },
+    addStructuredData() {
+      if (!this.post) return;
+      
+      // Remove existing structured data
+      const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
+      existingScripts.forEach(script => {
+        if (script.textContent.includes('BlogPosting') || script.textContent.includes('FAQPage')) {
+          script.remove();
+        }
+      });
+      
+      // Create BlogPosting structured data
+      const blogPostingSchema = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": this.post.title,
+        "description": this.post.excerpt,
+        "author": {
+          "@type": "Organization",
+          "name": this.post.author || "SharedStake Team"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "SharedStake",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://sharedstake.org/logo-white.svg"
+          }
+        },
+        "datePublished": this.post.publishDate,
+        "dateModified": this.post.publishDate,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": `https://sharedstake.org/blog/${this.post.slug}`
+        },
+        "url": `https://sharedstake.org/blog/${this.post.slug}`,
+        "image": {
+          "@type": "ImageObject",
+          "url": `https://sharedstake.org/images/blog-${this.post.slug}.jpg`,
+          "width": 1200,
+          "height": 630
+        },
+        "keywords": this.post.tags ? this.post.tags.join(', ') : '',
+        "articleSection": "Ethereum Staking",
+        "wordCount": this.post.content ? this.post.content.replace(/<[^>]*>/g, '').split(' ').length : 0
+      };
+      
+      // Add FAQ structured data if the post contains FAQ sections
+      const faqSchema = this.extractFAQSchema();
+      
+      // Insert BlogPosting schema
+      const blogScript = document.createElement('script');
+      blogScript.type = 'application/ld+json';
+      blogScript.textContent = JSON.stringify(blogPostingSchema);
+      document.head.appendChild(blogScript);
+      
+      // Insert FAQ schema if found
+      if (faqSchema) {
+        const faqScript = document.createElement('script');
+        faqScript.type = 'application/ld+json';
+        faqScript.textContent = JSON.stringify(faqSchema);
+        document.head.appendChild(faqScript);
+      }
+      
+      // Add breadcrumb structured data
+      this.addBreadcrumbSchema();
+    },
+    extractFAQSchema() {
+      if (!this.post || !this.post.content) return null;
+      
+      // Look for FAQ sections in the content
+      const faqMatches = this.post.content.match(/<h[1-6][^>]*>.*?Frequently Asked Questions.*?<\/h[1-6]>/gi);
+      if (!faqMatches) return null;
+      
+      // Extract questions and answers
+      const questions = [];
+      const content = this.post.content;
+      
+      // Look for question-answer pairs (various formats)
+      const qaPatterns = [
+        /<h[1-6][^>]*>(.*?)\?<\/h[1-6]>\s*<p[^>]*>(.*?)<\/p>/gi,
+        /<strong[^>]*>(.*?)\?<\/strong>\s*<p[^>]*>(.*?)<\/p>/gi,
+        /<b[^>]*>(.*?)\?<\/b>\s*<p[^>]*>(.*?)<\/p>/gi
+      ];
+      
+      qaPatterns.forEach(pattern => {
+        let match;
+        while ((match = pattern.exec(content)) !== null) {
+          const question = match[1].replace(/<[^>]*>/g, '').trim();
+          const answer = match[2].replace(/<[^>]*>/g, '').trim();
+          
+          if (question && answer && question.length > 10 && answer.length > 20) {
+            questions.push({
+              "@type": "Question",
+              "name": question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer
+              }
+            });
+          }
+        }
+      });
+      
+      if (questions.length === 0) return null;
+      
+      return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": questions
+      };
+    },
+    addBreadcrumbSchema() {
+      if (!this.post) return;
+      
+      // Remove existing breadcrumb structured data
+      const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
+      existingScripts.forEach(script => {
+        if (script.textContent.includes('BreadcrumbList')) {
+          script.remove();
+        }
+      });
+      
+      // Create breadcrumb structured data
+      const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://sharedstake.org"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://sharedstake.org/blog"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": this.post.title,
+            "item": `https://sharedstake.org/blog/${this.post.slug}`
+          }
+        ]
+      };
+      
+      // Insert breadcrumb schema
+      const breadcrumbScript = document.createElement('script');
+      breadcrumbScript.type = 'application/ld+json';
+      breadcrumbScript.textContent = JSON.stringify(breadcrumbSchema);
+      document.head.appendChild(breadcrumbScript);
+    },
+    processContentForLazyLoading() {
+      if (!this.post || !this.post.content) return;
+      
+      // Add loading="lazy" attribute to all img tags
+      this.post.content = this.post.content.replace(
+        /<img([^>]*?)>/gi,
+        '<img$1 loading="lazy">'
+      );
+      
+      // Add alt attributes to images that don't have them
+      this.post.content = this.post.content.replace(
+        /<img((?![^>]*alt=)[^>]*?)>/gi,
+        '<img$1 alt="Blog post image">'
+      );
     }
   }
 };

@@ -1,0 +1,5 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#1a1a1a"/>
+  <text x="200" y="150" text-anchor="middle" fill="#ff6b6b" font-family="Arial" font-size="16">Roadmap</text>
+  <text x="200" y="170" text-anchor="middle" fill="#666" font-family="Arial" font-size="12">Optimized placeholder</text>
+</svg>

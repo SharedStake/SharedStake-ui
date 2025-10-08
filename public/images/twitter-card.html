@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 107, 107, 0.1);
+    }
+    
+    .bg-circle-1 {
+      width: 160px;
+      height: 160px;
+      top: 50px;
+      left: 50px;
+    }
+    
+    .bg-circle-2 {
+      width: 240px;
+      height: 240px;
+      bottom: 50px;
+      right: 50px;
+    }
+    
+    .bg-circle-3 {
+      width: 120px;
+      height: 120px;
+      top: 100px;
+      right: 200px;
+    }
+    
+    .content {
+      text-align: center;
+      z-index: 10;
+      max-width: 800px;
+    }
+    
+    .logo {
+      font-size: 72px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+    }
+    
+    .title {
+      font-size: 48px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    
+    .subtitle {
+      font-size: 32px;
+      color: #e0e0e0;
+      margin-bottom: 40px;
+    }
+    
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    
+    .feature {
+      color: #ff6b6b;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .cta {
+      background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+      color: white;
+      padding: 20px 40px;
+      border-radius: 30px;
+      font-size: 24px;
+      font-weight: bold;
+      display: inline-block;
+      text-decoration: none;
+    }
+    
+    .eth-symbol {
+      position: absolute;
+      top: 200px;
+      left: 50px;
+      width: 80px;
+      height: 80px;
+      background: rgba(98, 126, 234, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: #627eea;
+      font-weight: bold;
+    }
+    
+    .reward-circle {
+      position: absolute;
+      top: 200px;
+      right: 100px;
+      width: 120px;
+      height: 120px;
+      border: 4px solid rgba(255, 107, 107, 0.3);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .reward-percentage {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .reward-label {
+      font-size: 16px;
+      color: #e0e0e0;
+    }
+    
+    .url {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #666;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+  <div class="bg-circle bg-circle-3"></div>
+  
+  <div class="eth-symbol">Ξ</div>
+  
+  <div class="content">
+    <div class="logo">SharedStake</div>
+    <div class="title">Ethereum Liquid Staking Platform</div>
+    <div class="subtitle">4-8% APR • No 32 ETH Minimum • Full Liquidity</div>
+    
+    <div class="features">
+      <div class="feature">✓ Professional Validators</div>
+      <div class="feature">✓ DeFi Integration</div>
+      <div class="feature">✓ Enterprise Security</div>
+    </div>
+    
+    <div class="cta">Start Staking Today</div>
+  </div>
+  
+  <div class="reward-circle">
+    <div class="reward-percentage">5.2%</div>
+    <div class="reward-label">APR</div>
+  </div>
+  
+  <div class="url">sharedstake.org</div>
+</body>
+</html>
