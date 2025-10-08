@@ -14,7 +14,13 @@ marked.setOptions({
 const renderer = new marked.Renderer();
 
 // Helper to generate IDs from text
-const makeId = (text) => text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim();
+const makeId = (text) => {
+  if (typeof text !== 'string') {
+    console.warn('makeId received non-string:', typeof text, text);
+    return 'heading-' + Math.random().toString(36).substr(2, 9);
+  }
+  return text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim();
+};
 
 // Helper to escape HTML
 const escapeHtml = (text) => {
