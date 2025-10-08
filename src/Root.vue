@@ -329,14 +329,6 @@
                 rel="noopener noreferrer"
               >Medium
               </a></span>
-            <!-- <span class="link footerLink">
-              <a
-                href="https://www.reddit.com/r/SharedStake/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Reddit
-              </a></span 
-            > -->
           </div>
           <div class="footerGroup">
             <div class="footerGroupName">

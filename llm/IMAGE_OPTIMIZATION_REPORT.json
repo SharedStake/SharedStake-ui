@@ -1,0 +1,1002 @@
+{
+  "timestamp": "2025-10-08T15:08:27.525Z",
+  "performanceImpact": {
+    "currentTotalSize": 5134,
+    "projectedTotalSize": 725,
+    "sizeReduction": 4410,
+    "performanceGain": 86
+  },
+  "criticalImages": [
+    {
+      "filename": "Harvest.png",
+      "path": "/workspace/public/images/Harvest.png",
+      "size": 9033,
+      "sizeKB": 9,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "Reward.png",
+      "path": "/workspace/public/images/Reward.png",
+      "size": 13027,
+      "sizeKB": 13,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "SGT_256.png",
+      "path": "/workspace/public/images/SGT_256.png",
+      "size": 19728,
+      "sizeKB": 19,
+      "sizeMB": 0.02,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "balance.svg",
+      "path": "/workspace/public/images/balance.svg",
+      "size": 2969,
+      "sizeKB": 3,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "certik-foundation-logo-white.png",
+      "path": "/workspace/public/images/certik-foundation-logo-white.png",
+      "size": 74457,
+      "sizeKB": 73,
+      "sizeMB": 0.07,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 40
+    },
+    {
+      "filename": "chainlink.png",
+      "path": "/workspace/public/images/chainlink.png",
+      "size": 5631,
+      "sizeKB": 5,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "defipulse.png",
+      "path": "/workspace/public/images/defipulse.png",
+      "size": 15824,
+      "sizeKB": 15,
+      "sizeMB": 0.02,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "diamond.svg",
+      "path": "/workspace/public/images/diamond.svg",
+      "size": 2735,
+      "sizeKB": 3,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "discord.svg",
+      "path": "/workspace/public/images/discord.svg",
+      "size": 736,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "discount.svg",
+      "path": "/workspace/public/images/discount.svg",
+      "size": 4684,
+      "sizeKB": 5,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "dowload.svg",
+      "path": "/workspace/public/images/dowload.svg",
+      "size": 2582,
+      "sizeKB": 3,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "down.png",
+      "path": "/workspace/public/images/down.png",
+      "size": 496,
+      "sizeKB": 0,
+      "sizeMB": 0,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "down.svg",
+      "path": "/workspace/public/images/down.svg",
+      "size": 501,
+      "sizeKB": 0,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "eth.png",
+      "path": "/workspace/public/images/eth.png",
+      "size": 12542,
+      "sizeKB": 12,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "github.svg",
+      "path": "/workspace/public/images/github.svg",
+      "size": 597,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "gnosis.svg",
+      "path": "/workspace/public/images/gnosis.svg",
+      "size": 990,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "immunefi.png",
+      "path": "/workspace/public/images/immunefi.png",
+      "size": 26830,
+      "sizeKB": 26,
+      "sizeMB": 0.03,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "info-icon.png",
+      "path": "/workspace/public/images/info-icon.png",
+      "size": 6587,
+      "sizeKB": 6,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "link.svg",
+      "path": "/workspace/public/images/link.svg",
+      "size": 446,
+      "sizeKB": 0,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "loading.svg",
+      "path": "/workspace/public/images/loading.svg",
+      "size": 654,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "logo-red.png",
+      "path": "/workspace/public/images/logo-red.png",
+      "size": 14048,
+      "sizeKB": 14,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "logo-red.svg",
+      "path": "/workspace/public/images/logo-red.svg",
+      "size": 2855,
+      "sizeKB": 3,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": true,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "logo-white.png",
+      "path": "/workspace/public/images/logo-white.png",
+      "size": 840,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "logo-white.svg",
+      "path": "/workspace/public/images/logo-white.svg",
+      "size": 1369,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": true,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "logo.png",
+      "path": "/workspace/public/images/logo.png",
+      "size": 8027,
+      "sizeKB": 8,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "next.svg",
+      "path": "/workspace/public/images/next.svg",
+      "size": 494,
+      "sizeKB": 0,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "og-image.jpg",
+      "path": "/workspace/public/images/og-image.jpg",
+      "size": 681,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".jpg",
+      "isCritical": true,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "reddit.svg",
+      "path": "/workspace/public/images/reddit.svg",
+      "size": 732,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "roadmap.png",
+      "path": "/workspace/public/images/roadmap.png",
+      "size": 1733883,
+      "sizeKB": 1693,
+      "sizeMB": 1.65,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 90
+    },
+    {
+      "filename": "ruler.png",
+      "path": "/workspace/public/images/ruler.png",
+      "size": 11230,
+      "sizeKB": 11,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "saddle.png",
+      "path": "/workspace/public/images/saddle.png",
+      "size": 22874,
+      "sizeKB": 22,
+      "sizeMB": 0.02,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "tokenomics.png",
+      "path": "/workspace/public/images/tokenomics.png",
+      "size": 1343648,
+      "sizeKB": 1312,
+      "sizeMB": 1.28,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 90
+    },
+    {
+      "filename": "twitter-card.jpg",
+      "path": "/workspace/public/images/twitter-card.jpg",
+      "size": 729,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".jpg",
+      "isCritical": true,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "twitter.svg",
+      "path": "/workspace/public/images/twitter.svg",
+      "size": 632,
+      "sizeKB": 1,
+      "sizeMB": 0,
+      "extension": ".svg",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "uniswap.png",
+      "path": "/workspace/public/images/uniswap.png",
+      "size": 8245,
+      "sizeKB": 8,
+      "sizeMB": 0.01,
+      "extension": ".png",
+      "isCritical": false,
+      "optimizationPotential": 20
+    },
+    {
+      "filename": "vEth2.png",
+      "path": "/workspace/public/images/vEth2.png",
+      "size": 52498,
+      "sizeKB": 51,
+      "sizeMB": 0.05,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 40
+    },
+    {
+      "filename": "vEth2_1.png",
+      "path": "/workspace/public/images/vEth2_1.png",
+      "size": 1835076,
+      "sizeKB": 1792,
+      "sizeMB": 1.75,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 90
+    },
+    {
+      "filename": "vEth2_200.png",
+      "path": "/workspace/public/images/vEth2_200.png",
+      "size": 18257,
+      "sizeKB": 18,
+      "sizeMB": 0.02,
+      "extension": ".png",
+      "isCritical": true,
+      "optimizationPotential": 20
+    }
+  ],
+  "optimizationRecommendations": [
+    {
+      "filename": "Harvest.png",
+      "currentSize": "9KB",
+      "targetSize": "7KB",
+      "reduction": "2KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "Reward.png",
+      "currentSize": "13KB",
+      "targetSize": "10KB",
+      "reduction": "3KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "SGT_256.png",
+      "currentSize": "19KB",
+      "targetSize": "15KB",
+      "reduction": "4KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "balance.svg",
+      "currentSize": "3KB",
+      "targetSize": "2KB",
+      "reduction": "1KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "certik-foundation-logo-white.png",
+      "currentSize": "73KB",
+      "targetSize": "44KB",
+      "reduction": "29KB (40%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Create SVG version for scalability",
+        "Provide multiple sizes (16px, 32px, 64px, 128px)"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "chainlink.png",
+      "currentSize": "5KB",
+      "targetSize": "4KB",
+      "reduction": "1KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "defipulse.png",
+      "currentSize": "15KB",
+      "targetSize": "12KB",
+      "reduction": "3KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "diamond.svg",
+      "currentSize": "3KB",
+      "targetSize": "2KB",
+      "reduction": "1KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "discord.svg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "discount.svg",
+      "currentSize": "5KB",
+      "targetSize": "4KB",
+      "reduction": "1KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "dowload.svg",
+      "currentSize": "3KB",
+      "targetSize": "2KB",
+      "reduction": "1KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "down.png",
+      "currentSize": "0KB",
+      "targetSize": "0KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "down.svg",
+      "currentSize": "0KB",
+      "targetSize": "0KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "eth.png",
+      "currentSize": "12KB",
+      "targetSize": "10KB",
+      "reduction": "2KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "github.svg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "gnosis.svg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "immunefi.png",
+      "currentSize": "26KB",
+      "targetSize": "21KB",
+      "reduction": "5KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "info-icon.png",
+      "currentSize": "6KB",
+      "targetSize": "5KB",
+      "reduction": "1KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "link.svg",
+      "currentSize": "0KB",
+      "targetSize": "0KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "loading.svg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "logo-red.png",
+      "currentSize": "14KB",
+      "targetSize": "11KB",
+      "reduction": "3KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Create SVG version for scalability",
+        "Provide multiple sizes (16px, 32px, 64px, 128px)"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "logo-red.svg",
+      "currentSize": "3KB",
+      "targetSize": "2KB",
+      "reduction": "1KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Create SVG version for scalability",
+        "Provide multiple sizes (16px, 32px, 64px, 128px)"
+      ],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "logo-white.png",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Create SVG version for scalability",
+        "Provide multiple sizes (16px, 32px, 64px, 128px)"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "logo-white.svg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Create SVG version for scalability",
+        "Provide multiple sizes (16px, 32px, 64px, 128px)"
+      ],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "logo.png",
+      "currentSize": "8KB",
+      "targetSize": "6KB",
+      "reduction": "2KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Create SVG version for scalability",
+        "Provide multiple sizes (16px, 32px, 64px, 128px)"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "next.svg",
+      "currentSize": "0KB",
+      "targetSize": "0KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "og-image.jpg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Optimize JPEG quality (85-90% for web)",
+        "Use progressive JPEG encoding",
+        "Ensure dimensions are exactly 1200x630px",
+        "Use high contrast for social media visibility"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "JPEGmini",
+        "TinyJPG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "reddit.svg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "roadmap.png",
+      "currentSize": "1693KB",
+      "targetSize": "169KB",
+      "reduction": "1524KB (90%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Convert to WebP format for 80-90% size reduction",
+        "Resize to appropriate dimensions (max 1920px width)",
+        "Use progressive JPEG for better loading experience",
+        "Convert PNG to WebP or optimized JPEG",
+        "Use PNG optimization tools (pngquant, optipng)"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "Squoosh (Google)",
+        "ImageMagick",
+        "Sharp (Node.js)",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "ruler.png",
+      "currentSize": "11KB",
+      "targetSize": "9KB",
+      "reduction": "2KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "saddle.png",
+      "currentSize": "22KB",
+      "targetSize": "18KB",
+      "reduction": "4KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "tokenomics.png",
+      "currentSize": "1312KB",
+      "targetSize": "131KB",
+      "reduction": "1181KB (90%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Convert to WebP format for 80-90% size reduction",
+        "Resize to appropriate dimensions (max 1920px width)",
+        "Use progressive JPEG for better loading experience",
+        "Convert PNG to WebP or optimized JPEG",
+        "Use PNG optimization tools (pngquant, optipng)"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "Squoosh (Google)",
+        "ImageMagick",
+        "Sharp (Node.js)",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "twitter-card.jpg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Optimize JPEG quality (85-90% for web)",
+        "Use progressive JPEG encoding",
+        "Ensure dimensions are exactly 1200x630px",
+        "Use high contrast for social media visibility"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "JPEGmini",
+        "TinyJPG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "twitter.svg",
+      "currentSize": "1KB",
+      "targetSize": "1KB",
+      "reduction": "0KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "uniswap.png",
+      "currentSize": "8KB",
+      "targetSize": "6KB",
+      "reduction": "2KB (20%)",
+      "priority": "MEDIUM",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "vEth2.png",
+      "currentSize": "51KB",
+      "targetSize": "31KB",
+      "reduction": "20KB (40%)",
+      "priority": "HIGH",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "vEth2_1.png",
+      "currentSize": "1792KB",
+      "targetSize": "179KB",
+      "reduction": "1613KB (90%)",
+      "priority": "HIGH",
+      "recommendations": [
+        "Convert to WebP format for 80-90% size reduction",
+        "Resize to appropriate dimensions (max 1920px width)",
+        "Use progressive JPEG for better loading experience",
+        "Convert PNG to WebP or optimized JPEG",
+        "Use PNG optimization tools (pngquant, optipng)"
+      ],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "Squoosh (Google)",
+        "ImageMagick",
+        "Sharp (Node.js)",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    },
+    {
+      "filename": "vEth2_200.png",
+      "currentSize": "18KB",
+      "targetSize": "14KB",
+      "reduction": "4KB (20%)",
+      "priority": "HIGH",
+      "recommendations": [],
+      "tools": [
+        "ImageOptim (Mac)",
+        "PNGGauntlet",
+        "TinyPNG",
+        "Squoosh",
+        "WebP Converter",
+        "Responsive Image Generator"
+      ]
+    }
+  ],
+  "summary": {
+    "totalImages": 38,
+    "criticalImages": 13,
+    "optimizationOpportunities": 38,
+    "highPriorityOptimizations": 13
+  }
+}
