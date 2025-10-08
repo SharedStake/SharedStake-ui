@@ -21,9 +21,9 @@
       class="flex items-center justify-center min-h-screen"
     >
       <div class="text-center">
-        <h1 class="text-4xl font-bold mb-4">
+        <h2 class="text-4xl font-bold mb-4">
           Post Not Found
-        </h1>
+        </h2>
         <p class="text-gray-400 mb-8">
           The blog post you're looking for doesn't exist.
         </p>
@@ -129,9 +129,9 @@
             v-if="relatedPosts.length > 0"
             class="mt-16"
           >
-            <h3 class="text-2xl font-bold mb-8">
+            <h2 class="text-2xl font-bold mb-8">
               Related Articles
-            </h3>
+            </h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <router-link 
                 v-for="relatedPost in relatedPosts" 
