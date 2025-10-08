@@ -248,7 +248,8 @@ export default {
       this.loading = true;
       this.post = null;
       
-      try {
+      // Simulate loading delay for better UX
+      setTimeout(() => {
         this.post = getBlogPostBySlug(slug);
         this.loading = false;
         
@@ -258,10 +259,7 @@ export default {
             this.optimizeImages();
           });
         }
-      } catch (error) {
-        console.error('Error loading post:', error);
-        this.loading = false;
-      }
+      }, 300);
     },
     formatDate(dateString) {
       const date = new Date(dateString);
@@ -279,46 +277,38 @@ export default {
     setPageMeta() {
       if (!this.post) return;
       
-      try {
-        // Set page title
-        document.title = `${this.post.title} - SharedStake Blog`;
-        
-        // Set meta description
-        const metaDescription = document.querySelector('meta[name="description"]');
-        if (metaDescription) {
-          metaDescription.setAttribute('content', this.post.meta.description);
-        } else {
-          const meta = document.createElement('meta');
-          meta.name = 'description';
-          meta.content = this.post.meta.description;
-          document.head.appendChild(meta);
-        }
-        
-        // Set Open Graph tags
-        this.setOpenGraphTags();
-        
-        // Set canonical URL
-        this.setCanonicalURL();
-        
-        // Set structured data
-        this.setStructuredData();
-      } catch (error) {
-        console.warn('Error setting page meta:', error);
+      // Set page title
+      document.title = `${this.post.title} - SharedStake Blog`;
+      
+      // Set meta description
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', this.post.meta.description);
+      } else {
+        const meta = document.createElement('meta');
+        meta.name = 'description';
+        meta.content = this.post.meta.description;
+        document.head.appendChild(meta);
       }
+      
+      // Set Open Graph tags
+      this.setOpenGraphTags();
+      
+      // Set canonical URL
+      this.setCanonicalURL();
+      
+      // Set structured data
+      this.setStructuredData();
     },
     setOpenGraphTags() {
-      try {
-        const ogTitle = document.querySelector('meta[property="og:title"]');
-        if (ogTitle) {
-          ogTitle.setAttribute('content', this.post.title);
-        } else {
-          const meta = document.createElement('meta');
-          meta.setAttribute('property', 'og:title');
-          meta.content = this.post.title;
-          document.head.appendChild(meta);
-        }
-      } catch (error) {
-        console.warn('Error setting Open Graph tags:', error);
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) {
+        ogTitle.setAttribute('content', this.post.title);
+      } else {
+        const meta = document.createElement('meta');
+        meta.setAttribute('property', 'og:title');
+        meta.content = this.post.title;
+        document.head.appendChild(meta);
       }
       
       const ogDescription = document.querySelector('meta[property="og:description"]');
@@ -449,29 +439,25 @@ export default {
       }
     },
     optimizeImages() {
-      if (!this.$refs.blogContent || !this.post) return;
+      if (!this.$refs.blogContent) return;
       
-      try {
-        const images = this.$refs.blogContent.querySelectorAll('img');
-        images.forEach((img, index) => {
-          // Add alt text if missing
-          if (!img.alt) {
-            img.alt = this.generateAltText(img, index);
-          }
-          
-          // Add loading="lazy" for below-the-fold images
-          if (index > 0) {
-            img.loading = 'lazy';
-          }
-          
-          // Add error handling
-          img.onerror = () => {
-            img.style.display = 'none';
-          };
-        });
-      } catch (error) {
-        console.warn('Error optimizing images:', error);
-      }
+      const images = this.$refs.blogContent.querySelectorAll('img');
+      images.forEach((img, index) => {
+        // Add alt text if missing
+        if (!img.alt) {
+          img.alt = this.generateAltText(img, index);
+        }
+        
+        // Add loading="lazy" for below-the-fold images
+        if (index > 0) {
+          img.loading = 'lazy';
+        }
+        
+        // Add error handling
+        img.onerror = () => {
+          img.style.display = 'none';
+        };
+      });
     },
     generateAltText(img, index) {
       if (!this.post) return `Image ${index + 1}`;
