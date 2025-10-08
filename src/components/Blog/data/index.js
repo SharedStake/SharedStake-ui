@@ -1,35 +1,7 @@
 // Dynamic loader for blog posts stored in individual files.
 // Supports both .js files (with exports) and .md files (with frontmatter)
 
-// Use marked directly with simple configuration
-import { marked } from 'marked';
-
-// Configure marked for basic markdown parsing without custom renderer
-marked.setOptions({
-  breaks: true,
-  gfm: true,
-  headerIds: false, // Disable header IDs to avoid the error
-  sanitize: false
-});
-
-// Simple markdown parser using marked
-const parseMarkdown = (content) => {
-  try {
-    return marked(content);
-  } catch (error) {
-    console.error('Error parsing markdown:', error);
-    // Fallback to basic HTML
-    return content
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-      .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-      .replace(/\*(.*)\*/gim, '<em>$1</em>')
-      .replace(/\n\n/gim, '</p><p>')
-      .replace(/\n/gim, '<br>')
-      .replace(/^(.*)$/gim, '<p>$1</p>');
-  }
-};
+import { parseMarkdown } from '@/utils/markdown.js';
 
 const requirePost = require.context('../posts', true, /\.(js|md)$/);
 
@@ -43,7 +15,14 @@ const loadedPosts = requirePost.keys().map((key) => {
   
   // Handle .md files (markdown with frontmatter)
   if (key.endsWith('.md')) {
-    const content = mod.default || mod;
+    // With esModule: false, raw-loader returns the string directly
+    let content = mod;
+    
+    // Ensure content is a string
+    if (typeof content !== 'string') {
+      console.error('Markdown content is not a string for', key, 'Type:', typeof content);
+      return null;
+    }
     const lines = content.split('\n');
     
     // Find frontmatter (between --- markers)
