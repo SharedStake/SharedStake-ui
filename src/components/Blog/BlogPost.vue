@@ -158,6 +158,7 @@ import Breadcrumb from '@/components/Common/Breadcrumb.vue';
 import BlogPostCard from './BlogPostCard.vue';
 import { useBlog } from '@/composables/useBlog.js';
 import { useStructuredData } from '@/composables/useStructuredData.js';
+import { useSEO } from '@/composables/useSEO.js';
 import { generateTwitterShareUrl } from '@/utils/blogUtils.js';
 
 export default {
@@ -170,12 +171,14 @@ export default {
   data() {
     const blogUtils = useBlog();
     const structuredDataUtils = useStructuredData();
+    const seoUtils = useSEO();
     
     return {
       post: null,
       loading: true,
       ...blogUtils,
-      ...structuredDataUtils
+      ...structuredDataUtils,
+      ...seoUtils
     };
   },
   computed: {
@@ -216,11 +219,14 @@ export default {
       this.loading = false;
       
       if (loadedPost) {
-        // Set page title
-        this.setPageMeta(`${loadedPost.title} - SharedStake Blog`, loadedPost.meta?.description);
+        // Set comprehensive SEO for blog post
+        this.setBlogPostSEO(loadedPost);
         
         // Generate and inject structured data
         this.injectBlogSchemas(loadedPost, window.location.href);
+        
+        // Track page view for analytics
+        this.trackPageView('blog-post');
       }
     }
   }

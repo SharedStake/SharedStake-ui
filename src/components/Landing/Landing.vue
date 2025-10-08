@@ -639,6 +639,7 @@
 import ImageVue from "../Handlers/ImageVue.vue";
 // import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
 import Partners from "./Partners.vue";
+import { useSEO } from "@/composables/useSEO.js";
 import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
@@ -651,7 +652,9 @@ export default {
   },
   props: ["scrolled", "windowWidth"],
   data() {
+    const seoUtils = useSEO();
     return {
+      ...seoUtils,
       TVL: 16000,
       TVLinUsd: 0,
       APY: "",
@@ -1168,6 +1171,18 @@ export default {
     };
   },
   async mounted() {
+    // Set comprehensive SEO for landing page
+    this.setPageSEO({
+      title: 'SharedStake | Ethereum Liquid Staking | Earn 4-8% APR',
+      description: 'Stake ETH with SharedStake and earn 4-8% APR rewards. No 32 ETH minimum, full liquidity, and DeFi integration. Start staking with as little as 0.01 ETH.',
+      keywords: 'ethereum staking, liquid staking, stake eth, ethereum rewards, defi staking, veth2, ethereum 2.0, staking platform',
+      url: '/',
+      type: 'website'
+    });
+    
+    // Track page view for analytics
+    this.trackPageView('landing-page');
+    
     this.setupTvl();
     if (!this.isMobile()) {
       this.setupApy();

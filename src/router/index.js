@@ -101,7 +101,7 @@ const router = createRouter({
     }
 });
 
-// Preload critical routes for better performance
+// SEO and performance route guards
 router.beforeEach((to, from, next) => {
     // Preload critical routes that are likely to be visited
     const criticalRoutes = ['/stake', '/earn', '/withdraw'];
@@ -121,6 +121,40 @@ router.beforeEach((to, from, next) => {
                 }
             }, 1000);
         }
+    }
+    
+    // Set default SEO for routes that don't have specific SEO handling
+    const routeSEO = {
+        '/stake': {
+            title: 'Stake ETH | SharedStake',
+            description: 'Stake your ETH with SharedStake and earn 4-8% APR rewards. No 32 ETH minimum required.',
+            keywords: 'stake eth, ethereum staking, liquid staking, stake ethereum',
+            type: 'website'
+        },
+        '/earn': {
+            title: 'Earn Rewards | SharedStake',
+            description: 'Earn additional rewards on your staked ETH with SharedStake\'s DeFi integration opportunities.',
+            keywords: 'earn rewards, defi rewards, ethereum rewards, staking rewards',
+            type: 'website'
+        },
+        '/withdraw': {
+            title: 'Withdraw ETH | SharedStake',
+            description: 'Withdraw your staked ETH and rewards from SharedStake. Fast and secure withdrawal process.',
+            keywords: 'withdraw eth, ethereum withdrawal, unstake eth, withdraw rewards',
+            type: 'website'
+        },
+        '/faq': {
+            title: 'FAQ | SharedStake',
+            description: 'Frequently asked questions about SharedStake, Ethereum staking, and liquid staking derivatives.',
+            keywords: 'faq, frequently asked questions, ethereum staking faq, sharedstake faq',
+            type: 'website'
+        }
+    };
+    
+    // Apply route-specific SEO if available
+    if (routeSEO[to.path]) {
+        // Store SEO data for the component to use
+        to.meta.seo = routeSEO[to.path];
     }
     
     next();
