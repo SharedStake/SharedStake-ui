@@ -72,11 +72,10 @@
 - **Web3**: ethers.js v6.15.0 (Web3.js completely removed)
 
 ### Build Tools
-- **Vue CLI**: 5.0.9 (⚠️ Still Vue 2 tooling - needs Vite migration)
+- **Vite**: 7.1.9 (modern Vue 3 tooling)
 - **PostCSS**: 8.4.31
 - **Tailwind CSS**: 3.4.18
 - **ESLint**: 8.57.1
-- **Babel**: 7.28.4
 
 ### Key Dependencies
 - **ethers**: 6.15.0 (Web3 replacement)
@@ -127,16 +126,16 @@ The application needs immediate attention before production deployment:
 
 ```bash
 # Install dependencies
-yarn install
+bun install
 
 # Development
-yarn serve
+bun run dev
 
 # Production build
-yarn build
+bun run build
 
 # Linting
-yarn lint
+bun run lint
 ```
 
 **Environment**: Copy `.env.example` to `.env` for custom RPC URLs
@@ -146,16 +145,11 @@ yarn lint
 ## 🎯 Future Roadmap
 
 ### Medium Priority (1-2 Months)
-1. **Vue 3 Migration Planning**
-   - Vue 2 is EOL and source of remaining vulnerabilities
-   - Plan migration strategy for Vue 3 + Composition API
-   - Consider Pinia for state management
-
-2. **Testing Infrastructure**
+1. **Testing Infrastructure**
    - Add Vitest + Vue Test Utils + Playwright
    - Implement automated testing in CI/CD
 
-3. **Development Tools**
+2. **Development Tools**
    - Set up Dependabot/Renovate for automated upgrades
    - Implement automated security scanning
 
@@ -173,8 +167,8 @@ yarn lint
 - `src/components/` - Vue components (Stake, Earn, Withdraw, Blog, etc.)
 - `src/utils/` - Utility functions (markdown parsing, common helpers)
 - `src/contracts/` - Smart contract ABIs and interactions
-- `src/store/` - Vuex state management
-- `src/router/` - Vue Router configuration
+- `src/stores/` - Pinia state management (replaces Vuex `src/store/`)
+- `src/router/` - Vue Router 4 configuration
 
 ### Blog System
 - `src/components/Blog/` - Blog components
