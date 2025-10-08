@@ -1,0 +1,5 @@
+OG Image Placeholder
+Dimensions: 1200x630px
+Content: SharedStake branding with "Earn 4-8% APR with Ethereum Liquid Staking"
+Colors: Dark background (#1f2937), white text, red ETH symbol
+Status: NEEDS TO BE CREATED - Use design tool to create this image
