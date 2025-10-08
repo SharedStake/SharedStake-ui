@@ -1,20 +1,29 @@
 # SharedStake UI
 
-Vue.js implementation of SharedStake DeFi protocol.
+Vue.js implementation of SharedStake DeFi protocol with optimized Bun-based build system.
 
 ## 🤖 AI Documentation
-**📁 For AI Agents**: See `/llm/` folder for comprehensive project context and migration history.
+**📁 For AI Agents**: See `/llm/` folder for comprehensive project context, migration history, and optimization guides.
 
-## Setup
+## 🚀 Quick Start
+
+### Prerequisites
+- **Bun**: >= 1.0.0 (recommended for fastest performance)
+- **Node.js**: 18+ (fallback option)
+
+### Setup
 ```bash
 # Install Bun (if not already installed)
 curl -fsSL https://bun.sh/install | bash
 
 # Install dependencies
 bun install
+
+# Start development server
+bun run dev
 ```
 
-## Development
+### Development Commands
 ```bash
 bun run dev      # Development server
 bun run build    # Production build
