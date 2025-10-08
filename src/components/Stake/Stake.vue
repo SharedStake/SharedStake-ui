@@ -209,12 +209,10 @@ import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
 import { toChecksumAddress } from "../../utils/common";
 import { getCurrentGasPrices } from "@/utils/common.js";
-import seoMixin from "@/mixins/seoMixin.js";
 const enableStaking = true;
 
 export default {
   components: { ImageVue, StakeGauge, ApprovalButton, Chooser, DappTxBtn },
-  mixins: [seoMixin],
   setup() {
     const walletStore = useWalletStore();
     return {

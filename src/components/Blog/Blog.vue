@@ -159,7 +159,6 @@
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
 import BlogPostCard from './BlogPostCard.vue';
 import { useBlog } from '@/composables/useBlog.js';
-import { useSEO } from '@/composables/useSEO.js';
 
 export default {
   name: 'Blog',
@@ -169,11 +168,9 @@ export default {
   },
   data() {
     const blogUtils = useBlog();
-    const seoUtils = useSEO();
     return {
       selectedTag: null,
-      ...blogUtils,
-      ...seoUtils
+      ...blogUtils
     };
   },
   computed: {
@@ -191,17 +188,10 @@ export default {
     }
   },
   mounted() {
-    // Set comprehensive SEO for blog index page
-    this.setPageSEO({
-      title: 'Blog - SharedStake',
-      description: 'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.',
-      keywords: 'ethereum blog, liquid staking blog, defi news, ethereum staking updates, sharedstake blog',
-      url: '/blog',
-      type: 'website'
-    });
-    
-    // Track page view for analytics
-    this.trackPageView('blog-index');
+    this.setPageMeta(
+      'Blog - SharedStake',
+      'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.'
+    );
   }
 };
 </script>

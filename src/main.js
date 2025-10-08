@@ -8,7 +8,6 @@ import '../public/assets/styles/main.css';
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 import VueEllipseProgress from 'vue-ellipse-progress';
-import seoPlugin from './plugins/seo.js';
 
 // Import performance monitoring and lazy loading
 import { initPerformanceMonitoring } from './utils/performanceMonitoring.js'
@@ -38,7 +37,6 @@ app.use(Toast, {
   newestOnTop: true
 })
 app.use(VueEllipseProgress, "vep");// you can define a name and use the plugin like <vep/>
-app.use(seoPlugin);
 
 // Initialize performance monitoring and lazy loading
 initPerformanceMonitoring({
