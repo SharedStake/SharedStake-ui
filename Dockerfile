@@ -1,26 +1,26 @@
 # Multi-stage build for optimized production image
-FROM node:18-alpine AS builder
+FROM oven/bun:1-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Copy package files for dependency installation
-COPY package.json package-lock.json* ./
+COPY package.json bun.lockb* ./
 
-# Install dependencies with legacy peer deps for compatibility
-RUN npm install --legacy-peer-deps --production=false
+# Install dependencies with frozen lockfile for consistency
+RUN bun install --frozen-lockfile --production=false
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN bun run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM oven/bun:1-alpine AS production
 
 # Install lightweight http server
-RUN npm install -g http-server
+RUN bun install -g http-server
 
 # Set working directory
 WORKDIR /app
