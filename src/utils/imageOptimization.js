@@ -7,6 +7,8 @@ export const imageOptimization = {
       ? 'https://sharedstake.org' 
       : 'http://localhost:8080'
     
+    // Destructure options but only use what we need
+    // eslint-disable-next-line no-unused-vars
     const { width, height, format = 'webp', quality = 80 } = options
     
     // For now, return the original URL
@@ -52,6 +54,8 @@ export const imageOptimization = {
 
   // Generate alt text based on context
   generateAltText: (imageName, context = {}) => {
+    // eslint-disable-next-line no-unused-vars
+    const { postTitle, postSlug, ...otherContext } = context
     const altTextMap = {
       // Logo images
       'logo-white.svg': 'SharedStake logo - Ethereum liquid staking platform',

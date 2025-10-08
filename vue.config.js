@@ -7,14 +7,6 @@ module.exports = {
     // SEO and Performance Optimizations
     publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
     productionSourceMap: false, // Disable source maps in production for smaller bundles
-    configureWebpack: {
-        // Performance optimizations
-        performance: {
-            hints: 'warning',
-            maxEntrypointSize: 512000,
-            maxAssetSize: 512000
-        }
-    },
     chainWebpack: config => {
         config.module
           .rule('js')
@@ -52,6 +44,12 @@ module.exports = {
       ],
       configureWebpack: {
         devtool: 'source-map',
+        // Performance optimizations
+        performance: {
+            hints: 'warning',
+            maxEntrypointSize: 512000,
+            maxAssetSize: 512000
+        },
         resolve: {
             alias: {
                 '@web3-onboard/core': path.resolve(__dirname, 'node_modules/@web3-onboard/core/dist/index.js'),
