@@ -12,6 +12,8 @@ frontend:
         # Run linting and type checking
         - bun run lint
         - bun run type-check
+        # Run security audit
+        - bun run audit
     build:
       commands:
         # Build the application

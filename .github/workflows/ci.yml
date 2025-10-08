@@ -92,12 +92,24 @@ jobs:
       - name: Build application
         run: bun run build
         
+      - name: Analyze bundle size
+        run: bun run build:analyze
+        continue-on-error: true
+        
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: dist/
           retention-days: 1
+          
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bundle-analysis
+          path: dist/report.html
+          retention-days: 7
 
   security:
     runs-on: ubuntu-latest

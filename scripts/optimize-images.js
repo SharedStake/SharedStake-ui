@@ -239,7 +239,7 @@ function generateOptimizationCommands() {
   console.log('🛠️ Optimization Commands:\n');
   
   console.log('📦 Install optimization tools:');
-  console.log('   npm install --save-dev imagemin imagemin-webp imagemin-pngquant imagemin-mozjpeg');
+  console.log('   bun add --dev imagemin imagemin-webp imagemin-pngquant imagemin-mozjpeg');
   console.log('');
   
   console.log('🖼️ Manual optimization (using online tools):');

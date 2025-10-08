@@ -9,11 +9,21 @@
     "setup": "bun install",
     "serve": "bun run vue-cli-service serve",
     "build": "bun run vue-cli-service build",
+    "build:analyze": "bun run vue-cli-service build --report",
     "lint": "bun run vue-cli-service lint",
+    "lint:fix": "bun run vue-cli-service lint --fix",
     "type-check": "bun run vue-tsc --noEmit",
     "type-check:watch": "bun run vue-tsc --noEmit --watch",
     "dev": "bun run serve",
-    "start": "bun run serve"
+    "start": "bun run serve",
+    "test": "echo \"No tests specified\" && exit 0",
+    "audit": "bun audit --level moderate",
+    "clean": "rm -rf dist node_modules/.cache",
+    "prebuild": "bun run clean",
+    "postbuild": "echo \"Build completed successfully\"",
+    "docker:build": "docker build -t sharedstake-ui .",
+    "docker:run": "docker run -p 8080:8080 sharedstake-ui",
+    "optimize:images": "bun run scripts/optimize-images.js"
   },
   "dependencies": {
     "@babel/core": "7.28.4",
