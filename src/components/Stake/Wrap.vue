@@ -123,7 +123,7 @@
 <script>
 import BN from "bignumber.js";
 import { wsgETH, sgETH } from "@/contracts";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
@@ -140,6 +140,12 @@ BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   name: "Wrap",
   components: {
     ImageVue,
@@ -189,7 +195,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
 
     userHasTokenBalance() {
       return this.userTokenBalance.gt(0);

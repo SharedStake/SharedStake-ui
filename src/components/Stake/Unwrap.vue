@@ -110,7 +110,7 @@
 <script>
 import BN from "bignumber.js";
 import { wsgETH, sgETH } from "@/contracts";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import { toWei } from "@/utils/common";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
@@ -133,6 +133,12 @@ export default {
     Step,
     Chooser,
     DappTxBtn,
+  },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
   },
 
   data() {
@@ -173,7 +179,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
 
     userHasTokenBalance() {
       return this.userTokenBalance.gt(0);

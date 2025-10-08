@@ -229,7 +229,7 @@
 <script>
 import BN from "bignumber.js";
 import { vEth2 as ABI_vEth2, sgETH } from "@/contracts";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import Step from "@/components/Withdraw/Step.vue";
 import SharedLink from "../Common/SharedLink.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
@@ -258,6 +258,12 @@ export default {
     ApprovalButton,
     Chooser,
     DappTxBtn,
+  },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
   },
   props: [
     "ABI",
@@ -309,7 +315,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
 
     userHasTokenBalance() {
       return this.userVEth2Balance.gt(0);

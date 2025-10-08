@@ -86,7 +86,7 @@
 import BN from "bignumber.js";
 import { ethers } from "ethers";
 import { wsgETH, sgETH } from "@/contracts";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
@@ -110,6 +110,12 @@ export default {
     ApprovalButton,
     Chooser,
     DappTxBtn
+  },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
   },
   data() {
     return {
@@ -147,7 +153,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
 
     userHasTokenBalance() {
       return this.userTokenBalance.gt(0);

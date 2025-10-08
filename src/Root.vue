@@ -341,7 +341,7 @@
 
 <script>
 import ImageVue from "./components/Handlers/ImageVue";
-import { mapGetters, mapActions } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
 import ConnectButton from "./components/Common/ConnectButton.vue";
@@ -350,6 +350,8 @@ import { useScrollVisibility } from "./composables/useScrollVisibility";
 export default {
   components: { ImageVue, Menu, ConnectButton },
   setup() {
+    const walletStore = useWalletStore();
+    
     // Use the composable for maintenance banner
     const { isVisible: maintenanceBannerVisible } = useScrollVisibility({
       threshold: 50,
@@ -365,6 +367,7 @@ export default {
     });
 
     return {
+      walletStore,
       maintenanceBannerVisible,
       footerBannerVisible
     };
@@ -409,12 +412,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
   },
   methods: {
-    ...mapActions(["setAddress"]),
     async Connect() {
-      await this.setAddress();
+      await this.walletStore.setAddress();
     },
     handleResize() {
       this.windowWidth = window.innerWidth;

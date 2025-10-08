@@ -188,7 +188,7 @@ import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ DECIMAL_PLACES: 5 })
 BN.config({ EXPONENTIAL_AT: 100 });
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 
 import { validator, sgETH, wsgETH } from "@/contracts";
 
@@ -203,6 +203,12 @@ const enableStaking = true;
 
 export default {
   components: { ImageVue, StakeGauge, ApprovalButton, Chooser, DappTxBtn },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data: () => ({
     buttonText: enableStaking ? "Enter an amount" : "Currently disabled",
     BNamount: BN(0),
@@ -246,7 +252,9 @@ export default {
     await this.initializeData();
   },
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
     enoughFundsInExitPool() {
       return this.BNamount.lte(this.contractBal);
     },

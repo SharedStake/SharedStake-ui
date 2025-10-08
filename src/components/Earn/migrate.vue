@@ -93,7 +93,7 @@
 
 <script>
 import { migrator, SGT } from "@/contracts";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import ImageVue from "../Handlers/ImageVue";
 // import { timeout } from "@/utils/helpers";
 // import web3 from "web3";
@@ -102,6 +102,12 @@ import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 export default {
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   components: { ImageVue },
   data: () => ({
     innerWidth: 0,
@@ -138,7 +144,9 @@ export default {
     window.removeEventListener("resize", this.onResize);
   },
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
     remaining_time() {
       return (
         (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /

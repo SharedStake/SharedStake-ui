@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import SharedButton from "./SharedButton.vue";
 import {
   notifyHandler,
@@ -29,6 +29,12 @@ export default {
   name: "DappTxBtn",
   props: ["click", "cb", "chosenGas", "defaultGas", "disabled"],
   components: { SharedButton, ImageVue, ConnectButton },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data() {
     return {
       gasPrices: {},
@@ -37,7 +43,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
     gasPrice() {
       return this.chosenGas
         ? this.chosenGas

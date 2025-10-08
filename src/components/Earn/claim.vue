@@ -62,10 +62,16 @@ import { airdrop } from "@/contracts";
 import { notify } from "@/utils/common";
 import { ethers } from "ethers";
 // import { merkle } from "./airdrop.js";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 
 export default {
   components: { ImageVue },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data: () => ({
     innerWidth: 0,
     address: "",
@@ -99,7 +105,9 @@ export default {
     window.removeEventListener("resize", this.onResize);
   },
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
   },
   methods: {
     async mounted() {

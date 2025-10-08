@@ -14,12 +14,18 @@
 <script>
 import { rollovers as ABI_Rollover, sgETH as ABI_sgETH } from "@/contracts";
 import BN from "bignumber.js";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import RedemptionBase from "./RedemptionBase.vue";
 
 export default {
   name: "Rollover",
   components: { RedemptionBase },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data() {
     return {
       ABI: ABI_Rollover,
@@ -31,7 +37,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
   },
   methods: {
     async getEthAvailableForWithdrawal() {

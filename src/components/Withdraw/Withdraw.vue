@@ -14,10 +14,16 @@
 <script>
 import { withdrawals as ABI_withdrawals } from "@/contracts";
 import BN from "bignumber.js";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import RedemptionBase from "./RedemptionBase.vue";
 
 export default {
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   name: "Withdraw",
   components: { RedemptionBase },
   data() {
@@ -31,7 +37,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
   },
   methods: {
     async getEthAvailableForWithdrawal() {

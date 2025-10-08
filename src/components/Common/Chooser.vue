@@ -15,12 +15,18 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import { toWei } from "../../utils/common";
 export default {
   name: "Chooser",
   props: ["routes", "currentActive"],
   components: {},
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data() {
     return {
       activeRoute: parseInt(this.currentActive),
@@ -28,7 +34,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
 
     isActive(index) {
       return this.activeRoute == index;

@@ -68,7 +68,7 @@
 
 <script>
 import BN from "bignumber.js";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import geyser from "./geyser.vue";
 import newGeyser from "./geyserV2.vue";
 // import migrator from "./migrate.vue";
@@ -92,6 +92,12 @@ import { vEth2Price } from "@/utils/veth2.js";
 
 export default {
   components: { geyser, Claim, newGeyser },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data: () => ({
     chosen: null,
     pools: [
@@ -208,7 +214,9 @@ export default {
     ],
   }),
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
   },
   mounted: async function() {
     await this.mounted();

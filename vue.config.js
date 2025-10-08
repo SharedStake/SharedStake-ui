@@ -65,7 +65,7 @@ module.exports = {
                 cacheGroups: {
                     // Separate Vue ecosystem
                     vue: {
-                        test: /[\\/]node_modules[\\/](vue|vue-router|vuex|@vue)[\\/]/,
+                        test: /[\\/]node_modules[\\/](vue|vue-router|pinia|@vue)[\\/]/,
                         name: 'vue-vendor',
                         chunks: 'all',
                         priority: 20
@@ -79,7 +79,7 @@ module.exports = {
                     },
                     // Separate UI libraries
                     ui: {
-                        test: /[\\/]node_modules[\\/](sweetalert2|vue-notification|vue-ellipse-progress|three|axios)[\\/]/,
+                        test: /[\\/]node_modules[\\/](sweetalert2|vue-toastification|vue-ellipse-progress|three|axios)[\\/]/,
                         name: 'ui-vendor',
                         chunks: 'all',
                         priority: 18

@@ -249,13 +249,19 @@
 
 <script>
 import ImageVue from "../Handlers/ImageVue";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import { notifyHandler } from "@/utils/common";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 import { timeout } from "@/utils/helpers";
 export default {
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   components: { ImageVue },
   props: ["pool", "chosen"],
   data: () => ({
@@ -297,7 +303,9 @@ export default {
     window.removeEventListener("resize", this.onResize);
   },
   computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
     disableDeposit: function () {
       let disable = false;
       if (!this.pool.active) disable = true;
