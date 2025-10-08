@@ -15,7 +15,14 @@ const loadedPosts = requirePost.keys().map((key) => {
   
   // Handle .md files (markdown with frontmatter)
   if (key.endsWith('.md')) {
-    const content = mod.default || mod;
+    // With esModule: false, raw-loader returns the string directly
+    let content = mod;
+    
+    // Ensure content is a string
+    if (typeof content !== 'string') {
+      console.error('Markdown content is not a string for', key, 'Type:', typeof content);
+      return null;
+    }
     const lines = content.split('\n');
     
     // Find frontmatter (between --- markers)
