@@ -165,22 +165,22 @@ const Earn = () => import('@/components/Earn/Earn.vue')
 ### **Bundle Analysis:**
 ```bash
 # Install webpack-bundle-analyzer
-npm install --save-dev webpack-bundle-analyzer
+bun add -D webpack-bundle-analyzer
 
 # Add to package.json scripts
 "analyze": "vue-cli-service build --report"
 
 # Run analysis
-npm run analyze
+bun run analyze
 ```
 
 ### **Image Optimization:**
 ```bash
 # Install image optimization tools
-npm install --save-dev imagemin imagemin-webp imagemin-pngquant
+bun add -D imagemin imagemin-webp imagemin-pngquant
 
 # Create optimization script
-node scripts/optimize-images.js
+bun run scripts/optimize-images.js
 ```
 
 ### **Performance Monitoring:**

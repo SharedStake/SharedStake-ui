@@ -77,33 +77,33 @@ This document outlines the comprehensive plan to migrate SharedStake UI from Vue
 ### 1. Vue 3 Installation
 ```bash
 # Remove Vue 2
-yarn remove vue vue-router vuex vue-template-compiler
+bun remove vue vue-router vuex vue-template-compiler
 
 # Install Vue 3
-yarn add vue@^3.4.0 vue-router@^4.2.0
-yarn add -D @vitejs/plugin-vue vue-tsc
+bun add vue@^3.4.0 vue-router@^4.2.0
+bun add -D @vitejs/plugin-vue vue-tsc
 ```
 
 ### 2. State Management Migration
 **Option A: Pinia (Recommended)**
 ```bash
-yarn add pinia
+bun add pinia
 ```
 
 **Option B: Vuex 4**
 ```bash
-yarn add vuex@^4.1.0
+bun add vuex@^4.1.0
 ```
 
 ### 3. Build System Migration
 **Option A: Vite (Recommended)**
 ```bash
-yarn add -D vite @vitejs/plugin-vue
+bun add -D vite @vitejs/plugin-vue
 ```
 
 **Option B: Vue CLI 5 with Vue 3 support**
 ```bash
-yarn add -D @vue/cli-service@^5.0.0
+bun add -D @vue/cli-service@^5.0.0
 ```
 
 ### 4. Component Migration Examples

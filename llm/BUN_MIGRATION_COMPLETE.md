@@ -97,6 +97,7 @@ If needed, you can rollback by:
 2. Running `yarn install` to restore `yarn.lock`
 3. Reverting CI/CD configuration files
 4. Removing `.bunfig.toml`
+5. Reverting GitHub Actions workflows
 
 ## Benefits
 

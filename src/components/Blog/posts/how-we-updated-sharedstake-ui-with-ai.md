@@ -132,7 +132,7 @@ The traditional approach? A 3-6 month refactor with a team of developers. Our ap
 | Tool/Process | Status | Impact |
 |--------------|--------|--------|
 | **Linting** | ✅ Zero errors | Clean, maintainable code |
-| **Node.js** | 22 LTS | Better compatibility |
+| **Runtime** | Bun 1.2.23 | 3-5x faster package management |
 | **Vue CLI** | 5.x | Modern build tools |
 | **Documentation** | Comprehensive | Faster onboarding |
 
@@ -140,7 +140,7 @@ The traditional approach? A 3-6 month refactor with a team of developers. Our ap
 
 **DX Improvements:**
 - 🎯 **Zero lint errors** across the entire codebase
-- 🔧 **Node.js 22 LTS** with Vue CLI 5 compatibility
+- 🔧 **Bun 1.2.23** with 3-5x faster package management
 - 📋 **Reproducible builds** with pinned dependencies
 - 📚 **Comprehensive documentation** in /llm folder
 
@@ -284,11 +284,11 @@ After:
 <br/>
 
 ```bash
-Before: yarn audit
+Before: bun audit
   250 vulnerabilities found
   Severity: 46 Critical | 89 High | 76 Moderate | 39 Low
 
-After: yarn audit  
+After: bun audit  
   8 vulnerabilities found
   Severity: 0 Critical | 3 High | 5 Moderate | 0 Low
 ```

@@ -94,7 +94,7 @@ Based on our analysis, SharedStake has **2.4MB of images** with **3 critical lar
 
 #### **imagemin (Node.js)**
 ```bash
-npm install --save-dev imagemin imagemin-webp imagemin-pngquant
+bun add -D imagemin imagemin-webp imagemin-pngquant
 ```
 
 #### **cwebp (Google's WebP Tool)**
