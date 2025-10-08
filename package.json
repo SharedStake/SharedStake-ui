@@ -11,12 +11,21 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build:fast": "vue-cli-service build --skip-plugins @vue/cli-plugin-eslint",
+    "build:ultra": "vue-cli-service build --skip-plugins @vue/cli-plugin-eslint --mode production",
     "lint": "vue-cli-service lint",
+    "lint:fast": "vue-cli-service lint --cache --cache-location .eslintcache",
     "lint:fix": "vue-cli-service lint --fix",
     "type-check": "vue-tsc --noEmit",
+    "type-check:fast": "vue-tsc --noEmit --skipLibCheck",
+    "type-check:incremental": "vue-tsc --noEmit --incremental",
     "type-check:watch": "vue-tsc --noEmit --watch",
     "ci": "yarn lint && yarn type-check && yarn build",
-    "ci:fast": "yarn lint && yarn build:fast"
+    "ci:fast": "yarn lint && yarn build:fast",
+    "ci:ultra": "yarn lint:fast && yarn type-check:fast && yarn build:ultra",
+    "ci:parallel": "yarn lint:fast & yarn type-check:fast & yarn build:ultra & wait",
+    "ci:lightning": "yarn lint:fast && yarn build:ultra",
+    "test:ci": "yarn lint:fast && yarn type-check:fast",
+    "precommit": "yarn lint:fast && yarn type-check:fast"
   },
   "dependencies": {
     "@babel/core": "7.28.4",

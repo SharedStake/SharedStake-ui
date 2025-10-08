@@ -1,0 +1,171 @@
+name: Lightning CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '22.x'
+  YARN_CACHE_FOLDER: ~/.yarn-cache
+
+jobs:
+  # Lightning-fast parallel execution with optimized caching
+  lightning-checks:
+    name: Lightning Quality & Build Checks
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        job: [lint, type-check, build, security, bundle-analysis]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js with aggressive caching
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
+        
+    - name: Install dependencies with optimizations
+      run: |
+        # Use aggressive caching and parallel installs
+        yarn install --frozen-lockfile --prefer-offline --silent --network-concurrency 1 --network-timeout 100000
+        
+    # Linting job with cache
+    - name: Run linting with cache
+      if: matrix.job == 'lint'
+      run: |
+        # Use ESLint cache if available
+        yarn lint --cache --cache-location .eslintcache || yarn lint
+        
+    # Type checking job with incremental compilation
+    - name: Run type checking with incremental compilation
+      if: matrix.job == 'type-check'
+      run: |
+        # Use TypeScript incremental compilation
+        yarn type-check --incremental || yarn type-check
+        
+    # Build job with optimizations
+    - name: Build application with optimizations
+      if: matrix.job == 'build'
+      run: |
+        # Use build cache and optimizations
+        yarn build --mode production
+        
+    # Security audit job (non-blocking)
+    - name: Run security audit
+      if: matrix.job == 'security'
+      run: |
+        yarn audit --level moderate --json > audit-results.json || true
+        if [ -s audit-results.json ]; then
+          VULN_COUNT=$(jq '.vulnerabilities | length' audit-results.json)
+          if [ "$VULN_COUNT" -gt 0 ]; then
+            echo "⚠️ Found $VULN_COUNT security vulnerabilities"
+            yarn audit --level moderate
+          else
+            echo "✅ No security vulnerabilities found"
+          fi
+        else
+          echo "✅ Security audit completed successfully"
+        fi
+      continue-on-error: true
+      
+    # Bundle analysis job
+    - name: Bundle analysis
+      if: matrix.job == 'bundle-analysis'
+      run: |
+        yarn build --mode production
+        echo "📊 Bundle Analysis:"
+        echo "Total size: $(du -sh dist/ | cut -f1)"
+        echo "Number of files: $(find dist/ -type f | wc -l)"
+        
+        # Analyze largest files
+        echo "Largest files:"
+        find dist/ -type f -exec du -h {} + | sort -rh | head -5
+        
+        # Check for performance issues
+        BUNDLE_SIZE_MB=$(du -sm dist/ | cut -f1)
+        if [ "$BUNDLE_SIZE_MB" -gt 50 ]; then
+          echo "⚠️ Bundle size is large ($BUNDLE_SIZE_MB MB)"
+        else
+          echo "✅ Bundle size is acceptable ($BUNDLE_SIZE_MB MB)"
+        fi
+
+  # Ultra-fast feedback for PRs
+  pr-feedback:
+    name: PR Quick Feedback
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
+        
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile --prefer-offline --silent
+        
+    - name: Quick lint check
+      run: yarn lint --max-warnings 0
+      
+    - name: Quick type check
+      run: yarn type-check --noEmit --skipLibCheck
+
+  # Smart deployment check
+  smart-deployment:
+    name: Smart Deployment Check
+    runs-on: ubuntu-latest
+    needs: lightning-checks
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
+        
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile --prefer-offline --silent
+      
+    - name: Build application
+      run: yarn build
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: production-build-$(date +%Y%m%d-%H%M%S)
+        path: dist/
+        retention-days: 30
+        
+    - name: Deploy readiness check
+      run: |
+        # Quick health check
+        npm install -g http-server
+        http-server dist -p 8080 &
+        SERVER_PID=$!
+        sleep 2
+        
+        if curl -f http://localhost:8080 > /dev/null 2>&1; then
+          echo "✅ Build is ready for deployment"
+          kill $SERVER_PID
+        else
+          echo "❌ Build failed deployment check"
+          kill $SERVER_PID
+          exit 1
+        fi
