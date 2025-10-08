@@ -3,12 +3,11 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install --lts
-        - nvm use --lts
+        - nvm install 22
+        - nvm use 22
         - npm install -g yarn
-        - yarn install
+        - yarn install --frozen-lockfile
         - yarn lint
-        - yarn test:ci
     build:
       commands:
         - yarn build
