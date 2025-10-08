@@ -8,26 +8,17 @@ frontend:
         - npm install -g yarn@1.22.22
         - yarn cache clean
         - yarn install --frozen-lockfile --prefer-offline --network-timeout 100000
-        - yarn --version
-        - node --version
         
     build:
       commands:
-        - echo "Running linting checks..."
         - yarn lint
-        - echo "Running type checking..."
         - yarn type-check
-        - echo "Building application..."
         - yarn build
-        - echo "Build completed successfully"
-        - ls -la dist/
         
     postBuild:
       commands:
-        - echo "Build Summary:"
-        - echo "Build size: $(du -sh dist/ | cut -f1)"
-        - echo "Number of files: $(find dist/ -type f | wc -l)"
-        - test -f dist/index.html && echo "index.html found" || (echo "index.html missing" && exit 1)
+        - ls -la dist/
+        - test -f dist/index.html
 
   artifacts:
     baseDirectory: dist
