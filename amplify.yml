@@ -3,13 +3,12 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install --lts
-        - nvm use --lts
-        - npm install -g yarn
-        - yarn install
+        - curl -fsSL https://bun.sh/install | bash
+        - export PATH="$HOME/.bun/bin:$PATH"
+        - bun install
     build:
       commands:
-        - yarn build
+        - bun run build
   artifacts:
     baseDirectory: dist
     files:
@@ -17,3 +16,4 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+      - ~/.bun/install/cache/**/*

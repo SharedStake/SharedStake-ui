@@ -1,7 +1,7 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# This workflow will do a clean installation of dependencies using Bun, cache/restore them, build the source code and run tests
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: Bun CI
 
 on:
   push:
@@ -14,19 +14,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [lts/*]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-    - run: npm install -g yarn
-    - run: yarn install
-    - run: yarn build
-    - run: yarn lint
+        bun-version: latest
+        
+    - name: Install dependencies
+      run: bun install
+      
+    - name: Build application
+      run: bun run build
+      
+    - name: Run linting
+      run: bun run lint
+      
+    - name: Run type checking
+      run: bun run type-check
