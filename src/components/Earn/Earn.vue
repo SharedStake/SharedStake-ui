@@ -87,7 +87,7 @@ import {
   vETH2_CRV,
   oldPools,
 } from "@/contracts";
-import Claim from "./claim.vue";
+const Claim = () => import("./claim.vue");
 import { vEth2Price } from "@/utils/veth2.js";
 
 export default {

@@ -61,7 +61,7 @@ import ImageVue from "../Handlers/ImageVue";
 import { airdrop } from "@/contracts";
 import { notify } from "@/utils/common";
 import { ethers } from "ethers";
-import { merkle } from "./airdrop.js";
+// import { merkle } from "./airdrop.js";
 import { mapGetters } from "vuex";
 
 export default {
@@ -125,6 +125,8 @@ export default {
           return;
         }
         
+        // Dynamically import merkle data to reduce initial bundle size
+        const { merkle } = await import("./airdrop.js");
         const claims = merkle.claims;
         let claim = null;
         for (let key in claims) {
