@@ -1,4 +1,4 @@
-name: Fast CI Pipeline
+name: Ultra-Fast CI Pipeline
 
 on:
   push:
@@ -10,14 +10,12 @@ env:
   NODE_VERSION: '22.x'
 
 jobs:
-  # Fast parallel execution - all checks run simultaneously
-  fast-checks:
-    name: Fast Quality & Build Checks
+  # Install dependencies once and cache them
+  setup:
+    name: Setup Dependencies
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        job: [lint, type-check, build, security]
+    outputs:
+      cache-hit: ${{ steps.cache.outputs.cache-hit }}
     
     steps:
     - name: Checkout code
@@ -31,6 +29,53 @@ jobs:
         cache-dependency-path: 'yarn.lock'
         
     - name: Install dependencies
+      id: cache
+      run: |
+        if yarn install --frozen-lockfile --prefer-offline --silent; then
+          echo "cache-hit=true" >> $GITHUB_OUTPUT
+        else
+          echo "cache-hit=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          node-modules-
+
+  # Ultra-fast parallel execution with shared dependencies
+  fast-checks:
+    name: Fast Quality & Build Checks
+    runs-on: ubuntu-latest
+    needs: setup
+    
+    strategy:
+      matrix:
+        job: [lint, type-check, build, security]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
+        
+    - name: Restore node_modules cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          node-modules-
+          
+    - name: Install dependencies (if cache miss)
+      if: needs.setup.outputs.cache-hit == 'false'
       run: yarn install --frozen-lockfile --prefer-offline --silent
       
     # Linting job
@@ -61,10 +106,11 @@ jobs:
         fi
       continue-on-error: true
 
-  # Quick feedback for PRs
+  # Ultra-fast PR feedback (no build, just quality checks)
   pr-feedback:
     name: PR Quick Feedback
     runs-on: ubuntu-latest
+    needs: setup
     if: github.event_name == 'pull_request'
     
     steps:
@@ -78,7 +124,16 @@ jobs:
         cache: 'yarn'
         cache-dependency-path: 'yarn.lock'
         
-    - name: Install dependencies
+    - name: Restore node_modules cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          node-modules-
+          
+    - name: Install dependencies (if cache miss)
+      if: needs.setup.outputs.cache-hit == 'false'
       run: yarn install --frozen-lockfile --prefer-offline --silent
         
     - name: Quick lint check
@@ -87,12 +142,12 @@ jobs:
     - name: Quick type check
       run: yarn type-check --noEmit --skipLibCheck
 
-  # Deployment check for main branch
+  # Smart deployment check (only if build job succeeded)
   deployment-check:
     name: Deployment Check
     runs-on: ubuntu-latest
-    needs: fast-checks
-    if: github.ref == 'refs/heads/main'
+    needs: [setup, fast-checks]
+    if: github.ref == 'refs/heads/main' && needs.fast-checks.result == 'success'
     
     steps:
     - name: Checkout code
@@ -105,7 +160,16 @@ jobs:
         cache: 'yarn'
         cache-dependency-path: 'yarn.lock'
         
-    - name: Install dependencies
+    - name: Restore node_modules cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          node-modules-
+          
+    - name: Install dependencies (if cache miss)
+      if: needs.setup.outputs.cache-hit == 'false'
       run: yarn install --frozen-lockfile --prefer-offline --silent
       
     - name: Build application
