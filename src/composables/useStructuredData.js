@@ -1,5 +1,4 @@
 // Composable for managing structured data (JSON-LD)
-import { computed, watch } from 'vue'
 
 export function useStructuredData() {
   
