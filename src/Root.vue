@@ -486,7 +486,10 @@ export default {
       if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 100) {
         return;
       }
-      this.showNavbar = currentScrollPosition < this.lastScrollPosition;
+      const isScrollingUp = currentScrollPosition < this.lastScrollPosition;
+      this.showNavbar = isScrollingUp;
+      this.maintenanceBannerVisible = isScrollingUp;
+      this.footerBannerVisible = isScrollingUp;
       this.lastScrollPosition = currentScrollPosition;
     },
     async setSgtPrice() {
