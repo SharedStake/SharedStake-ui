@@ -167,6 +167,17 @@ yarn lint
 - `src/components/Blog/posts/` - Markdown blog posts
 - `src/utils/markdown.js` - Markdown parsing utility
 
+### Documentation Structure
+- `README.md` - This comprehensive project overview
+- `SEO_COMPREHENSIVE_GUIDE.md` - Complete SEO implementation guide
+- `PERFORMANCE_COMPREHENSIVE_GUIDE.md` - Performance optimization guide
+- `BLOG_SYSTEM.md` - Blog system documentation
+- `VUE3_MIGRATION_PLAN.md` - Vue 3 migration strategy
+- `MIGRATION_TO_BUN.md` - Bun migration documentation
+- `GOOGLE_SEARCH_CONSOLE_SETUP.md` - GSC setup guide
+- `SCHEMA_MARKUP_TESTING_GUIDE.md` - Schema testing guide
+- `SEO_AUDIT_CHECKLIST.md` - SEO audit checklist
+
 ---
 
 ## 🔍 Recent Fixes Applied
