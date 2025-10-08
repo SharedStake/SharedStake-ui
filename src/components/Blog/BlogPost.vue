@@ -156,13 +156,11 @@
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
 import BlogStyles from './BlogStyles.vue';
-import LazyImage from '../Common/LazyImage.vue';
 
 export default {
   name: 'BlogPost',
   components: {
-    BlogStyles,
-    LazyImage
+    BlogStyles
   },
   data() {
     return {

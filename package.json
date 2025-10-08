@@ -3,17 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "bun": ">=1.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   },
   "scripts": {
-    "setup": "bun install",
-    "serve": "bun run vue-cli-service serve",
-    "build": "bun run vue-cli-service build",
-    "lint": "bun run vue-cli-service lint",
-    "type-check": "bun run vue-tsc --noEmit",
-    "type-check:watch": "bun run vue-tsc --noEmit --watch",
-    "dev": "bun run serve",
-    "start": "bun run serve"
+    "setup": "npm install",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "type-check": "vue-tsc --noEmit",
+    "type-check:watch": "vue-tsc --noEmit --watch",
+    "dev": "npm run serve",
+    "start": "npm run serve"
   },
   "dependencies": {
     "@babel/core": "7.28.4",
@@ -38,7 +39,6 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.28.4",
     "@types/webpack-env": "1.18.8",
-    "@vitejs/plugin-vue": "6.0.1",
     "@vue/cli-plugin-babel": "5.0.9",
     "@vue/cli-plugin-eslint": "5.0.9",
     "@vue/cli-service": "5.0.9",

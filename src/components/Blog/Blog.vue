@@ -193,13 +193,9 @@
 <script>
 import { blogPosts } from './data/index.js';
 import { getAllTags } from './data/index.js';
-import LazyImage from '../Common/LazyImage.vue';
 
 export default {
   name: 'Blog',
-  components: {
-    LazyImage
-  },
   data() {
     return {
       posts: blogPosts,
