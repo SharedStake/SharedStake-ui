@@ -18,6 +18,7 @@ This document outlines the migration of the SharedStake UI project from Yarn and
 ### CI/CD Configuration
 - **AWS Amplify**: Updated to install and use Bun instead of Node.js/Yarn
 - **Docker**: Updated Dockerfile to use `oven/bun:1-alpine` base image
+- **GitHub Actions**: Updated both `node.js.yml` and `ci.yml` workflows to use Bun
 - **Caching**: Added Bun cache paths for faster CI builds
 
 ### Performance Improvements
@@ -63,13 +64,21 @@ bun run type-check:watch
 
 **Expected improvement: 50-70% faster CI/CD pipeline**
 
+### GitHub Actions Updates
+- **node.js.yml**: Updated to use `oven-sh/setup-bun@v1` action instead of Node.js setup
+- **ci.yml**: Updated to use Bun for all build steps and security audits
+- **Removed**: Node.js version matrix (Bun handles compatibility automatically)
+- **Added**: Type checking step to the CI pipeline
+
 ## Files Modified
 
 1. `package.json` - Updated engines, scripts, and overrides
 2. `amplify.yml` - Updated to use Bun installation and commands
 3. `Dockerfile` - Updated base image and commands
-4. `yarn.lock` - Removed (replaced by `bun.lockb`)
-5. `.bunfig.toml` - Added Bun configuration for optimal performance
+4. `.github/workflows/node.js.yml` - Updated to use Bun instead of Node.js/Yarn
+5. `.github/workflows/ci.yml` - Updated to use Bun instead of Node.js/Yarn
+6. `yarn.lock` - Removed (replaced by `bun.lock`)
+7. `.bunfig.toml` - Added Bun configuration for optimal performance
 
 ## Verification
 
