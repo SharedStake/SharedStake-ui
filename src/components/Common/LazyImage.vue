@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { addLazyLoading, removeLazyLoading, isLazyLoading, isLazyLoaded } from '@/utils/lazyLoading.js';
+import { addLazyLoading, removeLazyLoading } from '@/utils/lazyLoading.js';
 
 export default {
   name: 'LazyImage',
