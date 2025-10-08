@@ -7,6 +7,7 @@ import '../public/assets/styles/main.css';
 
 import Notifications from 'vue-notification'
 import VueEllipseProgress from 'vue-ellipse-progress';
+import { performanceMonitoring } from './utils/performanceMonitoring.js';
 
 Vue.config.productionTip = false
 Vue.use(Notifications)
@@ -29,4 +30,8 @@ new Vue({
   store,
   router,
   render: h => h(App),
+  mounted() {
+    // Initialize performance monitoring
+    performanceMonitoring.init();
+  }
 }).$mount('#app')

@@ -30,6 +30,16 @@
       <!-- Hero Section -->
       <div class="relative pt-32 pb-12 md:pt-36 md:pb-16 px-4">
         <div class="max-w-4xl mx-auto">
+          <!-- Featured Image -->
+          <div v-if="featuredImageUrl" class="mb-8">
+            <LazyImage
+              :src="featuredImageUrl"
+              :alt="featuredImageAlt"
+              class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg"
+              container-class="w-full"
+            />
+          </div>
+          
           <!-- Post Header -->
           <div class="mb-6 md:mb-8">
             <div class="flex items-center gap-2 mb-3 md:mb-4 flex-wrap">
@@ -135,11 +145,13 @@
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
 import BlogStyles from './BlogStyles.vue';
+import LazyImage from '../Common/LazyImage.vue';
 
 export default {
   name: 'BlogPost',
   components: {
-    BlogStyles
+    BlogStyles,
+    LazyImage
   },
   data() {
     return {
@@ -165,6 +177,14 @@ export default {
       const url = encodeURIComponent(window.location.href);
       const text = encodeURIComponent(this.post.title);
       return `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+    },
+    featuredImageUrl() {
+      if (!this.post) return null;
+      return `/images/blog-${this.post.slug}.jpg`;
+    },
+    featuredImageAlt() {
+      if (!this.post) return '';
+      return `${this.post.title} - SharedStake Blog Post`;
     }
   },
   watch: {
@@ -188,6 +208,18 @@ export default {
         if (this.post) {
           // Set page title
           document.title = `${this.post.title} - SharedStake Blog`;
+          
+          // Set meta description
+          this.setMetaDescription();
+          
+          // Set Open Graph tags
+          this.setOpenGraphTags();
+          
+          // Set Twitter Card tags
+          this.setTwitterCardTags();
+          
+          // Add structured data
+          this.addStructuredData();
         }
       }, 300);
     },
@@ -203,6 +235,104 @@ export default {
       return tag.split('-').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
+    },
+    setMetaDescription() {
+      const description = this.post.meta?.description || this.post.excerpt || `${this.post.title} - Learn about Ethereum staking with SharedStake`;
+      this.updateMetaTag('description', description);
+      this.updateMetaTag('keywords', this.post.meta?.keywords || this.post.tags?.join(', ') || 'ethereum staking, liquid staking, defi');
+    },
+    setOpenGraphTags() {
+      const baseUrl = window.location.origin;
+      const postUrl = `${baseUrl}/blog/${this.post.slug}`;
+      
+      this.updateMetaTag('og:title', this.post.title, 'property');
+      this.updateMetaTag('og:description', this.post.excerpt || this.post.meta?.description, 'property');
+      this.updateMetaTag('og:url', postUrl, 'property');
+      this.updateMetaTag('og:type', 'article', 'property');
+      this.updateMetaTag('og:image', `${baseUrl}${this.featuredImageUrl}`, 'property');
+      this.updateMetaTag('og:site_name', 'SharedStake', 'property');
+      this.updateMetaTag('og:locale', 'en_US', 'property');
+      
+      // Article specific tags
+      this.updateMetaTag('article:author', this.post.author, 'property');
+      this.updateMetaTag('article:published_time', new Date(this.post.publishDate).toISOString(), 'property');
+      this.updateMetaTag('article:section', 'Ethereum Staking', 'property');
+      
+      // Add tags as article:tag
+      if (this.post.tags) {
+        this.post.tags.forEach(tag => {
+          this.updateMetaTag('article:tag', tag, 'property');
+        });
+      }
+    },
+    setTwitterCardTags() {
+      const baseUrl = window.location.origin;
+      
+      this.updateMetaTag('twitter:card', 'summary_large_image', 'name');
+      this.updateMetaTag('twitter:title', this.post.title, 'name');
+      this.updateMetaTag('twitter:description', this.post.excerpt || this.post.meta?.description, 'name');
+      this.updateMetaTag('twitter:image', `${baseUrl}${this.featuredImageUrl}`, 'name');
+      this.updateMetaTag('twitter:site', '@sharedstake', 'name');
+      this.updateMetaTag('twitter:creator', '@sharedstake', 'name');
+    },
+    addStructuredData() {
+      const baseUrl = window.location.origin;
+      const postUrl = `${baseUrl}/blog/${this.post.slug}`;
+      
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": this.post.title,
+        "description": this.post.excerpt || this.post.meta?.description,
+        "image": `${baseUrl}${this.featuredImageUrl}`,
+        "author": {
+          "@type": "Organization",
+          "name": this.post.author,
+          "url": baseUrl
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "SharedStake",
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${baseUrl}/images/logo-white.svg`
+          }
+        },
+        "datePublished": new Date(this.post.publishDate).toISOString(),
+        "dateModified": new Date(this.post.publishDate).toISOString(),
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": postUrl
+        },
+        "url": postUrl,
+        "keywords": this.post.tags?.join(', ') || 'ethereum staking, liquid staking, defi',
+        "articleSection": "Ethereum Staking",
+        "wordCount": this.post.content ? this.post.content.replace(/<[^>]*>/g, '').split(' ').length : 0
+      };
+      
+      // Remove existing structured data
+      const existingScript = document.querySelector('script[type="application/ld+json"][data-blog-post]');
+      if (existingScript) {
+        existingScript.remove();
+      }
+      
+      // Add new structured data
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-blog-post', 'true');
+      script.textContent = JSON.stringify(structuredData);
+      document.head.appendChild(script);
+    },
+    updateMetaTag(name, content, attribute = 'name') {
+      if (!content) return;
+      
+      let meta = document.querySelector(`meta[${attribute}="${name}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute(attribute, name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
     }
   }
 };
