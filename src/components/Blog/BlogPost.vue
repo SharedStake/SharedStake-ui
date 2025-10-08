@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import BlogStyles from './BlogStyles.vue';
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
