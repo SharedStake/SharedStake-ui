@@ -112,8 +112,6 @@
 </template>
 
 <script>
-import { ref, computed, watch, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
 import BlogStyles from './BlogStyles.vue';
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
 import BlogPostCard from './BlogPostCard.vue';
@@ -128,58 +126,62 @@ export default {
     Breadcrumb,
     BlogPostCard
   },
-  setup() {
-    const route = useRoute();
-    const post = ref(null);
-    
-    const { 
-      loading, 
-      loadPost, 
-      getRelatedPosts, 
-      getBreadcrumbItems, 
-      setPageMeta,
-      formatDate,
-      formatTag
-    } = useBlog();
-    
-    const { injectBlogSchemas, cleanupBlogSchemas } = useStructuredData();
-    
-    // Computed properties
-    const breadcrumbItems = computed(() => getBreadcrumbItems(post.value));
-    const relatedPosts = computed(() => getRelatedPosts(post.value));
-    const twitterShareUrl = computed(() => 
-      post.value ? generateTwitterShareUrl(post.value.title, window.location.href) : ''
-    );
-    
-    // Methods
-    const handleLoadPost = async (slug) => {
-      cleanupBlogSchemas();
-      const loadedPost = await loadPost(slug);
-      post.value = loadedPost;
-      
-      if (loadedPost) {
-        setPageMeta(`${loadedPost.title} - SharedStake Blog`, loadedPost.meta?.description);
-        injectBlogSchemas(loadedPost, window.location.href);
-      }
-    };
-    
-    // Watchers
-    watch(() => route.params.slug, handleLoadPost, { immediate: true });
-    
-    // Lifecycle
-    onUnmounted(() => {
-      cleanupBlogSchemas();
-    });
+  data() {
+    const blogUtils = useBlog();
+    const structuredDataUtils = useStructuredData();
     
     return {
-      post,
-      loading,
-      breadcrumbItems,
-      relatedPosts,
-      twitterShareUrl,
-      formatDate,
-      formatTag
+      post: null,
+      loading: true,
+      ...blogUtils,
+      ...structuredDataUtils
     };
+  },
+  computed: {
+    breadcrumbItems() {
+      return this.getBreadcrumbItems(this.post);
+    },
+    relatedPosts() {
+      return this.getRelatedPosts(this.post);
+    },
+    twitterShareUrl() {
+      if (!this.post) return '';
+      return generateTwitterShareUrl(this.post.title, window.location.href);
+    }
+  },
+  watch: {
+    '$route.params.slug': {
+      immediate: true,
+      handler(newSlug) {
+        this.handleLoadPost(newSlug);
+      }
+    }
+  },
+  methods: {
+    async handleLoadPost(slug) {
+      this.loading = true;
+      this.post = null;
+      
+      // Remove existing schemas
+      this.cleanupBlogSchemas();
+      
+      // Load post using the utility function
+      const loadedPost = await this.loadPost(slug);
+      this.post = loadedPost;
+      this.loading = false;
+      
+      if (loadedPost) {
+        // Set page title
+        this.setPageMeta(`${loadedPost.title} - SharedStake Blog`, loadedPost.meta?.description);
+        
+        // Generate and inject structured data
+        this.injectBlogSchemas(loadedPost, window.location.href);
+      }
+    }
+  },
+  beforeDestroy() {
+    // Clean up schemas when component is destroyed
+    this.cleanupBlogSchemas();
   }
 };
 </script>

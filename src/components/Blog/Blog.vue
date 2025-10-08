@@ -135,7 +135,6 @@
 </template>
 
 <script>
-import { onMounted } from 'vue';
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
 import BlogPostCard from './BlogPostCard.vue';
 import { useBlog } from '@/composables/useBlog.js';
@@ -146,36 +145,32 @@ export default {
     Breadcrumb,
     BlogPostCard
   },
-  setup() {
-    const { 
-      selectedTag,
-      breadcrumbItems: getBreadcrumbItems,
-      featuredPosts,
-      allTags,
-      filteredPosts,
-      setPageMeta,
-      formatDate,
-      formatTag
-    } = useBlog();
-    
-    const breadcrumbItems = getBreadcrumbItems();
-    
-    onMounted(() => {
-      setPageMeta(
-        'Blog - SharedStake',
-        'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.'
-      );
-    });
-    
+  data() {
+    const blogUtils = useBlog();
     return {
-      selectedTag,
-      breadcrumbItems,
-      featuredPosts,
-      allTags,
-      filteredPosts,
-      formatDate,
-      formatTag
+      selectedTag: null,
+      ...blogUtils
     };
+  },
+  computed: {
+    breadcrumbItems() {
+      return this.getBreadcrumbItems();
+    },
+    featuredPosts() {
+      return this.getFeaturedPosts();
+    },
+    allTags() {
+      return this.getAllTags();
+    },
+    filteredPosts() {
+      return this.getFilteredPosts(this.selectedTag);
+    }
+  },
+  mounted() {
+    this.setPageMeta(
+      'Blog - SharedStake',
+      'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.'
+    );
   }
 };
 </script>
