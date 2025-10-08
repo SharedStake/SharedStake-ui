@@ -1,0 +1,12 @@
+# AWS Amplify SPA redirect rules for Vue 3
+# This ensures that all routes are handled by the Vue Router
+
+# Handle all routes by serving index.html
+/*    /index.html   200
+
+# Handle API routes if any (adjust as needed)
+/api/*    /api/:splat    200
+
+# Handle static assets with proper caching
+/images/*    /images/:splat    200
+/assets/*    /assets/:splat    200
