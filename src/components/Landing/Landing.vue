@@ -492,8 +492,6 @@
         </a>
       </div>
     </div>
-    <!-- <div class="exp roadMap" v-show="scrolled > 4700"> -->
-    <!-- Roadmap section disabled - outdated content -->
     <div
       v-show="false"
       class="exp roadMap"

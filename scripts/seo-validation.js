@@ -7,8 +7,12 @@
  * actionable recommendations for improvements.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // SEO validation rules
 const seoRules = {
@@ -460,11 +464,11 @@ class SEOValidator {
 }
 
 // Run validation if called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const validator = new SEOValidator();
   validator.run().then(report => {
     process.exit(report.score >= 90 ? 0 : 1);
   });
 }
 
-module.exports = SEOValidator;
+export default SEOValidator;

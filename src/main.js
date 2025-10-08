@@ -9,6 +9,10 @@ import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 import VueEllipseProgress from 'vue-ellipse-progress';
 
+// Import performance monitoring and lazy loading
+import { initPerformanceMonitoring } from './utils/performanceMonitoring.js'
+import { initLazyLoading } from './utils/lazyLoading.js'
+
 // Handle unhandled promise rejections (e.g., ENS resolution errors)
 window.addEventListener('unhandledrejection', (event) => {
   // Check if it's an ENS-related error
@@ -33,5 +37,20 @@ app.use(Toast, {
   newestOnTop: true
 })
 app.use(VueEllipseProgress, "vep");// you can define a name and use the plugin like <vep/>
+
+// Initialize performance monitoring and lazy loading
+initPerformanceMonitoring({
+  enableCoreWebVitals: true,
+  enableLazyLoadingMetrics: true,
+  enableRealTimeMonitoring: true,
+  enableAnalytics: true
+});
+
+initLazyLoading({
+  rootMargin: '50px',
+  threshold: 0.1,
+  enablePerformanceMonitoring: true,
+  enableAnalytics: true
+});
 
 app.mount('#app')
