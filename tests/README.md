@@ -34,36 +34,36 @@ tests/
 
 1. Install dependencies:
    ```bash
-   npm install
+   bun install
    ```
 
 2. Install Playwright browsers:
    ```bash
-   npm run test:install
+   bun run test:install
    ```
 
 ### Test Commands
 
 ```bash
 # Run all tests
-npm test
+bun test
 
 # Run tests with UI (interactive mode)
-npm run test:ui
+bun run test:ui
 
 # Run tests in headed mode (see browser)
-npm run test:headed
+bun run test:headed
 
 # Run tests in debug mode
-npm run test:debug
+bun run test:debug
 
 # Run specific test suites
-npm run test:blog        # Blog tests only
-npm run test:main-app    # Main app tests only
-npm run test:visual      # Visual regression tests only
+bun run test:blog        # Blog tests only
+bun run test:main-app    # Main app tests only
+bun run test:visual      # Visual regression tests only
 
 # View test report
-npm run test:report
+bun run test:report
 ```
 
 ### Development Server
@@ -190,17 +190,17 @@ Tests run automatically on:
 
 1. **Run in headed mode**:
    ```bash
-   npm run test:headed
+   bun run test:headed
    ```
 
 2. **Use debug mode**:
    ```bash
-   npm run test:debug
+   bun run test:debug
    ```
 
 3. **Run specific test**:
    ```bash
-   npx playwright test tests/blog/blog.spec.js --headed
+   bunx playwright test tests/blog/blog.spec.js --headed
    ```
 
 ### CI Debugging
@@ -225,7 +225,7 @@ When UI changes are intentional:
 2. Review differences
 3. Update baseline images:
    ```bash
-   npx playwright test tests/visual-regression.spec.js --update-snapshots
+   bunx playwright test tests/visual-regression.spec.js --update-snapshots
    ```
 
 ### Performance

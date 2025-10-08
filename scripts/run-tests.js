@@ -9,15 +9,15 @@ const { execSync } = require('child_process');
 const path = require('path');
 
 const commands = {
-  'all': 'playwright test',
-  'blog': 'playwright test tests/blog/',
-  'main-app': 'playwright test tests/main-app/',
-  'visual': 'playwright test tests/visual-regression.spec.js',
-  'ui': 'playwright test --ui',
-  'headed': 'playwright test --headed',
-  'debug': 'playwright test --debug',
-  'report': 'playwright show-report',
-  'install': 'playwright install'
+  'all': 'bunx playwright test',
+  'blog': 'bunx playwright test tests/blog/',
+  'main-app': 'bunx playwright test tests/main-app/',
+  'visual': 'bunx playwright test tests/visual-regression.spec.js',
+  'ui': 'bunx playwright test --ui',
+  'headed': 'bunx playwright test --headed',
+  'debug': 'bunx playwright test --debug',
+  'report': 'bunx playwright show-report',
+  'install': 'bunx playwright install'
 };
 
 function showHelp() {
@@ -38,10 +38,10 @@ Available commands:
   install    Install Playwright browsers
 
 Examples:
-  node scripts/run-tests.js all
-  node scripts/run-tests.js blog
-  node scripts/run-tests.js ui
-  node scripts/run-tests.js visual
+  bun run scripts/run-tests.js all
+  bun run scripts/run-tests.js blog
+  bun run scripts/run-tests.js ui
+  bun run scripts/run-tests.js visual
 
 Environment variables:
   CI=true    Run in CI mode (headless, no UI)

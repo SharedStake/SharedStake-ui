@@ -83,27 +83,27 @@ After thorough research, **Playwright** was selected as the best option because:
 
 ### 1. Install Dependencies
 ```bash
-npm install
-npm run test:install
+bun install
+bun run test:install
 ```
 
 ### 2. Run Tests
 ```bash
 # Run all tests
-npm test
+bun test
 
 # Run with interactive UI
-npm run test:ui
+bun run test:ui
 
 # Run specific test suites
-npm run test:blog
-npm run test:main-app
-npm run test:visual
+bun run test:blog
+bun run test:main-app
+bun run test:visual
 ```
 
 ### 3. View Results
 ```bash
-npm run test:report
+bun run test:report
 ```
 
 ## Test Coverage
@@ -148,7 +148,7 @@ The test suite covers:
 ### Updating Visual Baselines
 When you make intentional UI changes:
 ```bash
-npx playwright test tests/visual-regression.spec.js --update-snapshots
+bunx playwright test tests/visual-regression.spec.js --update-snapshots
 ```
 
 ### Adding New Tests
@@ -158,8 +158,8 @@ npx playwright test tests/visual-regression.spec.js --update-snapshots
 4. Update documentation
 
 ### Debugging
-- Use `npm run test:headed` to see browser
-- Use `npm run test:debug` for step-by-step debugging
+- Use `bun run test:headed` to see browser
+- Use `bun run test:debug` for step-by-step debugging
 - Check screenshots in `test-results/` directory
 
 ## System Requirements Note
@@ -168,7 +168,7 @@ The current environment has some missing system dependencies for Playwright brow
 
 ## Next Steps
 
-1. **Run Initial Tests**: Execute `npm test` to see the test suite in action
+1. **Run Initial Tests**: Execute `bun test` to see the test suite in action
 2. **Review Results**: Check the test report to understand what's being tested
 3. **Customize**: Modify tests to match your specific requirements
 4. **CI Integration**: Push to GitHub to see CI tests run automatically
