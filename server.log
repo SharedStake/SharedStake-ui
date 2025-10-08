@@ -88,52 +88,53 @@
 [2K[1A[2K[G[9%] setup (compilation)
 [2K[1A[2K[G[10%] building 
 [2K[1A[2K[G[10%] building (0/0 modules)
+[2K[1A[2K[G[10%] building (0/2 modules)
 [2K[1A[2K[G[10%] building (import loader babel-loader/lib/index.js)
-[2K[1A[2K[G[10%] building (0/8 modules)
-[2K[1A[2K[G[10%] building (3/15 modules)
-[2K[1A[2K[G[24%] building (6/15 modules)
+[2K[1A[2K[G[10%] building (0/14 modules)
+[2K[1A[2K[G[10%] building (5/15 modules)
+[2K[1A[2K[G[24%] building (6/17 modules)
 [2K[1A[2K[G[24%] building (import loader @vue/vue-loader-v15/lib/index.js)
-[2K[1A[2K[G[24%] building (17/24 modules)
-[2K[1A[2K[G[24%] building (17/27 modules)
+[2K[1A[2K[G[24%] building (16/24 modules)
 [2K[1A[2K[G[24%] building (import loader vue-style-loader/index.js)
 [2K[1A[2K[G[24%] building (import loader css-loader/dist/cjs.js)
 [2K[1A[2K[G[24%] building (import loader postcss-loader/dist/cjs.js)
-[2K[1A[2K[G[24%] building (18/29 modules)
+[2K[1A[2K[G[24%] building (17/29 modules)
 [2K[1A[2K[G[24%] building (import loader @vue/vue-loader-v15/lib/loaders/pitcher.js)
 [2K[1A[2K[G[24%] building (19/37 modules)
 [2K[1A[2K[G[24%] building (import loader @vue/vue-loader-v15/lib/loaders/templateLoader.js)
 [2K[1A[2K[G[24%] building (19/37 modules)
-[2K[1A[2K[G[24%] building (20/41 modules)
+[2K[1A[2K[G[24%] building (19/41 modules)
 [2K[1A[2K[G[24%] building (import loader @vue/vue-loader-v15/lib/loaders/stylePostLoader.js
 )
-[2K[1A[2K[1A[2K[G[24%] building (26/42 modules)
-[2K[1A[2K[G[38%] building (27/42 modules)
-[2K[1A[2K[G[38%] building (30/66 modules)
-[2K[1A[2K[G[51%] building (37/96 modules)
+[2K[1A[2K[1A[2K[G[24%] building (23/43 modules)
+[2K[1A[2K[G[38%] building (26/43 modules)
+[2K[1A[2K[G[38%] building (29/66 modules)
+[2K[1A[2K[G[51%] building (37/97 modules)
 [2K[1A[2K[G[51%] building (38/128 modules)
-[2K[1A[2K[G[51%] building (65/192 modules)
-[2K[1A[2K[G[51%] building (83/265 modules)
-[2K[1A[2K[G[51%] building (89/271 modules)
+[2K[1A[2K[G[51%] building (67/223 modules)
+[2K[1A[2K[G[51%] building (87/261 modules)
+[2K[1A[2K[G[51%] building (100/278 modules)
 [BABEL] Note: The code generator has deoptimised the styling of /workspace/src/components/Earn/airdrop.js as it exceeds the max of 500KB.
-[2K[1A[2K[G[51%] building (106/302 modules)
-[2K[1A[2K[G[51%] building (139/356 modules)
-[2K[1A[2K[G[51%] building (157/400 modules)
+[2K[1A[2K[G[51%] building (114/309 modules)
+[2K[1A[2K[G[51%] building (114/357 modules)
+[2K[1A[2K[G[51%] building (161/400 modules)
 [2K[1A[2K[G[51%] building (import loader raw-loader/dist/cjs.js)
-[2K[1A[2K[G[51%] building (180/415 modules)
-[2K[1A[2K[G[51%] building (226/447 modules)
-[2K[1A[2K[G[51%] building (249/488 modules)
-[2K[1A[2K[G[51%] building (351/678 modules)
-[2K[1A[2K[G[51%] building (420/731 modules)
-[2K[1A[2K[G[51%] building (458/800 modules)
-[2K[1A[2K[G[51%] building (510/916 modules)
-[2K[1A[2K[G[51%] building (524/919 modules)
-[2K[1A[2K[G[51%] building (607/1113 modules)
-[2K[1A[2K[G[51%] building (661/1173 modules)
-[2K[1A[2K[G[51%] building (700/1304 modules)
-[2K[1A[2K[G[51%] building (922/1401 modules)
-[2K[1A[2K[G[51%] building (1097/1697 modules)
-[2K[1A[2K[G[51%] building (1294/1739 modules)
-[2K[1A[2K[G[51%] building (1659/1787 modules)
+[2K[1A[2K[G[51%] building (180/402 modules)
+[2K[1A[2K[G[51%] building (231/485 modules)
+[2K[1A[2K[G[51%] building (270/580 modules)
+[2K[1A[2K[G[51%] building (353/677 modules)
+[2K[1A[2K[G[51%] building (388/693 modules)
+[2K[1A[2K[G[51%] building (444/718 modules)
+[2K[1A[2K[G[51%] building (479/737 modules)
+[2K[1A[2K[G[51%] building (480/766 modules)
+[2K[1A[2K[G[51%] building (556/933 modules)
+[2K[1A[2K[G[51%] building (615/1121 modules)
+[2K[1A[2K[G[51%] building (668/1157 modules)
+[2K[1A[2K[G[51%] building (700/1283 modules)
+[2K[1A[2K[G[51%] building (1024/1349 modules)
+[2K[1A[2K[G[51%] building (1132/1698 modules)
+[2K[1A[2K[G[51%] building (1419/1761 modules)
+[2K[1A[2K[G[51%] building (1677/1792 modules)
 [2K[1A[2K[G[65%] building (1815/1815 modules)
 [2K[1A[2K[G[65%] building 
 [2K[1A[2K[G[69%] building (finish)
@@ -217,15 +218,15 @@ onPlugin)
 [2K[1A[2K[G[94%] sealing (after seal)
 [2K[1A[2K[G[95%] emitting (emit)
 [2K[1A[2K[G[98%] emitting (after emit)
-[2K[1A[2K[GBuild finished at 02:06:17 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:17 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:17 by 0.000s
-[2K[1A[2K[G DONE  Compiled successfully in 41515ms2:06:17 AM
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[G DONE  Compiled successfully in 36929ms2:15:03 AM
 
-Build finished at 02:06:17 by 0.000s
+Build finished at 02:15:03 by 0.000s
 [2K[1A[2K[G
   App running at:
-  - Local:   http://localhost:8081/ 
+  - Local:   http://localhost:8082/ 
 
   It seems you are running Vue CLI inside a container.
   Access the dev server via http://localhost:<your container's external mapped port>/
@@ -233,12 +234,12 @@ Build finished at 02:06:17 by 0.000s
   Note that the development build is not optimized.
   To create a production build, run yarn build.
 
-Build finished at 02:06:18 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:18 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:18 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:18 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:18 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:18 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:18 by 0.000s
-[2K[1A[2K[GBuild finished at 02:06:18 by 0.000s
+Build finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
+[2K[1A[2K[GBuild finished at 02:15:03 by 0.000s
 [2K[1A[2K[G
