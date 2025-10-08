@@ -172,7 +172,13 @@ export default {
       const img = new Image()
       img.onload = this.onImageLoad
       img.onerror = this.onImageError
-      img.src = this.src
+      
+      // Try WebP first if available, then fallback to original
+      if (this.webpSrc) {
+        img.src = this.webpSrc
+      } else {
+        img.src = this.src
+      }
     },
     onImageLoad() {
       this.loaded = true
@@ -180,6 +186,15 @@ export default {
       this.$emit('load')
     },
     onImageError() {
+      // If WebP failed and we haven't tried the original yet, try the original
+      if (this.webpSrc && this.src !== this.webpSrc) {
+        const img = new Image()
+        img.onload = this.onImageLoad
+        img.onerror = this.onImageError
+        img.src = this.src
+        return
+      }
+      
       this.error = true
       this.loaded = false
       this.$emit('error')
