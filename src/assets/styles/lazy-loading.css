@@ -1,0 +1,285 @@
+/**
+ * Lazy Loading Styles for SharedStake
+ * 
+ * These styles provide visual feedback during lazy loading
+ * and smooth transitions when images load.
+ */
+
+/* Base lazy image styles */
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  background-color: #f3f4f6;
+  background-image: 
+    linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: lazy-loading-shimmer 1.5s infinite;
+}
+
+/* Shimmer animation for loading state */
+@keyframes lazy-loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Loading state */
+.lazy-loading {
+  opacity: 0.7;
+  filter: blur(2px);
+}
+
+/* Loaded state */
+.lazy-loaded {
+  opacity: 1;
+  filter: none;
+  animation: none;
+  background: none;
+}
+
+/* Error state */
+.lazy-error {
+  opacity: 0.5;
+  filter: grayscale(100%);
+  background: #fee2e2;
+  border: 2px dashed #ef4444;
+}
+
+/* Error state with icon */
+.lazy-error::after {
+  content: "⚠️";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: #ef4444;
+}
+
+/* Responsive lazy images */
+.lazy-image {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+/* Aspect ratio containers for lazy images */
+.lazy-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+}
+
+.lazy-container--16-9 {
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+}
+
+.lazy-container--4-3 {
+  padding-bottom: 75%; /* 4:3 aspect ratio */
+}
+
+.lazy-container--1-1 {
+  padding-bottom: 100%; /* 1:1 aspect ratio */
+}
+
+.lazy-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Blog post specific lazy loading */
+.blog-content .lazy-image {
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+/* Hero section lazy loading */
+.hero-image.lazy-image {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Card lazy loading */
+.card-image.lazy-image {
+  border-radius: 8px 8px 0 0;
+}
+
+/* Gallery lazy loading */
+.gallery-image.lazy-image {
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.gallery-image.lazy-image:hover {
+  transform: scale(1.02);
+}
+
+/* Performance optimizations */
+.lazy-image {
+  will-change: opacity, filter;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .lazy-image {
+    background-color: #374151;
+    background-image: 
+      linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  }
+  
+  .lazy-error {
+    background: #7f1d1d;
+    border-color: #dc2626;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .lazy-image {
+    transition: none;
+    animation: none;
+  }
+  
+  .lazy-loading {
+    filter: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .lazy-image {
+    border: 2px solid currentColor;
+  }
+  
+  .lazy-error {
+    border: 3px solid #ef4444;
+  }
+}
+
+/* Print styles */
+@media print {
+  .lazy-image {
+    opacity: 1 !important;
+    filter: none !important;
+    animation: none !important;
+    background: none !important;
+  }
+  
+  .lazy-loading,
+  .lazy-error {
+    display: none;
+  }
+}
+
+/* Utility classes */
+.lazy-fade-in {
+  animation: lazy-fade-in 0.5s ease-in-out;
+}
+
+@keyframes lazy-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lazy-slide-up {
+  animation: lazy-slide-up 0.6s ease-out;
+}
+
+@keyframes lazy-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lazy-scale-in {
+  animation: lazy-scale-in 0.4s ease-out;
+}
+
+@keyframes lazy-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Loading spinner for lazy images */
+.lazy-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #E20050;
+  border-radius: 50%;
+  animation: lazy-spin 1s linear infinite;
+}
+
+@keyframes lazy-spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Progress bar for lazy loading */
+.lazy-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #E20050, #E48CAB);
+  transition: width 0.3s ease;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Intersection observer fallback */
+.no-intersection-observer .lazy-image {
+  opacity: 1;
+  animation: none;
+  background: none;
+}
+
+/* Performance monitoring */
+.lazy-performance-warning {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #92400e;
+  z-index: 1000;
+  display: none;
+}
+
+.lazy-performance-warning.show {
+  display: block;
+}
