@@ -10,9 +10,13 @@
     "setup": "nvm use",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:fast": "vue-cli-service build --skip-plugins @vue/cli-plugin-eslint",
     "lint": "vue-cli-service lint",
+    "lint:fix": "vue-cli-service lint --fix",
     "type-check": "vue-tsc --noEmit",
-    "type-check:watch": "vue-tsc --noEmit --watch"
+    "type-check:watch": "vue-tsc --noEmit --watch",
+    "ci": "yarn lint && yarn type-check && yarn build",
+    "ci:fast": "yarn lint && yarn build:fast"
   },
   "dependencies": {
     "@babel/core": "^7.26.0",
