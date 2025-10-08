@@ -1,5 +1,4 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 // import { timeout } from "../utils/helpers"
 // import store from "../store/index"
 // const InfoPage = "https://docs.sharedstake.org"
@@ -26,7 +25,7 @@ const Blog = () => import("../components/Blog/Blog.vue");
 const BlogPost = () => import("../components/Blog/BlogPost.vue");
 // const Web3Test = () => import("../components/Web3Test.vue"); // Removed after Web3.js migration
 
-Vue.use(VueRouter);
+// Vue.use(VueRouter); // Not needed in Vue 3
 
 let routes = [{
     path: "/",
@@ -159,9 +158,8 @@ let routes = [{
     // }
 ];
 
-const router = new VueRouter({
-    mode: "history",
-    base: "",
+const router = createRouter({
+    history: createWebHistory(),
     routes,
     scrollBehavior (to, from, savedPosition) {
         if (savedPosition) {
