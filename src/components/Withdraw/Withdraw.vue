@@ -3,23 +3,29 @@
     :ABI="ABI"
     :title="title"
     :descr="descr"
-    :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
-    :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
-    :outputTokenName="outputTokenName"
-    :totalRedeemed="totalRedeemed"
-    :getTotalRedeemed="getTotalRedeemed"
+    :get-eth-available-for-withdrawal="getEthAvailableForWithdrawal"
+    :eth-available-for-withdrawal="ethAvailableForWithdrawal"
+    :output-token-name="outputTokenName"
+    :total-redeemed="totalRedeemed"
+    :get-total-redeemed="getTotalRedeemed"
   />
 </template>
 
 <script>
 import { withdrawals as ABI_withdrawals } from "@/contracts";
 import BN from "bignumber.js";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import RedemptionBase from "./RedemptionBase.vue";
 
 export default {
   name: "Withdraw",
   components: { RedemptionBase },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data() {
     return {
       ABI: ABI_withdrawals,
@@ -31,7 +37,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
   },
   methods: {
     async getEthAvailableForWithdrawal() {

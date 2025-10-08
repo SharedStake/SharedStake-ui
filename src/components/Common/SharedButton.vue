@@ -1,6 +1,5 @@
 <template>
   <button
-    @click="$emit('click')"
     :disabled="disabled"
     class="px-6 py-3 text-xl font-semibold transition-all border-2 border-white rounded-full md:font-medium md:px-8 whitespace-nowrap"
     :class="{
@@ -9,6 +8,7 @@
       'bg-brand-primary hover:bg-transparent hover:text-brand-primary hover:border-brand-primary': !disabled
     }"
     type="button"
+    @click="$emit('click')"
   >
     <slot />
   </button>

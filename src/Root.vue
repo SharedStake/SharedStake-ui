@@ -7,12 +7,28 @@
       class="maintenance-banner fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4 text-lg font-bold text-center text-white bg-red-600 shadow-lg transition-transform duration-500"
     >
       <div class="flex items-center space-x-2">
-        <svg class="w-6 h-6 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        <svg
+          class="w-6 h-6 animate-pulse"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
         </svg>
         <span>⚠️ UNDER MAINTENANCE ⚠️</span>
-        <svg class="w-6 h-6 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        <svg
+          class="w-6 h-6 animate-pulse"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
         </svg>
       </div>
     </div>
@@ -25,9 +41,9 @@
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
         Get ready for V2!
-        <br />
+        <br>
         Over 90% of veth2 already redeemed! New v2 withdrawawls contracts with better UX coming soon for remaining users! 
-        <br />
+        <br>
         version: 1.0.6
       </p>
     </div>
@@ -40,22 +56,28 @@
       >
         <router-link to="/">
           <div class="LogoContainer flex items-center justify-evenly">
-            <ImageVue :src="'logo-white.svg'" :size="'30px'" class="Logo" />
-            <div class="main">SharedStake</div>
+            <ImageVue
+              :src="'logo-white.svg'"
+              :size="'30px'"
+              class="Logo"
+            />
+            <div class="main">
+              SharedStake
+            </div>
           </div>
         </router-link>
 
         <!-- Desktop menu -->
         <template v-if="windowWidth >= 960">
-          <Menu :sgtPrice="sgtPrice" />
+          <Menu :sgt-price="sgtPrice" />
           <ConnectButton />
         </template>
 
         <!-- Burger menu -->
         <div
-          @click="showSidebar = !showSidebar"
-          class="showers"
           v-show="windowWidth < 960"
+          class="showers"
+          @click="showSidebar = !showSidebar"
         >
           <svg
             viewBox="0 0 32 2"
@@ -63,29 +85,45 @@
             class="shower"
             :class="{ cross1: showSidebar }"
           >
-            <path fill="currentColor" d="M0 0h32v2H0z"></path></svg
-          ><svg
+            <path
+              fill="currentColor"
+              d="M0 0h32v2H0z"
+            /></svg><svg
             viewBox="0 0 32 2"
             fill="white"
             class="shower"
             :class="{ cross2: showSidebar }"
           >
-            <path fill="currentColor" d="M0 0h32v2H0z"></path>
+            <path
+              fill="currentColor"
+              d="M0 0h32v2H0z"
+            />
           </svg>
         </div>
       </div>
     </div>
-    <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
+    <div
+      v-show="windowWidth < 960 && showSidebar"
+      class="sidebar"
+    >
       <ConnectButton />
 
       <!-- Core Actions Section -->
       <div class="sidebar-section">
-        <div class="sidebar-section-header">Core Actions</div>
+        <div class="sidebar-section-header">
+          Core Actions
+        </div>
         <div class="link disabled-link flex flex-col items-start">
           <span>Stake</span>
-          <div class="coming-soon">Coming Soon</div>
+          <div class="coming-soon">
+            Coming Soon
+          </div>
         </div>
-        <router-link class="link" to="/wrap" @click.native="showSidebar = false">
+        <router-link
+          class="link"
+          to="/wrap"
+          @click.native="showSidebar = false"
+        >
           Wrap
         </router-link>
         <router-link
@@ -104,17 +142,29 @@
         </router-link>
         <div class="link disabled-link flex flex-col items-start">
           <span>Withdraw</span>
-          <div class="coming-soon">Coming Soon</div>
+          <div class="coming-soon">
+            Coming Soon
+          </div>
         </div>
-        <router-link class="link" to="/earn" @click.native="showSidebar = false">
+        <router-link
+          class="link"
+          to="/earn"
+          @click.native="showSidebar = false"
+        >
           Earn
         </router-link>
       </div>
 
       <!-- Learn & Resources Section -->
       <div class="sidebar-section">
-        <div class="sidebar-section-header">Learn & Resources</div>
-        <router-link class="link" to="/blog" @click.native="showSidebar = false">
+        <div class="sidebar-section-header">
+          Learn & Resources
+        </div>
+        <router-link
+          class="link"
+          to="/blog"
+          @click.native="showSidebar = false"
+        >
           Blog
         </router-link>
         <span class="link">
@@ -122,7 +172,7 @@
             href="https://docs.sharedstake.finance/"
             target="_blank"
             rel="noopener noreferrer"
-            >Docs
+          >Docs
           </a>
         </span>
         <span class="link">
@@ -130,7 +180,7 @@
             href="https://snapshot.page/#/sharedstake.eth"
             target="_blank"
             rel="noopener noreferrer"
-            >DAO
+          >DAO
           </a>
         </span>
         <span class="link">
@@ -138,20 +188,22 @@
             href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
             target="_blank"
             rel="noopener noreferrer"
-            >Dune Dashboard
+          >Dune Dashboard
           </a>
         </span>
       </div>
 
       <!-- Community Section -->
       <div class="sidebar-section">
-        <div class="sidebar-section-header">Community</div>
+        <div class="sidebar-section-header">
+          Community
+        </div>
         <span class="link">
           <a
             href="https://discord.gg/C9GhCv86My"
             target="_blank"
             rel="noopener noreferrer"
-            >Discord
+          >Discord
           </a>
         </span>
         <span class="link">
@@ -159,24 +211,28 @@
             href="https://twitter.com/ChimeraDefi"
             target="_blank"
             rel="noopener noreferrer"
-            >Twitter
+          >Twitter
           </a>
         </span>
         <div class="link disabled-link flex flex-col items-start">
           <span>Telegram</span>
-          <div class="coming-soon">Coming Soon</div>
+          <div class="coming-soon">
+            Coming Soon
+          </div>
         </div>
       </div>
 
       <!-- Trading Section -->
       <div class="sidebar-section">
-        <div class="sidebar-section-header">Trading</div>
+        <div class="sidebar-section-header">
+          Trading
+        </div>
         <span class="link">
           <a
             href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
             target="_blank"
             rel="noopener noreferrer"
-            >Buy SGT ${{ sgtPrice }}
+          >Buy SGT ${{ sgtPrice }}
           </a>
         </span>
         <span class="link">
@@ -184,7 +240,7 @@
             href="https://sharedtools.org"
             target="_blank"
             rel="noopener noreferrer"
-            >Get veSGT
+          >Get veSGT
           </a>
         </span>
         <span class="link">
@@ -192,15 +248,21 @@
             href="https://curve.fi/factory/49"
             target="_blank"
             rel="noopener noreferrer"
-            >Get CRV-vETH2-LP
+          >Get CRV-vETH2-LP
           </a>
         </span>
       </div>
 
       <!-- Stats Section -->
       <div class="sidebar-section">
-        <div class="sidebar-section-header">Analytics</div>
-        <router-link class="link" to="#Stats" @click.native="showSidebar = false">
+        <div class="sidebar-section-header">
+          Analytics
+        </div>
+        <router-link
+          class="link"
+          to="#Stats"
+          @click.native="showSidebar = false"
+        >
           <a href="#Stats">
             Stats
           </a>
@@ -208,7 +270,10 @@
       </div>
     </div>
     <!--App-->
-    <router-view :scrolled="currentScrollPosition" :windowWidth="windowWidth" />
+    <router-view
+      :scrolled="currentScrollPosition"
+      :window-width="windowWidth"
+    />
     <!--App-->
     <div class="footer">
       <div class="disclaimer">
@@ -240,31 +305,30 @@
             class="FooterLogo"
           />
           <div class="footerGroup">
-            <div class="footerGroupName">Community</div>
+            <div class="footerGroupName">
+              Community
+            </div>
             <span class="link footerLink">
               <a
                 href="https://twitter.com/ChimeraDefi"
                 target="_blank"
                 rel="noopener noreferrer"
-                >Twitter
-              </a></span
-            >
+              >Twitter
+              </a></span>
             <span class="link footerLink">
               <a
                 href="https://discord.gg/C9GhCv86My"
                 target="_blank"
                 rel="noopener noreferrer"
-                >Discord
-              </a></span
-            >
+              >Discord
+              </a></span>
             <span class="link footerLink">
               <a
                 href="https://medium.com/@chimera_defi"
                 target="_blank"
                 rel="noopener noreferrer"
-                >Medium
-              </a></span
-            >
+              >Medium
+              </a></span>
             <!-- <span class="link footerLink">
               <a
                 href="https://www.reddit.com/r/SharedStake/"
@@ -275,23 +339,23 @@
             > -->
           </div>
           <div class="footerGroup">
-            <div class="footerGroupName">Developers</div>
+            <div class="footerGroupName">
+              Developers
+            </div>
             <span class="link footerLink">
               <a
                 href="https://github.com/SharedStake"
                 target="_blank"
                 rel="noopener noreferrer"
-                >Github
-              </a></span
-            >
+              >Github
+              </a></span>
             <span class="link footerLink">
               <a
                 href="https://docs.sharedstake.finance/"
                 target="_blank"
                 rel="noopener noreferrer"
-                >Documentation
-              </a></span
-            >
+              >Documentation
+              </a></span>
             <span class="link footerLink">
               <router-link to="/blog">Blog</router-link>
             </span>
@@ -300,20 +364,21 @@
                 href="https://snapshot.page/#/sharedstake.eth"
                 target="_blank"
                 rel="noopener noreferrer"
-                >SIPs
+              >SIPs
               </a>
             </span>
           </div>
           <div class="footerGroup">
-            <div class="footerGroupName">About</div>
+            <div class="footerGroupName">
+              About
+            </div>
             <span class="link footerLink">
               <a
                 href="https://www.certik.org/projects/sharedstake"
                 target="_blank"
                 rel="noopener noreferrer"
-                >Audit
-              </a></span
-            >
+              >Audit
+              </a></span>
             <span class="link footerLink">
               <router-link to="/FAQ">FAQ </router-link>
             </span>
@@ -322,9 +387,8 @@
                 href="https://docs.sharedstake.org/risks"
                 target="_blank"
                 rel="noopener noreferrer"
-                >Risks
-              </a></span
-            >
+              >Risks
+              </a></span>
             <span class="link footerLink">
               <router-link to="/privacy">Privacy Policy </router-link>
             </span>
@@ -334,14 +398,16 @@
           </div>
         </div>
       </div>
-      <div class="bottom">SharedStake © 2025</div>
+      <div class="bottom">
+        SharedStake © 2025
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import ImageVue from "./components/Handlers/ImageVue";
-import { mapGetters, mapActions } from "vuex";
+import ImageVue from "./components/Handlers/ImageVue.vue";
+import { useWalletStore } from "@/stores/wallet";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
 import ConnectButton from "./components/Common/ConnectButton.vue";
@@ -350,6 +416,8 @@ import { useScrollVisibility } from "./composables/useScrollVisibility";
 export default {
   components: { ImageVue, Menu, ConnectButton },
   setup() {
+    const walletStore = useWalletStore();
+    
     // Use the composable for maintenance banner
     const { createScrollVisibility: createMaintenanceBanner } = useScrollVisibility({
       threshold: 50,
@@ -365,14 +433,12 @@ export default {
     });
 
     return {
-      createMaintenanceBanner,
-      createFooterBanner
+      walletStore,
+      maintenanceBannerVisible,
+      footerBannerVisible
     };
   },
   data() {
-    const maintenanceBanner = this.createMaintenanceBanner();
-    const footerBanner = this.createFooterBanner();
-    
     return {
       showNavbar: true,
       lastScrollPosition: 0,
@@ -380,32 +446,15 @@ export default {
       windowWidth: window.innerWidth,
       showSidebar: false,
       sgtPrice: null,
-      maintenanceBannerVisible: maintenanceBanner.isVisible,
-      footerBannerVisible: footerBanner.isVisible,
-      maintenanceBannerHandler: maintenanceBanner.handleScroll,
-      footerBannerHandler: footerBanner.handleScroll,
+      maintenanceBannerVisible: true,
+      footerBannerVisible: true,
     };
   },
 
-  mounted: async function() {
-    window.addEventListener("resize", this.handleResize);
-    window.addEventListener("scroll", this.onScroll);
-    window.addEventListener("scroll", this.maintenanceBannerHandler);
-    window.addEventListener("scroll", this.footerBannerHandler);
-    await this.setSgtPrice();
-  },
-
-  goto(refName) {
-    var element = this.$refs[refName];
-    var top = element.offsetTop;
-
-    window.scrollTo(0, top);
-  },
-  beforeDestroy() {
-    window.removeEventListener("resize", this.handleResize);
-    window.removeEventListener("scroll", this.onScroll);
-    window.removeEventListener("scroll", this.maintenanceBannerHandler);
-    window.removeEventListener("scroll", this.footerBannerHandler);
+  computed: {
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
   },
 
   watch: {
@@ -419,13 +468,25 @@ export default {
     },
   },
 
-  computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
+  mounted: async function() {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("scroll", this.onScroll);
+    await this.setSgtPrice();
+  },
+
+  goto(refName) {
+    var element = this.$refs[refName];
+    var top = element.offsetTop;
+
+    window.scrollTo(0, top);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("scroll", this.onScroll);
   },
   methods: {
-    ...mapActions(["setAddress"]),
     async Connect() {
-      await this.setAddress();
+      await this.walletStore.setAddress();
     },
     handleResize() {
       this.windowWidth = window.innerWidth;

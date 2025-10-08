@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import DappTxBtn from "../Common/DappTxBtn.vue";
 
 import BN from "bignumber.js";
@@ -21,16 +21,33 @@ BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "ApprovalButton",
-  props: ["ABI_spender", "ABI_token", "amount", "cb", "autoHide"],
   components: { DappTxBtn },
+  props: ["ABI_spender", "ABI_token", "amount", "cb", "autoHide"],
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data() {
     return {
       userApproved: BN(0),
     };
   },
 
-  mounted: async function() {
-    await this.getApproved();
+  computed: {
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
+
+    enoughApproved() {
+      return this.userApproved.gte(this.amount);
+    },
+
+    ethAmt() {
+      if (!this.amount) return 0;
+      return toWei(this.amount);
+    },
   },
 
   watch: {
@@ -42,17 +59,8 @@ export default {
     },
   },
 
-  computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
-
-    enoughApproved() {
-      return this.userApproved.gte(this.amount);
-    },
-
-    ethAmt() {
-      if (!this.amount) return 0;
-      return toWei(this.amount);
-    },
+  mounted: async function() {
+    await this.getApproved();
   },
 
   methods: {

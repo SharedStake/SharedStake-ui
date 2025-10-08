@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="header"></div>
+    <div class="header" />
     <div class="partner-container">
       <PartnerItem
-        :class="partners.length == 4 ? 'partner-item-quad' : 'partner-item'"
         v-for="partner in partners"
         :key="partner.key"
+        :class="partners.length == 4 ? 'partner-item-quad' : 'partner-item'"
         :name="partner.name"
         :text="partner.text"
-        :imageUrl="partner.imageUrl"
+        :image-url="partner.imageUrl"
         :link="partner.link"
       />
     </div>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import PartnerItem from "./PartnerItem";
+import PartnerItem from "./PartnerItem.vue";
 
 export default {
   components: { PartnerItem },

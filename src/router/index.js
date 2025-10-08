@@ -1,5 +1,8 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
+// import { timeout } from "../utils/helpers"
+// import store from "../store/index"
+// const InfoPage = "https://docs.sharedstake.org"
+// const DaoPage = "https://snapshot.page/#/sharedstake.eth"
 
 const Stake = () => import("../components/Stake/Stake.vue")
 const Earn = () => import("../components/Earn/Earn.vue")
@@ -16,7 +19,7 @@ const Unwrap = () => import("../components/Stake/Unwrap.vue");
 const Blog = () => import("../components/Blog/Blog.vue");
 const BlogPost = () => import("../components/Blog/BlogPost.vue");
 
-Vue.use(VueRouter);
+// Vue.use(VueRouter); // No longer needed in Vue Router 4
 
 let routes = [{
     path: "/",
@@ -86,9 +89,8 @@ let routes = [{
 }
 ];
 
-const router = new VueRouter({
-    mode: "history",
-    base: "",
+const router = createRouter({
+    history: createWebHistory(),
     routes,
     scrollBehavior (to, from, savedPosition) {
         if (savedPosition) {
@@ -110,9 +112,13 @@ router.beforeEach((to, from, next) => {
         if (nextRoute) {
             // Preload the next route in the background
             setTimeout(() => {
-                import(`../components${nextRoute === '/stake' ? '/Stake/Stake.vue' : 
-                    nextRoute === '/earn' ? '/Earn/Earn.vue' : 
-                    '/Withdraw/Withdraw.vue'}`);
+                if (nextRoute === '/stake') {
+                    import('../components/Stake/Stake.vue');
+                } else if (nextRoute === '/earn') {
+                    import('../components/Earn/Earn.vue');
+                } else if (nextRoute === '/withdraw') {
+                    import('../components/Withdraw/Withdraw.vue');
+                }
             }, 1000);
         }
     }

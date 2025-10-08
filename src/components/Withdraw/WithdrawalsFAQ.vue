@@ -10,16 +10,16 @@
       </template>
       <template #answer>
         You can withdraw your staked ETH by following the steps:
-        <br />
+        <br>
         <strong>Step 1:</strong> Approve vETH2 (Please enter how much vETH2 you'd like to redeem)
-        <br />
+        <br>
         <strong>Step 2:</strong> Deposit vETH2
-        <br />
+        <br>
         <strong>Step 3:</strong> Redeem (when there is ETH available)
-        <br />
+        <br>
         <strong>Note: You must deposit vETH2 first. ETH or tokens will then be buffered into the contract based on
           demand. </strong>
-          <br />
+        <br>
         <strong>Note: You can at any point after deposit, choose to withdraw your vETH2 and use OTC or uniswap to sell for ETH. If you require a quicker flow. </strong>
       </template>
     </QuestionAnswer>
@@ -50,13 +50,13 @@
         Redeemable for {{
           veth2Bal.div(1/1.08).div(eighteenPower)
             .decimalPlaces(6)
-            .toString()  }} tokens.
-        <br />
+            .toString() }} tokens.
+        <br>
         From which {{
           totalRedeemed.div(eighteenPower)
             .decimalPlaces(6).toString()
         }} tokens have already been redeemed.
-        <br />
+        <br>
         A total of {{
           (veth2Bal.multipliedBy(11).div(10)
             .minus(totalRedeemed)
@@ -100,8 +100,11 @@
       </template>
       <template #answer>
         If you had deposited in the old withdrawals/rollover contract, you will have to use etherscan to manually retrieve/withdraw 
-        your vETH2 and redo the process. <br />
-        You can find a howto in the <a class="link" href="https://docs.sharedstake.finance/withdrawals/withdraw-veth2-via-etherscan">docs under Withdrawals at docs.sharedstake.finance</a>
+        your vETH2 and redo the process. <br>
+        You can find a howto in the <a
+          class="link"
+          href="https://docs.sharedstake.finance/withdrawals/withdraw-veth2-via-etherscan"
+        >docs under Withdrawals at docs.sharedstake.finance</a>
       </template>
     </QuestionAnswer>
   </div>

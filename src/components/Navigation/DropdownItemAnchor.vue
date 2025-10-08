@@ -4,6 +4,6 @@
     target="_blank"
     rel="noopener noreferrer"
   >
-    <slot> </slot>
+    <slot />
   </a>
 </template>
