@@ -78,90 +78,134 @@
     <div class="sidebar" v-show="windowWidth < 960 && showSidebar">
       <ConnectButton />
 
-      <div class="link disabled-link flex flex-col items-start">
-        <span>Stake</span>
-        <div class="coming-soon">Coming Soon</div>
+      <!-- Core Actions Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">Core Actions</div>
+        <div class="link disabled-link flex flex-col items-start">
+          <span>Stake</span>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
+        <router-link class="link" to="/wrap" @click.native="showSidebar = false">
+          Wrap
+        </router-link>
+        <router-link
+          class="link"
+          to="/unwrap"
+          @click.native="showSidebar = false"
+        >
+          Unwrap
+        </router-link>
+        <router-link
+          class="link"
+          to="/rollover"
+          @click.native="showSidebar = false"
+        >
+          Rollover
+        </router-link>
+        <div class="link disabled-link flex flex-col items-start">
+          <span>Withdraw</span>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
+        <router-link class="link" to="/earn" @click.native="showSidebar = false">
+          Earn
+        </router-link>
       </div>
-      <router-link class="link" to="/wrap" @click.native="showSidebar = false">
-        Wrap
-      </router-link>
-      <router-link
-        class="link"
-        to="/unwrap"
-        @click.native="showSidebar = false"
-      >
-        Unwrap
-      </router-link>
-      <router-link
-        class="link"
-        to="/rollover"
-        @click.native="showSidebar = false"
-      >
-        Rollover
-      </router-link>
-      <div class="link disabled-link flex flex-col items-start">
-        <span>Withdraw</span>
-        <div class="coming-soon">Coming Soon</div>
+
+      <!-- Learn & Resources Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">Learn & Resources</div>
+        <router-link class="link" to="/blog" @click.native="showSidebar = false">
+          Blog
+        </router-link>
+        <span class="link">
+          <a
+            href="https://docs.sharedstake.finance/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Docs
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://snapshot.page/#/sharedstake.eth"
+            target="_blank"
+            rel="noopener noreferrer"
+            >DAO
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Dune Dashboard
+          </a>
+        </span>
       </div>
-      <router-link class="link" to="/earn" @click.native="showSidebar = false">
-        Earn
-      </router-link>
-      <router-link class="link" to="#Stats" @click.native="showSidebar = false">
-        <a href="#Stats">
-          Stats
-        </a>
-      </router-link>
-      <span class="link">
-        <a
-          href="https://snapshot.page/#/sharedstake.eth"
-          target="_blank"
-          rel="noopener noreferrer"
-          >DAO
-        </a>
-      </span>
-      <span class="link">
-        <a
-          href="https://docs.sharedstake.finance/"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Docs
-        </a>
-      </span>
-      <router-link class="link" to="/blog" @click.native="showSidebar = false">
-        Blog
-      </router-link>
-      <span class="link">
-        <a
-          href="https://duneanalytics.com/sushi2000/shared-stake-metrics"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Dune
-        </a>
-      </span>
-      <span class="link">
-        <a
-          href="https://sharedtools.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Get veSGT
-        </a>
-      </span>
-      <span class="link">
-        <a
-          href="https://curve.fi/factory/49"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Get CRV-vETH2-LP
-        </a>
-      </span>
-      <span class="link">
-        <a
-          href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Buy SGT ${{ sgtPrice }}
-        </a>
-      </span>
+
+      <!-- Community Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">Community</div>
+        <span class="link">
+          <a
+            href="https://discord.gg/C9GhCv86My"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Discord
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://twitter.com/ChimeraDefi"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Twitter
+          </a>
+        </span>
+        <div class="link disabled-link flex flex-col items-start">
+          <span>Telegram</span>
+          <div class="coming-soon">Coming Soon</div>
+        </div>
+      </div>
+
+      <!-- Trading Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">Trading</div>
+        <span class="link">
+          <a
+            href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Buy SGT ${{ sgtPrice }}
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://sharedtools.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Get veSGT
+          </a>
+        </span>
+        <span class="link">
+          <a
+            href="https://curve.fi/factory/49"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Get CRV-vETH2-LP
+          </a>
+        </span>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">Analytics</div>
+        <router-link class="link" to="#Stats" @click.native="showSidebar = false">
+          <a href="#Stats">
+            Stats
+          </a>
+        </router-link>
+      </div>
     </div>
     <!--App-->
     <router-view :scrolled="currentScrollPosition" :windowWidth="windowWidth" />
@@ -656,6 +700,23 @@ export default {
   color: #999;
   margin-top: 2px;
   font-weight: normal;
+}
+
+.sidebar-section {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.sidebar-section-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+  padding: 0 0.5rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
 }
 
 @media only screen and (max-width: 1100px) {
