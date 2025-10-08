@@ -38,12 +38,15 @@
 - **Marked**: Updated to 16.4.0 (markdown parsing)
 - **All builds passing, zero runtime errors**
 
-### **Vue 3 Migration** ✅ **CORE INFRASTRUCTURE COMPLETE**
+### **Vue 3 Migration** ✅ **MAJOR COMPONENTS COMPLETE**
 - **Vue**: Upgraded from 2.7.16 to 3.5.22
 - **Router**: Migrated from Vue Router 3.6.5 to 4.5.1
 - **State Management**: Migrated from Vuex to Pinia 2.3.1
 - **Build System**: Migrated from Vue CLI to Vite 5.4.20
 - **Testing**: Updated to Vue 3 compatible test utilities
+- **Components**: Migrated key components to Composition API
+  - ✅ ConnectButton, Chooser, ApproveButton, Root
+  - ✅ All components using modern Vue 3 patterns
 - **Build**: ✅ Production builds working successfully
 
 ### **Blog System Implementation** ✅ **COMPLETE**

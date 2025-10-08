@@ -32,6 +32,8 @@ export const useWalletStore = defineStore('wallet', {
         isAuth: (state) => !!state.address,
         ethersProvider: (state) => state.ethersProvider,
         networkName: (state) => networks[state.network] || 'Unknown',
+        getNetwork: (state) => networks[state.network],
+        getNetworkId: (state) => state.network,
     },
     
     actions: {
@@ -53,12 +55,33 @@ export const useWalletStore = defineStore('wallet', {
         
         async connectWallet() {
             try {
-                // This would integrate with the existing onboard logic
+                // This integrates with the existing onboard logic
                 await changeWallets()
             } catch (error) {
                 console.error('Failed to connect wallet:', error)
                 throw error
             }
+        },
+        
+        // Legacy Vuex action compatibility
+        async setAddress() {
+            await this.connectWallet()
+        },
+        
+        setAddressOnboard(address) {
+            this.setAddress(address)
+        },
+        
+        exit() {
+            this.disconnectWallet()
+        },
+        
+        setEthersProvider(provider) {
+            this.setProvider(provider)
+        },
+        
+        setWallet(wallet) {
+            this.setWalletName(wallet)
         },
         
         disconnectWallet() {

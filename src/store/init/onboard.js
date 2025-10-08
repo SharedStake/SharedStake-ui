@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import store from '../index'
+import { useWalletStore } from '../../stores/wallet'
 
 
 // import { init, useOnboard } from '@web3-onboard/vue'
@@ -128,12 +128,15 @@ export async function changeWallets() {
   if (wallet) {
       let provider = new ethers.BrowserProvider(wallet.provider);
       window.ethersProvider = provider;
-      store.commit("setEthersProvider", provider);
-      store.commit("setWallet", wallet.label);
-      store.dispatch("setAddressOnboard", wallet.accounts[0].address)
-      store.commit("setNetwork", wallet.chains[0])
+      
+      // Use Pinia store instead of Vuex
+      const walletStore = useWalletStore();
+      walletStore.setEthersProvider(provider);
+      walletStore.setWallet(wallet.label);
+      walletStore.setAddressOnboard(wallet.accounts[0].address);
+      walletStore.setNetwork(wallet.chains[0]);
       localStorage.setItem("selectedWallet", wallet.label);
-      store.commit("setAddress", wallet.accounts[0].address)  
+      walletStore.setAddress(wallet.accounts[0].address);
 
       const wallets = onboard.state.select('wallets')
       wallets.subscribe(() => changeWallets())

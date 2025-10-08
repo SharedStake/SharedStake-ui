@@ -296,8 +296,9 @@
 </template>
 
 <script>
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useWalletStore } from '@/stores/wallet'
 import ImageVue from "./components/Handlers/ImageVue.vue";
-import { mapGetters, mapActions } from "vuex";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
 import ConnectButton from "./components/Common/ConnectButton.vue";
@@ -306,6 +307,16 @@ import { useScrollVisibility } from "./composables/useScrollVisibility";
 export default {
   components: { ImageVue, Menu, ConnectButton },
   setup() {
+    const walletStore = useWalletStore()
+    
+    // Reactive state
+    const showNavbar = ref(true)
+    const lastScrollPosition = ref(0)
+    const currentScrollPosition = ref(0)
+    const windowWidth = ref(window.innerWidth)
+    const showSidebar = ref(false)
+    const sgtPrice = ref(null)
+
     // Use the composable for maintenance banner
     const { isVisible: maintenanceBannerVisible } = useScrollVisibility({
       threshold: 50,
@@ -320,81 +331,83 @@ export default {
       showOnScrollUp: true
     });
 
-    return {
-      maintenanceBannerVisible,
-      footerBannerVisible
-    };
-  },
-  data() {
-    return {
-      showNavbar: true,
-      lastScrollPosition: 0,
-      currentScrollPosition: 0,
-      windowWidth: window.innerWidth,
-      showSidebar: false,
-      sgtPrice: null,
-    };
-  },
+    // Computed
+    const userAddress = computed(() => walletStore.userAddress)
 
-  mounted: async function() {
-    window.addEventListener("resize", this.handleResize);
-    window.addEventListener("scroll", this.onScroll);
-    await this.setSgtPrice();
-  },
+    // Methods
+    const Connect = async () => {
+      await walletStore.connectWallet();
+    }
 
-  goto(refName) {
-    var element = this.$refs[refName];
-    var top = element.offsetTop;
+    const handleResize = () => {
+      windowWidth.value = window.innerWidth;
+    }
 
-    window.scrollTo(0, top);
-  },
-  beforeDestroy() {
-    window.removeEventListener("resize", this.handleResize);
-    window.removeEventListener("scroll", this.onScroll);
-  },
+    const onScroll = () => {
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScroll < 0) {
+        return;
+      }
+      currentScrollPosition.value = currentScroll;
+      // Stop executing this function if the difference between
+      // current scroll position and last scroll position is less than some offset
+      if (Math.abs(currentScroll - lastScrollPosition.value) < 100) {
+        return;
+      }
+      showNavbar.value = currentScroll < lastScrollPosition.value;
+      lastScrollPosition.value = currentScroll;
+    }
 
-  watch: {
-    showSidebar(show) {
+    const setSgtPrice = async () => {
+      const sgtCoinId = "sharedstake-governance-token";
+      sgtPrice.value = await priceInUsdAsync(sgtCoinId);
+    }
+
+    // Watch for sidebar changes
+    watch(showSidebar, (show) => {
       if (show) {
         // Prevent scroll on document behind sidebar.
         document.body.style.overflow = "hidden";
       } else {
         document.body.style.overflow = "auto";
       }
-    },
-  },
+    });
 
-  computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
-  },
-  methods: {
-    ...mapActions(["setAddress"]),
-    async Connect() {
-      await this.setAddress();
-    },
-    handleResize() {
-      this.windowWidth = window.innerWidth;
-    },
-    onScroll() {
-      const currentScrollPosition =
-        window.pageYOffset || document.documentElement.scrollTop;
-      if (currentScrollPosition < 0) {
-        return;
-      }
-      this.currentScrollPosition = currentScrollPosition;
-      // Stop executing this function if the difference between
-      // current scroll position and last scroll position is less than some offset
-      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 100) {
-        return;
-      }
-      this.showNavbar = currentScrollPosition < this.lastScrollPosition;
-      this.lastScrollPosition = currentScrollPosition;
-    },
-    async setSgtPrice() {
-      const sgtCoinId = "sharedstake-governance-token";
-      this.sgtPrice = await priceInUsdAsync(sgtCoinId);
-    },
-  },
+    // Lifecycle
+    onMounted(async () => {
+      window.addEventListener("resize", handleResize);
+      window.addEventListener("scroll", onScroll);
+      await setSgtPrice();
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", onScroll);
+    });
+
+    return {
+      // State
+      showNavbar,
+      lastScrollPosition,
+      currentScrollPosition,
+      windowWidth,
+      showSidebar,
+      sgtPrice,
+      
+      // Computed
+      userAddress,
+      
+      // Methods
+      Connect,
+      handleResize,
+      onScroll,
+      setSgtPrice,
+      
+      // Composables
+      maintenanceBannerVisible,
+      footerBannerVisible
+    };
+  }
 };
 </script>
 

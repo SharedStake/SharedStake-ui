@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { ref, computed, onMounted, watch } from 'vue'
+import { useWalletStore } from '@/stores/wallet'
 import DappTxBtn from "../Common/DappTxBtn.vue";
 
 import BN from "bignumber.js";
@@ -23,80 +24,82 @@ export default {
   name: "ApprovalButton",
   props: ["ABI_spender", "ABI_token", "amount", "cb", "autoHide"],
   components: { DappTxBtn },
-  data() {
-    return {
-      userApproved: BN(0),
-    };
-  },
+  setup(props) {
+    const walletStore = useWalletStore()
+    const userApproved = ref(BN(0))
 
-  mounted: async function() {
-    await this.getApproved();
-  },
+    const userConnectedWalletAddress = computed(() => walletStore.userAddress)
 
-  watch: {
-    userConnectedWalletAddress: {
-      immediate: true,
-      async handler() {
-        await this.getApproved();
-      },
-    },
-  },
+    const enoughApproved = computed(() => {
+      return userApproved.value.gte(props.amount);
+    })
 
-  computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    const ethAmt = computed(() => {
+      if (!props.amount) return 0;
+      return toWei(props.amount);
+    })
 
-    enoughApproved() {
-      return this.userApproved.gte(this.amount);
-    },
-
-    ethAmt() {
-      if (!this.amount) return 0;
-      return toWei(this.amount);
-    },
-  },
-
-  methods: {
-    async genProps() {
-      const spenderContract = this.ABI_spender();
-      const spenderAddress = await spenderContract.getAddress();
-      
-      return {
-        abiCall: async (...args) => {
-          const tokenContract = this.ABI_token(true); // Use signer for write operations
-          if (!tokenContract) {
-            throw new Error("Token contract not available");
-          }
-          return await tokenContract.approve(...args);
-        },
-        argsArr: [spenderAddress, this.ethAmt],
-        cb: this.wrappedCb,
-      };
-    },
-
-    async wrappedCb() {
-      await this.getApproved();
-      await this.cb();
-    },
-
-    async getApproved() {
+    const getApproved = async () => {
       try {
-        const tokenContract = this.ABI_token();
-        const spenderContract = this.ABI_spender();
+        const tokenContract = props.ABI_token();
+        const spenderContract = props.ABI_spender();
         if (!tokenContract || !spenderContract) {
           console.error("Contracts not available");
           return;
         }
         const spenderAddress = await spenderContract.getAddress();
-        let userApproved = await tokenContract.allowance(
-          this.userConnectedWalletAddress,
+        let approved = await tokenContract.allowance(
+          userConnectedWalletAddress.value,
           spenderAddress
         );
-        this.userApproved = BN(userApproved.toString());
+        userApproved.value = BN(approved.toString());
       } catch (error) {
         console.error("Error getting approved amount:", error);
-        this.userApproved = BN(0);
+        userApproved.value = BN(0);
       }
-    },
-  },
+    }
+
+    const genProps = async () => {
+      const spenderContract = props.ABI_spender();
+      const spenderAddress = await spenderContract.getAddress();
+      
+      return {
+        abiCall: async (...args) => {
+          const tokenContract = props.ABI_token(true); // Use signer for write operations
+          if (!tokenContract) {
+            throw new Error("Token contract not available");
+          }
+          return await tokenContract.approve(...args);
+        },
+        argsArr: [spenderAddress, ethAmt.value],
+        cb: wrappedCb,
+      };
+    }
+
+    const wrappedCb = async () => {
+      await getApproved();
+      await props.cb();
+    }
+
+    // Watch for wallet address changes
+    watch(userConnectedWalletAddress, async () => {
+      await getApproved();
+    }, { immediate: true })
+
+    // Get approved amount on mount
+    onMounted(async () => {
+      await getApproved();
+    })
+
+    return {
+      userApproved,
+      userConnectedWalletAddress,
+      enoughApproved,
+      ethAmt,
+      genProps,
+      wrappedCb,
+      getApproved
+    }
+  }
 };
 </script>

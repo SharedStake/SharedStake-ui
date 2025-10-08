@@ -15,23 +15,27 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { computed } from 'vue'
+import { useWalletStore } from '@/stores/wallet'
 
 export default {
-  computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
-  },
+  setup() {
+    const walletStore = useWalletStore()
 
-  methods: {
-    ...mapActions(["setAddress"]),
+    const userAddress = computed(() => walletStore.userAddress)
 
-    async handleConnect() {
-      if (!this.userAddress) {
-        await this.setAddress();
+    const handleConnect = async () => {
+      if (!userAddress.value) {
+        await walletStore.connectWallet()
       }
-    },
-  },
-};
+    }
+
+    return {
+      userAddress,
+      handleConnect
+    }
+  }
+}
 </script>
 
 <style scoped>

@@ -15,39 +15,46 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { ref, computed } from 'vue'
+import { useWalletStore } from '@/stores/wallet'
 import { toWei } from "../../utils/common";
+
 export default {
   name: "Chooser",
   props: ["routes", "currentActive"],
-  components: {},
-  data() {
+  setup(props) {
+    const walletStore = useWalletStore()
+    const activeRoute = ref(parseInt(props.currentActive))
+
+    const userConnectedWalletAddress = computed(() => walletStore.userAddress)
+
+    const isActive = (index) => {
+      return activeRoute.value == index;
+    }
+
+    const ethAmt = (amount) => {
+      return toWei(amount);
+    }
+
+    const onClick = (index, cb) => {
+      activeRoute.value = index;
+      return cb(index, props.routes);
+    }
+
+    const asyncOnClick = async (index, cb) => {
+      activeRoute.value = index;
+      return await cb(index, props.routes);
+    }
+
     return {
-      activeRoute: parseInt(this.currentActive),
-    };
-  },
-
-  computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
-
-    isActive(index) {
-      return this.activeRoute == index;
-    },
-
-    ethAmt() {
-      return toWei(this.amount);
-    },
-  },
-  methods: {
-    onClick(index, cb) {
-      this.activeRoute = index;
-      return cb(index, this.routes);
-    },
-    async asyncOnClick(index, cb) {
-      this.activeRoute = index;
-      return await cb(index, this.routes);
-    },
-  },
+      activeRoute,
+      userConnectedWalletAddress,
+      isActive,
+      ethAmt,
+      onClick,
+      asyncOnClick
+    }
+  }
 };
 </script>
 
