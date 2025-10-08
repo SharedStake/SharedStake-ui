@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SharedStake Twitter Card - 1200x630px</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .twitter-card {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #1DA1F2;
+            margin: 0 auto;
+        }
+        
+        .content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .logo {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 40px;
+            background: #E20050;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 40px rgba(226, 0, 80, 0.4);
+        }
+        
+        .logo svg {
+            width: 90px;
+            height: 90px;
+            fill: white;
+        }
+        
+        .title {
+            font-size: 56px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 25px;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.6);
+        }
+        
+        .subtitle {
+            font-size: 32px;
+            color: #E20050;
+            margin-bottom: 35px;
+            font-weight: 600;
+        }
+        
+        .value-prop {
+            font-size: 24px;
+            color: #ccc;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+        
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+        
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #E20050, #E48CAB);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(226, 0, 80, 0.3);
+        }
+        
+        .cta {
+            background: linear-gradient(135deg, #E20050, #E48CAB);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 60px;
+            font-size: 28px;
+            font-weight: bold;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(226, 0, 80, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .eth-symbol {
+            position: absolute;
+            top: 60px;
+            right: 100px;
+            width: 100px;
+            height: 100px;
+            background: rgba(226, 0, 80, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: #E20050;
+            border: 3px solid rgba(226, 0, 80, 0.3);
+        }
+        
+        .staking-icon {
+            position: absolute;
+            bottom: 60px;
+            left: 100px;
+            width: 80px;
+            height: 80px;
+            background: rgba(226, 0, 80, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #E20050;
+            border: 3px solid rgba(226, 0, 80, 0.3);
+        }
+        
+        .defi-icon {
+            position: absolute;
+            top: 200px;
+            left: 80px;
+            width: 60px;
+            height: 60px;
+            background: rgba(226, 0, 80, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #E20050;
+            border: 2px solid rgba(226, 0, 80, 0.3);
+        }
+        
+        .instructions {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #2d2d2d;
+            border-radius: 10px;
+        }
+        
+        .instructions h2 {
+            color: #1DA1F2;
+            margin-bottom: 20px;
+        }
+        
+        .instructions ol {
+            line-height: 1.6;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="twitter-card">
+        <div class="eth-symbol">Ξ</div>
+        <div class="staking-icon">⚡</div>
+        <div class="defi-icon">🔄</div>
+        
+        <div class="content">
+            <div class="logo">
+                <svg width="90" height="90" viewBox="0 0 40 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5714 5.53714C10.7246 5.53714 7.14 10.7829 7.14 13.6971H0C0 5.53714 8.20857 0.242857 11.9486 0H32.2029L35.1171 5.53714H14.5714Z" fill="white"/>
+                    <path d="M39.4886 13.6971H12.8229C12.8229 10.4914 15.4457 8.45143 17.1943 8.45143H36.72L39.4886 13.6971Z" fill="white"/>
+                    <path d="M24.9172 45.4629C28.764 45.4629 32.3486 40.2171 32.3486 37.3029H39.4886C39.4886 45.4629 31.28 50.7571 27.54 51H7.28573L4.37145 45.4629H24.9172Z" fill="white"/>
+                    <path d="M1.52588e-05 37.3029H26.6657C26.6657 40.5086 24.0429 42.5486 22.2943 42.5486H2.76859L1.52588e-05 37.3029Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.6957 32.9258C12.7869 32.9295 12.8779 32.9314 12.9686 32.9314H18.8647L32.4433 20.3318C31.1825 19.3404 29.8549 18.5951 28.5529 18.2118L12.6957 32.9258ZM28.4674 32.9314H22.2923L34.1836 21.8975C35.1531 22.8855 36.0475 24.0033 36.8148 25.1859L28.4674 32.9314ZM31.895 32.9314H39.4886C39.4886 31.1362 38.9288 29.1697 37.998 27.2685L31.895 32.9314ZM25.4367 17.9229H19.2615L6.25569 29.991C7.42536 30.988 8.68 31.785 9.9464 32.2964L25.4367 17.9229ZM9.98149 17.9229H15.8339L4.58132 28.3642C3.68991 27.3825 2.88326 26.291 2.20407 25.1396L9.98149 17.9229ZM6.55387 17.9229H0C0 19.5742 0.40835 21.3018 1.11147 22.9729L6.55387 17.9229Z" fill="white"/>
+                </svg>
+            </div>
+            
+            <h1 class="title">SharedStake</h1>
+            <p class="subtitle">Ethereum Liquid Staking Platform</p>
+            <p class="value-prop">4-8% APR • No 32 ETH Minimum • Full Liquidity</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <span>High APR</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🚀</div>
+                    <span>Easy Start</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💧</div>
+                    <span>Liquid</span>
+                </div>
+            </div>
+            
+            <div class="cta">Start Staking Today</div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>🐦 How to Convert This to twitter-card.jpg</h2>
+        <ol>
+            <li><strong>Take a Screenshot:</strong> Use your browser's developer tools to take a screenshot of the blue-bordered box above (1200x630px)</li>
+            <li><strong>Alternative - Use Online Tools:</strong>
+                <ul>
+                    <li>Go to <a href="https://htmlcsstoimage.com/" target="_blank">htmlcsstoimage.com</a></li>
+                    <li>Copy the HTML/CSS from this file</li>
+                    <li>Set dimensions to 1200x630px</li>
+                    <li>Download as twitter-card.jpg</li>
+                </ul>
+            </li>
+            <li><strong>Save to:</strong> <code>/public/images/twitter-card.jpg</code></li>
+            <li><strong>Optimize:</strong> Ensure file size is under 100KB</li>
+            <li><strong>Test:</strong> Use <a href="https://cards-dev.twitter.com/validator" target="_blank">Twitter Card Validator</a></li>
+        </ol>
+        
+        <h3>🎨 Twitter-Specific Design Features:</h3>
+        <ul>
+            <li>✅ Larger text size for better Twitter visibility</li>
+            <li>✅ Higher contrast for Twitter's interface</li>
+            <li>✅ Prominent SharedStake branding</li>
+            <li>✅ Clear value proposition</li>
+            <li>✅ Optimized for Twitter's dark mode</li>
+            <li>✅ Mobile-friendly design</li>
+            <li>✅ Visual hierarchy optimized for social sharing</li>
+        </ul>
+    </div>
+</body>
+</html>
