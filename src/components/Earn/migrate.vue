@@ -227,6 +227,7 @@ export default {
         await tx.wait();
         that.approval = false;
       } catch (err) {
+        if (this.dev) console.log(err);
         that.approval = false;
       }
       this.isEligible();
@@ -248,6 +249,7 @@ export default {
         await tx.wait();
         that.approval = false;
       } catch (err) {
+        if (this.dev) console.log(err);
         that.approval = false;
       }
       this.isEligible();
@@ -269,6 +271,7 @@ export default {
         await tx.wait();
         that.approval = false;
       } catch (err) {
+        if (this.dev) console.log(err);
         that.releasing = false;
       }
       this.isEligible();
