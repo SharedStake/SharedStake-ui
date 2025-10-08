@@ -179,7 +179,7 @@ export default {
       }
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // Clean up schemas when component is destroyed
     this.cleanupBlogSchemas();
   }

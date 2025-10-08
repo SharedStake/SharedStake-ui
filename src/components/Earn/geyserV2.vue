@@ -298,7 +298,7 @@ export default {
       await this.mounted();
     }
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("resize", this.onResize);
   },
   computed: {

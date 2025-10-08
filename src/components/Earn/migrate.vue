@@ -140,7 +140,7 @@ export default {
   mounted: async function () {
     await this.mounted();
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("resize", this.onResize);
   },
   computed: {

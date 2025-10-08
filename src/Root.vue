@@ -395,7 +395,7 @@ export default {
 
     window.scrollTo(0, top);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("scroll", this.onScroll);
   },

@@ -34,14 +34,18 @@
       font-color="white"
  
     >
-      <div slot="legend-value" class=" text-sm">
-        / {{ maxEthDepositOnContract.toLocaleString("en-US") }}
-      </div>
+      <template #legend-value>
+        <div class=" text-sm">
+          / {{ maxEthDepositOnContract.toLocaleString("en-US") }}
+        </div>
+      </template>
 
-      <div slot="legend-caption" class="flex flex-row gap-2">
-        <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
-        <div class="blue">ETH Staked</div>
-      </div>
+      <template #legend-caption>
+        <div class="flex flex-row gap-2">
+          <ImageVue :src="'tokens/eth-logo.png'" :size="'20px'" />
+          <div class="blue">ETH Staked</div>
+        </div>
+      </template>
     </vep>
   </div>
 </template>
