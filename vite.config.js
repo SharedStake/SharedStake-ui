@@ -3,7 +3,18 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    // Plugin to handle markdown files
+    {
+      name: 'markdown-loader',
+      transform(code, id) {
+        if (id.endsWith('.md')) {
+          return `export default ${JSON.stringify(code)}`;
+        }
+      }
+    }
+  ],
   base: '/',
   resolve: {
     alias: {
