@@ -63,7 +63,6 @@ export function useImageOptimization() {
   // Generate responsive image sources
   const generateImageSources = (basePath, alt, type = 'blog') => {
     const format = getOptimalFormat();
-    const size = imageConfig.sizes[type];
     
     return {
       src: `${basePath}.${format}`,
@@ -235,7 +234,7 @@ export function useImageOptimization() {
 // Image optimization utilities
 export const imageUtils = {
   // Generate responsive image HTML
-  generateResponsiveImage: (src, alt, type = 'blog', options = {}) => {
+  generateResponsiveImage: (src, alt, options = {}) => {
     const basePath = src.replace(/\.(jpg|jpeg|png|webp|avif)$/i, '');
     const format = optimizationState.value.isSupported.avif ? 'avif' : 
                    optimizationState.value.isSupported.webp ? 'webp' : 'jpg';
@@ -272,16 +271,13 @@ export const imageUtils = {
   },
   
   // Generate image metadata for SEO
-  generateImageMetadata: (src, alt, title, type = 'blog') => {
+  generateImageMetadata: (src, alt, title) => {
     const basePath = src.replace(/\.(jpg|jpeg|png|webp|avif)$/i, '');
-    const size = imageConfig.sizes[type];
     
     return {
       src: `${basePath}.webp`,
       alt: alt || 'SharedStake image',
       title: title || alt,
-      width: size.width,
-      height: size.height,
       type: 'image/webp',
       loading: 'lazy',
       decoding: 'async'

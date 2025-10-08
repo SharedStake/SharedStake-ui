@@ -1,6 +1,5 @@
 // Enhanced SEO composable for comprehensive meta management
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useStructuredData } from './useStructuredData.js';
+import { ref, computed } from 'vue';
 
 // Default SEO configuration
 const defaultSEO = {
@@ -170,8 +169,8 @@ export function useSEO() {
 
   // Performance monitoring
   const trackPageView = (pageName) => {
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'page_view', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'page_view', {
         page_title: pageTitle.value,
         page_location: seoState.value.url,
         page_name: pageName
@@ -320,10 +319,9 @@ export const seoUtils = {
   },
   
   // Generate social sharing URLs
-  generateSocialUrls: (url, title, description) => {
+  generateSocialUrls: (url, title) => {
     const encodedUrl = encodeURIComponent(url);
     const encodedTitle = encodeURIComponent(title);
-    const encodedDescription = encodeURIComponent(description);
     
     return {
       twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,

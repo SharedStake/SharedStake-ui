@@ -139,7 +139,7 @@ export default {
         let address;
         try {
           address = ethers.getAddress(this.address);
-        } catch (error) {
+        } catch {
           console.error("Invalid Ethereum address:", this.address);
           this.eligible = false;
           return;

@@ -1184,7 +1184,7 @@ export default {
           navigator.userAgent
         )
       ) {
-        return true || window.ethereum; // mobile browsers will load if eth rpc available.
+        return true; // mobile browsers will load if eth rpc available.
       } else {
         return false;
       }
@@ -1192,13 +1192,13 @@ export default {
     async setupTvl() {
       try {
         this.TVL = await this.fetchTvlFromEtherscan();
-      } catch (e) {
+      } catch {
         const STATIC_TVL = 17688; // Updated 1 feb 2023
 
         if (!this.isMobile()) {
           try {
             this.TVL = await this.fetchTvlWithWallet();
-          } catch (e) {
+          } catch {
             this.TVL = BN(STATIC_TVL).toString();
           }
         } else {
@@ -1269,7 +1269,7 @@ export default {
     async setupApy() {
       try {
         this.getAPY();
-      } catch (e) {
+      } catch {
         this.APY = await BN(6).toString();
       }
     },
