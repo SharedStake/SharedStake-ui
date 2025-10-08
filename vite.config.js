@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import { plugin as markdown } from 'vite-plugin-markdown'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    markdown({ mode: 'html' })
+  ],
   base: '/',
   resolve: {
     alias: {
