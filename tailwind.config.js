@@ -6,6 +6,9 @@ module.exports = {
       colors: {
         "brand-primary": "#e6007a",
         "brand-primary-light": "#e2539e",
+        "accent-cyan": "#4ecdc4",
+        "accent-purple": "#667eea",
+        "accent-pink": "#ff6b6b",
       },
       screens: {
         "md-large": "900px",

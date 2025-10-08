@@ -8,7 +8,9 @@
       />
       <div class="headerPart poolName">
         Migrate to V2!
-        <div class="minitext">Claim SGTv2</div>
+        <div class="minitext">
+          Claim SGTv2
+        </div>
       </div>
       <!-- <div class="headerPart poolAddress">
         <div class="minitext">Address:</div>
@@ -39,12 +41,19 @@
           Connect!
         </span>
       </div>
-      <div v-if="userAddress" class="headerPart poolButton">
+      <div
+        v-if="userAddress"
+        class="headerPart poolButton"
+      >
         <span v-if="available === 0">
           <div class="minitext">Status:</div>
           No balance
         </span>
-        <button v-else-if="approval" disabled class="mainButton disabled">
+        <button
+          v-else-if="approval"
+          disabled
+          class="mainButton disabled"
+        >
           Waiting...
         </button>
         <button
@@ -54,14 +63,22 @@
         >
           Migrate!
         </button>
-        <button v-else class="mainButton" @click="Approve">Approve</button>
+        <button
+          v-else
+          class="mainButton"
+          @click="Approve"
+        >
+          Approve
+        </button>
       </div>
     </div>
     <div class="outline" />
     <div class="geyserChooser">
       <div class="headerPart poolName">
         Migrated Funds:
-        <div class="minitext">Claimable SGTv2</div>
+        <div class="minitext">
+          Claimable SGTv2
+        </div>
       </div>
       <div class="headerPart poolAddress">
         <span>
@@ -69,7 +86,10 @@
           {{ sentAmount }}
         </span>
       </div>
-      <div v-if="userAddress" class="headerPart poolButton">
+      <div
+        v-if="userAddress"
+        class="headerPart poolButton"
+      >
         <span v-if="sentAmount === 0">
           <div class="minitext">Status:</div>
           No funds migrated yet.
@@ -93,8 +113,8 @@
 
 <script>
 import { migrator, SGT } from "@/contracts";
-import { mapGetters } from "vuex";
-import ImageVue from "../Handlers/ImageVue";
+import { useWalletStore } from "@/stores/wallet";
+import ImageVue from "../Handlers/ImageVue.vue";
 // import { timeout } from "@/utils/helpers";
 // import web3 from "web3";
 import { notifyHandler } from "@/utils/common";
@@ -103,6 +123,12 @@ BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 export default {
   components: { ImageVue },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data: () => ({
     innerWidth: 0,
     txs: [],
@@ -114,6 +140,17 @@ export default {
     sentAmount: 0,
     startTime: 0,
   }),
+  computed: {
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
+    remaining_time() {
+      return (
+        (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /
+        1000
+      ).toFixed(0);
+    },
+  },
   watch: {
     async userAddress() {
       await this.isEligible();
@@ -134,17 +171,8 @@ export default {
   mounted: async function () {
     await this.mounted();
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("resize", this.onResize);
-  },
-  computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
-    remaining_time() {
-      return (
-        (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /
-        1000
-      ).toFixed(0);
-    },
   },
   methods: {
     async mounted() {
@@ -199,6 +227,7 @@ export default {
         await tx.wait();
         that.approval = false;
       } catch (err) {
+        if (this.dev) console.log(err);
         that.approval = false;
       }
       this.isEligible();
@@ -220,6 +249,7 @@ export default {
         await tx.wait();
         that.approval = false;
       } catch (err) {
+        if (this.dev) console.log(err);
         that.approval = false;
       }
       this.isEligible();
@@ -241,6 +271,7 @@ export default {
         await tx.wait();
         that.approval = false;
       } catch (err) {
+        if (this.dev) console.log(err);
         that.releasing = false;
       }
       this.isEligible();

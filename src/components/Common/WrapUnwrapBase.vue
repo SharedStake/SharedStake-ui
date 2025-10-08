@@ -2,36 +2,53 @@
   <div class="w-5/6 max-w-2xl pt-40 mx-auto">
     <section class="relative gap-4 p-6 my-10 text-white bg-gray-800 shadow-md rounded-xl">
       <span
-        class="absolute p-1 px-3 text-sm font-bold text-gray-200 transform -translate-x-1/2 rounded-full opacity-95 left-1/2 -top-3 bg-brand-primary">Beta</span>
+        class="absolute p-1 px-3 text-sm font-bold text-gray-200 transform -translate-x-1/2 rounded-full opacity-95 left-1/2 -top-3 bg-brand-primary"
+      >Beta</span>
 
-      <Chooser :routes="this.routes" :currentActive="this.title == 'Wrap' ? 0 : 1" />
+      <Chooser
+        :routes="routes"
+        :current-active="title == 'Wrap' ? 0 : 1"
+      />
 
       <div class="flex flex-col items-center justify-center">
         <header class="pb-3 my-4 text-center">
           <h1 class="text-3xl font-semibold">
-            {{ this.title }}
+            {{ title }}
           </h1>
           <p class="text-sm text-gray-300">
-            {{ this.descr }}
+            {{ descr }}
           </p>
         </header>
 
         <!-- Progress - show completed steps status -->
-        <div class="pb-3 mb-6 border-b border-gray-700" v-if="userWalletIsConnected">
+        <div
+          v-if="userWalletIsConnected"
+          class="pb-3 mb-6 border-b border-gray-700"
+        >
           <aside class="flex flex-wrap justify-center gap-3 md:gap-6">
-            <Step :title="`Approve ${inputTokenName}`" :completed="this.depositStage" step="1" />
-            <Step :title="`Wrap ${inputTokenName}`" :completed="this.completed" step="2" />
+            <Step
+              :title="`Approve ${inputTokenName}`"
+              :completed="depositStage"
+              step="1"
+            />
+            <Step
+              :title="`Wrap ${inputTokenName}`"
+              :completed="completed"
+              step="2"
+            />
           </aside>
         </div>
 
-        <label v-if="this.depositStage || this.approvalStage">
+        <label v-if="depositStage || approvalStage">
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
-            How much {{inputTokenName}} would you like to stake for {{ outputTokenName }}?
+            How much {{ inputTokenName }} would you like to stake for {{ outputTokenName }}?
           </p>
           <div class="relative flex items-center gap-1 p-2 text-xl border border-gray-200 rounded-xl">
-            <input :value="amount" class="max-w-xs ml-2 text-white bg-transparent border-none outline-none" 
+            <input
+              :value="amount"
+              class="max-w-xs ml-2 text-white bg-transparent border-none outline-none" 
               :placeholder="
-                this.userTokenBalance
+                userTokenBalance
                   .div(10 ** 18)
                   .decimalPlaces(6)
                   .toString()
@@ -41,39 +58,59 @@
                   ? 0
                   : $event.target.value
               "
-            />
+            >
             <span class="text-sm">
-              {{inputTokenName}}
+              {{ inputTokenName }}
             </span>
-            <button @click="handleFillMaxAmount" v-if="true"
-              class=" px-1 py-0.5 text-xs font-semibold bg-white rounded text-brand-primary">
+            <button
+              v-if="true"
+              class=" px-1 py-0.5 text-xs font-semibold bg-white rounded text-brand-primary"
+              @click="handleFillMaxAmount"
+            >
               max
             </button>
           </div>
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
-            Current {{outputTokenName}} Balance: {{ parseBN(userOutputTokenBalance) }} 
+            Current {{ outputTokenName }} Balance: {{ parseBN(userOutputTokenBalance) }} 
           </p>
         </label>
 
         <!-- Action buttons -->
-        <div class="my-6" v-if="!completed">
+        <div
+          v-if="!completed"
+          class="my-6"
+        >
           <p v-if="loading">
-            <ImageVue :src="'loading.svg'" :size="'45px'" />
+            <ImageVue
+              :src="'loading.svg'"
+              :size="'45px'"
+            />
           </p>
 
           <ConnectButton v-else-if="!userConnectedWalletAddress" />
 
           <template v-else>
-            <p v-if="!userHasTokenBalance" class="mt-2 text-sm font-semibold text-gray-200">
-              You need to have {{inputTokenName}} tokens in your wallet in order to continue
+            <p
+              v-if="!userHasTokenBalance"
+              class="mt-2 text-sm font-semibold text-gray-200"
+            >
+              You need to have {{ inputTokenName }} tokens in your wallet in order to continue
               {{ outputTokenName }}.
             </p>
 
-            <ApprovalButton v-else-if="stage == 'approvalStage'" :ABI_token="sgETH" :ABI_spender="wsgETH"
-              :amount="this.amount" :cb="getUserApproved" />
+            <ApprovalButton
+              v-else-if="stage == 'approvalStage'"
+              :ABI_token="sgETH"
+              :ABI_spender="wsgETH"
+              :amount="amount"
+              :cb="getUserApproved"
+            />
 
-            <dapp-tx-btn v-else-if="stage == 'depositStage'" :click="handleDeposit">
-              <span> {{ this.title }}</span>
+            <dapp-tx-btn
+              v-else-if="stage == 'depositStage'"
+              :click="handleDeposit"
+            >
+              <span> {{ title }}</span>
             </dapp-tx-btn>
           </template>
         </div>
@@ -86,7 +123,7 @@
 import BN from "bignumber.js";
 import { ethers } from "ethers";
 import { wsgETH, sgETH } from "@/contracts";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
@@ -111,6 +148,12 @@ export default {
     Chooser,
     DappTxBtn
   },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data() {
     return {
       amount: null,
@@ -132,22 +175,10 @@ export default {
     };
   },
 
-  watch: {
-    userConnectedWalletAddress: {
-      immediate: true,
-      async handler(address) {
-        // log the amount of veth2 the user has deposited for withdrawal
-        if (address) {
-          this.loading = true;
-          await this.refreshBalances();
-          this.loading = false;
-        }
-      },
-    },
-  },
-
   computed: {
-    ...mapGetters({ userConnectedWalletAddress: "userAddress" }),
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
 
     userHasTokenBalance() {
       return this.userTokenBalance.gt(0);
@@ -208,6 +239,20 @@ export default {
     },
   },
 
+  watch: {
+    userConnectedWalletAddress: {
+      immediate: true,
+      async handler(address) {
+        // log the amount of veth2 the user has deposited for withdrawal
+        if (address) {
+          this.loading = true;
+          await this.refreshBalances();
+          this.loading = false;
+        }
+      },
+    },
+  },
+
   methods: {
     routeClickCb(index, routes) {
       const targetRoute = `/${routes[index].text.toLowerCase()}`;
@@ -258,11 +303,11 @@ export default {
         const wsgETHAddress = await wsgETHContract.getAddress();
         let userApproved = await sgETHContract.allowance(this.userConnectedWalletAddress, wsgETHAddress);
         this.userApproved = BN(userApproved.toString());
+        if (this.dev) console.log("userApproved", this.userApproved);
       } catch (error) {
         console.error("Error getting user approved:", error);
         this.userApproved = BN(0);
       }
-      if (this.dev) console.log("userApproved", this.userApproved);
     },
 
     async getUserTokenBalance() {
@@ -274,11 +319,11 @@ export default {
         }
         let userTokenBalance = await sgETHContract.balanceOf(this.userConnectedWalletAddress);
         this.userTokenBalance = BN(userTokenBalance.toString());
+        if (this.dev) console.log("userTokenBalance", this.userTokenBalance);
       } catch (error) {
         console.error("Error getting user token balance:", error);
         this.userTokenBalance = BN(0);
       }
-      if (this.dev) console.log("userTokenBalance", this.userTokenBalance);
       return this.userTokenBalance;
     },
 
@@ -291,11 +336,11 @@ export default {
         }
         let userOutputTokenBalance = await wsgETHContract.balanceOf(this.userConnectedWalletAddress);
         this.userOutputTokenBalance = BN(userOutputTokenBalance.toString());
+        if (this.dev) console.log("userOutputTokenBalance", this.userOutputTokenBalance);
       } catch (error) {
         console.error("Error getting user output token balance:", error);
         this.userOutputTokenBalance = BN(0);
       }
-      if (this.dev) console.log("userOutputTokenBalance", this.userOutputTokenBalance);
       return this.userOutputTokenBalance;
     },
 

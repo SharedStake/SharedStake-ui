@@ -1,16 +1,17 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 
 import router from './router'
-import store from "./store"
+import { createPinia } from 'pinia'
 import '../public/assets/styles/main.css';
 
-import Notifications from 'vue-notification'
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 import VueEllipseProgress from 'vue-ellipse-progress';
 
-Vue.config.productionTip = false
-Vue.use(Notifications)
-Vue.use(VueEllipseProgress, "vep");// you can define a name and use the plugin like <vep/>
+// Import performance monitoring and lazy loading
+import { initPerformanceMonitoring } from './utils/performanceMonitoring.js'
+import { initLazyLoading } from './utils/lazyLoading.js'
 
 // Handle unhandled promise rejections (e.g., ENS resolution errors)
 window.addEventListener('unhandledrejection', (event) => {
@@ -25,8 +26,31 @@ window.addEventListener('unhandledrejection', (event) => {
   }
 });
 
-new Vue({
-  store,
-  router,
-  render: h => h(App),
-}).$mount('#app')
+const app = createApp(App)
+const pinia = createPinia()
+
+app.use(pinia)
+app.use(router)
+app.use(Toast, {
+  transition: "Vue-Toastification__bounce",
+  maxToasts: 20,
+  newestOnTop: true
+})
+app.use(VueEllipseProgress, "vep");// you can define a name and use the plugin like <vep/>
+
+// Initialize performance monitoring and lazy loading
+initPerformanceMonitoring({
+  enableCoreWebVitals: true,
+  enableLazyLoadingMetrics: true,
+  enableRealTimeMonitoring: true,
+  enableAnalytics: true
+});
+
+initLazyLoading({
+  rootMargin: '50px',
+  threshold: 0.1,
+  enablePerformanceMonitoring: true,
+  enableAnalytics: true
+});
+
+app.mount('#app')

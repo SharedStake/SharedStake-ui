@@ -8,12 +8,17 @@
       />
       <div class="headerPart poolName">
         Airdrop
-        <div class="minitext">Claim SGT</div>
+        <div class="minitext">
+          Claim SGT
+        </div>
       </div>
       <div class="headerPart poolAddress">
-        <div class="minitext">Address:</div>
+        <div class="minitext">
+          Address:
+        </div>
         <div :class="'stakePage'">
           <input
+            v-model="address"
             class="token-amount-input"
             title="address"
             autocomplete="off"
@@ -23,8 +28,7 @@
             placeholder="0x0"
             minlength="1"
             spellcheck="false"
-            v-model="address"
-          />
+          >
         </div>
       </div>
       <div class="headerPart poolClaim">
@@ -49,23 +53,37 @@
           {{ available }}
         </span>
       </div>
-      <div v-show="eligible && !isClaimed" class="headerPart poolButton">
-        <button class="mainButton" @click="Claim">Claim</button>
+      <div
+        v-show="eligible && !isClaimed"
+        class="headerPart poolButton"
+      >
+        <button
+          class="mainButton"
+          @click="Claim"
+        >
+          Claim
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 import { airdrop } from "@/contracts";
 import { notify } from "@/utils/common";
 import { ethers } from "ethers";
 // import { merkle } from "./airdrop.js";
-import { mapGetters } from "vuex";
+import { useWalletStore } from "@/stores/wallet";
 
 export default {
   components: { ImageVue },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore
+    };
+  },
   data: () => ({
     innerWidth: 0,
     address: "",
@@ -75,6 +93,11 @@ export default {
     eligible: false,
     claim: {},
   }),
+  computed: {
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
+  },
   watch: {
     async userAddress() {
       await this.isEligible();
@@ -95,11 +118,8 @@ export default {
   mounted: async function () {
     await this.mounted();
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("resize", this.onResize);
-  },
-  computed: {
-    ...mapGetters({ userAddress: "userAddress" }),
   },
   methods: {
     async mounted() {

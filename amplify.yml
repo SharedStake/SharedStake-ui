@@ -15,6 +15,9 @@ frontend:
         - bun run build
         # Verify build output
         - ls -la dist/
+        # Verify images are present
+        - ls -la dist/images/
+        - ls -la dist/images/socialmediaicons/
   artifacts:
     baseDirectory: dist
     files:
