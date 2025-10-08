@@ -411,31 +411,14 @@ import { useWalletStore } from "@/stores/wallet";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
 import ConnectButton from "./components/Common/ConnectButton.vue";
-import { useScrollVisibility } from "./composables/useScrollVisibility";
 
 export default {
   components: { ImageVue, Menu, ConnectButton },
   setup() {
     const walletStore = useWalletStore();
     
-    // Use the composable for maintenance banner
-    const { createScrollVisibility: createMaintenanceBanner } = useScrollVisibility({
-      threshold: 50,
-      hideOnScrollDown: true,
-      showOnScrollUp: true
-    });
-
-    // Use the composable for footer banner
-    const { createScrollVisibility: createFooterBanner } = useScrollVisibility({
-      threshold: 50,
-      hideOnScrollDown: true,
-      showOnScrollUp: true
-    });
-
     return {
-      walletStore,
-      maintenanceBannerVisible,
-      footerBannerVisible
+      walletStore
     };
   },
   data() {
