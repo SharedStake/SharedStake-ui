@@ -1,0 +1,54 @@
+name: Dependency Update
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Update dependencies
+        run: |
+          bun update
+          
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet bun.lockb; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Create Pull Request
+        if: steps.changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update dependencies'
+          title: 'chore: update dependencies'
+          body: |
+            This PR updates project dependencies to their latest versions.
+            
+            **Changes:**
+            - Updated dependencies in `bun.lockb`
+            
+            **Testing:**
+            - [ ] CI passes
+            - [ ] Build succeeds
+            - [ ] No breaking changes
+          branch: dependency-update
+          delete-branch: true

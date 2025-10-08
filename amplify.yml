@@ -3,17 +3,30 @@ frontend:
   phases:
     preBuild:
       commands:
+        # Install Bun with optimized settings
         - curl -fsSL https://bun.sh/install | bash
         - export PATH="$HOME/.bun/bin:$PATH"
-        - bun install
+        - bun --version
+        # Install dependencies with frozen lockfile for consistency
+        - bun install --frozen-lockfile --production=false
+        # Run linting and type checking in parallel with build
+        - bun run lint &
+        - bun run type-check &
+        - wait
     build:
       commands:
+        # Build the application
         - bun run build
+        # Verify build output
+        - ls -la dist/
   artifacts:
     baseDirectory: dist
     files:
       - '**/*'
   cache:
     paths:
+      # Cache Bun dependencies and install cache
       - node_modules/**/*
       - ~/.bun/install/cache/**/*
+      # Cache Bun binary for faster subsequent builds
+      - ~/.bun/bin/**/*

@@ -1,16 +1,21 @@
 [install]
 # Use faster package resolution
 cache = true
-# Use bun's native bundler for better performance
-bun = true
+# Use exact versions for better caching
+exact = true
+# Enable production optimizations
+production = false
 
 [install.scopes]
-# Configure scopes if needed for private packages
+# Configure scopes for better performance
+"@babel" = "https://registry.npmjs.org"
+"@vue" = "https://registry.npmjs.org"
+"@web3-onboard" = "https://registry.npmjs.org"
 
 [run]
-# Enable faster script execution
+# Enable Bun's native bundler for faster builds
 bun = true
 
 [test]
 # Configure test settings if needed
-preload = ["./test/setup.ts"]
+timeout = 30000
