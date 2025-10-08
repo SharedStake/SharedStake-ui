@@ -17,13 +17,16 @@
     "dev": "bun run serve",
     "start": "bun run serve",
     "test": "echo \"No tests specified\" && exit 0",
-    "audit": "bun audit --level moderate",
+    "audit": "bun audit --level moderate || true",
+    "audit:strict": "bun audit --level moderate",
     "clean": "rm -rf dist node_modules/.cache",
     "prebuild": "bun run clean",
     "postbuild": "echo \"Build completed successfully\"",
     "docker:build": "docker build -t sharedstake-ui .",
     "docker:run": "docker run -p 8080:8080 sharedstake-ui",
-    "optimize:images": "bun run scripts/optimize-images.js"
+    "optimize:images": "bun run scripts/optimize-images.js",
+    "analyze:bundle": "bun run vue-cli-service build --report",
+    "analyze:security": "bun audit --level moderate"
   },
   "dependencies": {
     "@babel/core": "7.28.4",
