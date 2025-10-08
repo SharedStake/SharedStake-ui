@@ -52,6 +52,7 @@ module.exports = {
         optimization: {
             splitChunks: {
                 chunks: 'all',
+                maxSize: 500000, // 500KB max chunk size
                 cacheGroups: {
                     // Separate Vue ecosystem
                     vue: {
@@ -60,18 +61,18 @@ module.exports = {
                         chunks: 'all',
                         priority: 20
                     },
-                    // Separate Web3 ecosystem
+                    // Separate Web3 ecosystem - load asynchronously
                     web3: {
                         test: /[\\/]node_modules[\\/](web3|ethers|@web3-onboard|@ethereumjs|@metamask)[\\/]/,
                         name: 'web3-vendor',
-                        chunks: 'all',
+                        chunks: 'async',
                         priority: 19
                     },
-                    // Separate UI libraries
+                    // Separate UI libraries - load asynchronously
                     ui: {
                         test: /[\\/]node_modules[\\/](sweetalert2|vue-notification|vue-ellipse-progress|three|axios)[\\/]/,
                         name: 'ui-vendor',
-                        chunks: 'all',
+                        chunks: 'async',
                         priority: 18
                     },
                     // Separate utility libraries
@@ -80,6 +81,13 @@ module.exports = {
                         name: 'utils-vendor',
                         chunks: 'all',
                         priority: 17
+                    },
+                    // Separate large data files
+                    data: {
+                        test: /[\\/]src[\\/].*airdrop\.js$/,
+                        name: 'airdrop-data',
+                        chunks: 'async',
+                        priority: 25
                     },
                     // Default vendor chunk
                     vendor: {
