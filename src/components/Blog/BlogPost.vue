@@ -187,6 +187,7 @@
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
 import BlogStyles from './BlogStyles.vue';
+import { initPerformanceOptimizations } from '@/utils/performance.js';
 
 export default {
   name: 'BlogPost',
@@ -203,14 +204,9 @@ export default {
     relatedPosts() {
       if (!this.post) return [];
       
-      // Find posts with similar tags (excluding current post)
-      const currentTags = this.post.tags;
-      const related = blogPosts
-        .filter(p => p.id !== this.post.id)
-        .filter(p => p.tags.some(tag => currentTags.includes(tag)))
-        .slice(0, 3);
-      
-      return related;
+      // Use the enhanced related posts function from sitemap utility
+      const { getRelatedPosts } = require('@/utils/sitemap.js');
+      return getRelatedPosts(this.post.tags, this.post.slug, 3);
     },
     twitterShareUrl() {
       if (!this.post) return '';
@@ -244,6 +240,8 @@ export default {
         
         if (this.post) {
           this.setPageMeta();
+          // Initialize performance optimizations
+          initPerformanceOptimizations();
         }
       }, 300);
     },
@@ -284,73 +282,217 @@ export default {
       this.setStructuredData();
     },
     setOpenGraphTags() {
-      const ogTitle = document.querySelector('meta[property="og:title"]');
-      if (ogTitle) {
-        ogTitle.setAttribute('content', this.post.title);
+      const ogTags = [
+        { property: 'og:title', content: this.post.title },
+        { property: 'og:description', content: this.post.meta.description },
+        { property: 'og:url', content: window.location.href },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:site_name', content: 'SharedStake' },
+        { property: 'og:image', content: this.post.meta.image || `${window.location.origin}/logo-white.svg` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: this.post.title },
+        { property: 'article:author', content: this.post.author },
+        { property: 'article:published_time', content: this.post.publishDate },
+        { property: 'article:modified_time', content: this.post.publishDate },
+        { property: 'article:section', content: this.post.tags[0] || 'DeFi' },
+        { property: 'article:tag', content: this.post.tags.join(', ') }
+      ];
+
+      // Twitter Card tags
+      const twitterTags = [
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:site', content: '@ChimeraDefi' },
+        { name: 'twitter:creator', content: '@ChimeraDefi' },
+        { name: 'twitter:title', content: this.post.title },
+        { name: 'twitter:description', content: this.post.meta.description },
+        { name: 'twitter:image', content: this.post.meta.image || `${window.location.origin}/logo-white.svg` },
+        { name: 'twitter:image:alt', content: this.post.title }
+      ];
+
+      // Additional meta tags
+      const additionalTags = [
+        { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
+        { name: 'author', content: this.post.author },
+        { name: 'keywords', content: this.post.meta.keywords || this.post.tags.join(', ') },
+        { name: 'article:author', content: this.post.author },
+        { name: 'article:published_time', content: this.post.publishDate },
+        { name: 'article:section', content: this.post.tags[0] || 'DeFi' },
+        { name: 'article:tag', content: this.post.tags.join(', ') }
+      ];
+
+      // Set canonical URL
+      this.setCanonicalUrl();
+
+      // Apply all meta tags
+      [...ogTags, ...twitterTags, ...additionalTags].forEach(tag => {
+        this.setMetaTag(tag.property || tag.name, tag.content, tag.property ? 'property' : 'name');
+      });
+    },
+
+    setMetaTag(selector, content, attribute = 'name') {
+      const existing = document.querySelector(`meta[${attribute}="${selector}"]`);
+      if (existing) {
+        existing.setAttribute('content', content);
       } else {
         const meta = document.createElement('meta');
-        meta.setAttribute('property', 'og:title');
-        meta.content = this.post.title;
-        document.head.appendChild(meta);
-      }
-      
-      const ogDescription = document.querySelector('meta[property="og:description"]');
-      if (ogDescription) {
-        ogDescription.setAttribute('content', this.post.meta.description);
-      } else {
-        const meta = document.createElement('meta');
-        meta.setAttribute('property', 'og:description');
-        meta.content = this.post.meta.description;
-        document.head.appendChild(meta);
-      }
-      
-      const ogUrl = document.querySelector('meta[property="og:url"]');
-      if (ogUrl) {
-        ogUrl.setAttribute('content', window.location.href);
-      } else {
-        const meta = document.createElement('meta');
-        meta.setAttribute('property', 'og:url');
-        meta.content = window.location.href;
+        meta.setAttribute(attribute, selector);
+        meta.content = content;
         document.head.appendChild(meta);
       }
     },
+
+    setCanonicalUrl() {
+      // Remove existing canonical
+      const existingCanonical = document.querySelector('link[rel="canonical"]');
+      if (existingCanonical) {
+        existingCanonical.remove();
+      }
+
+      // Add canonical URL
+      const canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      canonical.href = window.location.href;
+      document.head.appendChild(canonical);
+    },
     setStructuredData() {
-      const structuredData = {
+      // Enhanced BlogPosting schema
+      const blogPostSchema = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "headline": this.post.title,
         "description": this.post.meta.description,
+        "image": this.post.meta.image ? [this.post.meta.image] : [`${window.location.origin}/logo-white.svg`],
         "author": {
           "@type": "Organization",
-          "name": this.post.author
+          "name": this.post.author,
+          "url": window.location.origin
         },
         "publisher": {
           "@type": "Organization",
           "name": "SharedStake",
+          "url": window.location.origin,
           "logo": {
             "@type": "ImageObject",
-            "url": `${window.location.origin}/logo-white.svg`
-          }
+            "url": `${window.location.origin}/logo-white.svg`,
+            "width": 200,
+            "height": 200
+          },
+          "sameAs": [
+            "https://twitter.com/ChimeraDefi",
+            "https://discord.gg/C9GhCv86My",
+            "https://github.com/SharedStake"
+          ]
         },
         "datePublished": this.post.publishDate,
         "dateModified": this.post.publishDate,
         "mainEntityOfPage": {
           "@type": "WebPage",
           "@id": window.location.href
+        },
+        "url": window.location.href,
+        "keywords": this.post.meta.keywords || this.post.tags.join(', '),
+        "articleSection": this.post.tags[0] || "DeFi",
+        "wordCount": this.post.content ? this.post.content.replace(/<[^>]*>/g, '').split(' ').length : 0,
+        "inLanguage": "en-US",
+        "isPartOf": {
+          "@type": "Blog",
+          "name": "SharedStake Blog",
+          "url": `${window.location.origin}/blog`
         }
       };
+
+      // Organization schema
+      const organizationSchema = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SharedStake",
+        "url": window.location.origin,
+        "logo": `${window.location.origin}/logo-white.svg`,
+        "description": "Ethereum liquid staking protocol providing secure and efficient staking solutions",
+        "foundingDate": "2020",
+        "sameAs": [
+          "https://twitter.com/ChimeraDefi",
+          "https://discord.gg/C9GhCv86My",
+          "https://github.com/SharedStake",
+          "https://docs.sharedstake.finance/"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "url": "https://discord.gg/C9GhCv86My"
+        }
+      };
+
+      // Breadcrumb schema
+      const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": window.location.origin
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": `${window.location.origin}/blog`
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": this.post.title,
+            "item": window.location.href
+          }
+        ]
+      };
+
+      // FAQ schema if post has FAQ content
+      const faqSchema = this.generateFAQSchema();
       
       // Remove existing structured data
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
+      const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
+      existingScripts.forEach(script => script.remove());
       
       // Add new structured data
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.textContent = JSON.stringify(structuredData);
-      document.head.appendChild(script);
+      const schemas = [blogPostSchema, organizationSchema, breadcrumbSchema];
+      if (faqSchema) schemas.push(faqSchema);
+      
+      schemas.forEach(schema => {
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(schema);
+        document.head.appendChild(script);
+      });
+    },
+    
+    generateFAQSchema() {
+      // Check if post content contains FAQ-like content
+      const faqPattern = /<h[2-6][^>]*>(.*\?.*)<\/h[2-6]>/gi;
+      const matches = this.post.content.match(faqPattern);
+      
+      if (!matches || matches.length < 2) return null;
+      
+      const faqItems = matches.map((match, index) => {
+        const question = match.replace(/<[^>]*>/g, '').trim();
+        return {
+          "@type": "Question",
+          "name": question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `Answer to: ${question}`
+          }
+        };
+      });
+      
+      return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems
+      };
     }
   }
 };

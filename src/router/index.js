@@ -92,6 +92,34 @@ let routes = [{
         name: "BlogPost",
         component: BlogPost,
     },
+    {
+        path: "/sitemap.xml",
+        name: "Sitemap",
+        beforeEnter: (to, from, next) => {
+            // Generate and serve sitemap
+            const { generateBlogSitemap } = require('../utils/sitemap.js');
+            const sitemap = generateBlogSitemap();
+            
+            // Set content type and serve XML
+            const blob = new Blob([sitemap], { type: 'application/xml' });
+            const url = URL.createObjectURL(blob);
+            window.location.href = url;
+        }
+    },
+    {
+        path: "/robots.txt",
+        name: "Robots",
+        beforeEnter: (to, from, next) => {
+            // Generate and serve robots.txt
+            const { generateRobotsTxt } = require('../utils/sitemap.js');
+            const robots = generateRobotsTxt();
+            
+            // Set content type and serve text
+            const blob = new Blob([robots], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            window.location.href = url;
+        }
+    },
     // {
     //     path: "/web3-test",
     //     name: "Web3 Test",

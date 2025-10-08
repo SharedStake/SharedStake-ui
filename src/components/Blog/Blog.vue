@@ -232,13 +232,106 @@ export default {
     }
   },
   mounted() {
-    // Set page title and meta description
-    document.title = 'Blog - SharedStake';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.');
+    this.setBlogPageMeta();
+  },
+  methods: {
+    setBlogPageMeta() {
+      // Set page title and meta description
+      document.title = 'Blog - SharedStake | Ethereum Liquid Staking Insights';
+      
+      const metaTags = [
+        { name: 'description', content: 'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem. Expert insights, tutorials, and market analysis.' },
+        { name: 'keywords', content: 'ethereum staking, liquid staking, defi, sharedstake, ethereum 2.0, staking rewards, blockchain, cryptocurrency' },
+        { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
+        { name: 'author', content: 'SharedStake Team' },
+        { property: 'og:title', content: 'SharedStake Blog - Ethereum Liquid Staking Insights' },
+        { property: 'og:description', content: 'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: `${window.location.origin}/blog` },
+        { property: 'og:site_name', content: 'SharedStake' },
+        { property: 'og:image', content: `${window.location.origin}/logo-white.svg` },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:site', content: '@ChimeraDefi' },
+        { name: 'twitter:title', content: 'SharedStake Blog - Ethereum Liquid Staking Insights' },
+        { name: 'twitter:description', content: 'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.' },
+        { name: 'twitter:image', content: `${window.location.origin}/logo-white.svg` }
+      ];
+
+      // Set canonical URL
+      this.setCanonicalUrl();
+
+      // Apply meta tags
+      metaTags.forEach(tag => {
+        this.setMetaTag(tag.property || tag.name, tag.content, tag.property ? 'property' : 'name');
+      });
+
+      // Set structured data for blog listing
+      this.setBlogStructuredData();
+    },
+
+    setMetaTag(selector, content, attribute = 'name') {
+      const existing = document.querySelector(`meta[${attribute}="${selector}"]`);
+      if (existing) {
+        existing.setAttribute('content', content);
+      } else {
+        const meta = document.createElement('meta');
+        meta.setAttribute(attribute, selector);
+        meta.content = content;
+        document.head.appendChild(meta);
+      }
+    },
+
+    setCanonicalUrl() {
+      const existingCanonical = document.querySelector('link[rel="canonical"]');
+      if (existingCanonical) {
+        existingCanonical.remove();
+      }
+
+      const canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      canonical.href = `${window.location.origin}/blog`;
+      document.head.appendChild(canonical);
+    },
+
+    setBlogStructuredData() {
+      const blogSchema = {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "SharedStake Blog",
+        "description": "Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.",
+        "url": `${window.location.origin}/blog`,
+        "publisher": {
+          "@type": "Organization",
+          "name": "SharedStake",
+          "url": window.location.origin,
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${window.location.origin}/logo-white.svg`
+          }
+        },
+        "blogPost": this.posts.slice(0, 10).map(post => ({
+          "@type": "BlogPosting",
+          "headline": post.title,
+          "description": post.meta.description,
+          "url": `${window.location.origin}/blog/${post.slug}`,
+          "datePublished": post.publishDate,
+          "author": {
+            "@type": "Organization",
+            "name": post.author
+          }
+        }))
+      };
+
+      // Remove existing blog structured data
+      const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
+      existingScripts.forEach(script => script.remove());
+
+      // Add new structured data
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(blogSchema);
+      document.head.appendChild(script);
     }
-  }
 };
 </script>
 

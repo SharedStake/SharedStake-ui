@@ -73,17 +73,54 @@ renderer.listitem = (text) => `<li class="blog-list-item">${text}</li>\n`;
 // Paragraphs
 renderer.paragraph = (text) => `<p class="blog-paragraph">${text}</p>\n`;
 
-// Links
+// Links with enhanced SEO and internal linking
 renderer.link = (href, title, text) => {
   const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
-  const external = href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
-  return `<a href="${escapeHtml(href)}"${titleAttr}${external} class="blog-link">${text}</a>`;
+  const isExternal = href.startsWith('http');
+  const isInternal = href.startsWith('/') || href.startsWith('#');
+  
+  let linkClass = 'blog-link';
+  let attributes = '';
+  
+  if (isExternal) {
+    attributes = ' target="_blank" rel="noopener noreferrer nofollow"';
+    linkClass += ' blog-link-external';
+  } else if (isInternal) {
+    attributes = ' rel="nofollow"';
+    linkClass += ' blog-link-internal';
+  }
+  
+  // Add SEO-friendly attributes for internal links
+  if (href.includes('/blog/')) {
+    attributes += ' data-link-type="blog-post"';
+  }
+  
+  return `<a href="${escapeHtml(href)}"${titleAttr}${attributes} class="${linkClass}">${text}</a>`;
 };
 
-// Images
+// Images with enhanced SEO optimization
 renderer.image = (href, title, text) => {
   const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
-  return `<img src="${escapeHtml(href)}" alt="${escapeHtml(text)}"${titleAttr} class="blog-image" loading="lazy" />`;
+  const altText = text || title || 'Blog image';
+  
+  // Generate responsive image with WebP support
+  const baseSrc = escapeHtml(href);
+  const webpSrc = baseSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+  
+  return `<picture class="blog-image-container">
+    <source srcset="${webpSrc}" type="image/webp">
+    <img 
+      src="${baseSrc}" 
+      alt="${escapeHtml(altText)}" 
+      ${titleAttr} 
+      class="blog-image" 
+      loading="lazy"
+      decoding="async"
+      width="800"
+      height="auto"
+      onerror="this.onerror=null; this.src='${baseSrc}'"
+    />
+  </picture>`;
 };
 
 // Horizontal rules

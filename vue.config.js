@@ -4,6 +4,13 @@ module.exports = {
     devServer: {
         port: 8080
     },
+    // Production optimizations
+    productionSourceMap: false,
+    css: {
+        extract: {
+            ignoreOrder: true
+        }
+    },
     chainWebpack: config => {
         config.module
           .rule('js')
@@ -52,7 +59,16 @@ module.exports = {
         optimization: {
             splitChunks: {
                 chunks: 'all',
+                minSize: 20000,
+                maxSize: 244000,
                 cacheGroups: {
+                    // Blog-specific chunk for better caching
+                    blog: {
+                        test: /[\\/]src[\\/]components[\\/]Blog[\\/]/,
+                        name: 'blog',
+                        chunks: 'all',
+                        priority: 25
+                    },
                     // Separate Vue ecosystem
                     vue: {
                         test: /[\\/]node_modules[\\/](vue|vue-router|vuex|@vue)[\\/]/,
@@ -89,7 +105,16 @@ module.exports = {
                         priority: 10
                     }
                 }
-            }
+            },
+            // Enable tree shaking
+            usedExports: true,
+            sideEffects: false
+        },
+        // Performance optimizations
+        performance: {
+            hints: 'warning',
+            maxEntrypointSize: 512000,
+            maxAssetSize: 512000
         }
     }
 }
