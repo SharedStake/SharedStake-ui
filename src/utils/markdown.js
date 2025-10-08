@@ -29,74 +29,124 @@ const escapeHtml = (text) => {
 };
 
 // Headings with classes
-renderer.heading = (text, level) => 
-  `<h${level} id="${makeId(text)}" class="blog-h${level}">${text}</h${level}>\n`;
+renderer.heading = ({ tokens, depth }) => {
+  const text = renderer.parser.parseInline(tokens);
+  return `<h${depth} id="${makeId(text)}" class="blog-h${depth}">${text}</h${depth}>\n`;
+};
 
 // Code blocks with language labels
-renderer.code = (code, language) => `<div class="blog-code-block">
-  ${language ? `<div class="blog-code-lang">${language}</div>` : ''}
-  <pre><code class="language-${language || 'plaintext'}">${escapeHtml(code)}</code></pre>
+renderer.code = ({ text, lang, escaped }) => {
+  const code = escaped ? text : escapeHtml(text);
+  const language = lang || 'plaintext';
+  return `<div class="blog-code-block">
+  ${lang ? `<div class="blog-code-lang">${lang}</div>` : ''}
+  <pre><code class="language-${language}">${code}</code></pre>
 </div>\n`;
+};
 
 // Inline code
-renderer.codespan = (code) => `<code class="blog-inline-code">${escapeHtml(code)}</code>`;
+renderer.codespan = ({ text }) => `<code class="blog-inline-code">${escapeHtml(text)}</code>`;
 
 // Blockquotes
-renderer.blockquote = (quote) => `<blockquote class="blog-blockquote">${quote}</blockquote>\n`;
+renderer.blockquote = ({ tokens }) => {
+  const content = renderer.parser.parse(tokens);
+  return `<blockquote class="blog-blockquote">${content}</blockquote>\n`;
+};
 
 // Tables with wrapper
-renderer.table = (header, body) => `<div class="blog-table-wrapper">
+renderer.table = ({ header, rows }) => {
+  let headerHtml = '';
+  for (let i = 0; i < header.length; i++) {
+    headerHtml += renderer.tablecell(header[i]);
+  }
+  const headerRow = `<tr class="blog-table-row">${headerHtml}</tr>\n`;
+  
+  let bodyHtml = '';
+  for (let i = 0; i < rows.length; i++) {
+    let rowHtml = '';
+    for (let j = 0; j < rows[i].length; j++) {
+      rowHtml += renderer.tablecell(rows[i][j]);
+    }
+    bodyHtml += `<tr class="blog-table-row">${rowHtml}</tr>\n`;
+  }
+  
+  return `<div class="blog-table-wrapper">
   <table class="blog-table">
-    <thead class="blog-table-head">${header}</thead>
-    <tbody class="blog-table-body">${body}</tbody>
+    <thead class="blog-table-head">${headerRow}</thead>
+    <tbody class="blog-table-body">${bodyHtml}</tbody>
   </table>
 </div>\n`;
+};
 
-renderer.tablerow = (content) => `<tr class="blog-table-row">${content}</tr>\n`;
-renderer.tablecell = (content, flags) => {
-  const tag = flags.header ? 'th' : 'td';
-  const cls = flags.header ? 'blog-table-header' : 'blog-table-cell';
-  const align = flags.align ? ` style="text-align: ${flags.align}"` : '';
+renderer.tablerow = ({ text }) => `<tr class="blog-table-row">${text}</tr>\n`;
+renderer.tablecell = (cell) => {
+  const content = renderer.parser.parseInline(cell.tokens);
+  const tag = cell.header ? 'th' : 'td';
+  const cls = cell.header ? 'blog-table-header' : 'blog-table-cell';
+  const align = cell.align ? ` style="text-align: ${cell.align}"` : '';
   return `<${tag} class="${cls}"${align}>${content}</${tag}>`;
 };
 
 // Lists
-renderer.list = (body, ordered, start) => {
+renderer.list = ({ ordered, start, items }) => {
   const tag = ordered ? 'ol' : 'ul';
   const cls = ordered ? 'blog-ordered-list' : 'blog-unordered-list';
   const startAttr = ordered && start !== 1 ? ` start="${start}"` : '';
+  
+  let body = '';
+  for (let i = 0; i < items.length; i++) {
+    body += renderer.listitem(items[i]);
+  }
+  
   return `<${tag} class="${cls}"${startAttr}>${body}</${tag}>\n`;
 };
 
-renderer.listitem = (text) => `<li class="blog-list-item">${text}</li>\n`;
+renderer.listitem = (item) => {
+  const content = renderer.parser.parse(item.tokens, !!item.loose);
+  return `<li class="blog-list-item">${content}</li>\n`;
+};
 
 // Paragraphs
-renderer.paragraph = (text) => `<p class="blog-paragraph">${text}</p>\n`;
+renderer.paragraph = ({ tokens }) => {
+  const content = renderer.parser.parseInline(tokens);
+  return `<p class="blog-paragraph">${content}</p>\n`;
+};
 
 // Links
-renderer.link = (href, title, text) => {
+renderer.link = ({ href, title, tokens }) => {
+  const text = renderer.parser.parseInline(tokens);
   const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
   const external = href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
   return `<a href="${escapeHtml(href)}"${titleAttr}${external} class="blog-link">${text}</a>`;
 };
 
 // Images
-renderer.image = (href, title, text) => {
+renderer.image = ({ href, title, text, tokens }) => {
+  const altText = tokens ? renderer.parser.parseInline(tokens, renderer.parser.textRenderer) : text;
   const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
-  return `<img src="${escapeHtml(href)}" alt="${escapeHtml(text)}"${titleAttr} class="blog-image" loading="lazy" />`;
+  return `<img src="${escapeHtml(href)}" alt="${escapeHtml(altText)}"${titleAttr} class="blog-image" loading="lazy" />`;
 };
 
 // Horizontal rules
 renderer.hr = () => '<hr class="blog-divider" />\n';
 
 // Strong (bold)
-renderer.strong = (text) => `<strong class="blog-strong">${text}</strong>`;
+renderer.strong = ({ tokens }) => {
+  const content = renderer.parser.parseInline(tokens);
+  return `<strong class="blog-strong">${content}</strong>`;
+};
 
 // Emphasis (italic)
-renderer.em = (text) => `<em class="blog-emphasis">${text}</em>`;
+renderer.em = ({ tokens }) => {
+  const content = renderer.parser.parseInline(tokens);
+  return `<em class="blog-emphasis">${content}</em>`;
+};
 
 // Strikethrough
-renderer.del = (text) => `<del class="blog-strikethrough">${text}</del>`;
+renderer.del = ({ tokens }) => {
+  const content = renderer.parser.parseInline(tokens);
+  return `<del class="blog-strikethrough">${content}</del>`;
+};
 
 // Export the parsing function
 export function parseMarkdown(markdown) {
