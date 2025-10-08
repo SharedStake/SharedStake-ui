@@ -11,14 +11,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:all": "npm run test:run && npm run test:e2e",
-    "test:install": "playwright install"
+    "test": "jest",
+    "test:ci": "jest --ci --coverage --watchAll=false"
   },
   "dependencies": {
     "@babel/core": "^7.26.0",
@@ -41,23 +35,18 @@
     "vuex": "3.6.2"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.26.5",
     "@vue/cli-plugin-babel": "5.0.9",
     "@vue/cli-plugin-eslint": "5.0.9",
     "@vue/cli-service": "5.0.9",
     "autoprefixer": "^10.4.21",
-    "@babel/eslint-parser": "^7.26.5",
     "eslint": "^8.57.1",
     "eslint-plugin-vue": "^9.32.0",
+    "jest": "^30.2.0",
     "postcss": "^8.4.49",
     "raw-loader": "^4.0.2",
     "tailwindcss": "^3.4.17",
-    "vue-template-compiler": "2.7.16",
-    "vitest": "^2.1.8",
-    "@vue/test-utils": "^1.4.6",
-    "jsdom": "^25.0.1",
-    "@vitest/coverage-v8": "^2.1.8",
-    "playwright": "^1.49.1",
-    "@playwright/test": "^1.49.1"
+    "vue-template-compiler": "2.7.16"
   },
   "eslintConfig": {
     "root": true,

@@ -8,7 +8,7 @@ frontend:
         - npm install -g yarn
         - yarn install
         - yarn lint
-        - yarn test:run
+        - yarn test:ci
     build:
       commands:
         - yarn build

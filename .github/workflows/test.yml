@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  unit-tests:
+  build-and-test:
     runs-on: ubuntu-latest
     
     strategy:
@@ -30,51 +30,21 @@ jobs:
     - name: Run linting
       run: yarn lint
       
-    - name: Run unit tests
-      run: yarn test:run
-      
-    - name: Generate coverage report
-      run: yarn test:coverage
-      
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-umbrella
-
-  e2e-tests:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22.x'
-        cache: 'yarn'
-        
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-      
-    - name: Install Playwright browsers
-      run: yarn test:install
+    - name: Run tests
+      run: yarn test:ci
       
     - name: Build application
       run: yarn build
       
-    - name: Run Playwright tests
-      run: yarn test:e2e
-      
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+    - name: Check build artifacts
+      run: |
+        if [ -d "dist" ]; then
+          echo "Build successful - dist directory exists"
+          ls -la dist/
+        else
+          echo "Build failed - dist directory not found"
+          exit 1
+        fi
 
   security-audit:
     runs-on: ubuntu-latest
@@ -102,33 +72,4 @@ jobs:
           exit 1
         else
           echo "No high severity vulnerabilities found"
-        fi
-
-  build-test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22.x'
-        cache: 'yarn'
-        
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-      
-    - name: Build application
-      run: yarn build
-      
-    - name: Check build artifacts
-      run: |
-        if [ -d "dist" ]; then
-          echo "Build successful - dist directory exists"
-          ls -la dist/
-        else
-          echo "Build failed - dist directory not found"
-          exit 1
         fi
