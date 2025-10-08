@@ -3,10 +3,11 @@ import { parseMarkdown } from '@/utils/markdown.js';
 
 // Use Vite's import.meta.glob to dynamically load all markdown files
 // The { eager: true } option loads all files immediately (like require.context)
-// The { as: 'raw' } option loads files as raw strings instead of modules
+// The { query: '?raw' } option loads files as raw strings instead of modules
 const postModules = import.meta.glob('../posts/**/*.md', { 
   eager: true, 
-  as: 'raw' 
+  query: '?raw',
+  import: 'default'
 });
 
 // Parse frontmatter from markdown content
