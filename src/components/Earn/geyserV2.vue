@@ -540,6 +540,8 @@ export default {
           let remRewards = await geyserContract.fundBalance();
           this.locked = BN(BN(remRewards.toString()).dividedBy(BN(10).pow(18)).toFixed(3));
         } catch (err) {
+        if (this.dev) console.log(err);
+        // Error handled silently
           // Silently handle error
         }
     },
@@ -566,6 +568,8 @@ export default {
           notifyHandler(tx.hash);
           await tx.wait();
         } catch (err) {
+        if (this.dev) console.log(err);
+        // Error handled silently
           approval = false;
         }
         await timeout(6000);
@@ -579,6 +583,8 @@ export default {
           await tx.wait();
           self.mounted();
         } catch (err) {
+        if (this.dev) console.log(err);
+        // Error handled silently
           // Silently handle error
         }
       }
@@ -598,7 +604,8 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
-        console.log(err);
+        if (this.dev) console.log(err);
+        // Error handled silently
       }
       // }
     },
@@ -617,7 +624,8 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
-        console.log(err);
+        if (this.dev) console.log(err);
+        // Error handled silently
       }
     },
     async Harvest() {
@@ -634,7 +642,8 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
-        console.log(err);
+        if (this.dev) console.log(err);
+        // Error handled silently
       }
     },
     async ExitOldPool() {
@@ -651,7 +660,8 @@ export default {
         await tx.wait();
         self.mounted();
       } catch (err) {
-        console.log(err);
+        if (this.dev) console.log(err);
+        // Error handled silently
       }
     },
   },

@@ -1,12 +1,10 @@
-import { ref, onMounted, onUnmounted } from 'vue';
-
 /**
- * Composable for managing element visibility based on scroll direction
+ * Vue 2 compatible composable for managing element visibility based on scroll direction
  * @param {Object} options - Configuration options
  * @param {number} options.threshold - Minimum scroll distance before triggering visibility change (default: 100)
  * @param {boolean} options.hideOnScrollDown - Whether to hide element when scrolling down (default: true)
  * @param {boolean} options.showOnScrollUp - Whether to show element when scrolling up (default: true)
- * @returns {Object} - Object containing isVisible ref and scroll position data
+ * @returns {Object} - Object containing scroll visibility utilities
  */
 export function useScrollVisibility(options = {}) {
   const {
@@ -15,46 +13,46 @@ export function useScrollVisibility(options = {}) {
     showOnScrollUp = true
   } = options;
 
-  const isVisible = ref(true);
-  const lastScrollPosition = ref(0);
-  const currentScrollPosition = ref(0);
+  // Return utility functions that can be used in Vue 2 components
+  const createScrollVisibility = () => {
+    let isVisible = true;
+    let lastScrollPosition = 0;
+    let currentScrollPosition = 0;
 
-  const handleScroll = () => {
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-    
-    if (scrollPosition < 0) {
-      return;
-    }
+    const handleScroll = () => {
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (scrollPosition < 0) {
+        return;
+      }
 
-    currentScrollPosition.value = scrollPosition;
+      currentScrollPosition = scrollPosition;
 
-    // Only update visibility if scroll distance exceeds threshold
-    if (Math.abs(scrollPosition - lastScrollPosition.value) < threshold) {
-      return;
-    }
+      // Only update visibility if scroll distance exceeds threshold
+      if (Math.abs(scrollPosition - lastScrollPosition) < threshold) {
+        return;
+      }
 
-    const isScrollingUp = scrollPosition < lastScrollPosition.value;
-    
-    if (hideOnScrollDown && !isScrollingUp) {
-      isVisible.value = false;
-    } else if (showOnScrollUp && isScrollingUp) {
-      isVisible.value = true;
-    }
+      const isScrollingUp = scrollPosition < lastScrollPosition;
+      
+      if (hideOnScrollDown && !isScrollingUp) {
+        isVisible = false;
+      } else if (showOnScrollUp && isScrollingUp) {
+        isVisible = true;
+      }
 
-    lastScrollPosition.value = scrollPosition;
+      lastScrollPosition = scrollPosition;
+    };
+
+    return {
+      get isVisible() { return isVisible; },
+      get currentScrollPosition() { return currentScrollPosition; },
+      get lastScrollPosition() { return lastScrollPosition; },
+      handleScroll
+    };
   };
 
-  onMounted(() => {
-    window.addEventListener('scroll', handleScroll);
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
-  });
-
   return {
-    isVisible,
-    currentScrollPosition,
-    lastScrollPosition
+    createScrollVisibility
   };
 }
