@@ -1,4 +1,5 @@
 // Performance Monitoring Utilities
+import { getLazyLoadMetrics } from './lazyLoading.js'
 
 export const performanceMonitoring = {
   // Core Web Vitals monitoring
@@ -282,6 +283,41 @@ export const performanceMonitoring = {
     else if (resourceSize > 2 * 1024 * 1024) score -= 5 // 2MB
     
     return Math.max(0, score)
+  },
+
+  // Lazy loading performance monitoring
+  measureLazyLoading: () => {
+    if (typeof window === 'undefined') return
+
+    // Monitor lazy loading performance every 10 seconds
+    setInterval(() => {
+      const metrics = getLazyLoadMetrics()
+      
+      if (metrics.imagesLoaded > 0 || metrics.imagesFailed > 0) {
+        console.log('Lazy Loading Metrics:', metrics)
+        
+        // Send to analytics
+        if (window.gtag) {
+          window.gtag('event', 'lazy_loading_metrics', {
+            images_loaded: metrics.imagesLoaded,
+            images_failed: metrics.imagesFailed,
+            average_load_time: Math.round(metrics.averageLoadTime),
+            success_rate: Math.round(metrics.successRate),
+            event_category: 'Performance'
+          })
+        }
+      }
+    }, 10000)
+  },
+
+  // Initialize all monitoring
+  init: () => {
+    performanceMonitoring.measureCoreWebVitals()
+    performanceMonitoring.measurePageLoad()
+    performanceMonitoring.measureImageLoading()
+    performanceMonitoring.measureResourceLoading()
+    performanceMonitoring.measureUserInteractions()
+    performanceMonitoring.measureLazyLoading()
   }
 }
 

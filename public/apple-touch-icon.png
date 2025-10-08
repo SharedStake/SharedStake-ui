@@ -1,0 +1,16 @@
+PLACEHOLDER: This file needs to be replaced with an actual 180x180px PNG image.
+
+Requirements:
+- Dimensions: 180x180px
+- File size: < 20KB
+- Content: SharedStake logo
+- Format: PNG
+- Background: Transparent or dark
+- Colors: Red (#E20050) and white
+
+Tools to use:
+1. Favicon Generator: https://favicon.io/
+2. RealFaviconGenerator: https://realfavicongenerator.net/
+3. Upload the logo-red.svg or logo-white.svg file
+
+The actual apple-touch-icon.png should be created and saved in this location.
