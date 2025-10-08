@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-bun-
             
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
         
       - name: Run linting
         run: bun run lint
@@ -60,7 +60,7 @@ jobs:
             ${{ runner.os }}-bun-
             
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
         
       - name: Run type checking
         run: bun run type-check
@@ -87,7 +87,7 @@ jobs:
             ${{ runner.os }}-bun-
             
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
         
       - name: Build application
         run: bun run build
@@ -121,7 +121,7 @@ jobs:
             ${{ runner.os }}-bun-
             
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
         
       - name: Run security audit
         run: bun run audit
