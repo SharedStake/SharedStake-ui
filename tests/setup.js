@@ -47,9 +47,9 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
 
 // Configure Vue Test Utils for Vue 2
 config.mocks = {
-  $t: (key) => key, // Mock i18n
-  $tc: (key) => key,
-  $te: (key) => true,
+  $t: (_key) => _key, // Mock i18n
+  $tc: (_key) => _key,
+  $te: (_key) => true,
   $d: (value) => value,
   $n: (value) => value,
 }

@@ -74,8 +74,28 @@
     },
     "rules": {
       "vue/multi-word-component-names": "off",
-      "vue/no-reserved-component-names": "off"
-    }
+      "vue/no-reserved-component-names": "off",
+      "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+    },
+    "overrides": [
+      {
+        "files": ["tests/**/*.js", "tests/**/*.ts"],
+        "env": {
+          "jest": true,
+          "node": true
+        },
+        "globals": {
+          "describe": "readonly",
+          "it": "readonly",
+          "expect": "readonly",
+          "beforeEach": "readonly",
+          "afterEach": "readonly",
+          "beforeAll": "readonly",
+          "afterAll": "readonly",
+          "vi": "readonly"
+        }
+      }
+    ]
   },
   "browserslist": [
     "> 1%",
