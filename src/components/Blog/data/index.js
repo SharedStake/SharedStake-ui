@@ -1,7 +1,14 @@
 // Optimized blog data loader
 import { parseMarkdown } from '@/utils/markdown.js';
 
-const requirePost = require.context('../posts', true, /\.(js|md)$/);
+// Use Vite's import.meta.glob to dynamically load all markdown files
+// The { eager: true } option loads all files immediately (like require.context)
+// The { query: '?raw' } option loads files as raw strings instead of modules
+const postModules = import.meta.glob('../posts/**/*.md', { 
+  eager: true, 
+  query: '?raw',
+  import: 'default'
+});
 
 // Parse frontmatter from markdown content
 const parseFrontmatter = (content) => {
@@ -54,17 +61,17 @@ const parseFrontmatter = (content) => {
 };
 
 // Load and process blog posts
-const loadedPosts = requirePost.keys()
-  .map(key => {
-    const mod = requirePost(key);
-    
-    if (key.endsWith('.js')) {
-      return mod?.default || mod;
+const loadedPosts = Object.entries(postModules)
+  .map(([path, content]) => {
+    // Skip non-markdown files
+    if (!path.endsWith('.md')) {
+      return null;
     }
     
-    if (key.endsWith('.md') && typeof mod === 'string') {
-      const { frontmatter, contentStart } = parseFrontmatter(mod);
-      const markdownContent = mod.split('\n').slice(contentStart).join('\n');
+    // Process markdown content
+    if (typeof content === 'string') {
+      const { frontmatter, contentStart } = parseFrontmatter(content);
+      const markdownContent = content.split('\n').slice(contentStart).join('\n');
       
       return {
         ...frontmatter,
