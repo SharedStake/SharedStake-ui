@@ -79,17 +79,6 @@
               Coming Soon
             </div>
           </div>
-          <!-- <a
-            href="https://www.reddit.com/r/SharedStake/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Reddit.svg'"
-              size="24px"
-              class="socialLogo"
-            /> -->
-          <!-- </a> -->
           <a
             href="https://github.com/SharedStake"
             target="_blank"
@@ -628,7 +617,6 @@
         </div>
       </div>
     </div> -->
-    <!-- <div class="Container" v-show="scrolled <= 5500"></div> -->
   </div>
 </template>
 
@@ -644,7 +632,6 @@ import { priceInUsdAsync } from "@/utils/coingecko";
 export default {
   components: {
     ImageVue,
-    // MailingListSubscribeForm,
     Partners,
   },
   props: ["scrolled", "windowWidth"],
