@@ -1,33 +1,13 @@
 // Optimized blog data loader
 import { parseMarkdown } from '@/utils/markdown.js';
 
-// Import all markdown files directly
-import ethereumStakingGuide2024 from '../posts/ethereum-staking-guide-2024.md';
-import defiIntegrationOpportunities from '../posts/defi-integration-opportunities.md';
-import eth2QuickstartAdvancedFeatures from '../posts/eth2-quickstart-advanced-features.md';
-import eth2QuickstartClientDiversity from '../posts/eth2-quickstart-client-diversity.md';
-import eth2QuickstartInstallationGuide from '../posts/eth2-quickstart-installation-guide.md';
-import eth2QuickstartIntroduction from '../posts/eth2-quickstart-introduction.md';
-import eth2QuickstartMaintenance from '../posts/eth2-quickstart-maintenance.md';
-import howWeUpdatedSharedstakeUiWithAi from '../posts/how-we-updated-sharedstake-ui-with-ai.md';
-import securityAuditResultsCertik from '../posts/security-audit-results-certik.md';
-import sharedstakeV2LaunchAnnouncement from '../posts/sharedstake-v2-launch-announcement.md';
-import understandingLiquidStakingBenefits from '../posts/understanding-liquid-staking-benefits.md';
-
-// Create a map of all posts
-const postModules = {
-  '../posts/ethereum-staking-guide-2024.md': ethereumStakingGuide2024,
-  '../posts/defi-integration-opportunities.md': defiIntegrationOpportunities,
-  '../posts/eth2-quickstart-advanced-features.md': eth2QuickstartAdvancedFeatures,
-  '../posts/eth2-quickstart-client-diversity.md': eth2QuickstartClientDiversity,
-  '../posts/eth2-quickstart-installation-guide.md': eth2QuickstartInstallationGuide,
-  '../posts/eth2-quickstart-introduction.md': eth2QuickstartIntroduction,
-  '../posts/eth2-quickstart-maintenance.md': eth2QuickstartMaintenance,
-  '../posts/how-we-updated-sharedstake-ui-with-ai.md': howWeUpdatedSharedstakeUiWithAi,
-  '../posts/security-audit-results-certik.md': securityAuditResultsCertik,
-  '../posts/sharedstake-v2-launch-announcement.md': sharedstakeV2LaunchAnnouncement,
-  '../posts/understanding-liquid-staking-benefits.md': understandingLiquidStakingBenefits
-};
+// Use Vite's import.meta.glob to dynamically load all markdown files
+// The { eager: true } option loads all files immediately (like require.context)
+// The { as: 'raw' } option loads files as raw strings instead of modules
+const postModules = import.meta.glob('../posts/**/*.md', { 
+  eager: true, 
+  as: 'raw' 
+});
 
 // Parse frontmatter from markdown content
 const parseFrontmatter = (content) => {
@@ -81,14 +61,16 @@ const parseFrontmatter = (content) => {
 
 // Load and process blog posts
 const loadedPosts = Object.entries(postModules)
-  .map(([path, mod]) => {
-    if (path.endsWith('.js')) {
-      return mod?.default || mod;
+  .map(([path, content]) => {
+    // Skip non-markdown files
+    if (!path.endsWith('.md')) {
+      return null;
     }
     
-    if (path.endsWith('.md') && typeof mod === 'string') {
-      const { frontmatter, contentStart } = parseFrontmatter(mod);
-      const markdownContent = mod.split('\n').slice(contentStart).join('\n');
+    // Process markdown content
+    if (typeof content === 'string') {
+      const { frontmatter, contentStart } = parseFrontmatter(content);
+      const markdownContent = content.split('\n').slice(contentStart).join('\n');
       
       return {
         ...frontmatter,
