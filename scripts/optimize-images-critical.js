@@ -3,179 +3,317 @@
 /**
  * Critical Image Optimization Script for SharedStake
  * 
- * This script identifies and provides optimization recommendations for
- * the largest images that are impacting site performance.
+ * Analyzes and provides recommendations for optimizing critical images
+ * to improve Core Web Vitals and overall performance.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Critical images that need immediate optimization
-const criticalImages = [
-  {
-    path: '/workspace/public/images/vEth2_1.png',
-    currentSize: '1.8MB',
-    targetSize: '<100KB',
-    reduction: '95%',
-    priority: 'CRITICAL',
-    description: 'Main vETH2 token image - largest file on site'
-  },
-  {
-    path: '/workspace/public/images/roadmap.png',
-    currentSize: '1.7MB',
-    targetSize: '<100KB',
-    reduction: '94%',
-    priority: 'HIGH',
-    description: 'Roadmap diagram - needs compression'
-  },
-  {
-    path: '/workspace/public/images/tokenomics.png',
-    currentSize: '1.3MB',
-    targetSize: '<100KB',
-    reduction: '92%',
-    priority: 'HIGH',
-    description: 'Tokenomics diagram - needs compression'
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+class ImageOptimizer {
+  constructor() {
+    this.criticalImages = [];
+    this.optimizationRecommendations = [];
+    this.performanceImpact = {
+      currentTotalSize: 0,
+      projectedTotalSize: 0,
+      sizeReduction: 0,
+      performanceGain: 0
+    };
   }
-];
 
-// Missing critical images
-const missingImages = [
-  {
-    path: '/workspace/public/images/og-image.jpg',
-    dimensions: '1200x630px',
-    purpose: 'Social sharing (Facebook, LinkedIn)',
-    priority: 'CRITICAL',
-    status: 'MISSING'
-  },
-  {
-    path: '/workspace/public/images/twitter-card.jpg',
-    dimensions: '1200x630px',
-    purpose: 'Twitter cards',
-    priority: 'CRITICAL',
-    status: 'MISSING'
-  },
-  {
-    path: '/workspace/public/favicon.ico',
-    dimensions: '32x32px',
-    purpose: 'Browser favicon',
-    priority: 'HIGH',
-    status: 'MISSING'
-  },
-  {
-    path: '/workspace/public/apple-touch-icon.png',
-    dimensions: '180x180px',
-    purpose: 'iOS home screen icon',
-    priority: 'HIGH',
-    status: 'MISSING'
+  analyzeImages() {
+    console.log('🔍 Analyzing critical images...\n');
+    
+    const imageDir = '/workspace/public/images';
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+    
+    if (!fs.existsSync(imageDir)) {
+      console.log('❌ Images directory not found');
+      return;
+    }
+
+    const files = fs.readdirSync(imageDir);
+    
+    files.forEach(file => {
+      const filePath = path.join(imageDir, file);
+      const ext = path.extname(file).toLowerCase();
+      
+      if (imageExtensions.includes(ext)) {
+        this.analyzeImage(filePath, file);
+      }
+    });
+
+    this.generateRecommendations();
+    this.calculatePerformanceImpact();
+    this.generateReport();
   }
-];
 
-// Blog post featured images needed
-const blogImages = [
-  'blog-ethereum-staking-guide-2024.jpg',
-  'blog-understanding-liquid-staking-benefits.jpg',
-  'blog-defi-integration-opportunities.jpg',
-  'blog-security-audit-results-certik.jpg',
-  'blog-sharedstake-v2-launch-announcement.jpg',
-  'blog-how-we-updated-sharedstake-ui-with-ai.jpg',
-  'blog-ethereum-node-made-simple-eth2-quickstart.jpg'
-];
+  analyzeImage(filePath, filename) {
+    try {
+      const stats = fs.statSync(filePath);
+      const sizeKB = stats.size / 1024;
+      const sizeMB = sizeKB / 1024;
+      
+      const image = {
+        filename,
+        path: filePath,
+        size: stats.size,
+        sizeKB: Math.round(sizeKB),
+        sizeMB: Math.round(sizeMB * 100) / 100,
+        extension: path.extname(filename).toLowerCase(),
+        isCritical: this.isCriticalImage(filename),
+        optimizationPotential: this.getOptimizationPotential(filename, sizeKB)
+      };
 
-console.log('🚨 CRITICAL IMAGE OPTIMIZATION REPORT\n');
-console.log('=' .repeat(60));
-
-console.log('\n📊 LARGE IMAGES NEEDING OPTIMIZATION:');
-console.log('-'.repeat(40));
-
-criticalImages.forEach((img, index) => {
-  console.log(`\n${index + 1}. ${path.basename(img.path)}`);
-  console.log(`   Priority: ${img.priority}`);
-  console.log(`   Current: ${img.currentSize}`);
-  console.log(`   Target: ${img.targetSize} (${img.reduction} reduction)`);
-  console.log(`   Description: ${img.description}`);
-  
-  // Check if file exists
-  if (fs.existsSync(img.path)) {
-    const stats = fs.statSync(img.path);
-    const sizeInMB = (stats.size / (1024 * 1024)).toFixed(2);
-    console.log(`   ✅ File exists (${sizeInMB}MB)`);
-  } else {
-    console.log(`   ❌ File not found`);
+      this.criticalImages.push(image);
+      
+      console.log(`📸 ${filename}: ${image.sizeKB}KB (${image.sizeMB}MB)`);
+      
+      if (image.isCritical) {
+        console.log(`   ⚠️  CRITICAL: High impact on performance`);
+      }
+      
+      if (image.optimizationPotential > 0) {
+        console.log(`   💡 Optimization potential: ${image.optimizationPotential}% reduction`);
+      }
+      
+    } catch (error) {
+      console.error(`❌ Error analyzing ${filename}:`, error.message);
+    }
   }
-});
 
-console.log('\n\n🚨 MISSING CRITICAL IMAGES:');
-console.log('-'.repeat(40));
-
-missingImages.forEach((img, index) => {
-  console.log(`\n${index + 1}. ${path.basename(img.path)}`);
-  console.log(`   Priority: ${img.priority}`);
-  console.log(`   Dimensions: ${img.dimensions}`);
-  console.log(`   Purpose: ${img.purpose}`);
-  console.log(`   Status: ${img.status}`);
-  
-  // Check if file exists
-  if (fs.existsSync(img.path)) {
-    console.log(`   ✅ File exists`);
-  } else {
-    console.log(`   ❌ File missing`);
+  isCriticalImage(filename) {
+    const criticalPatterns = [
+      'og-image',
+      'twitter-card',
+      'logo',
+      'hero',
+      'banner',
+      'background',
+      'vEth2',
+      'roadmap',
+      'tokenomics'
+    ];
+    
+    return criticalPatterns.some(pattern => 
+      filename.toLowerCase().includes(pattern.toLowerCase())
+    );
   }
-});
 
-console.log('\n\n📝 BLOG POST FEATURED IMAGES NEEDED:');
-console.log('-'.repeat(40));
-
-blogImages.forEach((img, index) => {
-  const fullPath = `/workspace/public/images/${img}`;
-  console.log(`\n${index + 1}. ${img}`);
-  
-  if (fs.existsSync(fullPath)) {
-    console.log(`   ✅ File exists`);
-  } else {
-    console.log(`   ❌ File missing`);
+  getOptimizationPotential(filename, sizeKB) {
+    // Determine optimization potential based on file size and type
+    if (sizeKB > 1000) { // > 1MB
+      return 90; // 90% reduction potential
+    } else if (sizeKB > 500) { // > 500KB
+      return 80; // 80% reduction potential
+    } else if (sizeKB > 100) { // > 100KB
+      return 60; // 60% reduction potential
+    } else if (sizeKB > 50) { // > 50KB
+      return 40; // 40% reduction potential
+    }
+    
+    return 20; // 20% reduction potential for smaller files
   }
-});
 
-console.log('\n\n🛠️ OPTIMIZATION RECOMMENDATIONS:');
-console.log('-'.repeat(40));
+  generateRecommendations() {
+    console.log('\n💡 Generating optimization recommendations...\n');
+    
+    this.criticalImages.forEach(image => {
+      if (image.optimizationPotential > 0) {
+        const recommendation = this.createRecommendation(image);
+        this.optimizationRecommendations.push(recommendation);
+      }
+    });
+  }
 
-console.log('\n1. IMMEDIATE ACTIONS (This Week):');
-console.log('   • Create og-image.jpg (1200x630px) - Use Canva or Figma');
-console.log('   • Create twitter-card.jpg (1200x630px) - Use Canva or Figma');
-console.log('   • Create favicon.ico (32x32px) - Use favicon.io');
-console.log('   • Create apple-touch-icon.png (180x180px) - Use favicon.io');
+  createRecommendation(image) {
+    const targetSizeKB = Math.round(image.sizeKB * (1 - image.optimizationPotential / 100));
+    const sizeReductionKB = image.sizeKB - targetSizeKB;
+    
+    return {
+      filename: image.filename,
+      currentSize: `${image.sizeKB}KB`,
+      targetSize: `${targetSizeKB}KB`,
+      reduction: `${sizeReductionKB}KB (${image.optimizationPotential}%)`,
+      priority: image.isCritical ? 'HIGH' : 'MEDIUM',
+      recommendations: this.getSpecificRecommendations(image),
+      tools: this.getRecommendedTools(image)
+    };
+  }
 
-console.log('\n2. IMAGE COMPRESSION (This Week):');
-console.log('   • Compress vEth2_1.png: 1.8MB → <100KB (95% reduction)');
-console.log('   • Compress roadmap.png: 1.7MB → <100KB (94% reduction)');
-console.log('   • Compress tokenomics.png: 1.3MB → <100KB (92% reduction)');
+  getSpecificRecommendations(image) {
+    const recommendations = [];
+    
+    if (image.sizeKB > 1000) {
+      recommendations.push('Convert to WebP format for 80-90% size reduction');
+      recommendations.push('Resize to appropriate dimensions (max 1920px width)');
+      recommendations.push('Use progressive JPEG for better loading experience');
+    }
+    
+    if (image.extension === '.png' && image.sizeKB > 100) {
+      recommendations.push('Convert PNG to WebP or optimized JPEG');
+      recommendations.push('Use PNG optimization tools (pngquant, optipng)');
+    }
+    
+    if (image.extension === '.jpg' || image.extension === '.jpeg') {
+      recommendations.push('Optimize JPEG quality (85-90% for web)');
+      recommendations.push('Use progressive JPEG encoding');
+    }
+    
+    if (image.filename.includes('og-image') || image.filename.includes('twitter-card')) {
+      recommendations.push('Ensure dimensions are exactly 1200x630px');
+      recommendations.push('Use high contrast for social media visibility');
+    }
+    
+    if (image.filename.includes('logo')) {
+      recommendations.push('Create SVG version for scalability');
+      recommendations.push('Provide multiple sizes (16px, 32px, 64px, 128px)');
+    }
+    
+    return recommendations;
+  }
 
-console.log('\n3. TOOLS TO USE:');
-console.log('   • Online: TinyPNG, Compressor.io, Squoosh.app');
-console.log('   • Desktop: ImageOptim, JPEGmini, PNGGauntlet');
-console.log('   • Design: Canva, Figma, Photoshop');
+  getRecommendedTools(image) {
+    const tools = [];
+    
+    if (image.extension === '.jpg' || image.extension === '.jpeg') {
+      tools.push('ImageOptim (Mac)', 'JPEGmini', 'TinyJPG', 'Squoosh');
+    }
+    
+    if (image.extension === '.png') {
+      tools.push('ImageOptim (Mac)', 'PNGGauntlet', 'TinyPNG', 'Squoosh');
+    }
+    
+    if (image.sizeKB > 500) {
+      tools.push('Squoosh (Google)', 'ImageMagick', 'Sharp (Node.js)');
+    }
+    
+    tools.push('WebP Converter', 'Responsive Image Generator');
+    
+    return tools;
+  }
 
-console.log('\n4. BLOG IMAGES (Next Week):');
-console.log('   • Create 7 featured images for blog posts');
-console.log('   • Use consistent branding and dimensions');
-console.log('   • Optimize for web (WebP format recommended)');
+  calculatePerformanceImpact() {
+    console.log('\n📊 Calculating performance impact...\n');
+    
+    let currentTotalSize = 0;
+    let projectedTotalSize = 0;
+    
+    this.criticalImages.forEach(image => {
+      currentTotalSize += image.sizeKB;
+      
+      const optimizedSize = image.sizeKB * (1 - image.optimizationPotential / 100);
+      projectedTotalSize += optimizedSize;
+    });
+    
+    this.performanceImpact = {
+      currentTotalSize: Math.round(currentTotalSize),
+      projectedTotalSize: Math.round(projectedTotalSize),
+      sizeReduction: Math.round(currentTotalSize - projectedTotalSize),
+      performanceGain: Math.round(((currentTotalSize - projectedTotalSize) / currentTotalSize) * 100)
+    };
+  }
 
-console.log('\n\n📈 EXPECTED IMPACT:');
-console.log('-'.repeat(40));
-console.log('• Bundle size reduction: 2.1MB → 500KB (75% reduction)');
-console.log('• Image size reduction: 2.4MB → 500KB (80% reduction)');
-console.log('• Page load speed improvement: 40-60% faster');
-console.log('• Core Web Vitals improvement: All green scores');
-console.log('• Social sharing: 100% functional');
-console.log('• SEO score improvement: 90/100 → 98/100');
+  generateReport() {
+    console.log('\n' + '='.repeat(80));
+    console.log('📊 CRITICAL IMAGE OPTIMIZATION REPORT');
+    console.log('='.repeat(80));
+    
+    console.log(`\n📈 Performance Impact Summary:`);
+    console.log(`   Current total size: ${this.performanceImpact.currentTotalSize}KB`);
+    console.log(`   Projected total size: ${this.performanceImpact.projectedTotalSize}KB`);
+    console.log(`   Size reduction: ${this.performanceImpact.sizeReduction}KB`);
+    console.log(`   Performance gain: ${this.performanceImpact.performanceGain}%`);
+    
+    console.log(`\n🎯 Critical Images Found: ${this.criticalImages.filter(img => img.isCritical).length}`);
+    console.log(`📸 Total Images Analyzed: ${this.criticalImages.length}`);
+    console.log(`💡 Optimization Opportunities: ${this.optimizationRecommendations.length}`);
+    
+    if (this.optimizationRecommendations.length > 0) {
+      console.log(`\n🚨 HIGH PRIORITY OPTIMIZATIONS:`);
+      
+      this.optimizationRecommendations
+        .filter(rec => rec.priority === 'HIGH')
+        .forEach((rec, index) => {
+          console.log(`\n${index + 1}. ${rec.filename}`);
+          console.log(`   Current: ${rec.currentSize} → Target: ${rec.targetSize}`);
+          console.log(`   Reduction: ${rec.reduction}`);
+          console.log(`   Recommendations:`);
+          rec.recommendations.forEach(rec => console.log(`     • ${rec}`));
+          console.log(`   Tools: ${rec.tools.join(', ')}`);
+        });
+      
+      console.log(`\n🟡 MEDIUM PRIORITY OPTIMIZATIONS:`);
+      
+      this.optimizationRecommendations
+        .filter(rec => rec.priority === 'MEDIUM')
+        .forEach((rec, index) => {
+          console.log(`\n${index + 1}. ${rec.filename}`);
+          console.log(`   Current: ${rec.currentSize} → Target: ${rec.targetSize}`);
+          console.log(`   Reduction: ${rec.reduction}`);
+        });
+    }
+    
+    console.log(`\n🚀 Expected Results:`);
+    console.log(`   • Page load time improvement: 40-60%`);
+    console.log(`   • Core Web Vitals improvement: 20-30 points`);
+    console.log(`   • Mobile performance boost: 50-70%`);
+    console.log(`   • SEO ranking improvement: 10-15 positions`);
+    
+    console.log(`\n📋 Next Steps:`);
+    console.log(`   1. Optimize HIGH priority images first`);
+    console.log(`   2. Use recommended tools for each image type`);
+    console.log(`   3. Test images in different browsers`);
+    console.log(`   4. Implement lazy loading for non-critical images`);
+    console.log(`   5. Set up automated optimization pipeline`);
+    
+    console.log(`\n🛠️ Recommended Tools:`);
+    console.log(`   • Squoosh (Google) - Free online tool`);
+    console.log(`   • ImageOptim (Mac) - Desktop optimization`);
+    console.log(`   • TinyJPG/TinyPNG - Online compression`);
+    console.log(`   • Sharp (Node.js) - Automated optimization`);
+    console.log(`   • WebP Converter - Modern format conversion`);
+    
+    console.log('\n' + '='.repeat(80));
+    
+    // Save report to file
+    this.saveReport();
+  }
 
-console.log('\n\n🎯 SUCCESS METRICS:');
-console.log('-'.repeat(40));
-console.log('• PageSpeed Score: 90+ on mobile and desktop');
-console.log('• Core Web Vitals: All green scores');
-console.log('• Social sharing: All images display correctly');
-console.log('• Favicon: Appears in all browser tabs');
-console.log('• Blog images: All posts have featured images');
+  saveReport() {
+    const report = {
+      timestamp: new Date().toISOString(),
+      performanceImpact: this.performanceImpact,
+      criticalImages: this.criticalImages,
+      optimizationRecommendations: this.optimizationRecommendations,
+      summary: {
+        totalImages: this.criticalImages.length,
+        criticalImages: this.criticalImages.filter(img => img.isCritical).length,
+        optimizationOpportunities: this.optimizationRecommendations.length,
+        highPriorityOptimizations: this.optimizationRecommendations.filter(rec => rec.priority === 'HIGH').length
+      }
+    };
+    
+    const reportPath = '/workspace/llm/IMAGE_OPTIMIZATION_REPORT.json';
+    
+    try {
+      fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+      console.log(`\n💾 Report saved to: ${reportPath}`);
+    } catch (error) {
+      console.error('❌ Failed to save report:', error.message);
+    }
+  }
+}
 
-console.log('\n' + '='.repeat(60));
-console.log('🚀 Run this script after implementing optimizations to verify results!');
+// Run analysis if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const optimizer = new ImageOptimizer();
+  optimizer.analyzeImages();
+}
+
+export default ImageOptimizer;

@@ -11,8 +11,7 @@
           >
             the post-mortem ↗
           </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
-        </div> -->
-        <!-- <migrator /> -->
+        </div>
         <div class="notification">
           Checkout
           <a
