@@ -240,6 +240,7 @@ export default {
         approvalStage: this.approvalStage,
         depositStage: this.depositStage,
       };
+      if (this.dev) console.log("State :", state);
       if (state.depositStage && !state.approvalStage) return "depositStage";
       return "approvalStage";
     },
@@ -296,6 +297,7 @@ export default {
         const wsgETHAddress = await wsgETHContract.getAddress();
         let userApproved = await sgETHContract.allowance(this.userConnectedWalletAddress, wsgETHAddress);
         this.userApproved = BN(userApproved.toString());
+        if (this.dev) console.log("userApproved", userApproved.toString());
       } catch (error) {
         console.error("Error getting user approved amount:", error);
         this.userApproved = BN(0);
@@ -311,6 +313,7 @@ export default {
         }
         let userTokenBalance = await sgETHContract.balanceOf(this.userConnectedWalletAddress);
         this.userTokenBalance = BN(userTokenBalance.toString());
+        if (this.dev) console.log("userTokenBalance", userTokenBalance.toString());
         return userTokenBalance.toString();
       } catch (error) {
         console.error("Error getting user token balance:", error);
