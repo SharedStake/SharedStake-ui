@@ -3,17 +3,26 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install --lts
-        - nvm use --lts
-        - npm install -g yarn
-        - yarn install
+        # Install Bun with optimized settings
+        - curl -fsSL https://bun.sh/install | bash
+        - export PATH="$HOME/.bun/bin:$PATH"
+        - bun --version
+        # Install dependencies with frozen lockfile for consistency
+        - bun install --frozen-lockfile
     build:
       commands:
-        - yarn build
+        # Build the application
+        - bun run build
+        # Verify build output
+        - ls -la dist/
   artifacts:
     baseDirectory: dist
     files:
       - '**/*'
   cache:
     paths:
+      # Cache Bun dependencies and install cache
       - node_modules/**/*
+      - ~/.bun/install/cache/**/*
+      # Cache Bun binary for faster subsequent builds
+      - ~/.bun/bin/**/*

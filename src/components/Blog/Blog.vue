@@ -3,6 +3,8 @@
     <!-- Hero Section -->
     <div class="relative pt-32 pb-12 md:pt-36 md:pb-20 px-4 text-center">
       <div class="max-w-4xl mx-auto">
+        <!-- Breadcrumb -->
+        <Breadcrumb :items="breadcrumbItems" class="mb-8" />
         <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-brand-primary to-pink-400 bg-clip-text text-transparent">
           SharedStake Blog
         </h1>
@@ -193,9 +195,13 @@
 <script>
 import { blogPosts } from './data/index.js';
 import { getAllTags } from './data/index.js';
+import Breadcrumb from '@/components/Common/Breadcrumb.vue';
 
 export default {
   name: 'Blog',
+  components: {
+    Breadcrumb
+  },
   data() {
     return {
       posts: blogPosts,
@@ -203,6 +209,18 @@ export default {
     };
   },
   computed: {
+    breadcrumbItems() {
+      return [
+        {
+          name: 'Home',
+          url: '/'
+        },
+        {
+          name: 'Blog',
+          url: '/blog'
+        }
+      ];
+    },
     featuredPosts() {
       return this.posts.filter(post => post.featured);
     },

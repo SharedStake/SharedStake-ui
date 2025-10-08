@@ -3,16 +3,30 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.0.0",
-    "yarn": ">=1.22.0"
+    "bun": ">=1.0.0"
   },
   "scripts": {
-    "setup": "nvm use",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "type-check": "vue-tsc --noEmit",
-    "type-check:watch": "vue-tsc --noEmit --watch"
+    "setup": "bun install",
+    "serve": "bun run vue-cli-service serve",
+    "build": "bun run vue-cli-service build",
+    "build:analyze": "bun run vue-cli-service build --report",
+    "lint": "bun run vue-cli-service lint",
+    "lint:fix": "bun run vue-cli-service lint --fix",
+    "type-check": "bun run vue-tsc --noEmit",
+    "type-check:watch": "bun run vue-tsc --noEmit --watch",
+    "dev": "bun run serve",
+    "start": "bun run serve",
+    "test": "echo \"No tests specified\" && exit 0",
+    "audit": "bun audit --level moderate || true",
+    "audit:strict": "bun audit --level moderate",
+    "clean": "rm -rf dist node_modules/.cache",
+    "prebuild": "bun run clean",
+    "postbuild": "echo \"Build completed successfully\"",
+    "docker:build": "docker build -t sharedstake-ui .",
+    "docker:run": "docker run -p 8080:8080 sharedstake-ui",
+    "optimize:images": "bun run scripts/optimize-images.js",
+    "analyze:bundle": "bun run vue-cli-service build --report",
+    "analyze:security": "bun audit --level moderate"
   },
   "dependencies": {
     "@babel/core": "7.28.4",
@@ -37,7 +51,6 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.28.4",
     "@types/webpack-env": "1.18.8",
-    "@vitejs/plugin-vue": "6.0.1",
     "@vue/cli-plugin-babel": "5.0.9",
     "@vue/cli-plugin-eslint": "5.0.9",
     "@vue/cli-service": "5.0.9",
@@ -75,7 +88,7 @@
     "last 2 versions",
     "not dead"
   ],
-  "resolutions": {
+  "overrides": {
     "crypto-es": "2.1.0",
     "postcss": "8.4.31",
     "webpack-dev-server": "5.2.1",
