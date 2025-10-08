@@ -20,16 +20,16 @@ The SharedStake UI includes a comprehensive blog system for content management a
 - **Parsing**: Custom markdown utility (`src/utils/markdown.js`)
 
 ### Features
-- **SEO Optimization**: Meta tags, Open Graph, structured data
+- **SEO Optimization**: Meta tags, Open Graph, BlogPosting + FAQ schema
 - **Responsive Design**: Mobile-friendly layout
-- **Content**: 10 high-quality markdown posts
+- **Content**: 11+ high-quality markdown posts
 - **Performance**: Optimized loading and rendering
 
 ### Technical Stack
 - **Markdown Parser**: marked v16.4.0
-- **Routing**: Vue Router 3
-- **Styling**: Tailwind CSS 3.4.17
-- **SEO**: Meta tags and Open Graph integration
+- **Routing**: Vue Router 4 (Vue 3)
+- **Styling**: Tailwind CSS 3.4.x
+- **SEO**: Meta tags, Open Graph, structured data
 
 ## Content Structure
 Each blog post includes:
