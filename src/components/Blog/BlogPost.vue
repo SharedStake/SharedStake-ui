@@ -30,6 +30,9 @@
       <!-- Hero Section -->
       <div class="relative pt-32 pb-12 md:pt-36 md:pb-16 px-4">
         <div class="max-w-4xl mx-auto">
+          <!-- Breadcrumb -->
+          <Breadcrumb :items="breadcrumbItems" class="mb-6" />
+          
           <!-- Post Header -->
           <div class="mb-6 md:mb-8">
             <div class="flex items-center gap-2 mb-3 md:mb-4 flex-wrap">
@@ -135,11 +138,18 @@
 <script>
 import { blogPosts, getBlogPostBySlug } from './data/index.js';
 import BlogStyles from './BlogStyles.vue';
+import Breadcrumb from '@/components/Common/Breadcrumb.vue';
+import { useStructuredData } from '@/composables/useStructuredData.js';
 
 export default {
   name: 'BlogPost',
   components: {
-    BlogStyles
+    BlogStyles,
+    Breadcrumb
+  },
+  setup() {
+    const { generateBlogPostingSchema, generateFAQSchema, injectSchema, removeSchema } = useStructuredData();
+    return { generateBlogPostingSchema, generateFAQSchema, injectSchema, removeSchema };
   },
   data() {
     return {
@@ -148,6 +158,24 @@ export default {
     };
   },
   computed: {
+    breadcrumbItems() {
+      if (!this.post) return [];
+      
+      return [
+        {
+          name: 'Home',
+          url: '/'
+        },
+        {
+          name: 'Blog',
+          url: '/blog'
+        },
+        {
+          name: this.post.title,
+          url: `/blog/${this.post.slug}`
+        }
+      ];
+    },
     relatedPosts() {
       if (!this.post) return [];
       
@@ -180,6 +208,10 @@ export default {
       this.loading = true;
       this.post = null;
       
+      // Remove existing schemas
+      this.removeSchema('blogposting-schema');
+      this.removeSchema('faq-schema');
+      
       // Simulate loading delay for better UX
       setTimeout(() => {
         this.post = getBlogPostBySlug(slug);
@@ -188,8 +220,57 @@ export default {
         if (this.post) {
           // Set page title
           document.title = `${this.post.title} - SharedStake Blog`;
+          
+          // Generate and inject structured data
+          this.injectStructuredData();
         }
       }, 300);
+    },
+    
+    injectStructuredData() {
+      if (!this.post) return;
+      
+      const currentUrl = window.location.href;
+      
+      // Generate and inject BlogPosting schema
+      const blogPostingSchema = this.generateBlogPostingSchema(this.post, currentUrl);
+      if (blogPostingSchema) {
+        this.injectSchema(blogPostingSchema, 'blogposting-schema');
+      }
+      
+      // Generate and inject FAQ schema if FAQ content exists
+      const faqContent = this.extractFAQContent();
+      if (faqContent) {
+        const faqSchema = this.generateFAQSchema(faqContent);
+        if (faqSchema) {
+          this.injectSchema(faqSchema, 'faq-schema');
+        }
+      }
+    },
+    
+    extractFAQContent() {
+      if (!this.post || !this.post.rawContent) return null;
+      
+      const lines = this.post.rawContent.split('\n');
+      let faqStart = -1;
+      let faqEnd = -1;
+      
+      // Find FAQ section
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.match(/^##\s+.*[Ff][Aa][Qq].*$/)) {
+          faqStart = i;
+        } else if (faqStart !== -1 && line.match(/^##\s+/) && !line.match(/[Ff][Aa][Qq]/)) {
+          faqEnd = i;
+          break;
+        }
+      }
+      
+      if (faqStart === -1) return null;
+      
+      // Extract FAQ content
+      const faqLines = faqEnd === -1 ? lines.slice(faqStart) : lines.slice(faqStart, faqEnd);
+      return faqLines.join('\n');
     },
     formatDate(dateString) {
       const date = new Date(dateString);
@@ -204,6 +285,11 @@ export default {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
     }
+  },
+  beforeUnmount() {
+    // Clean up schemas when component is destroyed
+    this.removeSchema('blogposting-schema');
+    this.removeSchema('faq-schema');
   }
 };
 </script>
