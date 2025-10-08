@@ -1,6 +1,5 @@
 <template>
   <div class="BlogPost min-h-screen bg-gray-900 text-white">
-    <!-- Import global blog styles -->
     <BlogStyles />
     
     <!-- Loading State -->
@@ -30,10 +29,8 @@
       <!-- Hero Section -->
       <div class="relative pt-32 pb-12 md:pt-36 md:pb-16 px-4">
         <div class="max-w-4xl mx-auto">
-          <!-- Breadcrumb -->
           <Breadcrumb :items="breadcrumbItems" class="mb-6" />
           
-          <!-- Post Header -->
           <div class="mb-6 md:mb-8">
             <div class="flex items-center gap-2 mb-3 md:mb-4 flex-wrap">
               <span 
@@ -68,7 +65,6 @@
           <!-- Post Footer -->
           <div class="mt-12 pt-8 border-t border-gray-800">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-              <!-- Share Buttons -->
               <div class="flex items-center gap-4">
                 <span class="text-gray-400 font-medium">Share:</span>
                 <a 
@@ -84,7 +80,6 @@
                 </a>
               </div>
 
-              <!-- Back to Blog -->
               <router-link 
                 to="/blog"
                 class="inline-flex items-center gap-2 text-brand-primary hover:text-pink-400 transition-colors font-medium"
@@ -105,27 +100,8 @@
                 v-for="relatedPost in relatedPosts" 
                 :key="relatedPost.id"
                 :to="`/blog/${relatedPost.slug}`"
-                class="group bg-gray-800/50 hover:bg-gray-800/80 rounded-xl p-6 transition-all duration-300 hover:scale-105"
               >
-                <div class="flex items-center gap-2 mb-3">
-                  <span 
-                    v-for="tag in relatedPost.tags.slice(0, 2)" 
-                    :key="tag"
-                    class="bg-brand-primary/20 text-brand-primary px-2 py-1 rounded-full text-xs font-medium"
-                  >
-                    {{ formatTag(tag) }}
-                  </span>
-                </div>
-                <h4 class="text-lg font-semibold mb-2 group-hover:text-brand-primary transition-colors">
-                  {{ relatedPost.title }}
-                </h4>
-                <p class="text-gray-400 text-sm mb-3 line-clamp-2">
-                  {{ relatedPost.excerpt }}
-                </p>
-                <div class="flex items-center justify-between text-xs text-gray-500">
-                  <span>{{ formatDate(relatedPost.publishDate) }}</span>
-                  <span class="group-hover:text-brand-primary transition-colors">Read more →</span>
-                </div>
+                <BlogPostCard :post="relatedPost" variant="related" />
               </router-link>
             </div>
           </div>
@@ -136,160 +112,74 @@
 </template>
 
 <script>
-import { blogPosts, getBlogPostBySlug } from './data/index.js';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { useRoute } from 'vue-router';
 import BlogStyles from './BlogStyles.vue';
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
+import BlogPostCard from './BlogPostCard.vue';
+import { useBlog } from '@/composables/useBlog.js';
 import { useStructuredData } from '@/composables/useStructuredData.js';
+import { generateTwitterShareUrl } from '@/utils/blogUtils.js';
 
 export default {
   name: 'BlogPost',
   components: {
     BlogStyles,
-    Breadcrumb
+    Breadcrumb,
+    BlogPostCard
   },
   setup() {
-    const { generateBlogPostingSchema, generateFAQSchema, injectSchema, removeSchema } = useStructuredData();
-    return { generateBlogPostingSchema, generateFAQSchema, injectSchema, removeSchema };
-  },
-  data() {
-    return {
-      post: null,
-      loading: true,
+    const route = useRoute();
+    const post = ref(null);
+    
+    const { 
+      loading, 
+      loadPost, 
+      getRelatedPosts, 
+      getBreadcrumbItems, 
+      setPageMeta,
+      formatDate,
+      formatTag
+    } = useBlog();
+    
+    const { injectBlogSchemas, cleanupBlogSchemas } = useStructuredData();
+    
+    // Computed properties
+    const breadcrumbItems = computed(() => getBreadcrumbItems(post.value));
+    const relatedPosts = computed(() => getRelatedPosts(post.value));
+    const twitterShareUrl = computed(() => 
+      post.value ? generateTwitterShareUrl(post.value.title, window.location.href) : ''
+    );
+    
+    // Methods
+    const handleLoadPost = async (slug) => {
+      cleanupBlogSchemas();
+      const loadedPost = await loadPost(slug);
+      post.value = loadedPost;
+      
+      if (loadedPost) {
+        setPageMeta(`${loadedPost.title} - SharedStake Blog`, loadedPost.meta?.description);
+        injectBlogSchemas(loadedPost, window.location.href);
+      }
     };
-  },
-  computed: {
-    breadcrumbItems() {
-      if (!this.post) return [];
-      
-      return [
-        {
-          name: 'Home',
-          url: '/'
-        },
-        {
-          name: 'Blog',
-          url: '/blog'
-        },
-        {
-          name: this.post.title,
-          url: `/blog/${this.post.slug}`
-        }
-      ];
-    },
-    relatedPosts() {
-      if (!this.post) return [];
-      
-      // Find posts with similar tags (excluding current post)
-      const currentTags = this.post.tags;
-      const related = blogPosts
-        .filter(p => p.id !== this.post.id)
-        .filter(p => p.tags.some(tag => currentTags.includes(tag)))
-        .slice(0, 3);
-      
-      return related;
-    },
-    twitterShareUrl() {
-      if (!this.post) return '';
-      const url = encodeURIComponent(window.location.href);
-      const text = encodeURIComponent(this.post.title);
-      return `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
-    }
-  },
-  watch: {
-    '$route.params.slug': {
-      immediate: true,
-      handler(newSlug) {
-        this.loadPost(newSlug);
-      }
-    }
-  },
-  methods: {
-    loadPost(slug) {
-      this.loading = true;
-      this.post = null;
-      
-      // Remove existing schemas
-      this.removeSchema('blogposting-schema');
-      this.removeSchema('faq-schema');
-      
-      // Simulate loading delay for better UX
-      setTimeout(() => {
-        this.post = getBlogPostBySlug(slug);
-        this.loading = false;
-        
-        if (this.post) {
-          // Set page title
-          document.title = `${this.post.title} - SharedStake Blog`;
-          
-          // Generate and inject structured data
-          this.injectStructuredData();
-        }
-      }, 300);
-    },
     
-    injectStructuredData() {
-      if (!this.post) return;
-      
-      const currentUrl = window.location.href;
-      
-      // Generate and inject BlogPosting schema
-      const blogPostingSchema = this.generateBlogPostingSchema(this.post, currentUrl);
-      if (blogPostingSchema) {
-        this.injectSchema(blogPostingSchema, 'blogposting-schema');
-      }
-      
-      // Generate and inject FAQ schema if FAQ content exists
-      const faqContent = this.extractFAQContent();
-      if (faqContent) {
-        const faqSchema = this.generateFAQSchema(faqContent);
-        if (faqSchema) {
-          this.injectSchema(faqSchema, 'faq-schema');
-        }
-      }
-    },
+    // Watchers
+    watch(() => route.params.slug, handleLoadPost, { immediate: true });
     
-    extractFAQContent() {
-      if (!this.post || !this.post.rawContent) return null;
-      
-      const lines = this.post.rawContent.split('\n');
-      let faqStart = -1;
-      let faqEnd = -1;
-      
-      // Find FAQ section
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (line.match(/^##\s+.*[Ff][Aa][Qq].*$/)) {
-          faqStart = i;
-        } else if (faqStart !== -1 && line.match(/^##\s+/) && !line.match(/[Ff][Aa][Qq]/)) {
-          faqEnd = i;
-          break;
-        }
-      }
-      
-      if (faqStart === -1) return null;
-      
-      // Extract FAQ content
-      const faqLines = faqEnd === -1 ? lines.slice(faqStart) : lines.slice(faqStart, faqEnd);
-      return faqLines.join('\n');
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    },
-    formatTag(tag) {
-      return tag.split('-').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' ');
-    }
-  },
-  beforeUnmount() {
-    // Clean up schemas when component is destroyed
-    this.removeSchema('blogposting-schema');
-    this.removeSchema('faq-schema');
+    // Lifecycle
+    onUnmounted(() => {
+      cleanupBlogSchemas();
+    });
+    
+    return {
+      post,
+      loading,
+      breadcrumbItems,
+      relatedPosts,
+      twitterShareUrl,
+      formatDate,
+      formatTag
+    };
   }
 };
 </script>

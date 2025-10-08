@@ -19,31 +19,12 @@
       <div class="max-w-6xl mx-auto">
         <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center">Featured Posts</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-          <div 
+          <BlogPostCard 
             v-for="post in featuredPosts" 
             :key="post.id"
-            class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105"
-          >
-            <div class="p-6">
-              <div class="flex items-center mb-4">
-                <span class="bg-brand-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  Featured
-                </span>
-              </div>
-              <h3 class="text-xl font-bold mb-3 line-clamp-2">{{ post.title }}</h3>
-              <p class="text-gray-300 mb-4 line-clamp-3">{{ post.excerpt }}</p>
-              <div class="flex items-center justify-between text-sm text-gray-400">
-                <span>{{ formatDate(post.publishDate) }}</span>
-                <span>{{ post.author }}</span>
-              </div>
-              <router-link 
-                :to="`/blog/${post.slug}`"
-                class="inline-block mt-4 text-brand-primary hover:text-pink-400 font-semibold transition-colors"
-              >
-                Read More →
-              </router-link>
-            </div>
-          </div>
+            :post="post"
+            variant="featured"
+          />
         </div>
       </div>
     </div>
@@ -86,51 +67,12 @@
 
             <!-- Posts List -->
             <div class="space-y-4 md:space-y-6">
-              <article 
+              <BlogPostCard 
                 v-for="post in filteredPosts" 
                 :key="post.id"
-                class="bg-gray-800 rounded-lg p-4 md:p-6 hover:bg-gray-750 transition-colors"
-              >
-                <div class="flex flex-col md:flex-row md:items-start gap-4">
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-3">
-                      <span 
-                        v-if="post.featured"
-                        class="bg-brand-primary text-white px-2 py-1 rounded text-xs font-semibold"
-                      >
-                        Featured
-                      </span>
-                      <span class="text-sm text-gray-400">{{ formatDate(post.publishDate) }}</span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 hover:text-brand-primary transition-colors">
-                      <router-link :to="`/blog/${post.slug}`">
-                        {{ post.title }}
-                      </router-link>
-                    </h3>
-                    <p class="text-gray-300 mb-4 line-clamp-2">{{ post.excerpt }}</p>
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center gap-4 text-sm text-gray-400">
-                        <span>By {{ post.author }}</span>
-                        <div class="flex gap-2">
-                          <span 
-                            v-for="tag in post.tags.slice(0, 3)" 
-                            :key="tag"
-                            class="bg-gray-700 px-2 py-1 rounded text-xs"
-                          >
-                            {{ formatTag(tag) }}
-                          </span>
-                        </div>
-                      </div>
-                      <router-link 
-                        :to="`/blog/${post.slug}`"
-                        class="text-brand-primary hover:text-pink-400 font-semibold transition-colors"
-                      >
-                        Read More →
-                      </router-link>
-                    </div>
-                  </div>
-                </div>
-              </article>
+                :post="post"
+                variant="list"
+              />
             </div>
 
             <!-- No Posts Message -->
@@ -193,92 +135,52 @@
 </template>
 
 <script>
-import { blogPosts } from './data/index.js';
-import { getAllTags } from './data/index.js';
+import { onMounted } from 'vue';
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
+import BlogPostCard from './BlogPostCard.vue';
+import { useBlog } from '@/composables/useBlog.js';
 
 export default {
   name: 'Blog',
   components: {
-    Breadcrumb
+    Breadcrumb,
+    BlogPostCard
   },
-  data() {
+  setup() {
+    const { 
+      selectedTag,
+      breadcrumbItems: getBreadcrumbItems,
+      featuredPosts,
+      allTags,
+      filteredPosts,
+      setPageMeta,
+      formatDate,
+      formatTag
+    } = useBlog();
+    
+    const breadcrumbItems = getBreadcrumbItems();
+    
+    onMounted(() => {
+      setPageMeta(
+        'Blog - SharedStake',
+        'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.'
+      );
+    });
+    
     return {
-      posts: blogPosts,
-      selectedTag: null,
+      selectedTag,
+      breadcrumbItems,
+      featuredPosts,
+      allTags,
+      filteredPosts,
+      formatDate,
+      formatTag
     };
-  },
-  computed: {
-    breadcrumbItems() {
-      return [
-        {
-          name: 'Home',
-          url: '/'
-        },
-        {
-          name: 'Blog',
-          url: '/blog'
-        }
-      ];
-    },
-    featuredPosts() {
-      return this.posts.filter(post => post.featured);
-    },
-    allTags() {
-      return getAllTags();
-    },
-    filteredPosts() {
-      if (this.selectedTag) {
-        return this.posts.filter(post => post.tags.includes(this.selectedTag));
-      }
-      return this.posts;
-    }
-  },
-  methods: {
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    },
-    formatTag(tag) {
-      return tag.split('-').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' ');
-    }
-  },
-  mounted() {
-    // Set page title and meta description
-    document.title = 'Blog - SharedStake';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Stay updated with the latest developments in Ethereum liquid staking, DeFi innovations, and the SharedStake ecosystem.');
-    }
   }
 };
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.bg-gray-750 {
-  background-color: rgb(55, 65, 81);
-}
-
 /* Smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;
