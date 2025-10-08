@@ -1,7 +1,19 @@
 // Dynamic loader for blog posts stored in individual files.
 // Supports both .js files (with exports) and .md files (with frontmatter)
 
-import { parseMarkdown } from '@/utils/markdown.js';
+// Simple markdown parser fallback
+const parseMarkdown = (content) => {
+  // Basic markdown parsing - convert to HTML
+  return content
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*)\*/gim, '<em>$1</em>')
+    .replace(/\n\n/gim, '</p><p>')
+    .replace(/\n/gim, '<br>')
+    .replace(/^(.*)$/gim, '<p>$1</p>');
+};
 
 const requirePost = require.context('../posts', true, /\.(js|md)$/);
 
