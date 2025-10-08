@@ -1,5 +1,17 @@
 <template>
   <div class="Landing">
+    <!-- Animated background elements -->
+    <div class="animated-bg">
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+      <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+      </div>
+    </div>
     <div
       v-show="scrolled >= 0"
       class="Container first"
@@ -16,11 +28,12 @@
           <h1 class="relative mb-6 mainTitle">
             <span
               title="Established in 2020"
-              class="absolute p-1 px-2 text-xs font-semibold text-gray-800 transform -translate-x-1/2 bg-gray-300 rounded-sm -bottom-6 md:bottom-auto md:-top-6 md:left-0 left-1/2 md:translate-x-0"
+              class="absolute p-1 px-2 text-xs font-semibold text-gray-800 transform -translate-x-1/2 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-sm -bottom-6 md:bottom-auto md:-top-6 md:left-0 left-1/2 md:translate-x-0 animate-pulse"
             >
               EST. 2020
             </span>
-            ETHEREUM LIQUID STAKING DERIVATIVE! <br>
+            <span class="gradient-text">ETHEREUM LIQUID STAKING DERIVATIVE!</span> <br>
+            <span class="subtitle-text">Experience the Future of DeFi</span>
           </h1>
           <div class="exp">
             SharedStake is a decentralized Ethereum 2 staking solution that
@@ -32,7 +45,7 @@
           class="flex items-center justify-center gap-6 mb-8 md-large:justify-start"
         >
           <div
-            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gray-500 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center"
+            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
           >
             <span>STAKE V2</span>
             <div class="text-xs mt-1">
@@ -40,7 +53,7 @@
             </div>
           </div>
           <a
-            class="px-6 py-3 text-xl font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-2xl hover:border-brand-primary hover:text-brand-primary md:px-8"
+            class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 hover:scale-105 hover:shadow-xl text-white"
             rel="noopener noreferrer nofollow"
             href="https://app.passch.com/"
             target="_blank"
@@ -61,6 +74,7 @@
             href="https://discord.gg/C9GhCv86My"
             target="_blank"
             rel="noopener noreferrer"
+            class="social-link"
           >
             <ImageVue
               :src="'socialmediaicons/Discord.svg'"
@@ -94,6 +108,7 @@
             href="https://github.com/SharedStake"
             target="_blank"
             rel="noopener noreferrer"
+            class="social-link"
           >
             <ImageVue
               :src="'socialmediaicons/Git.svg'"
@@ -105,6 +120,7 @@
             href="https://medium.com/@chimera_defi"
             target="_blank"
             rel="noopener noreferrer"
+            class="social-link"
           >
             <ImageVue
               :src="'socialmediaicons/Medium.svg'"
@@ -116,6 +132,7 @@
             href="https://twitter.com/ChimeraDefi"
             target="_blank"
             rel="noopener noreferrer"
+            class="social-link"
           >
             <ImageVue
               :src="'socialmediaicons/Twitter.svg'"
@@ -140,13 +157,13 @@
             Rollover (Returning soon!)
           </router-link> -->
           <span
-            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
+            class="px-4 py-2 text-base font-medium transition-all duration-300 border border-cyan-400 rounded-full whitespace-nowrap md:text-lg hover:border-cyan-300 hover:text-cyan-300 hover:bg-cyan-400/10 md:px-6 cursor-pointer"
             to="/rollover"
           >
             Rollover (Returning soon!)
           </span>
           <div
-            class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center"
+            class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center bg-gradient-to-r from-gray-600 to-gray-700"
           >
             <span>Withdraw</span>
             <div class="text-xs mt-1">
@@ -169,11 +186,11 @@
       v-show="scrolled >= 350"
       class="Stats flex flex-col items-center justify-evenly"
     >
-      <div class="StatsHeader">
+      <div class="StatsHeader gradient-text">
         Capital efficient staking
       </div>
       <div class="StatsExp">
-        Financial optimization at its finest.
+        <span class="highlight-text">Financial optimization at its finest.</span>
       </div>
       <div class="StatsExp">
         Better rewards, improved user experience, and more DeFi compatibility
@@ -375,17 +392,17 @@
           :size="'123px'"
           class="exp"
         />
-        <div class="StatsHeader">
+        <div class="StatsHeader gradient-text">
           vEth2
         </div>
       </div>
-      <div class="exp InfoHeader DropShadow centertext">
+      <div class="exp InfoHeader DropShadow centertext gradient-text">
         Yield Bearing Wrapped Ether
       </div>
       <div class="exp background3" />
       <div class="third">
-        <div class="Bubble">
-          <div class="exp InfoHeader">
+        <div class="Bubble enhanced-bubble">
+          <div class="exp InfoHeader gradient-text">
             Financially Optimized
           </div>
           <div class="exp Info mb30">
@@ -400,8 +417,8 @@
             class="exp ICON reverse"
           />
         </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">
+        <div class="Bubble enhanced-bubble">
+          <div class="exp InfoHeader gradient-text">
             DeFi Compatible
           </div>
           <div class="exp Info mb30">
@@ -418,8 +435,8 @@
             class="exp ICON reverse"
           />
         </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">
+        <div class="Bubble enhanced-bubble">
+          <div class="exp InfoHeader gradient-text">
             Incentivized Staking
           </div>
           <div class="exp Info mb30">
@@ -434,8 +451,8 @@
             class="exp ICON reverse"
           />
         </div>
-        <div class="Bubble">
-          <div class="exp InfoHeader">
+        <div class="Bubble enhanced-bubble">
+          <div class="exp InfoHeader gradient-text">
             Built-in Exit Pool
           </div>
           <div class="exp Info mb30">
@@ -451,7 +468,7 @@
           />
         </div>
       </div>
-      <div class="LearnButton">
+      <div class="LearnButton enhanced-learn-button">
         <a
           href="https://sips.sharedstake.org/SIPS/sip-3.html"
           target="_blank"
@@ -1350,6 +1367,200 @@ export default {
 
 <style scoped>
 /*this is ok until 900px */
+
+/* Animated background elements */
+.animated-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  animation: float 20s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(45deg, #a8e6cf, #ffd3a5);
+  top: 60%;
+  right: 20%;
+  animation-delay: -7s;
+}
+
+.orb-3 {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(45deg, #ff9a9e, #fecfef);
+  bottom: 20%;
+  left: 30%;
+  animation-delay: -14s;
+}
+
+.floating-shapes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.shape {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float 15s ease-in-out infinite;
+}
+
+.shape-1 {
+  width: 20px;
+  height: 20px;
+  top: 20%;
+  left: 80%;
+  animation-delay: -3s;
+}
+
+.shape-2 {
+  width: 15px;
+  height: 15px;
+  top: 70%;
+  left: 10%;
+  animation-delay: -8s;
+}
+
+.shape-3 {
+  width: 25px;
+  height: 25px;
+  top: 40%;
+  right: 15%;
+  animation-delay: -12s;
+}
+
+.shape-4 {
+  width: 18px;
+  height: 18px;
+  bottom: 30%;
+  left: 70%;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-30px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(15px) rotate(240deg);
+  }
+}
+
+/* Enhanced text styles */
+.gradient-text {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+.subtitle-text {
+  font-size: 0.6em;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.highlight-text {
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 500;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Enhanced social links */
+.social-link {
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.social-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Enhanced bubble styling */
+.enhanced-bubble {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.enhanced-bubble:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced learn button */
+.enhanced-learn-button {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.enhanced-learn-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.enhanced-learn-button:hover::before {
+  left: 100%;
+}
+
+.enhanced-learn-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
 
 .downSign {
   display: flex;
