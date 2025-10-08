@@ -3,18 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=8.0.0"
+    "bun": ">=1.0.0"
   },
   "scripts": {
-    "setup": "npm install",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "type-check": "vue-tsc --noEmit",
-    "type-check:watch": "vue-tsc --noEmit --watch",
-    "dev": "npm run serve",
-    "start": "npm run serve"
+    "setup": "bun install",
+    "serve": "bun run vue-cli-service serve",
+    "build": "bun run vue-cli-service build",
+    "lint": "bun run vue-cli-service lint",
+    "type-check": "bun run vue-tsc --noEmit",
+    "type-check:watch": "bun run vue-tsc --noEmit --watch",
+    "dev": "bun run serve",
+    "start": "bun run serve"
   },
   "dependencies": {
     "@babel/core": "7.28.4",
