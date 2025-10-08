@@ -1,0 +1,5 @@
+Favicon Placeholder
+Dimensions: 32x32px
+Content: SharedStake logo or ETH symbol
+Colors: Dark background, red ETH symbol
+Status: NEEDS TO BE CREATED - Use design tool to create this image
