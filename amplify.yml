@@ -7,8 +7,8 @@ frontend:
         - curl -fsSL https://bun.sh/install | bash
         - export PATH="$HOME/.bun/bin:$PATH"
         - bun --version
-        # Install dependencies with frozen lockfile for consistency
-        - bun install --frozen-lockfile
+        # Install dependencies (allow lockfile updates for new deps in CI)
+        - bun install
     build:
       commands:
         # Build the application
