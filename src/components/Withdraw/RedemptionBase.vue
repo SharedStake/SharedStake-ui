@@ -389,7 +389,6 @@ export default {
         depositStage: this.depositStage,
         withdrawStage: this.withdrawStage,
       };
-      if (this.dev) console.log("State :", state);
       if (state.withdrawStage) return "withdrawStage";
       if (state.depositStage && !state.approvalStage) return "depositStage";
       return "approvalStage";
@@ -456,7 +455,6 @@ export default {
         const targetAddress = await targetContract.getAddress();
         let userApprovedVEth2 = await vEth2Contract.allowance(this.userConnectedWalletAddress, targetAddress);
         this.userApprovedVEth2 = BN(userApprovedVEth2.toString());
-        if (this.dev) console.log("userApprovedVEth2", userApprovedVEth2.toString());
       } catch (error) {
         console.error("Error getting user approved vETH2:", error);
         this.userApprovedVEth2 = BN(0);
@@ -472,7 +470,6 @@ export default {
         }
         let userVeth2Balance = await vEth2Contract.balanceOf(this.userConnectedWalletAddress);
         this.userVEth2Balance = BN(userVeth2Balance.toString());
-        if (this.dev) console.log("userVeth2Balance", userVeth2Balance.toString());
         return userVeth2Balance.toString();
       } catch (error) {
         console.error("Error getting user vETH2 balance:", error);
@@ -493,7 +490,6 @@ export default {
         try {
           let userDepositedVEth2 = await contract.userEntries(this.userConnectedWalletAddress);
           this.userDepositedVEth2 = userDepositedVEth2?.[0] ? BN(userDepositedVEth2[0].toString()) : BN(0);
-          if (this.dev) console.log("userDepositedVEth2", this.userDepositedVEth2.toString());
         } catch (error) {
           // Handle decode errors or missing entries
           this.userDepositedVEth2 = BN(0);

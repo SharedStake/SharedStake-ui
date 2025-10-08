@@ -351,25 +351,28 @@ export default {
   components: { ImageVue, Menu, ConnectButton },
   setup() {
     // Use the composable for maintenance banner
-    const { isVisible: maintenanceBannerVisible } = useScrollVisibility({
+    const { createScrollVisibility: createMaintenanceBanner } = useScrollVisibility({
       threshold: 50,
       hideOnScrollDown: true,
       showOnScrollUp: true
     });
 
     // Use the composable for footer banner
-    const { isVisible: footerBannerVisible } = useScrollVisibility({
+    const { createScrollVisibility: createFooterBanner } = useScrollVisibility({
       threshold: 50,
       hideOnScrollDown: true,
       showOnScrollUp: true
     });
 
     return {
-      maintenanceBannerVisible,
-      footerBannerVisible
+      createMaintenanceBanner,
+      createFooterBanner
     };
   },
   data() {
+    const maintenanceBanner = this.createMaintenanceBanner();
+    const footerBanner = this.createFooterBanner();
+    
     return {
       showNavbar: true,
       lastScrollPosition: 0,
@@ -377,12 +380,18 @@ export default {
       windowWidth: window.innerWidth,
       showSidebar: false,
       sgtPrice: null,
+      maintenanceBannerVisible: maintenanceBanner.isVisible,
+      footerBannerVisible: footerBanner.isVisible,
+      maintenanceBannerHandler: maintenanceBanner.handleScroll,
+      footerBannerHandler: footerBanner.handleScroll,
     };
   },
 
   mounted: async function() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
+    window.addEventListener("scroll", this.maintenanceBannerHandler);
+    window.addEventListener("scroll", this.footerBannerHandler);
     await this.setSgtPrice();
   },
 
@@ -395,6 +404,8 @@ export default {
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("scroll", this.onScroll);
+    window.removeEventListener("scroll", this.maintenanceBannerHandler);
+    window.removeEventListener("scroll", this.footerBannerHandler);
   },
 
   watch: {
@@ -500,7 +511,6 @@ export default {
 .LogoContainer {
   font-size: 24px;
   cursor: pointer;
-  /* grid-area: Logo; */
 }
 
 .Logo {
@@ -510,7 +520,6 @@ export default {
 .Logo:hover {
   -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
   filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7));
-  /* Similar syntax to box-shadow */
 }
 .FooterLogo {
   margin-bottom: 50px;
@@ -587,57 +596,15 @@ export default {
 .link:hover {
   opacity: 1;
 }
-.ConnectButton {
-  padding: 0.5rem 1.5rem;
-  border: 3px double transparent;
-  border-radius: 80px;
-  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(
-      circle at left top,
-      rgb(250, 82, 160) 0%,
-      rgb(37, 167, 219) 100%
-    );
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  background-size: 100% 100%;
-  transition: filter 0.5s ease-out;
-  white-space: nowrap;
-}
-.animatedButton {
-  animation: animatedButton 3s ease-out backwards infinite;
-}
-.ConnectButton:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
-    brightness(200%);
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
-}
-@keyframes animatedButton {
-  from {
-    background-position: 0px;
-  }
-
-  to {
-    background-position: 168.6px;
-  }
-}
 .footer {
   padding: 40px 30px 10px 30px;
   background-color: rgb(24, 24, 24);
   color: rgb(255, 255, 255);
   min-height: 350px;
-  /* display: grid; */
-  /* grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.4fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "Disclaimer Logo"
-    "Disclaimer Info"
-    "bottom bottom "; */
   align-items: center;
 }
 
 .disclaimer {
-  grid-area: Disclaimer;
   font-size: 14px;
   padding: 0 0 50px 0;
   text-align: center;
@@ -650,7 +617,6 @@ export default {
   opacity: 1;
 }
 .footerLinks {
-  grid-area: Info;
   max-width: 1500px;
   width: calc(100% - 60px);
   margin: 0px auto;
@@ -683,7 +649,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  grid-area: bottom;
   color: #afafaf;
 }
 .icebear {

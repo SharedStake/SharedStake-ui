@@ -1,15 +1,22 @@
 <template>
-  <router-link
+  <BaseLink
+    type="router"
     :to="to"
-    class="px-4 py-2 text-sm font-semibold transition-all border border-white rounded-full hover:bg-gray-800"
+    variant="button"
+    size="small"
   >
     <slot />
-  </router-link>
+  </BaseLink>
 </template>
 
 <script>
+import BaseLink from "./BaseLink.vue";
+
 export default {
   name: "SharedLink",
+  components: {
+    BaseLink
+  },
   props: {
     to: {
       type: String,

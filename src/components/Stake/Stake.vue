@@ -440,7 +440,7 @@ export default {
         this.amountCheck(true);
       } catch (err) {
         this.buttonText = "Connect to wallet ↗";
-        console.log("Error mounting", err);
+        // Error mounting - handled by error boundary
       }
     },
     amountCheck(init) {

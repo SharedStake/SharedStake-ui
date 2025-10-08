@@ -72,17 +72,6 @@
             />
             <div class="text-xs mt-1 text-center">Coming Soon</div>
           </div>
-          <!-- <a
-            href="https://www.reddit.com/r/SharedStake/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Reddit.svg'"
-              size="24px"
-              class="socialLogo"
-            /> -->
-          <!-- </a> -->
           <a
             href="https://github.com/SharedStake"
             target="_blank"
@@ -418,8 +407,7 @@
         </a>
       </div>
     </div>
-    <!-- <div class="exp roadMap" v-show="scrolled > 4700"> -->
-      <!-- Roadmap section disabled - outdated content -->
+    <!-- Roadmap section disabled - outdated content -->
     <div class="exp roadMap" v-show="false">
       <div class="mainBox">
         <div class="exp titleBox">
@@ -521,13 +509,11 @@
         </div>
       </div>
     </div> -->
-    <!-- <div class="Container" v-show="scrolled <= 5500"></div> -->
   </div>
 </template>
 
 <script>
 import ImageVue from "../Handlers/ImageVue";
-// import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
 import Partners from "./Partners";
 import axios from "axios";
 import BN from "bignumber.js";
@@ -537,7 +523,6 @@ import { priceInUsdAsync } from "@/utils/coingecko";
 export default {
   components: {
     ImageVue,
-    // MailingListSubscribeForm,
     Partners,
   },
   props: ["scrolled", "windowWidth"],

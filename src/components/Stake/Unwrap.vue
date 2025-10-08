@@ -259,7 +259,6 @@ export default {
         if (!contract) return "0";
         const result = await contract.balanceOf(this.userConnectedWalletAddress);
         this.userTokenBalance = BN(result.toString());
-        if (this.dev) console.log("userTokenBalance", result.toString());
         return result.toString();
       } catch (error) {
         console.error("Error getting user token balance:", error);
@@ -274,7 +273,6 @@ export default {
         if (!contract) return "0";
         const result = await contract.balanceOf(this.userConnectedWalletAddress);
         this.userOutputTokenBalance = BN(result.toString());
-        if (this.dev) console.log("userOutputTokenBalance", result.toString());
         return result.toString();
       } catch (error) {
         console.error("Error getting user output token balance:", error);
