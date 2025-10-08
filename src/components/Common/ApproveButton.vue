@@ -11,22 +11,22 @@
 </template>
 
 <script>
-import { useWalletStore } from "@/stores/wallet";
+import { useWallet } from "@/composables/useWallet";
+import { useTokenBalance } from "@/composables/useTokenBalance";
 import DappTxBtn from "../Common/DappTxBtn.vue";
-
-import BN from "bignumber.js";
 import { toWei } from "../../utils/common";
-BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
-BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "ApprovalButton",
   components: { DappTxBtn },
   props: ["ABI_spender", "ABI_token", "amount", "cb", "autoHide"],
   setup() {
-    const walletStore = useWalletStore();
+    const { userAddress } = useWallet();
+    const { getTokenAllowance, BN } = useTokenBalance();
     return {
-      walletStore
+      userAddress,
+      getTokenAllowance,
+      BN
     };
   },
   data() {
@@ -37,7 +37,7 @@ export default {
 
   computed: {
     userConnectedWalletAddress() {
-      return this.walletStore.userAddress;
+      return this.userAddress;
     },
 
     enoughApproved() {
@@ -95,14 +95,10 @@ export default {
           return;
         }
         const spenderAddress = await spenderContract.getAddress();
-        let userApproved = await tokenContract.allowance(
-          this.userConnectedWalletAddress,
-          spenderAddress
-        );
-        this.userApproved = BN(userApproved.toString());
+        this.userApproved = await this.getTokenAllowance(tokenContract, spenderAddress);
       } catch (error) {
         console.error("Error getting approved amount:", error);
-        this.userApproved = BN(0);
+        this.userApproved = this.BN(0);
       }
     },
   },

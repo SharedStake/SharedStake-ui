@@ -657,39 +657,7 @@ export default {
 .link:hover {
   opacity: 1;
 }
-.ConnectButton {
-  padding: 0.5rem 1.5rem;
-  border: 3px double transparent;
-  border-radius: 80px;
-  background: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)),
-    radial-gradient(
-      circle at left top,
-      rgb(250, 82, 160) 0%,
-      rgb(37, 167, 219) 100%
-    );
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  background-size: 100% 100%;
-  transition: filter 0.5s ease-out;
-  white-space: nowrap;
-}
-.animatedButton {
-  animation: animatedButton 3s ease-out backwards infinite;
-}
-.ConnectButton:hover {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7))
-    brightness(200%);
-  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.7)) brightness(120%);
-}
-@keyframes animatedButton {
-  from {
-    background-position: 0px;
-  }
-
-  to {
-    background-position: 168.6px;
-  }
-}
+/* Connect button styles moved to BaseButton component */
 .footer {
   padding: 40px 30px 10px 30px;
   background-color: rgb(24, 24, 24);

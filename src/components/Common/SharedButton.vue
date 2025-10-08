@@ -1,21 +1,19 @@
 <template>
-  <button
+  <BaseButton
     :disabled="disabled"
-    class="px-6 py-3 text-xl font-semibold transition-all border-2 border-white rounded-full md:font-medium md:px-8 whitespace-nowrap"
-    :class="{
-      'md:text-3xl': big,
-      'cursor-not-allowed text-gray-400 border-gray-400': disabled,
-      'bg-brand-primary hover:bg-transparent hover:text-brand-primary hover:border-brand-primary': !disabled
-    }"
-    type="button"
+    :size="big ? 'large' : 'medium'"
+    variant="primary"
     @click="$emit('click')"
   >
     <slot />
-  </button>
+  </BaseButton>
 </template>
 <script>
+import BaseButton from './BaseButton.vue';
+
 export default {
-  name: "Button",
+  name: "SharedButton",
+  components: { BaseButton },
   props: {
     disabled: {
       type: Boolean,

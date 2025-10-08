@@ -21,55 +21,21 @@
         </header>
 
         <!-- Progress - show completed steps status -->
-        <div
-          v-if="userWalletIsConnected"
-          class="pb-3 mb-6 border-b border-gray-700"
-        >
-          <aside class="flex flex-wrap justify-center gap-3 md:gap-6">
-            <Step
-              :title="`Approve ${inputTokenName}`"
-              :completed="depositStage"
-              step="1"
-            />
-            <Step
-              :title="`Wrap ${inputTokenName}`"
-              :completed="completed"
-              step="2"
-            />
-          </aside>
-        </div>
+        <ProgressSteps
+          :show-progress="userWalletIsConnected"
+          :steps="progressSteps"
+        />
 
         <label v-if="depositStage || approvalStage">
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
             How much {{ inputTokenName }} would you like to stake for {{ outputTokenName }}?
           </p>
-          <div class="relative flex items-center gap-1 p-2 text-xl border border-gray-200 rounded-xl">
-            <input
-              :value="amount"
-              class="max-w-xs ml-2 text-white bg-transparent border-none outline-none" 
-              :placeholder="
-                userTokenBalance
-                  .div(10 ** 18)
-                  .decimalPlaces(6)
-                  .toString()
-              " 
-              @input="
-                amount = isNaN(parseFloat($event.target.value))
-                  ? 0
-                  : $event.target.value
-              "
-            >
-            <span class="text-sm">
-              {{ inputTokenName }}
-            </span>
-            <button
-              v-if="true"
-              class=" px-1 py-0.5 text-xs font-semibold bg-white rounded text-brand-primary"
-              @click="handleFillMaxAmount"
-            >
-              max
-            </button>
-          </div>
+          <TokenInput
+            v-model="amount"
+            :token-name="inputTokenName"
+            :placeholder="formatBalance(userTokenBalance)"
+            @max="handleFillMaxAmount"
+          />
           <p class="text-sm font-semibold text-gray-300 mb-0.5">
             Current {{ outputTokenName }} Balance: {{ parseBN(userOutputTokenBalance) }} 
           </p>
@@ -80,12 +46,7 @@
           v-if="!completed"
           class="my-6"
         >
-          <p v-if="loading">
-            <ImageVue
-              :src="'loading.svg'"
-              :size="'45px'"
-            />
-          </p>
+          <LoadingSpinner v-if="loading" />
 
           <ConnectButton v-else-if="!userConnectedWalletAddress" />
 
@@ -120,23 +81,19 @@
 </template>
 
 <script>
-import BN from "bignumber.js";
 import { ethers } from "ethers";
 import { wsgETH, sgETH } from "@/contracts";
-import { useWalletStore } from "@/stores/wallet";
+import { useWallet } from "@/composables/useWallet";
+import { useTokenBalance } from "@/composables/useTokenBalance";
 import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
-
 import ImageVue from "../Handlers/ImageVue.vue";
-
-// Max unit is the maximum value that can be represented in Solidity
-// const MAX_UNIT = 2 ** 256 - 1;
-
-BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
-BN.config({ EXPONENTIAL_AT: 100 });
+import LoadingSpinner from "../Common/LoadingSpinner.vue";
+import TokenInput from "../Common/TokenInput.vue";
+import ProgressSteps from "../Common/ProgressSteps.vue";
 
 export default {
   name: "Wrap",
@@ -146,12 +103,21 @@ export default {
     Step,
     ApprovalButton,
     Chooser,
-    DappTxBtn
+    DappTxBtn,
+    LoadingSpinner,
+    TokenInput,
+    ProgressSteps
   },
   setup() {
-    const walletStore = useWalletStore();
+    const { userAddress } = useWallet();
+    const { formatBalance, parseBalance, getTokenBalance, getTokenAllowance, BN } = useTokenBalance();
     return {
-      walletStore
+      userAddress,
+      formatBalance,
+      parseBalance,
+      getTokenBalance,
+      getTokenAllowance,
+      BN
     };
   },
   data() {
@@ -177,7 +143,7 @@ export default {
 
   computed: {
     userConnectedWalletAddress() {
-      return this.walletStore.userAddress;
+      return this.userAddress;
     },
 
     userHasTokenBalance() {
@@ -187,9 +153,7 @@ export default {
     userHasApprovedToken() {
       return (
         this.userApproved.gt(0) &&
-        this.userApproved.gte(
-          ethers.parseEther(this.amount?.toString() || '0').toString()
-        )
+        this.userApproved.gte(this.parseBalance(this.amount || 0))
       );
     },
 
@@ -225,6 +189,19 @@ export default {
 
     completedStepsCount() {
       return this.approvalStage + this.depositStage + 1;
+    },
+
+    progressSteps() {
+      return [
+        {
+          title: `Approve ${this.inputTokenName}`,
+          completed: this.depositStage
+        },
+        {
+          title: `Wrap ${this.inputTokenName}`,
+          completed: this.completed
+        }
+      ];
     },
 
     stage() { // need to improve this. 
@@ -278,9 +255,7 @@ export default {
     },
 
     parseBN(n) {
-       return n.div(10 ** 18)
-                  .decimalPlaces(6)
-                  .toString()
+       return this.formatBalance(n);
     },
 
     async refreshBalances() {
@@ -301,11 +276,10 @@ export default {
           return;
         }
         const wsgETHAddress = await wsgETHContract.getAddress();
-        let userApproved = await sgETHContract.allowance(this.userConnectedWalletAddress, wsgETHAddress);
-        this.userApproved = BN(userApproved.toString());
+        this.userApproved = await this.getTokenAllowance(sgETHContract, wsgETHAddress);
       } catch (error) {
         console.error("Error getting user approved:", error);
-        this.userApproved = BN(0);
+        this.userApproved = this.BN(0);
       }
       if (this.dev) console.log("userApproved", this.userApproved);
     },
@@ -313,15 +287,10 @@ export default {
     async getUserTokenBalance() {
       try {
         const sgETHContract = sgETH();
-        if (!sgETHContract) {
-          console.error("sgETH contract not available");
-          return;
-        }
-        let userTokenBalance = await sgETHContract.balanceOf(this.userConnectedWalletAddress);
-        this.userTokenBalance = BN(userTokenBalance.toString());
+        this.userTokenBalance = await this.getTokenBalance(sgETHContract);
       } catch (error) {
         console.error("Error getting user token balance:", error);
-        this.userTokenBalance = BN(0);
+        this.userTokenBalance = this.BN(0);
       }
       if (this.dev) console.log("userTokenBalance", this.userTokenBalance);
       return this.userTokenBalance;
@@ -330,25 +299,17 @@ export default {
     async getUserOutputTokenBalance() {
       try {
         const wsgETHContract = wsgETH();
-        if (!wsgETHContract) {
-          console.error("wsgETH contract not available");
-          return;
-        }
-        let userOutputTokenBalance = await wsgETHContract.balanceOf(this.userConnectedWalletAddress);
-        this.userOutputTokenBalance = BN(userOutputTokenBalance.toString());
+        this.userOutputTokenBalance = await this.getTokenBalance(wsgETHContract);
       } catch (error) {
         console.error("Error getting user output token balance:", error);
-        this.userOutputTokenBalance = BN(0);
+        this.userOutputTokenBalance = this.BN(0);
       }
       if (this.dev) console.log("userOutputTokenBalance", this.userOutputTokenBalance);
       return this.userOutputTokenBalance;
     },
 
     handleFillMaxAmount() {
-      this.amount = this.userTokenBalance
-        .div(10 ** 18)
-        .decimalPlaces(6)
-        .toString();
+      this.amount = this.formatBalance(this.userTokenBalance);
     },
   },
 };
