@@ -1,0 +1,16 @@
+[install]
+# Use faster package resolution
+cache = true
+# Use bun's native bundler for better performance
+bun = true
+
+[install.scopes]
+# Configure scopes if needed for private packages
+
+[run]
+# Enable faster script execution
+bun = true
+
+[test]
+# Configure test settings if needed
+preload = ["./test/setup.ts"]

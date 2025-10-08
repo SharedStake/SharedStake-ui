@@ -3,16 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.0.0",
-    "yarn": ">=1.22.0"
+    "bun": ">=1.0.0"
   },
   "scripts": {
-    "setup": "nvm use",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "type-check": "vue-tsc --noEmit",
-    "type-check:watch": "vue-tsc --noEmit --watch"
+    "setup": "bun install",
+    "serve": "bun run vue-cli-service serve",
+    "build": "bun run vue-cli-service build",
+    "lint": "bun run vue-cli-service lint",
+    "type-check": "bun run vue-tsc --noEmit",
+    "type-check:watch": "bun run vue-tsc --noEmit --watch",
+    "dev": "bun run serve",
+    "start": "bun run serve"
   },
   "dependencies": {
     "@babel/core": "7.28.4",
@@ -75,7 +76,7 @@
     "last 2 versions",
     "not dead"
   ],
-  "resolutions": {
+  "overrides": {
     "crypto-es": "2.1.0",
     "postcss": "8.4.31",
     "webpack-dev-server": "5.2.1",
