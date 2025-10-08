@@ -32,24 +32,6 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "@web3-onboard/injected-wallets"
         update-types: ["version-update:semver-major"]
-
-  # Enable security updates
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "sharedstake-team"
-    assignees:
-      - "sharedstake-team"
-    commit-message:
-      prefix: "security"
-      include: "scope"
-    labels:
-      - "security"
-      - "dependencies"
-      - "automated"
     allow:
       - dependency-type: "direct"
       - dependency-type: "indirect"
