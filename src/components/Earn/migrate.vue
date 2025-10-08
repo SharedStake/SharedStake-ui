@@ -8,7 +8,9 @@
       />
       <div class="headerPart poolName">
         Migrate to V2!
-        <div class="minitext">Claim SGTv2</div>
+        <div class="minitext">
+          Claim SGTv2
+        </div>
       </div>
       <!-- <div class="headerPart poolAddress">
         <div class="minitext">Address:</div>
@@ -39,12 +41,19 @@
           Connect!
         </span>
       </div>
-      <div v-if="userAddress" class="headerPart poolButton">
+      <div
+        v-if="userAddress"
+        class="headerPart poolButton"
+      >
         <span v-if="available === 0">
           <div class="minitext">Status:</div>
           No balance
         </span>
-        <button v-else-if="approval" disabled class="mainButton disabled">
+        <button
+          v-else-if="approval"
+          disabled
+          class="mainButton disabled"
+        >
           Waiting...
         </button>
         <button
@@ -54,14 +63,22 @@
         >
           Migrate!
         </button>
-        <button v-else class="mainButton" @click="Approve">Approve</button>
+        <button
+          v-else
+          class="mainButton"
+          @click="Approve"
+        >
+          Approve
+        </button>
       </div>
     </div>
     <div class="outline" />
     <div class="geyserChooser">
       <div class="headerPart poolName">
         Migrated Funds:
-        <div class="minitext">Claimable SGTv2</div>
+        <div class="minitext">
+          Claimable SGTv2
+        </div>
       </div>
       <div class="headerPart poolAddress">
         <span>
@@ -69,7 +86,10 @@
           {{ sentAmount }}
         </span>
       </div>
-      <div v-if="userAddress" class="headerPart poolButton">
+      <div
+        v-if="userAddress"
+        class="headerPart poolButton"
+      >
         <span v-if="sentAmount === 0">
           <div class="minitext">Status:</div>
           No funds migrated yet.
@@ -102,13 +122,13 @@ import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 export default {
+  components: { ImageVue },
   setup() {
     const walletStore = useWalletStore();
     return {
       walletStore
     };
   },
-  components: { ImageVue },
   data: () => ({
     innerWidth: 0,
     txs: [],
@@ -120,6 +140,17 @@ export default {
     sentAmount: 0,
     startTime: 0,
   }),
+  computed: {
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
+    remaining_time() {
+      return (
+        (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /
+        1000
+      ).toFixed(0);
+    },
+  },
   watch: {
     async userAddress() {
       await this.isEligible();
@@ -142,17 +173,6 @@ export default {
   },
   unmounted() {
     window.removeEventListener("resize", this.onResize);
-  },
-  computed: {
-    userAddress() {
-      return this.walletStore.userAddress;
-    },
-    remaining_time() {
-      return (
-        (this.startTime * 1000 + 5 * 24 * 3600 - Date.now()) /
-        1000
-      ).toFixed(0);
-    },
   },
   methods: {
     async mounted() {

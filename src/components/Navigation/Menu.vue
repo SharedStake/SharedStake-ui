@@ -8,14 +8,18 @@
       <DropdownGroup>
         <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
           <span>Stake</span>
-          <div class="coming-soon">Coming Soon</div>
+          <div class="coming-soon">
+            Coming Soon
+          </div>
         </div>
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
         <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
           <span>Withdraw</span>
-          <div class="coming-soon">Coming Soon</div>
+          <div class="coming-soon">
+            Coming Soon
+          </div>
         </div>
         <DropdownItemRouter to="/wrap">
           Wrap
@@ -30,7 +34,10 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemAnchor href="https://docs.sharedstake.finance/" class="px-6">
+      <DropdownItemAnchor
+        href="https://docs.sharedstake.finance/"
+        class="px-6"
+      >
         Learn
         <DropdownArrow />
       </DropdownItemAnchor>
@@ -55,7 +62,9 @@
         </DropdownItemAnchor>
         <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
           <span>Telegram</span>
-          <div class="coming-soon">Coming Soon</div>
+          <div class="coming-soon">
+            Coming Soon
+          </div>
         </div>
         <DropdownItemAnchor href="https://twitter.com/ChimeraDefi">
           Twitter
@@ -64,14 +73,17 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemAnchor class="px-6"
-        href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD">
+      <DropdownItemAnchor
+        class="px-6"
+        href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
+      >
         Buy $SGT <span class="font-normal">{{ formattedSgtPrice }}</span>
         <DropdownArrow />
       </DropdownItemAnchor>
       <DropdownGroup>
         <DropdownItemAnchor
-          href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD">
+          href="https://app.uniswap.org/#/swap?outputCurrency=0x24C19F7101c1731b85F1127EaA0407732E36EcDD"
+        >
           Buy on Uniswap
         </DropdownItemAnchor>
         <DropdownItemAnchor href="https://swap.cow.fi/#/1/swap/ETH/0x24C19F7101c1731b85F1127EaA0407732E36EcDD">
@@ -89,14 +101,14 @@ import DropdownGroup from "./DropdownGroup.vue";
 import DropdownArrow from "./DropdownArrow.vue";
 export default {
   name: "DropdownMenu",
-  props: {
-    sgtPrice: Number,
-  },
   components: {
     DropdownItemRouter,
     DropdownItemAnchor,
     DropdownGroup,
     DropdownArrow,
+  },
+  props: {
+    sgtPrice: Number,
   },
   computed: {
     formattedSgtPrice() {

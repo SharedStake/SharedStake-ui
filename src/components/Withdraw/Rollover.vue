@@ -3,11 +3,11 @@
     :ABI="ABI"
     :title="title"
     :descr="descr"
-    :getEthAvailableForWithdrawal="getEthAvailableForWithdrawal"
-    :ethAvailableForWithdrawal="ethAvailableForWithdrawal"
-    :outputTokenName="outputTokenName"
-    :totalRedeemed="totalRedeemed"
-    :getTotalRedeemed="getTotalRedeemed"
+    :get-eth-available-for-withdrawal="getEthAvailableForWithdrawal"
+    :eth-available-for-withdrawal="ethAvailableForWithdrawal"
+    :output-token-name="outputTokenName"
+    :total-redeemed="totalRedeemed"
+    :get-total-redeemed="getTotalRedeemed"
   />
 </template>
 

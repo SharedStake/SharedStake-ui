@@ -20,8 +20,7 @@
             target="_blank"
             rel="noopener noreferrer"
           >
-            bunni.pro</a
-          >
+            bunni.pro</a>
           for new farming pools!
         </div>
         <div class="notification">
@@ -45,19 +44,21 @@
         </div>
       </div>
       <newGeyser
-        class="geyser"
         v-for="pool in newPools"
+        :key="pool.name"
+        class="geyser"
         :pool="pool"
-        v-bind:key="pool.name"
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
-      <div class="notification">Old farms - please withdraw ASAP</div>
+      <div class="notification">
+        Old farms - please withdraw ASAP
+      </div>
       <geyser
-        class="geyser geyser-old"
         v-for="pool in pools"
+        :key="pool.name"
+        class="geyser geyser-old"
         :pool="pool"
-        v-bind:key="pool.name"
         :chosen="chosen === pool.name"
         @toggle="chosen = chosen == pool.name ? null : pool.name"
       />
@@ -218,13 +219,13 @@ export default {
       return this.walletStore.userAddress;
     },
   },
-  mounted: async function() {
-    await this.mounted();
-  },
   watch: {
     async userAddress(newVal) {
       if (newVal) await this.mounted;
     },
+  },
+  mounted: async function() {
+    await this.mounted();
   },
   methods: {
     async mounted() {

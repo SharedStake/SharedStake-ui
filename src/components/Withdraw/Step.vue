@@ -9,7 +9,9 @@
     >
       {{ step }}
     </span>
-    <p :class="{ 'line-through text-gray-400': completed }">{{ title }}</p>
+    <p :class="{ 'line-through text-gray-400': completed }">
+      {{ title }}
+    </p>
   </div>
 </template>
 

@@ -1,11 +1,18 @@
 <template>
   <span>
     <ConnectButton v-if="!userConnectedWalletAddress" />
-    <SharedButton v-else-if="!loading" @click="execTx" :disabled="disabled">
+    <SharedButton
+      v-else-if="!loading"
+      :disabled="disabled"
+      @click="execTx"
+    >
       <slot />
     </SharedButton>
     <p v-else-if="loading">
-      <ImageVue :src="'loading.svg'" :size="'45px'" />
+      <ImageVue
+        :src="'loading.svg'"
+        :size="'45px'"
+      />
     </p>
   </span>
 </template>
@@ -27,8 +34,8 @@ BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "DappTxBtn",
-  props: ["click", "cb", "chosenGas", "defaultGas", "disabled"],
   components: { SharedButton, ImageVue, ConnectButton },
+  props: ["click", "cb", "chosenGas", "defaultGas", "disabled"],
   setup() {
     const walletStore = useWalletStore();
     return {
@@ -53,10 +60,6 @@ export default {
     },
   },
 
-  mounted: async function () {
-    this.gasPrices = await getCurrentGasPrices();
-  },
-
   watch: {
     userConnectedWalletAddress: {
       immediate: true,
@@ -64,6 +67,10 @@ export default {
         this.gasPrices = await getCurrentGasPrices();
       },
     },
+  },
+
+  mounted: async function () {
+    this.gasPrices = await getCurrentGasPrices();
   },
 
   methods: {

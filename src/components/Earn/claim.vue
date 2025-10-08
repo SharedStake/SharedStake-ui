@@ -8,12 +8,17 @@
       />
       <div class="headerPart poolName">
         Airdrop
-        <div class="minitext">Claim SGT</div>
+        <div class="minitext">
+          Claim SGT
+        </div>
       </div>
       <div class="headerPart poolAddress">
-        <div class="minitext">Address:</div>
+        <div class="minitext">
+          Address:
+        </div>
         <div :class="'stakePage'">
           <input
+            v-model="address"
             class="token-amount-input"
             title="address"
             autocomplete="off"
@@ -23,8 +28,7 @@
             placeholder="0x0"
             minlength="1"
             spellcheck="false"
-            v-model="address"
-          />
+          >
         </div>
       </div>
       <div class="headerPart poolClaim">
@@ -49,8 +53,16 @@
           {{ available }}
         </span>
       </div>
-      <div v-show="eligible && !isClaimed" class="headerPart poolButton">
-        <button class="mainButton" @click="Claim">Claim</button>
+      <div
+        v-show="eligible && !isClaimed"
+        class="headerPart poolButton"
+      >
+        <button
+          class="mainButton"
+          @click="Claim"
+        >
+          Claim
+        </button>
       </div>
     </div>
   </div>
@@ -81,6 +93,11 @@ export default {
     eligible: false,
     claim: {},
   }),
+  computed: {
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
+  },
   watch: {
     async userAddress() {
       await this.isEligible();
@@ -103,11 +120,6 @@ export default {
   },
   unmounted() {
     window.removeEventListener("resize", this.onResize);
-  },
-  computed: {
-    userAddress() {
-      return this.walletStore.userAddress;
-    },
   },
   methods: {
     async mounted() {

@@ -1,5 +1,6 @@
 <template>
   <svg
+    :id="direction"
     :width="size"
     :height="size"
     viewBox="0 0 24 24"
@@ -9,10 +10,14 @@
     stroke-linecap="round"
     stroke-linejoin="round"
     class="arrow"
-    :id="direction"
   >
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <polyline points="19 12 12 19 5 12"></polyline>
+    <line
+      x1="12"
+      y1="5"
+      x2="12"
+      y2="19"
+    />
+    <polyline points="19 12 12 19 5 12" />
   </svg>
 </template>
 

@@ -21,8 +21,8 @@ BN.config({ EXPONENTIAL_AT: 100 });
 
 export default {
   name: "ApprovalButton",
-  props: ["ABI_spender", "ABI_token", "amount", "cb", "autoHide"],
   components: { DappTxBtn },
+  props: ["ABI_spender", "ABI_token", "amount", "cb", "autoHide"],
   setup() {
     const walletStore = useWalletStore();
     return {
@@ -33,19 +33,6 @@ export default {
     return {
       userApproved: BN(0),
     };
-  },
-
-  mounted: async function() {
-    await this.getApproved();
-  },
-
-  watch: {
-    userConnectedWalletAddress: {
-      immediate: true,
-      async handler() {
-        await this.getApproved();
-      },
-    },
   },
 
   computed: {
@@ -61,6 +48,19 @@ export default {
       if (!this.amount) return 0;
       return toWei(this.amount);
     },
+  },
+
+  watch: {
+    userConnectedWalletAddress: {
+      immediate: true,
+      async handler() {
+        await this.getApproved();
+      },
+    },
+  },
+
+  mounted: async function() {
+    await this.getApproved();
   },
 
   methods: {

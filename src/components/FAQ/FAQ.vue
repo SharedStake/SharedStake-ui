@@ -1,8 +1,9 @@
 <template>
   <div class="container">
     <div class="max-w-2xl mx-auto text-gray-300">
-
-      <h1 class="text-2xl font-medium text-center border-b border-b-white pb-3 mb-6">SGT Discord FAQ</h1>
+      <h1 class="text-2xl font-medium text-center border-b border-b-white pb-3 mb-6">
+        SGT Discord FAQ
+      </h1>
 
       <h2>How does SharedStake generate fees on the platform?</h2>
       <p>When you initially deposit and stake vETH2, only a 0.315% fee goes to the DAO treasury plus 5% of earnings using the protocol. With a whopping 95% of earnings going directly to the liquidity providers, staking with SharedStake quickly becomes profitable.</p>
@@ -47,8 +48,18 @@
       <p>Follow us on Twitter, Discord. Please help us by following, liking and resharing our news updates.</p>
 
       <div class="flex gap-3 mt-2">
-        <a rel="noopener noreferrer nofollow" target="_blank" class="underline" href="https://twitter.com/ChimeraDefi">Twitter</a>
-        <a rel="noopener noreferrer nofollow" target="_blank" class="underline" href="https://discord.com/invite/VezkjY9udC">Discord</a>
+        <a
+          rel="noopener noreferrer nofollow"
+          target="_blank"
+          class="underline"
+          href="https://twitter.com/ChimeraDefi"
+        >Twitter</a>
+        <a
+          rel="noopener noreferrer nofollow"
+          target="_blank"
+          class="underline"
+          href="https://discord.com/invite/VezkjY9udC"
+        >Discord</a>
       </div>
 
       <h2>How can I be sure my investments will be safe from hackers?</h2>

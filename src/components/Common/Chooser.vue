@@ -2,7 +2,7 @@
   <div class="chooser">
     <div class="navbar">
       <button
-        v-for="(route, index) in this.routes"
+        v-for="(route, index) in routes"
         :key="route.id"
         class="switch"
         :class="{ switch_active: activeRoute == index }"
@@ -19,8 +19,8 @@ import { useWalletStore } from "@/stores/wallet";
 import { toWei } from "../../utils/common";
 export default {
   name: "Chooser",
-  props: ["routes", "currentActive"],
   components: {},
+  props: ["routes", "currentActive"],
   setup() {
     const walletStore = useWalletStore();
     return {

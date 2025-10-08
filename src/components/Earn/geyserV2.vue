@@ -1,6 +1,12 @@
 <template>
-  <div class="geyserwrapper" :id="chosen ? 'pinkShadow' : 'noShadow'">
-    <div class="geyserChooser" @click="$emit('toggle')">
+  <div
+    :id="chosen ? 'pinkShadow' : 'noShadow'"
+    class="geyserwrapper"
+  >
+    <div
+      class="geyserChooser"
+      @click="$emit('toggle')"
+    >
       <ImageVue
         :src="pool.pic"
         :size="innerWidth > 700 ? '40px' : '8vw'"
@@ -14,12 +20,17 @@
           rel="noopener noreferrer"
         >
           {{ pool.name }}
-          <span class="minitext" style="font-weight: 700"> ↗</span>
+          <span
+            class="minitext"
+            style="font-weight: 700"
+          > ↗</span>
           <div class="minitext">{{ pool.explanation }}</div>
         </a>
       </div>
       <div class="headerPart poolGrowth">
-        <div class="minitext">Yearly Growth:</div>
+        <div class="minitext">
+          Yearly Growth:
+        </div>
         <div class="yearlyGrowth">
           {{
             apy === 0 || isNaN(apy)
@@ -35,48 +46,80 @@
           balance == 0
             ? 0
             : balance
-                .div(decimalsPower)
-                .toFixed(3)
-                .toString()
+              .div(decimalsPower)
+              .toFixed(3)
+              .toString()
         }}
-        <div class="minitext">available to stake</div>
+        <div class="minitext">
+          available to stake
+        </div>
       </div>
-      <span class="headerPart label" :id="chosen ? 'headDown' : 'headUp'"
-        ><svg
-          class="MuiSvgIcon-root"
-          focusable="false"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"></path>
-          <path fill="none" d="M0 0h24v24H0z"></path></svg
-      ></span>
+      <span
+        :id="chosen ? 'headDown' : 'headUp'"
+        class="headerPart label"
+      ><svg
+        class="MuiSvgIcon-root"
+        focusable="false"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+        <path
+          fill="none"
+          d="M0 0h24v24H0z"
+        /></svg></span>
     </div>
-    <div class="geyserExp" v-if="chosen && pool.external">
-      <div class="statsPart" id="whiteBorder">
-        <a :href="pool.link" target="_blank" rel="noopener noreferrer">
+    <div
+      v-if="chosen && pool.external"
+      class="geyserExp"
+    >
+      <div
+        id="whiteBorder"
+        class="statsPart"
+      >
+        <a
+          :href="pool.link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <div class="minitext blue">
             {{ pool.status }}
-            <span class="minitext" style="font-weight: 700"> ↗</span>
+            <span
+              class="minitext"
+              style="font-weight: 700"
+            > ↗</span>
           </div>
         </a>
       </div>
     </div>
-    <div class="geyserStats" v-show="chosen && !pool.external">
-      <div class="statsPart" id="whiteBorder">
-        <div class="minitext blue">Total Staked:</div>
+    <div
+      v-show="chosen && !pool.external"
+      class="geyserStats"
+    >
+      <div
+        id="whiteBorder"
+        class="statsPart"
+      >
+        <div class="minitext blue">
+          Total Staked:
+        </div>
         {{
           totalStaked.eq(0)
             ? 0
             : totalStaked
-                .div(decimalsPower)
-                .toFixed(1)
-                .toString()
+              .div(decimalsPower)
+              .toFixed(1)
+              .toString()
         }}
         {{ pool.name }}
       </div>
-      <div class="statsPart" id="whiteBorder">
-        <div class="minitext blue">Remaining Rewards:</div>
+      <div
+        id="whiteBorder"
+        class="statsPart"
+      >
+        <div class="minitext blue">
+          Remaining Rewards:
+        </div>
         {{ locked.eq(0) ? 0 : locked.toFixed(1).toString() }}
         SGT
       </div>
@@ -87,42 +130,55 @@
             : stakedSchedule.toFixed(0).toString()
         }}
         Days
-        <div class="minitext blue">emission period.</div>
+        <div class="minitext blue">
+          emission period.
+        </div>
       </div>
     </div>
-    <div class="geyserUser" v-show="chosen && !pool.external">
+    <div
+      v-show="chosen && !pool.external"
+      class="geyserUser"
+    >
       <div class="userPart rightBorder">
-        <div class="minitext blue">Staked:</div>
+        <div class="minitext blue">
+          Staked:
+        </div>
         {{
           staked.eq(0)
             ? 0
             : staked
-                .div(decimalsPower)
-                .toFixed(3)
-                .toString()
+              .div(decimalsPower)
+              .toFixed(3)
+              .toString()
         }}
         {{ pool.name }}
       </div>
       <div class="userPart">
-        <div class="minitext blue">Earned:</div>
+        <div class="minitext blue">
+          Earned:
+        </div>
         {{
           earned.eq(0)
             ? 0
             : earned
-                .div(eighteenPower)
-                .toFixed(3)
-                .toString()
+              .div(eighteenPower)
+              .toFixed(3)
+              .toString()
         }}
         SGT
       </div>
     </div>
-    <div class="geyserMain" v-show="chosen && !pool.external">
+    <div
+      v-show="chosen && !pool.external"
+      class="geyserMain"
+    >
       <div class="mainPart rightBorder">
         <div :class="'stakePage'">
           <div class="input-style">
             <input
               class="token-amount-input"
               inputmode="decimal"
+              v-model="DAmount"
               title="Token Amount"
               autocomplete="off"
               autocorrect="off"
@@ -133,10 +189,10 @@
               maxlength="39"
               spellcheck="false"
               value=""
-              v-model="DAmount"
-            />
+            >
             <div
               class="toMax"
+              title="Get max token"
               @click="
                 () => {
                   DAmount = balance
@@ -144,25 +200,24 @@
                     : 0;
                 }
               "
-              title="Get max token"
             >
               MAX
             </div>
           </div>
           <button
             class="mainButton"
-            @click="Deposit"
             :disabled="disableDeposit"
+            @click="Deposit"
           >
             stake
           </button>
           <div class="s-toggle">
             <input
               id="inf-approval"
+              v-model="inf_approval"
               type="checkbox"
               name="inf-approval"
-              v-model="inf_approval"
-            />
+            >
             <label for="inf-approval">Infinite Approval</label>
           </div>
         </div>
@@ -173,6 +228,7 @@
             <input
               class="token-amount-input"
               inputmode="decimal"
+              v-model="WAmount"
               title="Token Amount"
               autocomplete="off"
               autocorrect="off"
@@ -183,16 +239,15 @@
               maxlength="39"
               spellcheck="false"
               value=""
-              v-model="WAmount"
-            />
+            >
             <div
               class="toMax"
+              title="Get max token"
               @click="
                 () => {
                   WAmount = staked ? staked.div(decimalsPower).toString() : 0;
                 }
               "
-              title="Get max token"
             >
               MAX
             </div>
@@ -200,42 +255,45 @@
           <div class="buttons">
             <button
               class="mainButton half"
-              @click="Withdraw"
               :disabled="disableWithdraw"
+              @click="Withdraw"
             >
               unstake
             </button>
             <button
               class="mainButton half pink"
-              @click="ClaimRewards"
               :disabled="disableHarvest"
+              @click="ClaimRewards"
             >
               claim rewards
             </button>
           </div>
-          <div class="buttons" v-if="pool.oldPool">
+          <div
+            v-if="pool.oldPool"
+            class="buttons"
+          >
             <button
               class="mainButton"
-              @click="ExitOldPool"
               :disabled="!(oldStaked.gt(0) || oldEarned.gt(0))"
+              @click="ExitOldPool"
             >
               EXIT from the old pool:
               {{
                 oldStaked.eq(0)
                   ? 0
                   : oldStaked
-                      .div(decimalsPower)
-                      .toFixed(1)
-                      .toString()
+                    .div(decimalsPower)
+                    .toFixed(1)
+                    .toString()
               }}
               Tokens +
               {{
                 oldEarned.eq(0)
                   ? 0
                   : oldEarned
-                      .div(eighteenPower)
-                      .toFixed(3)
-                      .toString()
+                    .div(eighteenPower)
+                    .toFixed(3)
+                    .toString()
               }}
               SGT
             </button>
@@ -255,14 +313,14 @@ BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
 import { timeout } from "@/utils/helpers";
 export default {
+  components: { ImageVue },
+  props: ["pool", "chosen"],
   setup() {
     const walletStore = useWalletStore();
     return {
       walletStore
     };
   },
-  components: { ImageVue },
-  props: ["pool", "chosen"],
   data: () => ({
     innerWidth: 0,
     balance: BN(0),
@@ -282,25 +340,6 @@ export default {
     oldStaked: BN(0),
     oldEarned: BN(0),
   }),
-  created: function () {
-    this.innerWidth = window.innerWidth;
-    window.addEventListener("resize", this.onResize);
-    var self = this;
-    if (window.ethereum)
-      window.ethereum.on("accountsChanged", async function () {
-        if (self.pool.active) {
-          await self.mounted();
-        }
-      });
-  },
-  mounted: async function () {
-    if (this.pool.active) {
-      await this.mounted();
-    }
-  },
-  unmounted() {
-    window.removeEventListener("resize", this.onResize);
-  },
   computed: {
     userAddress() {
       return this.walletStore.userAddress;
@@ -419,6 +458,25 @@ export default {
     userAddress(newVal) {
       if (newVal) this.mounted(newVal);
     },
+  },
+  created: function () {
+    this.innerWidth = window.innerWidth;
+    window.addEventListener("resize", this.onResize);
+    var self = this;
+    if (window.ethereum)
+      window.ethereum.on("accountsChanged", async function () {
+        if (self.pool.active) {
+          await self.mounted();
+        }
+      });
+  },
+  mounted: async function () {
+    if (this.pool.active) {
+      await this.mounted();
+    }
+  },
+  unmounted() {
+    window.removeEventListener("resize", this.onResize);
   },
   methods: {
     onResize() {

@@ -1,10 +1,25 @@
 <template>
   <div class="partner">
-    <ImageVue :src="imageUrl" size="128px" />
-    <div class="header">{{ name }}</div>
-    <div class="partner-text">{{ text }}</div>
-    <a class="link" :href="link" target="_blank" rel="noopener noreferrer">
-      <ImageVue :src="'down.svg'" :size="'30px'" />
+    <ImageVue
+      :src="imageUrl"
+      size="128px"
+    />
+    <div class="header">
+      {{ name }}
+    </div>
+    <div class="partner-text">
+      {{ text }}
+    </div>
+    <a
+      class="link"
+      :href="link"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <ImageVue
+        :src="'down.svg'"
+        :size="'30px'"
+      />
     </a>
   </div>
 </template>
