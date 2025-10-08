@@ -270,8 +270,8 @@ class PerformanceMonitor {
     const vitals = this.metrics.coreWebVitals;
     
     Object.entries(vitals).forEach(([metric, value]) => {
-      if (value !== null) {
-        gtag('event', metric, {
+      if (value !== null && typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+        window.gtag('event', metric, {
           event_category: 'Web Vitals',
           value: Math.round(value),
           non_interaction: true
@@ -281,8 +281,10 @@ class PerformanceMonitor {
   }
 
   trackCustomEventsToGA() {
+    if (typeof window === 'undefined' || typeof window.gtag === 'undefined') return;
+    
     // Track page load performance
-    gtag('event', 'page_load_time', {
+    window.gtag('event', 'page_load_time', {
       event_category: 'Performance',
       value: Math.round(this.metrics.navigation.loadTime),
       non_interaction: true
@@ -291,7 +293,7 @@ class PerformanceMonitor {
     // Track lazy loading performance
     const lazyMetrics = this.metrics.lazyLoading;
     if (lazyMetrics.imagesLoaded > 0) {
-      gtag('event', 'lazy_loading_performance', {
+      window.gtag('event', 'lazy_loading_performance', {
         event_category: 'Performance',
         images_loaded: lazyMetrics.imagesLoaded,
         images_failed: lazyMetrics.imagesFailed,
@@ -355,8 +357,8 @@ class PerformanceMonitor {
 
   sendToAnalytics(name, value) {
     // Google Analytics
-    if (typeof gtag !== 'undefined') {
-      gtag('event', name, {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+      window.gtag('event', name, {
         event_category: 'Performance',
         value: typeof value === 'number' ? Math.round(value) : value,
         non_interaction: true

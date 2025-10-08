@@ -11,7 +11,7 @@
           >
             the post-mortem ↗
           </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
-        </div>
+        </div> -->
         <div class="notification">
           Checkout
           <a
@@ -29,14 +29,14 @@
             target="_blank"
             rel="noopener noreferrer"
           >
-            Multifarm.fi</a
+            Multifarm.fi</a>
           > or
           <a
             href="https://vfat.tools/sgt"
             target="_blank"
             rel="noopener noreferrer"
           >
-            vfat.tools/sgt</a
+            vfat.tools/sgt</a>
           >
           and  -->
           Please withdraw remaining funds from the following old pools

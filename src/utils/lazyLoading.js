@@ -163,8 +163,8 @@ class LazyLoadingManager {
     this.performanceMetrics.lazyLoadEvents.push(event);
 
     // Send to analytics if available
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'lazy_load', {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+      window.gtag('event', 'lazy_load', {
         event_category: 'performance',
         event_label: type,
         value: Math.round(loadTime)
@@ -197,8 +197,8 @@ class LazyLoadingManager {
     });
 
     // Send to analytics
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'lazy_loading_metrics', {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+      window.gtag('event', 'lazy_loading_metrics', {
         event_category: 'performance',
         images_loaded: metrics.imagesLoaded,
         images_failed: metrics.imagesFailed,
