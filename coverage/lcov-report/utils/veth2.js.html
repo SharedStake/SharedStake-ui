@@ -1,0 +1,142 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for utils/veth2.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">utils</a> veth2.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/11</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/0</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/11</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { ethers } from 'ethers';
+import BN from 'bignumber.js'
+&nbsp;
+export const vEth2Price = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
+    const SaddleAbi = <span class="cstat-no" title="statement not covered" >[{ anonymous: false, inputs: [{ indexed: true, internalType: "address", name: "provider", type: "address" }, { indexed: false, internalType: "uint256[]", name: "tokenAmounts", type: "uint256[]" }, { indexed: false, internalType: "uint256[]", name: "fees", type: "uint256[]" }, { indexed: false, internalType: "uint256", name: "invariant", type: "uint256" }, { indexed: false, internalType: "uint256", name: "lpTokenSupply", type: "uint256" }], name: "AddLiquidity", type: "event" }, { anonymous: false, inputs: [{ indexed: true, internalType: "address", name: "receiver", type: "address" }, { indexed: false, internalType: "uint8", name: "tokenIndex", type: "uint8" }, { indexed: false, internalType: "uint256", name: "amount", type: "uint256" }, { indexed: false, internalType: "uint256", name: "amountFee", type: "uint256" }, { indexed: false, internalType: "uint256", name: "protocolFee", type: "uint256" }], name: "FlashLoan", type: "event" }, { anonymous: false, inputs: [{ indexed: false, internalType: "uint256", name: "newAdminFee", type: "uint256" }], name: "NewAdminFee", type: "event" }, { anonymous: false, inputs: [{ indexed: false, internalType: "uint256", name: "newSwapFee", type: "uint256" }], name: "NewSwapFee", type: "event" }, { anonymous: false, inputs: [{ indexed: false, internalType: "uint256", name: "newWithdrawFee", type: "uint256" }], name: "NewWithdrawFee", type: "event" }, { anonymous: false, inputs: [{ indexed: true, internalType: "address", name: "previousOwner", type: "address" }, { indexed: true, internalType: "address", name: "newOwner", type: "address" }], name: "OwnershipTransferred", type: "event" }, { anonymous: false, inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }], name: "Paused", type: "event" }, { anonymous: false, inputs: [{ indexed: false, internalType: "uint256", name: "oldA", type: "uint256" }, { indexed: false, internalType: "uint256", name: "newA", type: "uint256" }, { indexed: false, internalType: "uint256", name: "initialTime", type: "uint256" }, { indexed: false, internalType: "uint256", name: "futureTime", type: "uint256" }], name: "RampA", type: "event" }, { anonymous: false, inputs: [{ indexed: true, internalType: "address", name: "provider", type: "address" }, { indexed: false, internalType: "uint256[]", name: "tokenAmounts", type: "uint256[]" }, { indexed: false, internalType: "uint256", name: "lpTokenSupply", type: "uint256" }], name: "RemoveLiquidity", type: "event" }, { anonymous: false, inputs: [{ indexed: true, internalType: "address", name: "provider", type: "address" }, { indexed: false, internalType: "uint256[]", name: "tokenAmounts", type: "uint256[]" }, { indexed: false, internalType: "uint256[]", name: "fees", type: "uint256[]" }, { indexed: false, internalType: "uint256", name: "invariant", type: "uint256" }, { indexed: false, internalType: "uint256", name: "lpTokenSupply", type: "uint256" }], name: "RemoveLiquidityImbalance", type: "event" }, { anonymous: false, inputs: [{ indexed: true, internalType: "address", name: "provider", type: "address" }, { indexed: false, internalType: "uint256", name: "lpTokenAmount", type: "uint256" }, { indexed: false, internalType: "uint256", name: "lpTokenSupply", type: "uint256" }, { indexed: false, internalType: "uint256", name: "boughtId", type: "uint256" }, { indexed: false, internalType: "uint256", name: "tokensBought", type: "uint256" }], name: "RemoveLiquidityOne", type: "event" }, { anonymous: false, inputs: [{ indexed: false, internalType: "uint256", name: "currentA", type: "uint256" }, { indexed: false, internalType: "uint256", name: "time", type: "uint256" }], name: "StopRampA", type: "event" }, { anonymous: false, inputs: [{ indexed: true, internalType: "address", name: "buyer", type: "address" }, { indexed: false, internalType: "uint256", name: "tokensSold", type: "uint256" }, { indexed: false, internalType: "uint256", name: "tokensBought", type: "uint256" }, { indexed: false, internalType: "uint128", name: "soldId", type: "uint128" }, { indexed: false, internalType: "uint128", name: "boughtId", type: "uint128" }], name: "TokenSwap", type: "event" }, { anonymous: false, inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }], name: "Unpaused", type: "event" }, { inputs: [], name: "MAX_BPS", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "uint256[]", name: "amounts", type: "uint256[]" }, { internalType: "uint256", name: "minToMint", type: "uint256" }, { internalType: "uint256", name: "deadline", type: "uint256" }], name: "addLiquidity", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "address", name: "user", type: "address" }], name: "calculateCurrentWithdrawFee", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "address", name: "account", type: "address" }, { internalType: "uint256", name: "amount", type: "uint256" }], name: "calculateRemoveLiquidity", outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "address", name: "account", type: "address" }, { internalType: "uint256", name: "tokenAmount", type: "uint256" }, { internalType: "uint8", name: "tokenIndex", type: "uint8" }], name: "calculateRemoveLiquidityOneToken", outputs: [{ internalType: "uint256", name: "availableTokenAmount", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "uint8", name: "tokenIndexFrom", type: "uint8" }, { internalType: "uint8", name: "tokenIndexTo", type: "uint8" }, { internalType: "uint256", name: "dx", type: "uint256" }], name: "calculateSwap", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "address", name: "account", type: "address" }, { internalType: "uint256[]", name: "amounts", type: "uint256[]" }, { internalType: "bool", name: "deposit", type: "bool" }], name: "calculateTokenAmount", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "address", name: "receiver", type: "address" }, { internalType: "contract IERC20", name: "token", type: "address" }, { internalType: "uint256", name: "amount", type: "uint256" }, { internalType: "bytes", name: "params", type: "bytes" }], name: "flashLoan", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "flashLoanFeeBPS", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [], name: "getA", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [], name: "getAPrecise", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "uint256", name: "index", type: "uint256" }], name: "getAdminBalance", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "address", name: "user", type: "address" }], name: "getDepositTimestamp", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "uint8", name: "index", type: "uint8" }], name: "getToken", outputs: [{ internalType: "contract IERC20", name: "", type: "address" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "uint8", name: "index", type: "uint8" }], name: "getTokenBalance", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "address", name: "tokenAddress", type: "address" }], name: "getTokenIndex", outputs: [{ internalType: "uint8", name: "", type: "uint8" }], stateMutability: "view", type: "function" }, { inputs: [], name: "getVirtualPrice", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "contract IERC20[]", name: "_pooledTokens", type: "address[]" }, { internalType: "uint8[]", name: "decimals", type: "uint8[]" }, { internalType: "string", name: "lpTokenName", type: "string" }, { internalType: "string", name: "lpTokenSymbol", type: "string" }, { internalType: "uint256", name: "_a", type: "uint256" }, { internalType: "uint256", name: "_fee", type: "uint256" }, { internalType: "uint256", name: "_adminFee", type: "uint256" }, { internalType: "uint256", name: "_withdrawFee", type: "uint256" }], name: "initialize", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "owner", outputs: [{ internalType: "address", name: "", type: "address" }], stateMutability: "view", type: "function" }, { inputs: [], name: "pause", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "paused", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" }, { inputs: [], name: "protocolFeeShareBPS", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "uint256", name: "futureA", type: "uint256" }, { internalType: "uint256", name: "futureTime", type: "uint256" }], name: "rampA", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }, { internalType: "uint256[]", name: "minAmounts", type: "uint256[]" }, { internalType: "uint256", name: "deadline", type: "uint256" }], name: "removeLiquidity", outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint256[]", name: "amounts", type: "uint256[]" }, { internalType: "uint256", name: "maxBurnAmount", type: "uint256" }, { internalType: "uint256", name: "deadline", type: "uint256" }], name: "removeLiquidityImbalance", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint256", name: "tokenAmount", type: "uint256" }, { internalType: "uint8", name: "tokenIndex", type: "uint8" }, { internalType: "uint256", name: "minAmount", type: "uint256" }, { internalType: "uint256", name: "deadline", type: "uint256" }], name: "removeLiquidityOneToken", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint256", name: "newAdminFee", type: "uint256" }], name: "setAdminFee", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint256", name: "newWithdrawFee", type: "uint256" }], name: "setDefaultWithdrawFee", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint256", name: "newFlashLoanFeeBPS", type: "uint256" }, { internalType: "uint256", name: "newProtocolFeeShareBPS", type: "uint256" }], name: "setFlashLoanFees", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint256", name: "newSwapFee", type: "uint256" }], name: "setSwapFee", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "stopRampA", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "uint8", name: "tokenIndexFrom", type: "uint8" }, { internalType: "uint8", name: "tokenIndexTo", type: "uint8" }, { internalType: "uint256", name: "dx", type: "uint256" }, { internalType: "uint256", name: "minDy", type: "uint256" }, { internalType: "uint256", name: "deadline", type: "uint256" }], name: "swap", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "swapStorage", outputs: [{ internalType: "uint256", name: "initialA", type: "uint256" }, { internalType: "uint256", name: "futureA", type: "uint256" }, { internalType: "uint256", name: "initialATime", type: "uint256" }, { internalType: "uint256", name: "futureATime", type: "uint256" }, { internalType: "uint256", name: "swapFee", type: "uint256" }, { internalType: "uint256", name: "adminFee", type: "uint256" }, { internalType: "uint256", name: "defaultWithdrawFee", type: "uint256" }, { internalType: "contract LPToken", name: "lpToken", type: "address" }], stateMutability: "view", type: "function" }, { inputs: [{ internalType: "address", name: "newOwner", type: "address" }], name: "transferOwnership", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "unpause", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [{ internalType: "address", name: "recipient", type: "address" }, { internalType: "uint256", name: "transferAmount", type: "uint256" }], name: "updateUserWithdrawFee", outputs: [], stateMutability: "nonpayable", type: "function" }, { inputs: [], name: "withdrawAdminFees", outputs: [], stateMutability: "nonpayable", type: "function" }]</span>
+&nbsp;
+    const SaddleAddress = <span class="cstat-no" title="statement not covered" >"0xdec2157831D6ABC3Ec328291119cc91B337272b5";</span>
+    
+<span class="cstat-no" title="statement not covered" >    try {</span>
+        // Use ethers.js provider
+        const provider = <span class="cstat-no" title="statement not covered" >new ethers.BrowserProvider(window.ethereum);</span>
+        let myamount = <span class="cstat-no" title="statement not covered" >BN(1E18).toString();</span>
+        const Saddle = <span class="cstat-no" title="statement not covered" >new ethers.Contract(SaddleAddress, SaddleAbi, provider);</span>
+        const vETh2Price = <span class="cstat-no" title="statement not covered" >await Saddle.calculateSwap(0, 1, myamount);</span>
+<span class="cstat-no" title="statement not covered" >        return BN(vETh2Price.toString());</span>
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >        console.error("Error calculating vETH2 price:", error);</span>
+<span class="cstat-no" title="statement not covered" >        return BN(0);</span>
+    }
+}</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-10-08T05:26:49.591Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    

@@ -1,0 +1,1060 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for contracts/index.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">contracts</a> index.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/136</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/65</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/39</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/107</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a>
+<a name='L275'></a><a href='#L275'>275</a>
+<a name='L276'></a><a href='#L276'>276</a>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * This file includes the contract informations 
+ * such as abi's, addresses and constants imported from contracts folder.
+ * Import any contract to use from here.
+ * DELETE USELESS INFO 
+**/
+&nbsp;
+import { ethers } from 'ethers';
+import { notifyNotification } from '@/utils/common';
+import sharedStake from './abis/sharedStake.json'
+import vEth2Token from './abis/vEth2Token.json'
+import erc20 from './abis/erc20.json'
+import erc20_uniswap from './abis/erc20_uniswap.json'
+import geyserABI from './abis/geyser.json'
+import geyserABI_new from './abis/geyserV2.json'
+import sgtABI from './abis/erc20.json'
+import airdrop_distributor from './abis/distributor.json'
+import migratorABI from './abis/migrator.json' 
+&nbsp;
+// https://github.com/chimera-defi/SharedDeposit/blob/main/data/abi/Withdrawals.json
+import withdrawalsABI from './abis/withdrawals.json'
+import rolloversABI from './abis/rollovers.json'
+import sgETHABI from './abis/sgETH.json'
+import wsgETHABI from './abis/wsgETH.json'
+&nbsp;
+let _addresses = <span class="cstat-no" title="statement not covered" >{};</span>
+&nbsp;
+let _geyser_vEth2_old;
+let _geyser_SGT_old;
+let _geyser_SGT_uniswap_old;
+let _geyser_vEth2_saddle_old;
+&nbsp;
+// V2 changes
+const chainIdGoerli = <span class="cstat-no" title="statement not covered" >"0x5";</span>
+const chainIdMainnet = <span class="cstat-no" title="statement not covered" >"0x1";</span>
+&nbsp;
+const CHAIN_IDS = <span class="cstat-no" title="statement not covered" >{</span>
+    GOERLI: chainIdGoerli,
+    MAINNET: chainIdMainnet,
+    SEPOLIA: "0xaa36a7",
+    // Common development networks
+    LOCALHOST: "0x7a69", // 31337 - Hardhat default
+    LOCALHOST_ALT: "0x539", // 1337 - Ganache default
+};
+&nbsp;
+&nbsp;
+let _ABIs = <span class="cstat-no" title="statement not covered" >{</span>
+    validator: sharedStake,
+    vEth2: vEth2Token,
+    SGT: sgtABI,
+    geyser: geyserABI,
+    erc20,
+    erc20_uniswap,
+    airdrop_distributor,
+    geyser_new: geyserABI_new, 
+    migrator:migratorABI,
+    withdrawals: withdrawalsABI,
+    rollovers: rolloversABI,
+    sgETH: sgETHABI,
+    wsgETH: wsgETHABI
+}
+&nbsp;
+let connErr = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    console.log("Err: Fn not defined correctly. Is window.ethereum available? Is the right chain selected? Connect wallet to continue");</span>
+<span class="cstat-no" title="statement not covered" >    return null; </span>// Return null instead of undefined
+};
+let createContract = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >connErr();</span></span>
+let createContractDefault = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >connErr();</span></span>
+let isValidChain = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(c</span>id) =&gt; <span class="cstat-no" title="statement not covered" >Object.values(CHAIN_IDS).indexOf(cid) &gt; -1;</span></span>
+// makes sure all addresses are checksumed (not needed with ethers.js as it handles this automatically)
+// let checksumAddresses = (_addresses, web3) =&gt; {
+//     for (const x in _addresses) {
+//         _addresses[x] = web3.utils.toChecksumAddress(_addresses[x]);
+//     }
+//     return _addresses;
+// }
+&nbsp;
+&nbsp;
+// Initialize ethers.js and contracts when window.ethereum is available
+let provider = <span class="cstat-no" title="statement not covered" >null;</span>
+let signer = <span class="cstat-no" title="statement not covered" >null;</span>
+let isInitialized = <span class="cstat-no" title="statement not covered" >false;</span>
+&nbsp;
+// Function to initialize ethers.js and contracts
+const initializeEthers = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (window.ethereum &amp;&amp; !isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >            provider = new ethers.BrowserProvider(window.ethereum);</span>
+<span class="cstat-no" title="statement not covered" >            signer = null; </span>// Will be set when user connects wallet
+<span class="cstat-no" title="statement not covered" >            isInitialized = true;</span>
+            
+            // Listen for network changes and reinitialize
+<span class="cstat-no" title="statement not covered" >            if (window.ethereum.on) {</span>
+<span class="cstat-no" title="statement not covered" >                window.ethereum.on('chainChanged', <span class="fstat-no" title="function not covered" >(n</span>ewChainId) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                    console.log('Network changed to:', newChainId);</span>
+                    // Reset initialization flag to allow reinitialization
+<span class="cstat-no" title="statement not covered" >                    isInitialized = false;</span>
+                    // Reinitialize with new network
+<span class="cstat-no" title="statement not covered" >                    setTimeout(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                        initializeEthers().catch(<span class="fstat-no" title="function not covered" >er</span>ror =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                            console.error("Error reinitializing after network change:", error);</span>
+                        });
+                    }, 100);
+                });
+            }
+            
+            // Get chain ID properly using ethers.js provider with fallback
+            let chainId;
+<span class="cstat-no" title="statement not covered" >            try {</span>
+                const network = <span class="cstat-no" title="statement not covered" >await provider.getNetwork();</span>
+<span class="cstat-no" title="statement not covered" >                chainId = "0x" + network.chainId.toString(16);</span>
+            } catch (networkError) {
+                // Fallback to window.ethereum.chainId if ethers.js fails
+<span class="cstat-no" title="statement not covered" >                chainId = window.ethereum.chainId;</span>
+<span class="cstat-no" title="statement not covered" >                console.warn("Ethers.js network detection failed, using window.ethereum.chainId:", chainId, "Error:", networkError);</span>
+            }
+            
+            // Ensure chainId is in hex format
+<span class="cstat-no" title="statement not covered" >            if (chainId &amp;&amp; !chainId.startsWith('0x')) {</span>
+<span class="cstat-no" title="statement not covered" >                chainId = "0x" + parseInt(chainId).toString(16);</span>
+            }
+            
+            let addressTemp = <span class="cstat-no" title="statement not covered" >{};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (chainId == CHAIN_IDS.MAINNET) {</span>
+<span class="cstat-no" title="statement not covered" >                addressTemp = {</span>
+                    validator: "0x85Bc06f4e3439d41f610a440Ba0FbE333736B310",// break for now - on mainnet, till we deploy audited new v2
+                    // Protocol Tokens
+                    vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
+                    SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078",
+                    // OTHER Tokens
+                    SGT_uniswap: "0x3d07f6e1627DA96B8836190De64c1aED70e3FC55",
+                    SGT_vEth2_uniswap: "0xC794746Df95C4B7043E8d6B521cFECaB1b14C6cE",
+                    vEth2_saddle: "0xe37E2a01feA778BC1717d72Bd9f018B6A6B241D5",
+                    // Geysers
+                    geyser_vEth2: "0x2b228842b97ab8a1f3dcd216ec5d553ada957915",
+                    geyser_vEth2_saddle: "0x6f27C4E4888A7090CAD2e1b82D6e02eBb4FA06EC",
+                    geyser_SGT: "0x3FD816A5943a77FA10DE73B44d891676bD818C9C",
+                    geyser_SGT_uniswap: "0x77d03ecC4d6a15C320dd3849973aA3a599cBB07F", 
+                    geyser_SGT_vEth2_uniswap: "0x53dc9D5deB3B7f5cD9A3E4D19A2beCda559D57Aa",
+                    // OLD Geysers
+                    geyser_vEth2_old: "0xA919D7a5fb7ad4ab6F2aae82b6F39d181A027d35",
+                    geyser_SGT_old: "0xc637dB981e417869814B2Ea2F1bD115d2D993597",
+                    geyser_SGT_uniswap_old: "0x64A1DB33f68695df773924682D2EFb1161B329e8",
+                    geyser_vEth2_saddle_old: "0xCF91812631e37C01c443a4fa02DfB59ee2DDbA7c",
+&nbsp;
+                    // SGT airdrop
+                    airdrop_distributor: "0x5d918012f56C7EF4c9b78fCA97c126ae13C0F639",
+                    
+                    //V2
+                    migrator:"0x9615460582Efa2a9b1d8D21e7E02afE43A415E13",
+                    SGT_sushiswap: '0x41bfba56b9ba48d0a83775d89c247180617266bc',
+                    veSGT: '0x21b555305e9d65c8b8ae232e60fd806edc9c5d78',
+                    vETH2_CRV: '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
+                    masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412',
+&nbsp;
+                    // New contracts. shareddeposit v2
+                    withdrawals: "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432",
+                    rollovers: "0x68a31dfD0c81A411C5adadc8A40225425777466C",
+&nbsp;
+                    sgETH: "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
+                    wsgETH: "0x31AA035313b1D2109e61Ee0E3662A86A8615fF1d"
+                }
+            } else <span class="cstat-no" title="statement not covered" >if (chainId == CHAIN_IDS.GOERLI) {</span>
+<span class="cstat-no" title="statement not covered" >                addressTemp = {</span>
+                    validator: "0xb6F4a4ae69df1EB0d7dE4141CAd600104FAC28f6",// 
+                    // Protocol Tokens
+                    vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
+                    SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
+                    // Geysers
+                    geyser_SGT: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// 
+                    geyser_vEth2: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
+                    geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
+                    
+                    // New withdrawals contract.
+                    withdrawals: "0x330B12204596812946d010c24b0Da3c8Af37B37c",
+                    rollovers: "0x8CcE3694d698cb5DF1e1bD8A948899449Ea94ffB",
+&nbsp;
+                    sgETH: "0x0056390361289CAFc3E10b65AC4C49e44C08B7df",
+                    wsgETH: "0x7b569f6eC245403B5fbF68aDa4aef95cb26b6351"
+                }
+            } else <span class="cstat-no" title="statement not covered" >if (chainId == CHAIN_IDS.SEPOLIA) {</span>
+<span class="cstat-no" title="statement not covered" >                addressTemp =</span>
+                {
+                    sgETH: '0xCF4831EBE785437DC54a90018b1b410Bd16c8533',
+                    wsgETH: '0x514dfd2d10eC6775f030BA2abcf7A2445C0CA6Fb',
+                    validator: '0xd6Ad9a646330F1a937347a5cfaaDE57990109b5C',
+                    PaymentSplitter: '0x38E86964A811Ee66D1139CD97C838B713F63779B',
+                    withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
+                    RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
+                }
+            }
+&nbsp;
+            // Always define contract creation functions
+<span class="cstat-no" title="statement not covered" >            createContract = <span class="fstat-no" title="function not covered" >(a</span>bi, address, useSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                if (</span>
+                    _addresses &amp;&amp; _ABIs &amp;&amp;
+                    _addresses[address] &amp;&amp; _ABIs[abi]
+                ) {
+                    const contractProvider = <span class="cstat-no" title="statement not covered" >useSigner &amp;&amp; signer ? signer : provider;</span>
+<span class="cstat-no" title="statement not covered" >                    return new ethers.Contract(_addresses[address], _ABIs[abi], contractProvider);</span>
+                }
+<span class="cstat-no" title="statement not covered" >                    console.warn("Contract creation failed for:", abi, "-&gt;", address);</span>
+<span class="cstat-no" title="statement not covered" >                return null;</span>
+            }
+<span class="cstat-no" title="statement not covered" >            createContractDefault = <span class="fstat-no" title="function not covered" >(n</span>ame, useSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract(name, name, useSigner)</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (isValidChain(chainId)) {</span>
+<span class="cstat-no" title="statement not covered" >                _addresses = addressTemp; </span>// ethers.js handles checksumming automatically
+<span class="cstat-no" title="statement not covered" >                console.info("Contracts initialized for chain:", chainId);</span>
+            } else {
+                const chainDecimal = <span class="cstat-no" title="statement not covered" >parseInt(chainId, 16);</span>
+<span class="cstat-no" title="statement not covered" >                console.warn(`Unsupported chain detected: ${chainId} (${chainDecimal}). Supported chains: Mainnet (0x1), Goerli (0x5), Sepolia (0xaa36a7). App will run in limited mode.`);</span>
+                
+                // Show user-friendly notification
+<span class="cstat-no" title="statement not covered" >                try {</span>
+<span class="cstat-no" title="statement not covered" >                    notifyNotification(</span>
+                        `Unsupported network detected (Chain ID: ${chainDecimal}). Please switch to Ethereum Mainnet, Goerli, or Sepolia for full functionality.`,
+                        "error"
+                    );
+                } catch (e) {
+<span class="cstat-no" title="statement not covered" >                    console.log("Could not show notification:", e);</span>
+                }
+                
+                // For development networks (high chain IDs), use Sepolia as fallback
+<span class="cstat-no" title="statement not covered" >                if (chainDecimal &gt; 1000) { </span>
+<span class="cstat-no" title="statement not covered" >                    console.info("Using Sepolia addresses as fallback for development network");</span>
+<span class="cstat-no" title="statement not covered" >                    addressTemp = {</span>
+                        sgETH: '0xCF4831EBE785437DC54a90018b1b410Bd16c8533',
+                        wsgETH: '0x514dfd2d10eC6775f030BA2abcf7A2445C0CA6Fb',
+                        validator: '0xd6Ad9a646330F1a937347a5cfaaDE57990109b5C',
+                        withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
+                        RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
+                    };
+<span class="cstat-no" title="statement not covered" >                    _addresses = addressTemp;</span>
+<span class="cstat-no" title="statement not covered" >                    console.warn("⚠️ Using fallback addresses - contracts may not function correctly on this network");</span>
+                } else {
+                    // Set empty addresses to prevent contract creation
+<span class="cstat-no" title="statement not covered" >                    _addresses = {};</span>
+                }
+            }
+&nbsp;
+            /************************************* CONTRACTS ****************************************/
+        } catch (error) {
+<span class="cstat-no" title="statement not covered" >            console.error("Error initializing ethers.js:", error);</span>
+<span class="cstat-no" title="statement not covered" >            connErr();</span>
+        }
+    }
+};
+&nbsp;
+// Initialize immediately if window.ethereum is available
+<span class="cstat-no" title="statement not covered" >if (window.ethereum) {</span>
+<span class="cstat-no" title="statement not covered" >    initializeEthers().catch(<span class="fstat-no" title="function not covered" >er</span>ror =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        console.error("Error during contract initialization:", error);</span>
+    });
+} else {
+    // Wait for window.ethereum to be available
+    const checkEthereum = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (window.ethereum) {</span>
+<span class="cstat-no" title="statement not covered" >            initializeEthers().catch(<span class="fstat-no" title="function not covered" >er</span>ror =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                console.error("Error during contract initialization:", error);</span>
+            });
+        } else {
+<span class="cstat-no" title="statement not covered" >            setTimeout(checkEthereum, 100);</span>
+        }
+    };
+<span class="cstat-no" title="statement not covered" >    checkEthereum();</span>
+}
+&nbsp;
+// Function to get signer
+export const getSigner = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (provider &amp;&amp; !signer) {</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >            signer = await provider.getSigner();</span>
+        } catch (error) {
+<span class="cstat-no" title="statement not covered" >            console.error("Error getting signer:", error);</span>
+        }
+    }
+<span class="cstat-no" title="statement not covered" >    return signer;</span>
+};
+&nbsp;
+export const addresses = <span class="cstat-no" title="statement not covered" >_addresses</span>
+export const ABIs = <span class="cstat-no" title="statement not covered" >_ABIs</span>
+&nbsp;
+// Contract factory functions
+export const validator = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault('validator', useSigner);</span></span>
+export const vEth2 = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault('vEth2', useSigner);</span></span>
+export const SGT = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault('SGT', useSigner);</span></span>
+&nbsp;
+// Token contracts
+export const SGT_uniswap = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("erc20_uniswap", "SGT_uniswap", useSigner);</span></span>
+export const SGT_vEth2_uniswap = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("erc20_uniswap", "SGT_vEth2_uniswap", useSigner);</span></span>
+export const vEth2_saddle = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("erc20", "vEth2_saddle", useSigner);</span></span>
+// Geyser contracts
+export const geyser_vEth2 = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_vEth2", useSigner);</span></span>
+export const geyser_SGT = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_SGT", useSigner);</span></span>
+export const geyser_SGT_uniswap = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_SGT_uniswap", useSigner);</span></span>
+export const geyser_SGT_vEth2_uniswap = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_SGT_vEth2_uniswap", useSigner);</span></span>
+export const geyser_vEth2_saddle = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser_new", "geyser_vEth2_saddle", useSigner);</span></span>
+&nbsp;
+// Legacy geyser contracts
+export const geyser_vEth2_old = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_vEth2_old", useSigner);</span></span>
+export const geyser_SGT_old = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_SGT_old", useSigner);</span></span>
+export const geyser_SGT_uniswap_old = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_SGT_uniswap_old", useSigner);</span></span>
+export const geyser_vEth2_saddle_old = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract("geyser", "geyser_vEth2_saddle_old", useSigner);</span></span>
+&nbsp;
+// Utility contracts
+export const airdrop = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault("airdrop_distributor", useSigner);</span></span>
+export const migrator = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault("migrator", useSigner);</span></span>
+&nbsp;
+export const masterchef = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract('geyser_new', 'masterchef', useSigner);</span></span>
+export const SGT_sushiswap = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract('erc20_uniswap', 'SGT_sushiswap', useSigner);</span></span>
+export const veSGT = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract('erc20', 'veSGT', useSigner);</span></span>
+export const vETH2_CRV = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContract('erc20', 'vETH2_CRV', useSigner);</span></span>
+&nbsp;
+export const withdrawals = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault('withdrawals', useSigner);</span></span>
+export const rollovers = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault("rollovers", useSigner);</span></span>
+export const sgETH = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault('sgETH', useSigner);</span></span>
+export const wsgETH = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(u</span>seSigner = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> =&gt; <span class="cstat-no" title="statement not covered" >createContractDefault("wsgETH", useSigner);</span></span>
+export const oldPools = <span class="cstat-no" title="statement not covered" >{</span>
+    geyser_SGT: _geyser_SGT_old,
+    geyser_SGT_uniswap: _geyser_SGT_uniswap_old,
+    geyser_vEth2: _geyser_vEth2_old,
+    geyser_vEth2_saddle: _geyser_vEth2_saddle_old
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-10-08T05:26:49.707Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    
