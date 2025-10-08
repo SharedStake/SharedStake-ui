@@ -192,8 +192,8 @@ import { useWalletStore } from "@/stores/wallet";
 
 import { validator, sgETH, wsgETH } from "@/contracts";
 
-import ImageVue from "../Handlers/ImageVue";
-import StakeGauge from "./StakeGauge";
+import ImageVue from "../Handlers/ImageVue.vue";
+import StakeGauge from "./StakeGauge.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";

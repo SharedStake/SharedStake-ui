@@ -181,9 +181,13 @@ router.beforeEach((to, from, next) => {
         if (nextRoute) {
             // Preload the next route in the background
             setTimeout(() => {
-                import(`../components${nextRoute === '/stake' ? '/Stake/Stake.vue' : 
-                    nextRoute === '/earn' ? '/Earn/Earn.vue' : 
-                    '/Withdraw/Withdraw.vue'}`);
+                if (nextRoute === '/stake') {
+                    import('../components/Stake/Stake.vue');
+                } else if (nextRoute === '/earn') {
+                    import('../components/Earn/Earn.vue');
+                } else if (nextRoute === '/withdraw') {
+                    import('../components/Withdraw/Withdraw.vue');
+                }
             }, 1000);
         }
     }

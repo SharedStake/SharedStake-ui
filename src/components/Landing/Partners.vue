@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import PartnerItem from "./PartnerItem";
+import PartnerItem from "./PartnerItem.vue";
 
 export default {
   components: { PartnerItem },

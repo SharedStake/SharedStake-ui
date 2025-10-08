@@ -340,7 +340,7 @@
 </template>
 
 <script>
-import ImageVue from "./components/Handlers/ImageVue";
+import ImageVue from "./components/Handlers/ImageVue.vue";
 import { useWalletStore } from "@/stores/wallet";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";

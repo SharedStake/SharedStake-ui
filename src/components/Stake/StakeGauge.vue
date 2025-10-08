@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 import { validator } from "@/contracts";
 import BN from "bignumber.js";
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });

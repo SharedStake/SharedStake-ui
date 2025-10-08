@@ -247,7 +247,7 @@
 </template>
 
 <script>
-import ImageVue from "../Handlers/ImageVue";
+import ImageVue from "../Handlers/ImageVue.vue";
 import { useWalletStore } from "@/stores/wallet";
 import { notifyHandler } from "@/utils/common";
 import BN from "bignumber.js";
