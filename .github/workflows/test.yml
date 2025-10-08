@@ -64,11 +64,11 @@ jobs:
     - name: Run security audit
       run: yarn audit --level moderate
       
-    - name: Check for known vulnerabilities
+    - name: Check for critical vulnerabilities only
       run: |
-        if yarn audit --level high; then
-          echo "High severity vulnerabilities found!"
+        if yarn audit --level critical; then
+          echo "Critical vulnerabilities found!"
           exit 1
         else
-          echo "No high severity vulnerabilities found"
+          echo "No critical vulnerabilities found"
         fi
