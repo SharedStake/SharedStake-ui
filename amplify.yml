@@ -8,11 +8,10 @@ frontend:
         - export PATH="$HOME/.bun/bin:$PATH"
         - bun --version
         # Install dependencies with frozen lockfile for consistency
-        - bun install --frozen-lockfile --production=false
-        # Run linting and type checking in parallel with build
-        - bun run lint &
-        - bun run type-check &
-        - wait
+        - bun install --frozen-lockfile
+        # Run linting and type checking
+        - bun run lint
+        - bun run type-check
     build:
       commands:
         # Build the application
