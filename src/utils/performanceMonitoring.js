@@ -237,6 +237,9 @@ export const performanceMonitoring = {
     // User interaction performance
     performanceMonitoring.measureUserInteractions()
     
+    // Lazy loading performance
+    performanceMonitoring.measureLazyLoading()
+    
     // Memory usage (check every 30 seconds)
     setInterval(() => {
       performanceMonitoring.measureMemoryUsage()
@@ -308,16 +311,6 @@ export const performanceMonitoring = {
         }
       }
     }, 10000)
-  },
-
-  // Initialize all monitoring
-  init: () => {
-    performanceMonitoring.measureCoreWebVitals()
-    performanceMonitoring.measurePageLoad()
-    performanceMonitoring.measureImageLoading()
-    performanceMonitoring.measureResourceLoading()
-    performanceMonitoring.measureUserInteractions()
-    performanceMonitoring.measureLazyLoading()
   }
 }
 

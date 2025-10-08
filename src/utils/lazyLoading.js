@@ -225,7 +225,7 @@ export const lazyLoadDirective = {
 };
 
 // Utility functions
-export const lazyLoadImage = (img, options = {}) => {
+export const lazyLoadImage = (img) => {
   if (typeof img === 'string') {
     const imgElement = document.querySelector(img);
     if (imgElement) {
