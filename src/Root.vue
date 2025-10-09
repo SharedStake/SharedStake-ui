@@ -635,6 +635,7 @@ export default {
 .link:hover {
   opacity: 1;
 }
+/* Connect button styles moved to BaseButton component */
 .footer {
   padding: 40px 30px 10px 30px;
   background-color: rgb(24, 24, 24);

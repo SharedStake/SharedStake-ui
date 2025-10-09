@@ -1,8 +1,7 @@
 <template>
-  <button
-    type="button"
-    class="text-lg text-white btn-connect"
-    :class="{ 'btn-animated': !userAddress }"
+  <BaseButton
+    variant="connect"
+    :animated="!userAddress"
     @click="handleConnect"
   >
     <template v-if="userAddress">
@@ -11,35 +10,32 @@
     <template v-else>
       Connect Wallet
     </template>
-  </button>
+  </BaseButton>
 </template>
 
 <script>
-import { useWalletStore } from "@/stores/wallet";
+import { useWallet } from '@/composables/useWallet';
+import BaseButton from './BaseButton.vue';
 
 export default {
+  components: { BaseButton },
   setup() {
-    const walletStore = useWalletStore();
+    const { userAddress, connect } = useWallet();
     return {
-      walletStore
+      userAddress,
+      connect
     };
   },
-
-  computed: {
-    userAddress() {
-      return this.walletStore.userAddress;
-    },
-  },
-
   methods: {
     async handleConnect() {
       if (!this.userAddress) {
-        await this.walletStore.setAddress();
+        await this.connect();
       }
     },
   },
 };
 </script>
+<<<<<<< HEAD
 
 <style scoped>
 .btn-connect {
@@ -78,4 +74,3 @@ export default {
   }
 }
 </style>
-
