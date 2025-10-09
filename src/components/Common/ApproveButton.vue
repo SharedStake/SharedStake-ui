@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      userApproved: this.BN(0),
+      userApproved: null,
     };
   },
 
@@ -41,7 +41,7 @@ export default {
     },
 
     enoughApproved() {
-      return this.userApproved.gte(this.amount);
+      return this.userApproved && this.userApproved.gte(this.amount);
     },
 
     ethAmt() {

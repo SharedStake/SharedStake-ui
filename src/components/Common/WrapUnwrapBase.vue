@@ -119,9 +119,9 @@ export default {
   data() {
     return {
       amount: null,
-      userTokenBalance: this.BN(0),
-      userOutputTokenBalance: this.BN(0),
-      userApproved: this.BN(0),
+      userTokenBalance: null,
+      userOutputTokenBalance: null,
+      userApproved: null,
       loading: false,
       error: false,
       dev: true, // change to true for log
@@ -143,11 +143,12 @@ export default {
     },
 
     userHasTokenBalance() {
-      return this.userTokenBalance.gt(0);
+      return this.userTokenBalance && this.userTokenBalance.gt(0);
     },
 
     userHasApprovedToken() {
       return (
+        this.userApproved &&
         this.userApproved.gt(0) &&
         this.userApproved.gte(this.parseBalance(this.amount || 0))
       );
