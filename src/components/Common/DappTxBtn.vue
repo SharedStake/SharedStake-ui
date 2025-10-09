@@ -18,13 +18,12 @@ import { useTokenBalance } from "@/composables/useTokenBalance";
 import { useTransaction } from "@/composables/useTransaction";
 import SharedButton from "./SharedButton.vue";
 import { getCurrentGasPrices } from "@/utils/common";
-import ImageVue from "../Handlers/ImageVue.vue";
 import ConnectButton from "./ConnectButton.vue";
 import LoadingSpinner from "./LoadingSpinner.vue";
 
 export default {
   name: "DappTxBtn",
-  components: { SharedButton, ImageVue, ConnectButton, LoadingSpinner },
+  components: { SharedButton, ConnectButton, LoadingSpinner },
   props: ["click", "cb", "chosenGas", "defaultGas", "disabled"],
   setup() {
     const { userAddress } = useWallet();

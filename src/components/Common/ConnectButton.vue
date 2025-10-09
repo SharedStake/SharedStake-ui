@@ -35,7 +35,6 @@ export default {
   },
 };
 </script>
-<<<<<<< HEAD
 
 <style scoped>
 .btn-connect {

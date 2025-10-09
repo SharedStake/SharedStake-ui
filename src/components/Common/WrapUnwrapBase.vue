@@ -85,12 +85,10 @@ import { ethers } from "ethers";
 import { wsgETH, sgETH } from "@/contracts";
 import { useWallet } from "@/composables/useWallet";
 import { useTokenBalance } from "@/composables/useTokenBalance";
-import Step from "@/components/Withdraw/Step.vue";
 import ConnectButton from "../Common/ConnectButton.vue";
 import ApprovalButton from "../Common/ApproveButton.vue";
 import Chooser from "../Common/Chooser.vue";
 import DappTxBtn from "../Common/DappTxBtn.vue";
-import ImageVue from "../Handlers/ImageVue.vue";
 import LoadingSpinner from "../Common/LoadingSpinner.vue";
 import TokenInput from "../Common/TokenInput.vue";
 import ProgressSteps from "../Common/ProgressSteps.vue";
@@ -98,9 +96,7 @@ import ProgressSteps from "../Common/ProgressSteps.vue";
 export default {
   name: "Wrap",
   components: {
-    ImageVue,
     ConnectButton,
-    Step,
     ApprovalButton,
     Chooser,
     DappTxBtn,
@@ -123,9 +119,9 @@ export default {
   data() {
     return {
       amount: null,
-      userTokenBalance: BN(0),
-      userOutputTokenBalance: BN(0),
-      userApproved: BN(0),
+      userTokenBalance: this.BN(0),
+      userOutputTokenBalance: this.BN(0),
+      userApproved: this.BN(0),
       loading: false,
       error: false,
       dev: true, // change to true for log

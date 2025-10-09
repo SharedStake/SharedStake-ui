@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      userApproved: BN(0),
+      userApproved: this.BN(0),
     };
   },
 
