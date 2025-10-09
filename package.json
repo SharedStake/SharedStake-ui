@@ -21,7 +21,7 @@
     "audit": "bun audit --level moderate || true",
     "audit:strict": "bun audit --level moderate",
     "clean": "rm -rf dist node_modules/.cache",
-    "prebuild": "bun run clean",
+    "prebuild": "npm run clean",
     "postbuild": "echo \"Build completed successfully\"",
     "docker:build": "docker build -t sharedstake-ui .",
     "docker:run": "docker run -p 8080:8080 sharedstake-ui",
