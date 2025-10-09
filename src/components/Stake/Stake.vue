@@ -267,7 +267,6 @@ export default {
         newValue[newValue.length - 2] !== "."
       ) {
         this.Damount = newValue;
-        // this.BNamount =    BN(0);
         this.amountCheck();
         return;
       }
@@ -295,9 +294,6 @@ export default {
       this.Damount = "";
       
       this.buttonText = enableStaking ? "Enter an amount" : "Currently disabled";
-      // this.buttonText = "Enter an amount";
-
-      // this.buttonText = "Currently disabled";
     },
     validInput: function(val) {
       if (!val) {
@@ -308,7 +304,6 @@ export default {
           this.buttonText = "input is too small";
           return;
         }
-      // this.buttonText = "Currently disabled";
       }
       if (val) {
         if (this.isDeposit) this.buttonText = "Stake";
@@ -318,7 +313,6 @@ export default {
     async userAddress(newVal) {
       if (newVal) {
         this.buttonText = "Enter an amount";
-        // this.buttonText = "Currently disabled";
         await this.initializeData();
       } else {
         this.buttonText = "Connect to wallet ↗";

@@ -398,10 +398,8 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
 import ImageVue from "./components/Handlers/ImageVue.vue";
-import { useWallet } from "@/composables/useWallet";
-import { useScrollVisibility } from "@/composables/useScrollVisibility";
+import { useWalletStore } from "@/stores/wallet";
 import { priceInUsdAsync } from "@/utils/coingecko";
 import Menu from "./components/Navigation/Menu.vue";
 import ConnectButton from "./components/Common/ConnectButton.vue";
@@ -409,70 +407,88 @@ import ConnectButton from "./components/Common/ConnectButton.vue";
 export default {
   components: { ImageVue, Menu, ConnectButton },
   setup() {
-    const { userAddress } = useWallet()
-    const { isVisible: showNavbar, currentScrollPosition } = useScrollVisibility({
-      threshold: 100,
-      hideOnScrollDown: true,
-      showOnScrollUp: true
-    })
-    
-    // Local reactive state
-    const windowWidth = ref(window.innerWidth)
-    const showSidebar = ref(false)
-    const sgtPrice = ref(null)
-    const maintenanceBannerVisible = ref(true)
-    const footerBannerVisible = ref(true)
-    
-    // Methods
-    const handleResize = () => {
-      windowWidth.value = window.innerWidth
-    }
-    
-    const setSgtPrice = async () => {
-      const sgtCoinId = "sharedstake-governance-token"
-      sgtPrice.value = await priceInUsdAsync(sgtCoinId)
-    }
-    
-    const goto = (refName) => {
-      const element = document.querySelector(`[data-ref="${refName}"]`)
-      if (element) {
-        const top = element.offsetTop
-        window.scrollTo(0, top)
-      }
-    }
-    
-    // Watchers
-    watch(showSidebar, (show) => {
-      if (show) {
-        document.body.style.overflow = "hidden"
-      } else {
-        document.body.style.overflow = "auto"
-      }
-    })
-    
-    // Lifecycle
-    onMounted(async () => {
-      window.addEventListener("resize", handleResize)
-      await setSgtPrice()
-    })
-    
-    onUnmounted(() => {
-      window.removeEventListener("resize", handleResize)
-    })
+    const walletStore = useWalletStore();
     
     return {
-      userAddress,
-      showNavbar,
-      currentScrollPosition,
-      windowWidth,
-      showSidebar,
-      sgtPrice,
-      maintenanceBannerVisible,
-      footerBannerVisible,
-      handleResize,
-      goto
-    }
-  }
+      walletStore
+    };
+  },
+  data() {
+    return {
+      showNavbar: true,
+      lastScrollPosition: 0,
+      currentScrollPosition: 0,
+      windowWidth: window.innerWidth,
+      showSidebar: false,
+      sgtPrice: null,
+      maintenanceBannerVisible: true,
+      footerBannerVisible: true,
+    };
+  },
+
+  computed: {
+    userAddress() {
+      return this.walletStore.userAddress;
+    },
+  },
+
+  watch: {
+    showSidebar(show) {
+      if (show) {
+        // Prevent scroll on document behind sidebar.
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    },
+  },
+
+  mounted: async function() {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("scroll", this.onScroll);
+    await this.setSgtPrice();
+  },
+
+  goto(refName) {
+    var element = this.$refs[refName];
+    var top = element.offsetTop;
+
+    window.scrollTo(0, top);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("scroll", this.onScroll);
+  },
+  methods: {
+    async Connect() {
+      await this.walletStore.setAddress();
+    },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
+    onScroll() {
+      const currentScrollPosition =
+        window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScrollPosition < 0) {
+        return;
+      }
+      this.currentScrollPosition = currentScrollPosition;
+      // Stop executing this function if the difference between
+      // current scroll position and last scroll position is less than some offset
+      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 100) {
+        return;
+      }
+      const isScrollingUp = currentScrollPosition < this.lastScrollPosition;
+      this.showNavbar = isScrollingUp;
+      this.maintenanceBannerVisible = isScrollingUp;
+      this.footerBannerVisible = isScrollingUp;
+      this.lastScrollPosition = currentScrollPosition;
+    },
+    async setSgtPrice() {
+      const sgtCoinId = "sharedstake-governance-token";
+      this.sgtPrice = await priceInUsdAsync(sgtCoinId);
+    },
+  },
 };
 </script>
 

@@ -45,7 +45,6 @@ import BN from "bignumber.js";
 import { useWalletStore } from "@/stores/wallet";
 import geyser from "./geyser.vue";
 import newGeyser from "./geyserV2.vue";
-// import migrator from "./migrate.vue";
 import {
   SGT,
   vEth2,
@@ -172,19 +171,6 @@ export default {
         tokenPerSgt: 0,
         link: "https://curve.fi/factory/49",
       },
-      // {
-      //   name: "vEth2 - wEth",
-      //   explanation: "on saddle",
-      //   pic: "tokens/saddle.svg",
-      //   token: vEth2_saddle,
-      //   geyser: geyser_vEth2_saddle,
-      //   locked: BN(24000),
-      //   external: false,
-      //   active: true,
-      //   tokenPerSgt: 0,
-      //   oldPool: oldPools["geyser_vEth2_saddle"],
-      //   link: "https://saddle.exchange/#/pools/veth2/deposit", //for inactive pools => change this to uniswap
-      // },
     ],
   }),
   computed: {

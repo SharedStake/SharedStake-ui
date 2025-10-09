@@ -393,13 +393,11 @@ export default {
     DAmount(newValue, oldVal) {
       if (newValue.length > 40) {
         this.Damount = oldVal;
-        // this.amountCheck();
         return;
       }
       if (newValue[newValue.length - 1] == 0) {
         this.Damount = newValue;
         this.bigDAmount = BN(this.Damount).multipliedBy(BN(10).pow(18));
-        // this.amountCheck();
         return;
       }
       if (
@@ -407,7 +405,6 @@ export default {
         newValue[newValue.length - 2] !== "."
       ) {
         this.Damount = newValue;
-        // this.amountCheck();
         return;
       }
       if (isNaN(newValue)) {
@@ -426,13 +423,11 @@ export default {
     WAmount(newValue, oldVal) {
       if (newValue.length > 40) {
         this.WAmount = oldVal;
-        // this.amountCheck();
         return;
       }
       if (newValue[newValue.length - 1] == 0) {
         this.WAmount = newValue;
         this.bigWAmount = BN(this.WAmount).multipliedBy(BN(10).pow(18));
-        // this.amountCheck();
         return;
       }
       if (
@@ -440,7 +435,6 @@ export default {
         newValue[newValue.length - 2] !== "."
       ) {
         this.WAmount = newValue;
-        // this.amountCheck();
         return;
       }
       if (isNaN(newValue)) {
