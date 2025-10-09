@@ -1,0 +1,132 @@
+name: UI Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  ui-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Install Playwright Browsers
+      run: bunx playwright install --with-deps
+    
+    - name: Build application
+      run: bun run build
+    
+    - name: Run UI tests
+      run: bun run test
+      env:
+        CI: true
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+    
+    - name: Upload test screenshots
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-screenshots
+        path: test-results/
+        retention-days: 30
+
+  visual-regression-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Install Playwright Browsers
+      run: bunx playwright install --with-deps
+    
+    - name: Build application
+      run: bun run build
+    
+    - name: Run visual regression tests
+      run: bun run test:visual
+      env:
+        CI: true
+    
+    - name: Upload visual test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: visual-test-results
+        path: test-results/
+        retention-days: 30
+
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: [ui-tests, visual-regression-tests]
+    if: always()
+    
+    steps:
+    - name: Download test results
+      uses: actions/download-artifact@v4
+      with:
+        name: playwright-report
+        path: playwright-report/
+    
+    - name: Comment PR with test results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Check if test results exist
+          const reportPath = 'playwright-report/index.html';
+          if (fs.existsSync(reportPath)) {
+            const reportContent = fs.readFileSync(reportPath, 'utf8');
+            
+            // Extract test summary from HTML
+            const summaryMatch = reportContent.match(/<title>(.*?)<\/title>/);
+            const summary = summaryMatch ? summaryMatch[1] : 'Test results available';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🧪 UI Test Results
+              
+              ${summary}
+              
+              📊 [View detailed test report](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+              
+              ${context.job === 'ui-tests' ? '✅ UI tests completed' : '❌ UI tests failed'}
+              ${context.job === 'visual-regression-tests' ? '✅ Visual regression tests completed' : '❌ Visual regression tests failed'}
+              `
+            });
+          }
