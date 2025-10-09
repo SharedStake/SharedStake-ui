@@ -1,54 +1,34 @@
-// Blog utilities for Vue 3 Composition API
-import { ref, computed } from 'vue'
+// Blog utilities for Vue 3
 import { blogPosts, getBlogPostBySlug } from '@/components/Blog/data/index.js';
 import { formatDate, formatTag, generateBreadcrumbItems, findRelatedPosts } from '@/utils/blogUtils.js';
 
 export function useBlog() {
-  // Reactive state
-  const selectedTag = ref(null)
-  const isLoading = ref(false)
-  
-  // Computed properties
-  const allTags = computed(() => {
+  // Helper functions that can be used in Vue 3 components
+  const getAllTags = () => {
     const tags = new Set();
     blogPosts.forEach(post => {
       (post.tags || []).forEach(tag => tags.add(tag));
     });
     return Array.from(tags);
-  });
+  };
   
-  const featuredPosts = computed(() => 
-    blogPosts.filter(post => post.featured)
-  );
+  const getFeaturedPosts = () => 
+    blogPosts.filter(post => post.featured);
   
-  const filteredPosts = computed(() => {
-    if (selectedTag.value) {
-      return blogPosts.filter(post => post.tags?.includes(selectedTag.value));
+  const getFilteredPosts = (selectedTag) => {
+    if (selectedTag) {
+      return blogPosts.filter(post => post.tags?.includes(selectedTag));
     }
     return blogPosts;
-  });
-  
-  // Methods
-  const setSelectedTag = (tag) => {
-    selectedTag.value = tag;
   };
   
-  const clearFilter = () => {
-    selectedTag.value = null;
-  };
-  
-  const loadPost = async (slug) => {
-    isLoading.value = true;
-    try {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const post = getBlogPostBySlug(slug);
-          resolve(post);
-        }, 300);
-      });
-    } finally {
-      isLoading.value = false;
-    }
+  const loadPost = (slug) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const post = getBlogPostBySlug(slug);
+        resolve(post);
+      }, 300);
+    });
   };
   
   const getRelatedPosts = (currentPost, limit = 3) => {
@@ -68,21 +48,13 @@ export function useBlog() {
   };
   
   return {
-    // Reactive state
-    selectedTag,
-    isLoading,
-    
-    // Computed properties
-    allTags,
-    featuredPosts,
-    filteredPosts,
-    
     // Data
     blogPosts,
     
-    // Methods
-    setSelectedTag,
-    clearFilter,
+    // Helper functions
+    getAllTags,
+    getFeaturedPosts,
+    getFilteredPosts,
     loadPost,
     getRelatedPosts,
     getBreadcrumbItems,
