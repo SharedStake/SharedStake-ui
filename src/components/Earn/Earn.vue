@@ -2,16 +2,6 @@
   <div class="EarnWrapper">
     <div class="Earn">
       <div style="margin-top: 10px">
-        <!-- <div class="notification">
-            SharedStake suffered an insider exploit on 23th of June 2021. Please read 
-          <a
-            href="https://medium.com/@chimera_defi/sgt-rugpull-post-mortem-634a527940e0"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            the post-mortem ↗
-          </a> and proceed with extreme care. Deposits will be disabled until protocol upgrades land. But liquid vETH2 can be purchased via 1inch. 
-        </div> -->
         <div class="notification">
           Checkout
           <a
@@ -23,22 +13,6 @@
           for new farming pools!
         </div>
         <div class="notification">
-          <!-- For new farming pools you can also use
-          <a
-            href="https://app.multifarm.fi/farms/ETH_Sharedstake"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Multifarm.fi</a>
-          > or
-          <a
-            href="https://vfat.tools/sgt"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            vfat.tools/sgt</a>
-          >
-          and  -->
           Please withdraw remaining funds from the following old pools
         </div>
       </div>

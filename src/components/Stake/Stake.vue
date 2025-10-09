@@ -154,39 +154,6 @@
             {{ buttonText }}
           </span>
         </dapp-tx-btn>
-
-        <!-- <div class="notification" v-if="isDeposit">
-          <a
-            v-if="!enoughFundsInExitPool"
-            href="https://curve.fi/factory/49"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="notification"
-          >
-            Buy on Curve Pool ↗
-          </a>
-        </div>
-        <div class="notification" v-else>
-          <a
-            v-if="!enoughFundsInExitPool"
-            href="https://curve.fi/factory/49"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="notification"
-          >
-            Check out Curve if exit pool is low ↗
-          </a>
-        </div> -->
-        <!-- <div class="notification" v-if="!isDeposit">
-          *Protocol fee refund is <span class="underline">currently</span>
-          <a
-            href="https://snapshot.page/#/sharedstake.eth/proposal/QmdGJMwRHtTSFVsxufj7TKPK8G1zqwBbk8YuHfrqbWEsGd"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            disabled↗</a
-          >
-        </div> -->
       </div>
     </div>
     <StakeGauge class="gauge" />

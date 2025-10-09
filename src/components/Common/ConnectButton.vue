@@ -2,11 +2,11 @@
   <button
     type="button"
     class="text-lg text-white btn-connect"
-    :class="{ 'btn-animated': !userAddress }"
+    :class="{ 'btn-animated': !isConnected }"
     @click="handleConnect"
   >
-    <template v-if="userAddress">
-      {{ userAddress.slice(0, 4) + "..." + userAddress.slice(-4) }}
+    <template v-if="isConnected">
+      {{ formatAddress(userAddress) }}
     </template>
     <template v-else>
       Connect Wallet
@@ -15,29 +15,26 @@
 </template>
 
 <script>
-import { useWalletStore } from "@/stores/wallet";
+import { useWallet } from '@/composables/useWallet'
 
 export default {
+  name: 'ConnectButton',
   setup() {
-    const walletStore = useWalletStore();
-    return {
-      walletStore
-    };
-  },
-
-  computed: {
-    userAddress() {
-      return this.walletStore.userAddress;
-    },
-  },
-
-  methods: {
-    async handleConnect() {
-      if (!this.userAddress) {
-        await this.walletStore.setAddress();
+    const { userAddress, isConnected, connect, formatAddress } = useWallet()
+    
+    const handleConnect = async () => {
+      if (!isConnected.value) {
+        await connect()
       }
-    },
-  },
+    }
+    
+    return {
+      userAddress,
+      isConnected,
+      handleConnect,
+      formatAddress
+    }
+  }
 };
 </script>
 
