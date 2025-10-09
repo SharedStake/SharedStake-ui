@@ -105,7 +105,7 @@ SharedStake UI is a modern Vue 3 application with a functional blog system, comp
 ## 🛠️ **TECHNICAL STACK**
 
 ### **Core Framework**
-- **Runtime**: Node.js v22.20.0 (Bun not available)
+- **Runtime**: Bun 1.2.23 (primary) / Node.js v22.20.0 (fallback)
 - **Vue**: 3.5.22 + Router 4 + Pinia 2.3.1
 - **Web3**: ethers.js v6.15.0 (Web3.js removed)
 - **Build**: Vite 7.1.9
@@ -148,17 +148,24 @@ SharedStake UI is a modern Vue 3 application with a functional blog system, comp
 ## 📋 **QUICK SETUP**
 
 ```bash
+# Install Bun (recommended)
+curl -fsSL https://bun.sh/install | bash
+source ~/.bashrc
+
 # Install dependencies
-npm install
+bun install
 
 # Development
-npm run dev
+bun run dev
 
 # Production build
-npm run build
+bun run build
 
 # Linting
-npm run lint
+bun run lint
+
+# Fallback to npm if bun is not available
+npm install && npm run build
 ```
 
 ---
