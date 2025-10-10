@@ -34,10 +34,6 @@ export default {
   },
 
   computed: {
-    userConnectedWalletAddress() {
-      return this.userAddress;
-    },
-
     isActive(index) {
       return this.activeRoute == index;
     },

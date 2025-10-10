@@ -36,10 +36,6 @@ export default {
   },
 
   computed: {
-    userConnectedWalletAddress() {
-      return this.userAddress;
-    },
-
     enoughApproved() {
       return this.userApproved && this.userApproved.gte(this.amount);
     },
@@ -51,7 +47,7 @@ export default {
   },
 
   watch: {
-    userConnectedWalletAddress: {
+    userAddress: {
       immediate: true,
       async handler() {
         await this.getApproved();

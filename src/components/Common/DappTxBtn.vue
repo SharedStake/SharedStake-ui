@@ -1,6 +1,6 @@
 <template>
   <span>
-    <ConnectButton v-if="!userConnectedWalletAddress" />
+    <ConnectButton v-if="!userAddress" />
     <SharedButton
       v-else-if="!loading"
       :disabled="disabled"
@@ -43,9 +43,6 @@ export default {
   },
 
   computed: {
-    userConnectedWalletAddress() {
-      return this.userAddress;
-    },
     gasPrice() {
       return this.chosenGas
         ? this.chosenGas
@@ -54,7 +51,7 @@ export default {
   },
 
   watch: {
-    userConnectedWalletAddress: {
+    userAddress: {
       immediate: true,
       async handler() {
         this.gasPrices = await getCurrentGasPrices();
@@ -69,28 +66,17 @@ export default {
   methods: {
     async execTx() {
       this.loading = true;
-      let args = this.click();
-      // Debug logging removed for production
-      await this.wrapTx(args.abiCall, args.argsArr, args.senderObj, args.cb);
-    },
-
-    async wrapTx(
-      abiCall = () => { },
-      argsArr = [],
-      senderObj = {},
-      cb = () => { }
-    ) {
-      this.loading = true;
+      const args = this.click();
       const chosenGas = this.gasPrice;
 
       const txOptions = {
         maxFeePerGas: chosenGas.maxFeePerGas,
         maxPriorityFeePerGas: chosenGas.maxPriorityFeePerGas,
-        ...senderObj,
+        ...args.senderObj,
       };
 
       try {
-        const success = await this.executeTransaction(abiCall, argsArr, txOptions, cb);
+        const success = await this.executeTransaction(args.abiCall, args.argsArr, txOptions, args.cb);
         this.error = !success;
       } catch (error) {
         console.error("Transaction error:", error);

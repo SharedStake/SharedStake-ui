@@ -48,7 +48,7 @@
         >
           <LoadingSpinner v-if="loading" />
 
-          <ConnectButton v-else-if="!userConnectedWalletAddress" />
+          <ConnectButton v-else-if="!userAddress" />
 
           <template v-else>
             <p
@@ -138,10 +138,6 @@ export default {
   },
 
   computed: {
-    userConnectedWalletAddress() {
-      return this.userAddress;
-    },
-
     userHasTokenBalance() {
       return this.userTokenBalance && this.userTokenBalance.gt(0);
     },
@@ -161,7 +157,7 @@ export default {
     },
 
     userWalletIsConnected() {
-      return this.userConnectedWalletAddress;
+      return this.userAddress;
     },
 
     amountFieldLowerThanMax() {
@@ -214,7 +210,7 @@ export default {
   },
 
   watch: {
-    userConnectedWalletAddress: {
+    userAddress: {
       immediate: true,
       async handler(address) {
         // log the amount of veth2 the user has deposited for withdrawal
@@ -244,7 +240,7 @@ export default {
           }
           return await contract.deposit(...args);
         },
-        argsArr: [ethers.parseEther(this.amount.toString()), this.userConnectedWalletAddress],
+        argsArr: [ethers.parseEther(this.amount.toString()), this.userAddress],
         cb: async () => {
           await this.refreshBalances();
         }
