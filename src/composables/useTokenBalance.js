@@ -19,9 +19,9 @@ export function useTokenBalance() {
   };
   
   const getTokenBalance = async (contract) => {
-    if (!contract || !userAddress.value) return BN(0);
+    if (!contract || !userAddress) return BN(0);
     try {
-      const balance = await contract.balanceOf(userAddress.value);
+      const balance = await contract.balanceOf(userAddress);
       return BN(balance.toString());
     } catch (error) {
       console.error('Error getting token balance:', error);
@@ -30,9 +30,9 @@ export function useTokenBalance() {
   };
   
   const getTokenAllowance = async (tokenContract, spenderAddress) => {
-    if (!tokenContract || !userAddress.value || !spenderAddress) return BN(0);
+    if (!tokenContract || !userAddress || !spenderAddress) return BN(0);
     try {
-      const allowance = await tokenContract.allowance(userAddress.value, spenderAddress);
+      const allowance = await tokenContract.allowance(userAddress, spenderAddress);
       return BN(allowance.toString());
     } catch (error) {
       console.error('Error getting token allowance:', error);
