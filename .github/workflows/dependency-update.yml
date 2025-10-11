@@ -6,6 +6,9 @@ on:
     - cron: '0 9 * * 1'
   workflow_dispatch: # Allow manual triggering
 
+env:
+  BUN_VERSION: latest
+
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
@@ -18,7 +21,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: latest
+          bun-version: ${{ env.BUN_VERSION }}
           
       - name: Update dependencies
         run: |

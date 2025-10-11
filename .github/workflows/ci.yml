@@ -28,8 +28,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          key: ${{ runner.os }}-bun-lint-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-lint-
             ${{ runner.os }}-bun-
             
       - name: Install deps
@@ -54,8 +55,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          key: ${{ runner.os }}-bun-types-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-types-
             ${{ runner.os }}-bun-
             
       - name: Install deps
@@ -80,8 +82,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          key: ${{ runner.os }}-bun-build-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-build-
             ${{ runner.os }}-bun-
             
       - name: Install deps
@@ -113,8 +116,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          key: ${{ runner.os }}-bun-audit-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-audit-
             ${{ runner.os }}-bun-
             
       - name: Install deps
@@ -140,8 +144,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          key: ${{ runner.os }}-bun-analyze-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-analyze-
             ${{ runner.os }}-bun-
             
       - name: Install deps
@@ -149,3 +154,25 @@ jobs:
         
       - name: Build analyze
         run: bun run build:analyze
+
+  # Summary job to check all results
+  success:
+    runs-on: ubuntu-latest
+    needs: [lint, types, build, audit, build-analyze]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          failed_jobs=()
+          if [[ "${{ needs.lint.result }}" == "failure" ]]; then failed_jobs+=("lint"); fi
+          if [[ "${{ needs.types.result }}" == "failure" ]]; then failed_jobs+=("types"); fi
+          if [[ "${{ needs.build.result }}" == "failure" ]]; then failed_jobs+=("build"); fi
+          if [[ "${{ needs.audit.result }}" == "failure" ]]; then failed_jobs+=("audit"); fi
+          if [[ "${{ needs.build-analyze.result }}" == "failure" ]]; then failed_jobs+=("build-analyze"); fi
+          
+          if [ ${#failed_jobs[@]} -gt 0 ]; then
+            echo "❌ CI failed on: ${failed_jobs[*]}"
+            exit 1
+          else
+            echo "✅ All checks passed!"
+          fi
