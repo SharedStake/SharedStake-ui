@@ -11,36 +11,9 @@ env:
   BUN_VERSION: latest
 
 jobs:
-  # Setup job that all others depend on
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      cache-hit: ${{ steps.cache.outputs.cache-hit }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-          
-      - name: Cache deps
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-            
-      - name: Install deps
-        run: bun install --frozen-lockfile
-
-  # Code quality checks
+  # All jobs run in parallel - no dependencies!
   lint:
     runs-on: ubuntu-latest
-    needs: setup
     if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'src/')
     steps:
       - name: Checkout
@@ -67,7 +40,6 @@ jobs:
 
   types:
     runs-on: ubuntu-latest
-    needs: setup
     if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'src/')
     steps:
       - name: Checkout
@@ -92,13 +64,9 @@ jobs:
       - name: Type check
         run: bun run type-check
 
-  # Build matrix for different modes
   build:
     runs-on: ubuntu-latest
-    needs: setup
-    strategy:
-      matrix:
-        mode: [production, analyze]
+    if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'src/') || contains(github.event.pull_request.changed_files, 'package.json')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -119,26 +87,18 @@ jobs:
       - name: Install deps
         run: bun install --frozen-lockfile
         
-      - name: Build (${{ matrix.mode }})
-        run: |
-          if [ "${{ matrix.mode }}" = "analyze" ]; then
-            bun run build:analyze
-          else
-            bun run build
-          fi
+      - name: Build
+        run: bun run build
         
       - name: Upload artifacts
-        if: matrix.mode == 'production'
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: dist/
           retention-days: 1
 
-  # Security audit
   audit:
     runs-on: ubuntu-latest
-    needs: setup
     if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'package.json') || contains(github.event.pull_request.changed_files, 'bun.lockb')
     steps:
       - name: Checkout
@@ -163,23 +123,29 @@ jobs:
       - name: Security audit
         run: bun run audit
 
-  # Summary with notifications
-  success:
+  # Optional: Only run if we want to test analyze mode
+  build-analyze:
     runs-on: ubuntu-latest
-    needs: [setup, lint, types, build, audit]
-    if: always()
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Check results
-        run: |
-          failed_jobs=()
-          if [[ "${{ needs.lint.result }}" == "failure" ]]; then failed_jobs+=("lint"); fi
-          if [[ "${{ needs.types.result }}" == "failure" ]]; then failed_jobs+=("types"); fi
-          if [[ "${{ needs.build.result }}" == "failure" ]]; then failed_jobs+=("build"); fi
-          if [[ "${{ needs.audit.result }}" == "failure" ]]; then failed_jobs+=("audit"); fi
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
           
-          if [ ${#failed_jobs[@]} -gt 0 ]; then
-            echo "❌ CI failed on: ${failed_jobs[*]}"
-            exit 1
-          else
-            echo "✅ All checks passed!"
-          fi
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+            
+      - name: Install deps
+        run: bun install --frozen-lockfile
+        
+      - name: Build analyze
+        run: bun run build:analyze
