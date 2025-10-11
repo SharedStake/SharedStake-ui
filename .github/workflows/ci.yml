@@ -14,7 +14,7 @@ jobs:
   # All jobs run in parallel - no dependencies!
   lint:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'src/')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'src/'))
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
 
   types:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'src/')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'src/'))
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,7 +66,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'src/') || contains(github.event.pull_request.changed_files, 'package.json')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && (contains(github.event.pull_request.changed_files, 'src/') || contains(github.event.pull_request.changed_files, 'package.json')))
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -99,7 +99,7 @@ jobs:
 
   audit:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'package.json') || contains(github.event.pull_request.changed_files, 'bun.lockb')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && (contains(github.event.pull_request.changed_files, 'package.json') || contains(github.event.pull_request.changed_files, 'bun.lockb')))
     steps:
       - name: Checkout
         uses: actions/checkout@v4
