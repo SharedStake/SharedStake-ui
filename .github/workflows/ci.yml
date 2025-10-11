@@ -1,20 +1,21 @@
-name: CI Pipeline
+name: CI
 
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  workflow_dispatch:
 
 env:
   BUN_VERSION: latest
 
 jobs:
-  # Parallel jobs for maximum efficiency
+  # All jobs run in parallel - no dependencies!
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         
       - name: Setup Bun
@@ -22,26 +23,25 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
           
-      - name: Cache Bun dependencies
+      - name: Cache deps
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-lint-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-lint-
             ${{ runner.os }}-bun-
             
-      - name: Install dependencies
+      - name: Install deps
         run: bun install --frozen-lockfile
         
-      - name: Run linting
+      - name: Lint
         run: bun run lint
 
-  type-check:
+  types:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         
       - name: Setup Bun
@@ -49,26 +49,25 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
           
-      - name: Cache Bun dependencies
+      - name: Cache deps
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-types-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-types-
             ${{ runner.os }}-bun-
             
-      - name: Install dependencies
+      - name: Install deps
         run: bun install --frozen-lockfile
         
-      - name: Run type checking
+      - name: Type check
         run: bun run type-check
 
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         
       - name: Setup Bun
@@ -76,33 +75,32 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
           
-      - name: Cache Bun dependencies
+      - name: Cache deps
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-build-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-build-
             ${{ runner.os }}-bun-
             
-      - name: Install dependencies
+      - name: Install deps
         run: bun install --frozen-lockfile
         
-      - name: Build application
+      - name: Build
         run: bun run build
         
-      - name: Upload build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: dist/
           retention-days: 1
 
-  security:
+  audit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         
       - name: Setup Bun
@@ -110,32 +108,67 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
           
-      - name: Cache Bun dependencies
+      - name: Cache deps
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-audit-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
+            ${{ runner.os }}-bun-audit-
             ${{ runner.os }}-bun-
             
-      - name: Install dependencies
+      - name: Install deps
         run: bun install --frozen-lockfile
         
-      - name: Run security audit
+      - name: Security audit
         run: bun run audit
 
-  # Summary job that depends on all parallel jobs
-  ci-success:
+  # Optional: Only run if we want to test analyze mode
+  build-analyze:
     runs-on: ubuntu-latest
-    needs: [lint, type-check, build, security]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+          
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-analyze-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-analyze-
+            ${{ runner.os }}-bun-
+            
+      - name: Install deps
+        run: bun install --frozen-lockfile
+        
+      - name: Build analyze
+        run: bun run build:analyze
+
+  # Summary job to check all results
+  success:
+    runs-on: ubuntu-latest
+    needs: [lint, types, build, audit, build-analyze]
     if: always()
     steps:
-      - name: Check CI results
+      - name: Check results
         run: |
-          if [[ "${{ needs.lint.result }}" == "failure" || "${{ needs.type-check.result }}" == "failure" || "${{ needs.build.result }}" == "failure" ]]; then
-            echo "CI failed"
+          failed_jobs=()
+          if [[ "${{ needs.lint.result }}" == "failure" ]]; then failed_jobs+=("lint"); fi
+          if [[ "${{ needs.types.result }}" == "failure" ]]; then failed_jobs+=("types"); fi
+          if [[ "${{ needs.build.result }}" == "failure" ]]; then failed_jobs+=("build"); fi
+          if [[ "${{ needs.audit.result }}" == "failure" ]]; then failed_jobs+=("audit"); fi
+          if [[ "${{ needs.build-analyze.result }}" == "failure" ]]; then failed_jobs+=("build-analyze"); fi
+          
+          if [ ${#failed_jobs[@]} -gt 0 ]; then
+            echo "❌ CI failed on: ${failed_jobs[*]}"
             exit 1
+          else
+            echo "✅ All checks passed!"
           fi
-          echo "All CI checks passed successfully!"
