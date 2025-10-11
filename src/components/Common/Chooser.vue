@@ -15,16 +15,16 @@
 </template>
 
 <script>
-import { useWalletStore } from "@/stores/wallet";
+import { useWallet } from "@/composables/useWallet";
 import { toWei } from "../../utils/common";
 export default {
   name: "Chooser",
   components: {},
   props: ["routes", "currentActive"],
   setup() {
-    const walletStore = useWalletStore();
+    const { userAddress } = useWallet();
     return {
-      walletStore
+      userAddress
     };
   },
   data() {
@@ -34,10 +34,6 @@ export default {
   },
 
   computed: {
-    userConnectedWalletAddress() {
-      return this.walletStore.userAddress;
-    },
-
     isActive(index) {
       return this.activeRoute == index;
     },
