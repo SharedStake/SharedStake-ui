@@ -40,7 +40,7 @@
     "axios": "1.12.2",
     "bignumber.js": "9.3.1",
     "bnc-notify": "1.9.8",
-    "core-js": "3.45.1",
+    "core-js": "3.46.0",
     "ethers": "6.15.0",
     "marked": "16.4.0",
     "pinia": "2.3.1",
@@ -57,14 +57,14 @@
     "eslint": "9.37.0",
     "eslint-plugin-vue": "10.5.0",
     "globals": "16.4.0",
-    "postcss": "8.4.31",
+    "postcss": "8.5.6",
     "raw-loader": "4.0.2",
     "tailwindcss": "3.4.18",
     "typescript": "5.9.3",
     "vite": "7.1.9",
     "vue-eslint-parser": "10.2.0",
     "vue-tsc": "2.2.12",
-    "webpack-dev-server": "5.2.1"
+    "webpack-dev-server": "5.2.2"
   },
   "eslintConfig": {
     "root": true,
@@ -91,8 +91,8 @@
   ],
   "overrides": {
     "crypto-es": "2.1.0",
-    "postcss": "8.4.31",
-    "webpack-dev-server": "5.2.1",
+    "postcss": "8.5.6",
+    "webpack-dev-server": "5.2.2",
     "ws": "8.18.0",
     "cross-spawn": "6.0.6",
     "nanoid": "5.0.9",
