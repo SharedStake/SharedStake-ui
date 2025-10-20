@@ -42,7 +42,7 @@
     "bnc-notify": "1.9.8",
     "core-js": "3.46.0",
     "ethers": "6.15.0",
-    "marked": "16.4.0",
+    "marked": "16.4.1",
     "pinia": "2.3.1",
     "vue": "3.5.22",
     "vue-ellipse-progress": "2.2.0",
