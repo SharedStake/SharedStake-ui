@@ -1,3 +1,6 @@
 [submodule "SharedDeposit"]
 	path = SharedDeposit
 	url = https://github.com/chimera-defi/SharedDeposit
+[submodule "infra"]
+	path = infra
+	url = https://github.com/chimera-defi/eth2-quickstart
