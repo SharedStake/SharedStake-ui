@@ -93,9 +93,9 @@
     "crypto-es": "2.1.0",
     "postcss": "8.5.6",
     "webpack-dev-server": "5.2.2",
-    "ws": "8.18.0",
-    "cross-spawn": "6.0.6",
-    "nanoid": "5.0.9",
-    "esbuild": "0.25.0"
+    "ws": "8.18.3",
+    "cross-spawn": "7.0.6",
+    "nanoid": "5.1.6",
+    "esbuild": "0.25.11"
   }
 }
