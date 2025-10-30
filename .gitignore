@@ -15,6 +15,11 @@ yarn-error.log*
 pnpm-debug.log*
 .yarnclean
 
+# Package manager lock files (we use Bun exclusively)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # Editor directories and files
 .idea
 .vscode
