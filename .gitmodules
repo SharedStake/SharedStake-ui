@@ -1,0 +1,3 @@
+[submodule "SharedDeposit"]
+	path = SharedDeposit
+	url = https://github.com/chimera-defi/SharedDeposit
