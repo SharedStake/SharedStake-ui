@@ -2,6 +2,13 @@
 
 # Pre-commit hook that ensures tests and builds pass
 # This script runs before every commit and will fail if checks don't pass
+#
+# The hook automatically runs:
+# 1. ESLint with auto-fix
+# 2. TypeScript type checking
+# 3. Production build
+#
+# If any check fails, the commit is blocked.
 
 set -e  # Exit on any error
 
@@ -15,7 +22,8 @@ NC='\033[0m' # No Color
 
 # Check if bun is available
 if ! command -v bun &> /dev/null; then
-    echo -e "${RED}? Error: bun is not installed${NC}"
+    echo -e "${RED}? Error: bun is not installed or not in PATH${NC}"
+    echo -e "${YELLOW}?? Install bun: curl -fsSL https://bun.sh/install | bash${NC}"
     exit 1
 fi
 

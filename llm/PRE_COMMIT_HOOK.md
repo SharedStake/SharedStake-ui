@@ -23,7 +23,6 @@ If any of these checks fail, the commit will be blocked until the issues are fix
 - `bun run pre-commit` - Manually run the pre-commit checks
 - `bun run pre-commit:fix` - Attempt to auto-fix issues (shows errors for agent to fix)
 - `bun run pre-commit:install` - Install/reinstall the git hook
-- `bun run check` - Quick check script that runs all checks in sequence
 
 ## For LLM Agents
 
