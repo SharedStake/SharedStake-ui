@@ -210,6 +210,25 @@ bun run lint
 
 ---
 
+## 🔒 Pre-Commit Hook System
+
+**CRITICAL FOR AGENTS**: This project has a git pre-commit hook that runs automatically on every `git commit`. The hook will:
+1. Run ESLint with auto-fix
+2. Run TypeScript type checking
+3. Run production build
+
+**If any check fails, the commit is blocked.** When this happens:
+- The hook outputs clear error messages
+- Run `bun run pre-commit:fix` to see all errors
+- Use `read_lints` tool to read linter errors programmatically
+- Fix issues, then commit again (hook runs automatically)
+
+**See [`llm/PRE_COMMIT_HOOK.md`](./PRE_COMMIT_HOOK.md) for complete documentation.**
+
+The hook is automatically installed via `postinstall` script when you run `bun install`.
+
+---
+
 ## 🔍 Recent Fixes Applied
 
 ### October 8, 2025

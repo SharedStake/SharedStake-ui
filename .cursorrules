@@ -1,0 +1,248 @@
+# Cursor Rules for SharedStake UI
+
+## ?? AI Agent Guidelines
+
+### Pre-Commit Hook System
+**IMPORTANT**: This project uses a git pre-commit hook that runs automatically on every `git commit`. 
+
+**When committing code:**
+- The hook automatically runs `lint:fix`, `type-check`, and `build`
+- If any check fails, the commit is blocked with clear error messages
+- **DO NOT** bypass with `--no-verify` unless absolutely necessary
+
+**If pre-commit fails:**
+1. Read the error output carefully
+2. Run `bun run pre-commit:fix` to see all errors
+3. Use `read_lints` tool to read linter errors programmatically
+4. Fix the issues in code
+5. Commit again (hook runs automatically)
+
+**Documentation**: See [`llm/PRE_COMMIT_HOOK.md`](./llm/PRE_COMMIT_HOOK.md) for complete details.
+
+### Development Workflow
+- **Package Manager**: Use `bun`, NOT npm or yarn
+- **Installation**: `bun install` (automatically installs pre-commit hook)
+- **Development**: `bun run dev`
+- **Build**: `bun run build`
+- **Linting**: `bun run lint:fix`
+
+### Project Structure
+- **Framework**: Vue 3.5.22 + Vite 7.1.9
+- **State Management**: Pinia (not Vuex)
+- **Web3**: ethers.js v6 (NOT web3.js)
+- **Runtime**: Bun 1.2.23+
+
+### Code Quality
+- **Always** ensure lint, type-check, and build pass before committing
+- The pre-commit hook enforces this automatically
+- Run `bun run pre-commit` to test manually before committing
+
+### Documentation
+- All AI documentation is in the `llm/` folder
+- See [`llm/README.md`](./llm/README.md) for comprehensive project context
+- See [`llm/DEVELOPMENT_SETUP.md`](./llm/DEVELOPMENT_SETUP.md) for setup instructions
+
+---
+
+## Code Review Process
+
+### Required Review Passes (Minimum 3, Maximum 5)
+
+**Pass 1: Functionality Verification**
+- Verify all imports and dependencies are correct
+- Check for missing functions/components that are being called
+- Ensure no broken references or imports
+- Test that all added code is properly integrated
+- Verify Vue components follow Vue 3 composition API patterns
+- Check that Pinia stores are used correctly (not Vuex)
+
+**Pass 2: Architecture Compliance**
+- Verify code follows Vue 3 patterns (not Vue 2)
+- Check that ethers.js v6 is used (not web3.js)
+- Ensure Pinia is used for state management (not Vuex)
+- Validate that Bun-compatible code patterns are used
+- Check component structure follows project conventions
+- Verify proper use of composables and utilities
+
+**Pass 3: Code Quality & Redundancy**
+- Remove duplicate code and functions
+- Check for unused imports, variables, or functions
+- Verify consistent error handling patterns
+- Ensure proper TypeScript types (if applicable)
+- Check ESLint compliance (run `bun run lint`)
+- Verify no console.logs or debug code in production paths
+
+**Pass 4: Edge Cases & Error Handling (if issues found in Pass 3)**
+- Test critical paths and error conditions
+- Verify Web3 connection error handling
+- Check for proper loading states in components
+- Validate error messages are user-friendly
+- Test responsive design and accessibility
+
+**Pass 5: Final Validation (if issues found in Pass 4)**
+- Comprehensive end-to-end validation
+- Verify build passes (`bun run build`)
+- Run type checking (`bun run type-check`)
+- Final cleanup and documentation
+- Ensure all changes follow security best practices
+
+### Review Completion Criteria
+- All imports and dependencies resolve correctly
+- No missing or broken component/function references
+- Architecture compliance maintained (Vue 3, Pinia, ethers.js v6)
+- Code quality standards met (lint, type-check pass)
+- No functionality removed or broken
+- Build passes successfully
+- No redundant or duplicate code
+- Proper error handling implemented
+
+---
+
+## Rule Enforcement Mechanisms
+
+### Mandatory Compliance Checks
+Before any code changes are considered complete, the following must be verified:
+
+1. **Pre-Commit Hook Validation**
+   - Run `bun run pre-commit` to verify all checks pass
+   - Linting must pass (`bun run lint:fix`)
+   - Type checking must pass (`bun run type-check`)
+   - Build must succeed (`bun run build`)
+   - If any check fails, use `bun run pre-commit:fix` to see detailed errors
+
+2. **Architecture Pattern Compliance**
+   - Use Vue 3 Composition API (not Options API or Vue 2 patterns)
+   - Use Pinia stores (not Vuex) - located in `src/stores/`
+   - Use ethers.js v6 patterns (not web3.js)
+   - Use Bun runtime patterns (not Node.js-specific code)
+   - Follow component structure: `src/components/[Category]/ComponentName.vue`
+
+3. **Code Quality Enforcement**
+   - Run `bun run lint:fix` before committing
+   - Remove unused imports and variables
+   - Check for duplicate code - consolidate into composables/utils
+   - Ensure consistent error handling patterns
+   - Verify TypeScript types are correct (if using TS)
+
+4. **Dependency Management**
+   - Use `bun` for all package management
+   - Verify new dependencies are compatible with Bun
+   - Check that ethers.js v6 is used (not web3.js)
+   - Ensure Vue 3 compatible packages (not Vue 2)
+
+### Validation Requirements
+
+**Pre-Commit Validation Checklist:**
+- [ ] All imports resolve correctly
+- [ ] Vue 3 patterns used (not Vue 2)
+- [ ] Pinia stores used (not Vuex)
+- [ ] ethers.js v6 used (not web3.js)
+- [ ] Linting passes (`bun run lint:fix`)
+- [ ] Type checking passes (`bun run type-check`)
+- [ ] Build succeeds (`bun run build`)
+- [ ] No duplicate or unused code
+- [ ] Error handling consistent across modified files
+- [ ] Documentation updated if needed
+
+**Automated Validation Commands:**
+```bash
+# Run all checks
+bun run pre-commit
+
+# Check for Vue 2 patterns (should not find anything)
+grep -r "this\.\$store" src/
+grep -r "Vue\.use" src/
+
+# Check for web3.js usage (should not find anything)
+grep -r "web3\." src/
+grep -r "from 'web3'" src/
+
+# Check linting
+bun run lint:fix
+
+# Check types
+bun run type-check
+
+# Build verification
+bun run build
+```
+
+### Rule Violation Prevention
+
+**Common Violations to Avoid:**
+1. **Vue 2 Patterns** - Use Vue 3 Composition API, not Options API or Vue 2 syntax
+2. **Vuex Usage** - Use Pinia stores, not Vuex
+3. **web3.js Usage** - Use ethers.js v6, not web3.js
+4. **npm/yarn Usage** - Use `bun` for all package management
+5. **Missing Error Handling** - Always handle async operations and errors gracefully
+6. **Duplicate Code** - Extract common logic to composables or utilities
+7. **Unused Code** - Remove unused imports, variables, and functions
+
+**Enforcement Actions:**
+- If any rule violation is detected, the code change MUST be rejected
+- All violations MUST be fixed before proceeding to the next review pass
+- Additional review passes MUST be performed until all rules are satisfied
+- Pre-commit hook will block commits if checks fail
+
+---
+
+## Consistency Maintenance Guidelines
+
+### Code Pattern Standards
+
+1. **Vue Component Structure** - All components MUST follow:
+   ```vue
+   <script setup>
+   import { ref, computed, onMounted } from 'vue'
+   import { useStore } from '@/stores/storeName'
+   // component logic
+   </script>
+   
+   <template>
+     <!-- template content -->
+   </template>
+   
+   <style scoped>
+   /* component styles */
+   </style>
+   ```
+
+2. **State Management** - Always use Pinia stores:
+   ```javascript
+   import { useStore } from '@/stores/storeName'
+   const store = useStore()
+   // Use store.getters, store.actions, etc.
+   ```
+
+3. **Web3 Interactions** - Use ethers.js v6 patterns:
+   ```javascript
+   import { ethers } from 'ethers'
+   const provider = new ethers.BrowserProvider(window.ethereum)
+   const signer = await provider.getSigner()
+   ```
+
+4. **Error Handling** - Consistent error handling pattern:
+   ```javascript
+   try {
+     // async operation
+   } catch (error) {
+     console.error('Descriptive error message', error)
+     // Show user-friendly error message
+   }
+   ```
+
+### Documentation Requirements
+- All new components MUST be documented
+- Complex logic MUST have comments explaining the approach
+- Web3 interactions MUST document expected behavior
+- Breaking changes MUST be documented in `llm/` folder
+- Security implications MUST be documented and validated
+
+### Quality Assurance Process
+1. **Before Making Changes** - Read and understand existing patterns in similar components
+2. **During Development** - Follow established patterns and use existing composables/utils
+3. **After Changes** - Run all validation checks (`bun run pre-commit`)
+4. **Before Committing** - Ensure all rules are satisfied and documentation is updated
+5. **Multipass Review** - Perform minimum 3-pass review for any significant changes
+
+This comprehensive rule set ensures consistent, maintainable, and secure code across the SharedStake UI project.
