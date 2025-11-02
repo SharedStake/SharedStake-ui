@@ -1,0 +1,43 @@
+# Cursor Rules for SharedStake UI
+
+## ?? AI Agent Guidelines
+
+### Pre-Commit Hook System
+**IMPORTANT**: This project uses a git pre-commit hook that runs automatically on every `git commit`. 
+
+**When committing code:**
+- The hook automatically runs `lint:fix`, `type-check`, and `build`
+- If any check fails, the commit is blocked with clear error messages
+- **DO NOT** bypass with `--no-verify` unless absolutely necessary
+
+**If pre-commit fails:**
+1. Read the error output carefully
+2. Run `bun run pre-commit:fix` to see all errors
+3. Use `read_lints` tool to read linter errors programmatically
+4. Fix the issues in code
+5. Commit again (hook runs automatically)
+
+**Documentation**: See [`llm/PRE_COMMIT_HOOK.md`](./llm/PRE_COMMIT_HOOK.md) for complete details.
+
+### Development Workflow
+- **Package Manager**: Use `bun`, NOT npm or yarn
+- **Installation**: `bun install` (automatically installs pre-commit hook)
+- **Development**: `bun run dev`
+- **Build**: `bun run build`
+- **Linting**: `bun run lint:fix`
+
+### Project Structure
+- **Framework**: Vue 3.5.22 + Vite 7.1.9
+- **State Management**: Pinia (not Vuex)
+- **Web3**: ethers.js v6 (NOT web3.js)
+- **Runtime**: Bun 1.2.23+
+
+### Code Quality
+- **Always** ensure lint, type-check, and build pass before committing
+- The pre-commit hook enforces this automatically
+- Run `bun run pre-commit` to test manually before committing
+
+### Documentation
+- All AI documentation is in the `llm/` folder
+- See [`llm/README.md`](./llm/README.md) for comprehensive project context
+- See [`llm/DEVELOPMENT_SETUP.md`](./llm/DEVELOPMENT_SETUP.md) for setup instructions
