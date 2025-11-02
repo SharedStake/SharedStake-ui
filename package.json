@@ -31,8 +31,7 @@
     "analyze:security": "bun audit --level moderate",
     "pre-commit": "bash scripts/pre-commit-check.sh",
     "pre-commit:fix": "bash scripts/fix-pre-commit-issues.sh",
-    "pre-commit:install": "bash scripts/install-pre-commit-hook.sh",
-    "check": "bun run lint && bun run type-check && bun run build"
+    "pre-commit:install": "bash scripts/install-pre-commit-hook.sh"
   },
   "dependencies": {
     "@babel/core": "7.28.5",
