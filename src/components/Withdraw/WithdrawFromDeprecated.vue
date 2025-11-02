@@ -13,7 +13,7 @@
             Withdraw from Deprecated Contracts
           </h1>
           <p class="text-sm text-gray-300">
-            Check and withdraw ETH from deprecated withdrawals contracts
+            Withdraw your vETH2 from deprecated contracts to use in the new withdrawal contract
           </p>
         </header>
 
@@ -53,61 +53,38 @@
               </div>
 
               <div class="flex flex-col gap-2">
-                <div>
-                  <p class="text-sm text-gray-300">
-                    ETH Balance:
-                    <span class="font-semibold text-white">
-                      {{ parseBN(contract.ethBalance) }} ETH
-                    </span>
-                  </p>
-                </div>
-
                 <div v-if="contract.userDeposited.gt(0)">
                   <p class="text-sm text-gray-300">
                     Your Deposited vETH2:
-                    <span class="font-semibold text-white">
+                    <span class="font-semibold text-white text-lg">
                       {{ parseBN(contract.userDeposited) }} vETH2
                     </span>
                   </p>
-                </div>
-
-                <div v-if="contract.userDeposited.gt(0) && contract.ethBalance.gt(0)">
-                  <p class="text-sm text-green-400 font-semibold">
-                    ? Funds available for withdrawal
+                  <p class="text-xs text-gray-400 mt-1">
+                    You can withdraw this vETH2 and deposit it into the new withdrawal contract
                   </p>
                 </div>
 
-                <div v-else-if="contract.userDeposited.gt(0) && contract.ethBalance.eq(0)">
-                  <p class="text-sm text-yellow-400 font-semibold">
-                    ? You have deposits but contract has no ETH available
-                  </p>
-                </div>
-
-                <div v-else-if="contract.userDeposited.eq(0)">
+                <div v-else>
                   <p class="text-sm text-gray-400">
-                    No deposits found for your address
+                    No vETH2 deposits found for your address in this contract
                   </p>
                 </div>
               </div>
 
-              <!-- Withdrawal buttons -->
+              <!-- Withdrawal button -->
               <div
                 v-if="contract.userDeposited.gt(0)"
-                class="flex flex-col gap-2 mt-2"
+                class="flex flex-col gap-2 mt-3"
               >
-                <dapp-tx-btn
-                  v-if="contract.ethBalance.gt(0)"
-                  :disabled="!contract.canRedeem"
-                  :click="() => handleRedeemEth(contract)"
-                >
-                  <span>Redeem ETH</span>
-                </dapp-tx-btn>
-
                 <dapp-tx-btn
                   :click="() => handleWithdrawVeth(contract)"
                 >
-                  <span>Withdraw vETH2</span>
+                  <span>Withdraw {{ parseBN(contract.userDeposited) }} vETH2</span>
                 </dapp-tx-btn>
+                <p class="text-xs text-gray-400 text-center mt-1">
+                  After withdrawal, you can deposit this vETH2 into the new withdrawal contract
+                </p>
               </div>
             </div>
           </div>
@@ -118,7 +95,10 @@
           v-else-if="!loading && deprecatedContracts.length === 0"
           class="p-4 text-center text-gray-400"
         >
-          <p>No deprecated contracts found or no funds available.</p>
+          <p>No vETH2 deposits found in deprecated contracts for your address.</p>
+          <p class="text-sm mt-2">
+            If you had deposits in old contracts, they may have already been withdrawn.
+          </p>
         </div>
 
         <!-- Error state -->
@@ -243,10 +223,8 @@ export default {
             return {
               address,
               contract,
-              ethBalance: ethBalanceBN,
+              ethBalance: ethBalanceBN, // Keep for info, but not used for withdrawal logic
               userDeposited,
-              canRedeem:
-                userDeposited.gt(0) && ethBalanceBN.gt(0),
             };
           } catch (error) {
             console.error(`Error scanning contract ${address}:`, error);
@@ -257,9 +235,9 @@ export default {
         const results = await Promise.all(contractPromises);
         this.deprecatedContracts = results.filter((r) => r !== null);
 
-        // Filter to only show contracts with user deposits or ETH balance
+        // Filter to only show contracts with user deposits (we only care about vETH2 withdrawals)
         this.deprecatedContracts = this.deprecatedContracts.filter(
-          (c) => c.userDeposited.gt(0) || c.ethBalance.gt(0)
+          (c) => c.userDeposited.gt(0)
         );
       } catch (error) {
         console.error("Error scanning deprecated contracts:", error);
@@ -267,25 +245,6 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
-
-    handleRedeemEth(contractData) {
-      return {
-        abiCall: async (...args) => {
-          const contract = createDeprecatedWithdrawalsContract(
-            contractData.address,
-            true
-          );
-          if (!contract) {
-            throw new Error("Contract not available");
-          }
-          return await contract.redeem(...args);
-        },
-        argsArr: [],
-        cb: async () => {
-          await this.scanDeprecatedContracts();
-        },
-      };
     },
 
     handleWithdrawVeth(contractData) {
@@ -298,21 +257,9 @@ export default {
           if (!contract) {
             throw new Error("Contract not available");
           }
-          // Try withdraw method first, fallback to requestRedeem if needed
-          try {
-            return await contract.withdraw(...args);
-          } catch (error) {
-            // If withdraw fails, try requestRedeem as alternative
-            if (error.code === "CALL_EXCEPTION" || error.message.includes("withdraw")) {
-              try {
-                return await contract.requestRedeem(...args);
-              } catch (retryError) {
-                console.error("Error with both withdraw and requestRedeem:", retryError);
-                throw new Error("Contract does not support withdrawal. Please check contract methods.");
-              }
-            }
-            throw error;
-          }
+          // Call withdraw method to get vETH2 back
+          // This method should return the user's deposited vETH2
+          return await contract.withdraw(...args);
         },
         argsArr: [],
         cb: async () => {
