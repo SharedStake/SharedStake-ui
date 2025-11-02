@@ -159,11 +159,10 @@ const initializeEthers = async () => {
                     rollovers: "0x68a31dfD0c81A411C5adadc8A40225425777466C",
 
                     // Deprecated withdrawals contracts (for withdrawal from old contracts)
-                    // These contracts are deprecated and users can withdraw their funds
-                    // TODO: Update with actual deprecated contract addresses
-                    // Format: withdrawals_deprecated_v{N} where N is version number
-                    // Example: withdrawals_deprecated_v1: "0x...", withdrawals_deprecated_v2: "0x..."
-                    withdrawals_deprecated_v1: "", // Previous deprecated contract address (to be filled)
+                    // These contracts are deprecated and users can withdraw their vETH2
+                    // Old contract (deployed Jul 19 2023): 0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4
+                    // Current contract (also deprecated): 0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432
+                    withdrawals_deprecated_v1: "0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4", // Previous deprecated contract (Jul 19 2023)
                     withdrawals_deprecated_v2: "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432", // Current contract (also deprecated)
 
                     sgETH: "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
