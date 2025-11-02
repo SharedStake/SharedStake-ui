@@ -7,7 +7,8 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "setup": "bun install",
+    "setup": "bun install && bash scripts/install-pre-commit-hook.sh",
+    "postinstall": "bash scripts/install-pre-commit-hook.sh",
     "serve": "vite",
     "build": "vite build",
     "build:analyze": "vite build --mode analyze",
@@ -30,6 +31,7 @@
     "analyze:security": "bun audit --level moderate",
     "pre-commit": "bash scripts/pre-commit-check.sh",
     "pre-commit:fix": "bash scripts/fix-pre-commit-issues.sh",
+    "pre-commit:install": "bash scripts/install-pre-commit-hook.sh",
     "check": "bun run lint && bun run type-check && bun run build"
   },
   "dependencies": {

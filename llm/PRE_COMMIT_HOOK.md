@@ -16,6 +16,7 @@ If any of these checks fail, the commit will be blocked until the issues are fix
 
 - `bun run pre-commit` - Manually run the pre-commit checks
 - `bun run pre-commit:fix` - Attempt to auto-fix issues (shows errors for agent to fix)
+- `bun run pre-commit:install` - Install/reinstall the git hook
 - `bun run check` - Quick check script that runs all checks in sequence
 
 ## For LLM Agents
@@ -53,11 +54,18 @@ git commit --no-verify -m "your message"
 
 **Warning**: Only use `--no-verify` when absolutely necessary. It bypasses all quality checks and can lead to broken builds.
 
-## Reinstalling the Hook
+## Automatic Installation
 
-If the hook gets removed or corrupted, reinstall it:
+The hook is automatically installed when you run:
+- `bun install` (via postinstall script)
+- `bun run setup` (includes hook installation)
+
+## Manual Installation
+
+If you need to manually install or reinstall the hook:
 
 ```bash
-cp scripts/pre-commit-check.sh .git/hooks/pre-commit
-chmod +x .git/hooks/pre-commit
+bun run pre-commit:install
+# or
+bash scripts/install-pre-commit-hook.sh
 ```
