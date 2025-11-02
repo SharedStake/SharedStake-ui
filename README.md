@@ -2,7 +2,7 @@
 
 [![Website](https://img.shields.io/badge/Website-sharedstake.org-blue?style=for-the-badge)](https://sharedstake.org)
 [![Twitter](https://img.shields.io/badge/Twitter-@ChimeraDefi-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/ChimeraDefi)
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/sharedstake)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/C9GhCv86My)
 
 Vue.js implementation of SharedStake DeFi protocol with optimized Bun-based build system.
 
