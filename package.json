@@ -27,7 +27,10 @@
     "docker:run": "docker run -p 8080:8080 sharedstake-ui",
     "optimize:images": "bun run scripts/optimize-images.js",
     "analyze:bundle": "vite build --mode analyze",
-    "analyze:security": "bun audit --level moderate"
+    "analyze:security": "bun audit --level moderate",
+    "pre-commit": "bash scripts/pre-commit-check.sh",
+    "pre-commit:fix": "bash scripts/fix-pre-commit-issues.sh",
+    "check": "bun run lint && bun run type-check && bun run build"
   },
   "dependencies": {
     "@babel/core": "7.28.5",
