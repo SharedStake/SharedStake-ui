@@ -48,3 +48,13 @@ bun run lint     # Code linting
 
 ## Next Phase
 Ready for Vue 3 migration to eliminate remaining Vue 2 EOL warnings.
+
+## 🔗 Links
+
+- **Website**: [sharedstake.org](https://sharedstake.org)
+- **Twitter**: _[Need confirmation on correct Twitter handle/URL]_
+- **Discord**: _[Need confirmation on correct Discord invite URL]_
+
+> **Note**: Please provide the correct Twitter and Discord links. I found multiple different URLs in the codebase:
+> - Twitter: `@ChimeraDefi` and `@sharedstake` are both referenced
+> - Discord: Multiple invite URLs found (`discord.gg/C9GhCv86My`, `discord.gg/sharedstake`, `discord.com/invite/VezkjY9udC`)
