@@ -79,12 +79,6 @@
                     You can withdraw this vETH2 now. Once the new withdrawal contract is launched, you can deposit it there to redeem for ETH.
                   </p>
                 </div>
-
-                <div v-else>
-                  <p class="text-sm text-gray-400">
-                    No vETH2 deposits found for your address in this contract
-                  </p>
-                </div>
               </div>
 
               <!-- Withdrawal button -->
@@ -142,6 +136,7 @@ import ConnectButton from "@/components/Common/ConnectButton.vue";
 import DappTxBtn from "@/components/Common/DappTxBtn.vue";
 import ImageVue from "@/components/Handlers/ImageVue.vue";
 import DeprecatedWithdrawalsFAQ from "./DeprecatedWithdrawalsFAQ.vue";
+import { parseBN } from "@/utils/bignumber";
 import {
   getDeprecatedWithdrawalsAddresses,
   createDeprecatedWithdrawalsContract,
@@ -172,6 +167,7 @@ export default {
       deprecatedContracts: [],
       totalVeth2Staked: BN(0),
       totalEthRedeemed: BN(0),
+      calculatingTotals: false,
     };
   },
   computed: {
@@ -192,23 +188,16 @@ export default {
           await this.scanDeprecatedContracts();
         } else {
           this.deprecatedContracts = [];
-          // Still calculate totals even if user isn't connected
-          await this.calculateTotals();
         }
       },
     },
   },
   mounted: async function() {
-    // Calculate totals on mount even if user isn't connected
+    // Calculate totals on mount (works even if user isn't connected)
     await this.calculateTotals();
   },
   methods: {
-    parseBN(n) {
-      return n
-        .div(10 ** 18)
-        .decimalPlaces(6)
-        .toString();
-    },
+    parseBN,
 
     async scanDeprecatedContracts() {
       this.loading = true;
@@ -267,9 +256,6 @@ export default {
 
         const results = await Promise.all(contractPromises);
         this.deprecatedContracts = results.filter((r) => r !== null);
-        
-        // Calculate totals across all deprecated contracts
-        await this.calculateTotals();
       } catch (error) {
         console.error("Error scanning deprecated contracts:", error);
         this.error = "Failed to scan deprecated contracts. Please try again.";
@@ -279,6 +265,12 @@ export default {
     },
 
     async calculateTotals() {
+      // Prevent concurrent calls
+      if (this.calculatingTotals) {
+        return;
+      }
+      
+      this.calculatingTotals = true;
       try {
         const vEth2Contract = vEth2();
         if (!vEth2Contract) {
@@ -287,37 +279,52 @@ export default {
         }
 
         const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+        if (!deprecatedAddresses || deprecatedAddresses.length === 0) {
+          return;
+        }
+
         let totalVeth2 = BN(0);
         let totalRedeemed = BN(0);
 
-        for (const address of deprecatedAddresses) {
+        // Calculate totals for ALL deprecated contracts (not just user deposits)
+        const totalPromises = deprecatedAddresses.map(async (address) => {
           try {
             // Get vETH2 balance of the contract
             const veth2Bal = await vEth2Contract.balanceOf(address);
-            totalVeth2 = totalVeth2.plus(BN(veth2Bal.toString()));
-
+            const veth2BN = BN(veth2Bal.toString());
+            
             // Get totalOut (total ETH redeemed) from the contract
+            let totalOutBN = BN(0);
             const contract = createDeprecatedWithdrawalsContract(address, false);
             if (contract) {
               try {
                 const totalOut = await contract.totalOut();
-                totalRedeemed = totalRedeemed.plus(BN(totalOut.toString()));
+                totalOutBN = BN(totalOut.toString());
               } catch (err) {
-                // Contract might not have totalOut method
-                if (err.code !== "BAD_DATA") {
+                // Contract might not have totalOut method - this is OK for old contracts
+                if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION") {
                   console.warn(`Error getting totalOut for ${address}:`, err);
                 }
               }
             }
+            
+            return { veth2: veth2BN, redeemed: totalOutBN };
           } catch (error) {
             console.warn(`Error calculating totals for ${address}:`, error);
+            return { veth2: BN(0), redeemed: BN(0) };
           }
-        }
+        });
+
+        const totals = await Promise.all(totalPromises);
+        totalVeth2 = totals.reduce((sum, t) => sum.plus(t.veth2), BN(0));
+        totalRedeemed = totals.reduce((sum, t) => sum.plus(t.redeemed), BN(0));
 
         this.totalVeth2Staked = totalVeth2;
         this.totalEthRedeemed = totalRedeemed;
       } catch (error) {
         console.error("Error calculating totals:", error);
+      } finally {
+        this.calculatingTotals = false;
       }
     },
 
@@ -331,25 +338,32 @@ export default {
           if (!contract) {
             throw new Error("Contract not available");
           }
-          // Try withdraw method first, fallback to requestRedeem if needed
-          try {
-            return await contract.withdraw(...args);
-          } catch (error) {
-            // If withdraw fails, try requestRedeem as alternative
-            if (error.code === "CALL_EXCEPTION" || error.message.includes("withdraw")) {
-              try {
-                return await contract.requestRedeem(...args);
-              } catch (retryError) {
-                console.error("Error with both withdraw and requestRedeem:", retryError);
-                throw new Error("Contract does not support withdrawal. Please check contract methods.");
+          
+          // Deprecated contracts may have different methods
+          // Try common withdrawal methods in order
+          const methods = ['withdraw', 'requestRedeem'];
+          
+          for (const methodName of methods) {
+            try {
+              if (contract[methodName]) {
+                return await contract[methodName](...args);
               }
+            } catch (error) {
+              // If method doesn't exist or call fails, try next method
+              if (error.code === "CALL_EXCEPTION" || error.code === "BAD_DATA") {
+                continue;
+              }
+              // For other errors, throw immediately
+              throw error;
             }
-            throw error;
           }
+          
+          throw new Error("Contract does not support withdrawal. Please check contract methods on Etherscan.");
         },
         argsArr: [],
         cb: async () => {
           await this.scanDeprecatedContracts();
+          await this.calculateTotals();
         },
       };
     },
