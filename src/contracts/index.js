@@ -158,6 +158,13 @@ const initializeEthers = async () => {
                     withdrawals: "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432",
                     rollovers: "0x68a31dfD0c81A411C5adadc8A40225425777466C",
 
+                    // Deprecated withdrawals contracts (for withdrawal from old contracts)
+                    // These contracts are deprecated and users can withdraw their vETH2
+                    // Old contract (deployed Jul 19 2023): 0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4
+                    // Current contract (also deprecated): 0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432
+                    withdrawals_deprecated_v1: "0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4", // Previous deprecated contract (Jul 19 2023)
+                    withdrawals_deprecated_v2: "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432", // Current contract (also deprecated)
+
                     sgETH: "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
                     wsgETH: "0x31AA035313b1D2109e61Ee0E3662A86A8615fF1d"
                 }
@@ -317,6 +324,38 @@ export const withdrawals = (useSigner = false) => createContractDefault('withdra
 export const rollovers = (useSigner = false) => createContractDefault("rollovers", useSigner);
 export const sgETH = (useSigner = false) => createContractDefault('sgETH', useSigner);
 export const wsgETH = (useSigner = false) => createContractDefault("wsgETH", useSigner);
+
+// Deprecated withdrawals contracts - returns array of contract addresses
+export const getDeprecatedWithdrawalsAddresses = () => {
+    // Array of deprecated contract addresses
+    const deprecatedAddresses = [];
+    
+    // Add deprecated contract addresses if they exist and are not empty
+    if (_addresses) {
+        // Check all withdrawals_deprecated_v{N} keys
+        Object.keys(_addresses).forEach((key) => {
+            if (key.startsWith('withdrawals_deprecated_')) {
+                const address = _addresses[key];
+                if (address && address.trim() !== '' && address.startsWith('0x')) {
+                    deprecatedAddresses.push(address);
+                }
+            }
+        });
+    }
+    
+    return deprecatedAddresses;
+};
+
+// Create contract instance for a specific address (for deprecated contracts)
+export const createDeprecatedWithdrawalsContract = (address, useSigner = false) => {
+    if (!address || !_ABIs || !_ABIs.withdrawals) {
+        console.warn("Cannot create deprecated contract:", address);
+        return null;
+    }
+    const contractProvider = useSigner && signer ? signer : provider;
+    return new ethers.Contract(address, _ABIs.withdrawals, contractProvider);
+};
+
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
     geyser_SGT_uniswap: _geyser_SGT_uniswap_old,

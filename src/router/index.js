@@ -14,6 +14,7 @@ const Landing = () => import("../components/Landing/Landing.vue")
 
 const Withdraw = () => import("../components/Withdraw/Withdraw.vue")
 const Rollover = () => import("../components/Withdraw/Rollover.vue")
+const WithdrawFromDeprecated = () => import("../components/Withdraw/WithdrawFromDeprecated.vue")
 const Wrap = () => import("../components/Stake/Wrap.vue");
 const Unwrap = () => import("../components/Stake/Unwrap.vue");
 const Blog = () => import("../components/Blog/Blog.vue");
@@ -64,6 +65,11 @@ let routes = [{
         path: "/rollover",
         name: "Rollover",
         component: Rollover,
+    },
+    {
+        path: "/withdraw-from-deprecated",
+        name: "WithdrawFromDeprecated",
+        component: WithdrawFromDeprecated,
     },
     {
         path: "/wrap",
