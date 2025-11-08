@@ -56,6 +56,57 @@
 
     <QuestionAnswer>
       <template #question>
+        Do I have vETH2 deposited in deprecated contracts?
+      </template>
+      <template #answer>
+        <template v-if="userTotalDeposited && userTotalDeposited.gt(0)">
+          Yes! You have a total of {{
+            userTotalDeposited.div(eighteenPower)
+              .decimalPlaces(6)
+              .toString()
+          }} vETH2 deposited across deprecated contracts. 
+          You can withdraw these using the buttons above.
+        </template>
+        <template v-else>
+          No deposits found in deprecated contracts for your address. 
+          <br>
+          <br>
+          If you believe you should have deposits but don't see them, it could mean:
+          <br>
+          • You never deposited vETH2 into the old contracts
+          <br>
+          • You already withdrew your vETH2 from the deprecated contracts
+          <br>
+          • Your deposits were in a different contract that isn't tracked here
+          <br>
+          <br>
+          You can check your transaction history on Etherscan to verify which contracts you interacted with.
+        </template>
+      </template>
+    </QuestionAnswer>
+
+    <QuestionAnswer>
+      <template #question>
+        How much vETH2 is staked in deprecated contracts?
+      </template>
+      <template #answer>
+        Across both deprecated withdrawal contracts, there is a total of {{
+          (totalVeth2Staked || BN(0)).div(eighteenPower)
+            .decimalPlaces(6)
+            .toString()
+        }} vETH2 still deposited.
+        <br>
+        <br>
+        From these contracts, a total of {{
+          (totalEthRedeemed || BN(0)).div(eighteenPower)
+            .decimalPlaces(6)
+            .toString()
+        }} ETH has already been redeemed via the totalOut function.
+      </template>
+    </QuestionAnswer>
+
+    <QuestionAnswer>
+      <template #question>
         I don't see any deprecated contracts with deposits
       </template>
       <template #answer>
@@ -98,10 +149,21 @@
 
 <script>
 import QuestionAnswer from "@/components/Withdraw/QuestionAnswer.vue";
+import BN from "bignumber.js";
 
 export default {
   name: 'DeprecatedWithdrawalsFAQ',
   components: { QuestionAnswer },
+  props: [
+    'userTotalDeposited',
+    'totalVeth2Staked',
+    'totalEthRedeemed'
+  ],
+  computed: {
+    eighteenPower: function() {
+      return BN(10).pow(18);
+    },
+  },
 }
 </script>
 

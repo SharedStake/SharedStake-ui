@@ -125,7 +125,11 @@
         </div>
 
         <!-- FAQ Section -->
-        <DeprecatedWithdrawalsFAQ />
+        <DeprecatedWithdrawalsFAQ
+          :user-total-deposited="userTotalDeposited"
+          :total-veth2-staked="totalVeth2Staked"
+          :total-eth-redeemed="totalEthRedeemed"
+        />
       </div>
     </section>
   </div>
@@ -141,6 +145,7 @@ import DeprecatedWithdrawalsFAQ from "./DeprecatedWithdrawalsFAQ.vue";
 import {
   getDeprecatedWithdrawalsAddresses,
   createDeprecatedWithdrawalsContract,
+  vEth2,
 } from "@/contracts";
 
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
@@ -165,11 +170,18 @@ export default {
       loading: false,
       error: null,
       deprecatedContracts: [],
+      totalVeth2Staked: BN(0),
+      totalEthRedeemed: BN(0),
     };
   },
   computed: {
     userConnectedWalletAddress() {
       return this.walletStore.userAddress;
+    },
+    userTotalDeposited() {
+      return this.deprecatedContracts.reduce((total, contract) => {
+        return total.plus(contract.userDeposited);
+      }, BN(0));
     },
   },
   watch: {
@@ -180,9 +192,15 @@ export default {
           await this.scanDeprecatedContracts();
         } else {
           this.deprecatedContracts = [];
+          // Still calculate totals even if user isn't connected
+          await this.calculateTotals();
         }
       },
     },
+  },
+  mounted: async function() {
+    // Calculate totals on mount even if user isn't connected
+    await this.calculateTotals();
   },
   methods: {
     parseBN(n) {
@@ -249,11 +267,57 @@ export default {
 
         const results = await Promise.all(contractPromises);
         this.deprecatedContracts = results.filter((r) => r !== null);
+        
+        // Calculate totals across all deprecated contracts
+        await this.calculateTotals();
       } catch (error) {
         console.error("Error scanning deprecated contracts:", error);
         this.error = "Failed to scan deprecated contracts. Please try again.";
       } finally {
         this.loading = false;
+      }
+    },
+
+    async calculateTotals() {
+      try {
+        const vEth2Contract = vEth2();
+        if (!vEth2Contract) {
+          console.warn("vETH2 contract not available for totals calculation");
+          return;
+        }
+
+        const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+        let totalVeth2 = BN(0);
+        let totalRedeemed = BN(0);
+
+        for (const address of deprecatedAddresses) {
+          try {
+            // Get vETH2 balance of the contract
+            const veth2Bal = await vEth2Contract.balanceOf(address);
+            totalVeth2 = totalVeth2.plus(BN(veth2Bal.toString()));
+
+            // Get totalOut (total ETH redeemed) from the contract
+            const contract = createDeprecatedWithdrawalsContract(address, false);
+            if (contract) {
+              try {
+                const totalOut = await contract.totalOut();
+                totalRedeemed = totalRedeemed.plus(BN(totalOut.toString()));
+              } catch (err) {
+                // Contract might not have totalOut method
+                if (err.code !== "BAD_DATA") {
+                  console.warn(`Error getting totalOut for ${address}:`, err);
+                }
+              }
+            }
+          } catch (error) {
+            console.warn(`Error calculating totals for ${address}:`, error);
+          }
+        }
+
+        this.totalVeth2Staked = totalVeth2;
+        this.totalEthRedeemed = totalRedeemed;
+      } catch (error) {
+        console.error("Error calculating totals:", error);
       }
     },
 
