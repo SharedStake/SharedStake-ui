@@ -90,12 +90,12 @@
       <template #answer>
         Across both deprecated withdrawal contracts, there is a total of {{
           parseBN(totalVeth2Staked || BN(0))
-        }} vETH2 still deposited.
+        }} vETH2 deposited.
         <br>
         <br>
         From these contracts, a total of {{
           parseBN(totalEthRedeemed || BN(0))
-        }} ETH has already been redeemed via the totalOut function.
+        }} ETH has already been redeemed.
       </template>
     </QuestionAnswer>
 
