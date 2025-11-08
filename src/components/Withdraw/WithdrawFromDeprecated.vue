@@ -1,0 +1,300 @@
+<template>
+  <div class="w-5/6 max-w-2xl pt-40 mx-auto">
+    <section
+      class="relative gap-4 p-6 my-10 text-white bg-gray-800 shadow-md rounded-xl"
+    >
+      <span
+        class="absolute p-1 px-3 text-sm font-bold text-gray-200 transform -translate-x-1/2 rounded-full opacity-95 left-1/2 -top-3 bg-brand-primary"
+      >Deprecated Contracts</span>
+
+      <div class="flex flex-col items-center justify-center">
+        <header class="pb-3 my-4 text-center">
+          <h1 class="text-3xl font-semibold">
+            Withdraw from Deprecated Contracts
+          </h1>
+          <p class="text-sm text-gray-300 mt-2">
+            Withdraw your vETH2 from deprecated contracts to use in the new withdrawal contract
+          </p>
+        </header>
+
+        <!-- Explanation Box -->
+        <div class="w-full p-4 mb-6 bg-blue-900 border border-blue-700 rounded-lg">
+          <h3 class="mb-2 text-lg font-semibold text-blue-200">
+            What does this page do?
+          </h3>
+          <p class="text-sm text-gray-200">
+            This page helps you withdraw vETH2 tokens that you previously deposited into <strong>old, deprecated withdrawal contracts</strong>. 
+            These contracts are no longer actively used, but your vETH2 may still be locked in them.
+          </p>
+          <p class="mt-2 text-sm text-gray-200">
+            <strong>When you click "Withdraw vETH2":</strong> The contract will return your deposited vETH2 tokens to your wallet. 
+            After withdrawal, you can deposit these tokens into the <SharedLink to="/withdraw" class="text-blue-300 underline">new withdrawal contract</SharedLink> to redeem them for ETH.
+          </p>
+        </div>
+
+        <!-- Loading state -->
+        <div v-if="loading" class="my-6">
+          <ImageVue
+            :src="'loading.svg'"
+            :size="'45px'"
+          />
+          <p class="mt-2 text-sm text-gray-300">
+            Scanning deprecated contracts...
+          </p>
+        </div>
+
+        <!-- Connect wallet prompt -->
+        <ConnectButton v-if="!userConnectedWalletAddress" />
+
+        <!-- Contract list -->
+        <div v-else-if="!loading && deprecatedContracts.length > 0" class="w-full">
+          <p class="mb-4 text-sm font-semibold text-gray-300 text-center">
+            Found {{ deprecatedContracts.length }} deprecated contract(s) with your deposits
+          </p>
+
+          <div
+            v-for="(contract, index) in deprecatedContracts"
+            :key="contract.address"
+            class="p-4 mb-4 border border-gray-700 rounded-lg bg-gray-900"
+          >
+            <div class="flex flex-col gap-3">
+              <div>
+                <p class="text-sm font-semibold text-gray-400">
+                  Contract {{ index + 1 }}
+                </p>
+                <p class="text-xs text-gray-500 font-mono break-all">
+                  {{ contract.address }}
+                </p>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <div v-if="contract.userDeposited.gt(0)">
+                  <p class="text-sm text-gray-300">
+                    Your Deposited vETH2:
+                    <span class="font-semibold text-white text-lg">
+                      {{ parseBN(contract.userDeposited) }} vETH2
+                    </span>
+                  </p>
+                  <p class="text-xs text-gray-400 mt-1">
+                    You can withdraw this vETH2 and deposit it into the new withdrawal contract
+                  </p>
+                </div>
+
+                <div v-else>
+                  <p class="text-sm text-gray-400">
+                    No vETH2 deposits found for your address in this contract
+                  </p>
+                </div>
+              </div>
+
+              <!-- Withdrawal button -->
+              <div
+                v-if="contract.userDeposited.gt(0)"
+                class="flex flex-col gap-2 mt-3"
+              >
+                <dapp-tx-btn
+                  :click="() => handleWithdrawVeth(contract)"
+                >
+                  <span>Withdraw {{ parseBN(contract.userDeposited) }} vETH2</span>
+                </dapp-tx-btn>
+                <p class="text-xs text-gray-400 text-center mt-1">
+                  After withdrawal, you can deposit this vETH2 into the new withdrawal contract
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No contracts found -->
+        <div
+          v-else-if="!loading && deprecatedContracts.length === 0"
+          class="p-4 text-center text-gray-400"
+        >
+          <p>No vETH2 deposits found in deprecated contracts for your address.</p>
+          <p class="text-sm mt-2">
+            If you had deposits in old contracts, they may have already been withdrawn.
+          </p>
+        </div>
+
+        <!-- Error state -->
+        <div
+          v-if="error"
+          class="p-4 mt-4 text-center bg-red-900 border border-red-700 rounded-lg"
+        >
+          <p class="text-sm text-red-200">{{ error }}</p>
+        </div>
+
+        <!-- FAQ Section -->
+        <DeprecatedWithdrawalsFAQ />
+      </div>
+    </section>
+  </div>
+</template>
+
+<script>
+import BN from "bignumber.js";
+import { useWalletStore } from "@/stores/wallet";
+import ConnectButton from "@/components/Common/ConnectButton.vue";
+import DappTxBtn from "@/components/Common/DappTxBtn.vue";
+import ImageVue from "@/components/Handlers/ImageVue.vue";
+import SharedLink from "@/components/Common/SharedLink.vue";
+import DeprecatedWithdrawalsFAQ from "./DeprecatedWithdrawalsFAQ.vue";
+import {
+  getDeprecatedWithdrawalsAddresses,
+  createDeprecatedWithdrawalsContract,
+} from "@/contracts";
+
+BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
+BN.config({ EXPONENTIAL_AT: 100 });
+
+export default {
+  name: "WithdrawFromDeprecated",
+  components: {
+    ConnectButton,
+    DappTxBtn,
+    ImageVue,
+    SharedLink,
+    DeprecatedWithdrawalsFAQ,
+  },
+  setup() {
+    const walletStore = useWalletStore();
+    return {
+      walletStore,
+    };
+  },
+  data() {
+    return {
+      loading: false,
+      error: null,
+      deprecatedContracts: [],
+    };
+  },
+  computed: {
+    userConnectedWalletAddress() {
+      return this.walletStore.userAddress;
+    },
+  },
+  watch: {
+    userConnectedWalletAddress: {
+      immediate: true,
+      async handler(address) {
+        if (address) {
+          await this.scanDeprecatedContracts();
+        } else {
+          this.deprecatedContracts = [];
+        }
+      },
+    },
+  },
+  methods: {
+    parseBN(n) {
+      return n
+        .div(10 ** 18)
+        .decimalPlaces(6)
+        .toString();
+    },
+
+    async scanDeprecatedContracts() {
+      this.loading = true;
+      this.error = null;
+      this.deprecatedContracts = [];
+
+      try {
+        const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+
+        if (!deprecatedAddresses || deprecatedAddresses.length === 0) {
+          this.error = "No deprecated contracts configured.";
+          this.loading = false;
+          return;
+        }
+
+        const contractPromises = deprecatedAddresses.map(async (address) => {
+          try {
+            const contract = createDeprecatedWithdrawalsContract(address, false);
+            if (!contract) {
+              return null;
+            }
+
+            // Check user deposits
+            let userDeposited = BN(0);
+            try {
+              const userEntries = await contract.userEntries(
+                this.userConnectedWalletAddress
+              );
+              userDeposited = userEntries?.[0]
+                ? BN(userEntries[0].toString())
+                : BN(0);
+            } catch (err) {
+              // Contract might not have userEntries method or user has no deposits
+              if (err.code !== "BAD_DATA") {
+                console.warn(
+                  `Error checking user deposits for ${address}:`,
+                  err
+                );
+              }
+            }
+
+            // Only include contracts where user has deposits
+            if (userDeposited.gt(0)) {
+              return {
+                address,
+                contract,
+                userDeposited,
+              };
+            }
+            return null;
+          } catch (error) {
+            console.error(`Error scanning contract ${address}:`, error);
+            return null;
+          }
+        });
+
+        const results = await Promise.all(contractPromises);
+        this.deprecatedContracts = results.filter((r) => r !== null);
+      } catch (error) {
+        console.error("Error scanning deprecated contracts:", error);
+        this.error = "Failed to scan deprecated contracts. Please try again.";
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    handleWithdrawVeth(contractData) {
+      return {
+        abiCall: async (...args) => {
+          const contract = createDeprecatedWithdrawalsContract(
+            contractData.address,
+            true
+          );
+          if (!contract) {
+            throw new Error("Contract not available");
+          }
+          // Try withdraw method first, fallback to requestRedeem if needed
+          try {
+            return await contract.withdraw(...args);
+          } catch (error) {
+            // If withdraw fails, try requestRedeem as alternative
+            if (error.code === "CALL_EXCEPTION" || error.message.includes("withdraw")) {
+              try {
+                return await contract.requestRedeem(...args);
+              } catch (retryError) {
+                console.error("Error with both withdraw and requestRedeem:", retryError);
+                throw new Error("Contract does not support withdrawal. Please check contract methods.");
+              }
+            }
+            throw error;
+          }
+        },
+        argsArr: [],
+        cb: async () => {
+          await this.scanDeprecatedContracts();
+        },
+      };
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Component styles */
+</style>

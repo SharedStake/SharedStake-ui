@@ -21,6 +21,9 @@
             Coming Soon
           </div>
         </div>
+        <DropdownItemRouter to="/withdraw-from-deprecated">
+          Withdraw from Deprecated
+        </DropdownItemRouter>
         <DropdownItemRouter to="/wrap">
           Wrap
         </DropdownItemRouter>
