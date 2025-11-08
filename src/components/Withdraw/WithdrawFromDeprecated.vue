@@ -28,7 +28,7 @@
           </p>
           <p class="mt-2 text-sm text-gray-200">
             <strong>When you click "Withdraw vETH2":</strong> The contract will return your deposited vETH2 tokens to your wallet. 
-            After withdrawal, you can deposit these tokens into the <SharedLink to="/withdraw" class="text-blue-300 underline">new withdrawal contract</SharedLink> to redeem them for ETH.
+            After withdrawal, you can deposit these tokens into the new withdrawal contract (coming soon) to redeem them for ETH once it's launched.
           </p>
         </div>
 
@@ -76,7 +76,7 @@
                     </span>
                   </p>
                   <p class="text-xs text-gray-400 mt-1">
-                    You can withdraw this vETH2 and deposit it into the new withdrawal contract
+                    You can withdraw this vETH2 now. Once the new withdrawal contract is launched, you can deposit it there to redeem for ETH.
                   </p>
                 </div>
 
@@ -98,7 +98,7 @@
                   <span>Withdraw {{ parseBN(contract.userDeposited) }} vETH2</span>
                 </dapp-tx-btn>
                 <p class="text-xs text-gray-400 text-center mt-1">
-                  After withdrawal, you can deposit this vETH2 into the new withdrawal contract
+                  After withdrawal, you can deposit this vETH2 into the new withdrawal contract once it's launched
                 </p>
               </div>
             </div>
@@ -137,7 +137,6 @@ import { useWalletStore } from "@/stores/wallet";
 import ConnectButton from "@/components/Common/ConnectButton.vue";
 import DappTxBtn from "@/components/Common/DappTxBtn.vue";
 import ImageVue from "@/components/Handlers/ImageVue.vue";
-import SharedLink from "@/components/Common/SharedLink.vue";
 import DeprecatedWithdrawalsFAQ from "./DeprecatedWithdrawalsFAQ.vue";
 import {
   getDeprecatedWithdrawalsAddresses,
@@ -153,7 +152,6 @@ export default {
     ConnectButton,
     DappTxBtn,
     ImageVue,
-    SharedLink,
     DeprecatedWithdrawalsFAQ,
   },
   setup() {

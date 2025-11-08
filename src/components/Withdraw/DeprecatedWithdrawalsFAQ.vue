@@ -22,8 +22,7 @@
       <template #answer>
         When you click "Withdraw vETH2", the contract will execute a withdrawal transaction that returns your deposited vETH2 tokens to your wallet. 
         This is a one-way operation - your vETH2 will be sent back to your connected wallet address. 
-        After the withdrawal is complete, you can then deposit these vETH2 tokens into the 
-        <SharedLink to="/withdraw" class="text-blue-300 underline">new withdrawal contract</SharedLink> to redeem them for ETH.
+        After the withdrawal is complete, you can then deposit these vETH2 tokens into the new withdrawal contract (coming soon) to redeem them for ETH once it's launched.
       </template>
     </QuestionAnswer>
 
@@ -33,8 +32,8 @@
       </template>
       <template #answer>
         The deprecated contracts are no longer actively processing withdrawals or accepting new deposits. 
-        To use your vETH2 tokens in the current system, you need to withdraw them from the old contracts first. 
-        Once withdrawn, you can deposit them into the new withdrawal contract which is actively maintained and has ETH available for redemption.
+        To use your vETH2 tokens in the new system, you need to withdraw them from the old contracts first. 
+        Once withdrawn, you can hold them in your wallet until the new withdrawal contract launches, then deposit them there to redeem for ETH.
       </template>
     </QuestionAnswer>
 
@@ -47,9 +46,9 @@
         <br>
         <strong>Step 1:</strong> Your vETH2 will be returned to your wallet
         <br>
-        <strong>Step 2:</strong> Go to the <SharedLink to="/withdraw" class="text-blue-300 underline">Withdraw page</SharedLink> 
+        <strong>Step 2:</strong> Wait for the new withdrawal contract to launch (coming soon)
         <br>
-        <strong>Step 3:</strong> Approve and deposit your vETH2 into the new withdrawal contract
+        <strong>Step 3:</strong> Once launched, approve and deposit your vETH2 into the new withdrawal contract
         <br>
         <strong>Step 4:</strong> Wait for ETH to become available, then redeem your vETH2 for ETH
       </template>
@@ -80,8 +79,8 @@
       </template>
       <template #answer>
         Your vETH2 tokens are safe in the deprecated contracts - they won't disappear. However, these contracts are no longer 
-        actively processing redemptions, so you won't be able to redeem them for ETH until you withdraw and move them to the new contract. 
-        We recommend withdrawing your vETH2 from deprecated contracts so you can use them in the current system.
+        actively processing redemptions, so you won't be able to redeem them for ETH until you withdraw and move them to the new contract (coming soon). 
+        We recommend withdrawing your vETH2 from deprecated contracts now so you're ready when the new contract launches.
       </template>
     </QuestionAnswer>
 
@@ -99,11 +98,10 @@
 
 <script>
 import QuestionAnswer from "@/components/Withdraw/QuestionAnswer.vue";
-import SharedLink from "@/components/Common/SharedLink.vue";
 
 export default {
   name: 'DeprecatedWithdrawalsFAQ',
-  components: { QuestionAnswer, SharedLink },
+  components: { QuestionAnswer },
 }
 </script>
 
