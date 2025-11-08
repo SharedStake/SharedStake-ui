@@ -148,6 +148,13 @@
         </div>
         <router-link
           class="link"
+          to="/withdraw-from-deprecated"
+          @click.native="showSidebar = false"
+        >
+          Withdraw from Deprecated
+        </router-link>
+        <router-link
+          class="link"
           to="/earn"
           @click.native="showSidebar = false"
         >
