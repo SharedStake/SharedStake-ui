@@ -96,6 +96,31 @@
         From these contracts, a total of {{
           parseBN(totalEthRedeemed || BN(0))
         }} ETH has already been redeemed.
+        <br>
+        <br>
+        <span class="text-xs text-gray-400">
+          For power users: Review the contracts on Etherscan - 
+          <a
+            v-if="deprecatedContractAddresses && deprecatedContractAddresses.length > 0"
+            :href="`https://etherscan.io/address/${deprecatedContractAddresses[0]}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-300 underline hover:text-blue-200"
+          >
+            Contract 1
+          </a>
+          <template v-if="deprecatedContractAddresses && deprecatedContractAddresses.length > 1">
+            <span class="text-gray-500"> | </span>
+            <a
+              :href="`https://etherscan.io/address/${deprecatedContractAddresses[1]}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-300 underline hover:text-blue-200"
+            >
+              Contract 2
+            </a>
+          </template>
+        </span>
       </template>
     </QuestionAnswer>
 
@@ -152,7 +177,8 @@ export default {
   props: [
     'userTotalDeposited',
     'totalVeth2Staked',
-    'totalEthRedeemed'
+    'totalEthRedeemed',
+    'deprecatedContractAddresses'
   ],
   computed: {
     eighteenPower: function() {

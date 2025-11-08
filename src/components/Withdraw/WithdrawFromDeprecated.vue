@@ -123,6 +123,7 @@
           :user-total-deposited="userTotalDeposited"
           :total-veth2-staked="totalVeth2Staked"
           :total-eth-redeemed="totalEthRedeemed"
+          :deprecated-contract-addresses="deprecatedContractAddresses"
         />
       </div>
     </section>
@@ -178,6 +179,9 @@ export default {
       return this.deprecatedContracts.reduce((total, contract) => {
         return total.plus(contract.userDeposited);
       }, BN(0));
+    },
+    deprecatedContractAddresses() {
+      return getDeprecatedWithdrawalsAddresses();
     },
   },
   watch: {
