@@ -50,11 +50,12 @@ bun run optimize:images # Optimize images
 ```
 
 ### **Project Structure**
-- **Package Manager**: Bun (bun.lockb)
-- **Build Tool**: Vite 7.1.9
-- **Framework**: Vue 3.5.22 + Router 4 + Pinia 2.3.1
-- **Styling**: Tailwind CSS 3.4.x
-- **TypeScript**: Supported
+- **Package Manager**: Bun (bun.lockb) - requires >=1.0.0
+- **Build Tool**: Vite 7.1.12
+- **Framework**: Vue 3.5.22 + Router 4 + Pinia 3.0.3
+- **Styling**: Tailwind CSS 3.4.18
+- **TypeScript**: Supported (vue-tsc 3.1.2)
+- **Web3**: ethers.js 6.15.0
 
 ### **Troubleshooting**
 If you see errors about missing modules or build failures:
