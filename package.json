@@ -41,7 +41,7 @@
     "@babel/preset-env": "7.28.5",
     "@web3-onboard/core": "2.24.1",
     "@web3-onboard/injected-wallets": "2.11.3",
-    "axios": "1.13.1",
+    "axios": "1.13.2",
     "bignumber.js": "9.3.1",
     "bnc-notify": "1.9.8",
     "core-js": "3.46.0",
