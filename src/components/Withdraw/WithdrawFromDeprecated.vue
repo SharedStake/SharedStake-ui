@@ -308,18 +308,14 @@ export default {
         const vEth2Contract = vEth2();
         if (!vEth2Contract) {
           console.warn("vETH2 contract not available for totals calculation - provider may not be initialized");
-          this.calculatingTotals = false;
           return;
         }
 
         const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
         if (!deprecatedAddresses || deprecatedAddresses.length === 0) {
           console.warn("No deprecated contract addresses found");
-          this.calculatingTotals = false;
           return;
         }
-
-        console.log(`Calculating totals for ${deprecatedAddresses.length} deprecated contracts:`, deprecatedAddresses);
 
         let totalVeth2 = BN(0);
         let totalRedeemed = BN(0);
@@ -332,7 +328,6 @@ export default {
             try {
               const veth2Bal = await vEth2Contract.balanceOf(address);
               veth2BN = BN(veth2Bal.toString());
-              console.log(`Contract ${address} has ${veth2BN.toString()} vETH2`);
             } catch (err) {
               console.warn(`Error getting vETH2 balance for ${address}:`, err);
             }
@@ -344,7 +339,6 @@ export default {
               try {
                 const totalOut = await contract.totalOut();
                 totalOutBN = BN(totalOut.toString());
-                console.log(`Contract ${address} has redeemed ${totalOutBN.toString()} ETH`);
               } catch (err) {
                 // Contract might not have totalOut method - this is OK for old contracts
                 if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION" && err.code !== "UNPREDICTABLE_GAS_LIMIT") {
@@ -365,8 +359,6 @@ export default {
         const totals = await Promise.all(totalPromises);
         totalVeth2 = totals.reduce((sum, t) => sum.plus(t.veth2), BN(0));
         totalRedeemed = totals.reduce((sum, t) => sum.plus(t.redeemed), BN(0));
-
-        console.log(`Total vETH2 staked: ${totalVeth2.toString()}, Total ETH redeemed: ${totalRedeemed.toString()}`);
 
         this.totalVeth2Staked = totalVeth2;
         this.totalEthRedeemed = totalRedeemed;

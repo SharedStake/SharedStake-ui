@@ -180,11 +180,6 @@ export default {
     'totalEthRedeemed',
     'deprecatedContractAddresses'
   ],
-  computed: {
-    eighteenPower: function() {
-      return BN(10).pow(18);
-    },
-  },
   methods: {
     parseBN,
   },
