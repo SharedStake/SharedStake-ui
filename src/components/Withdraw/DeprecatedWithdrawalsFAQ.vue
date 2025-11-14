@@ -121,6 +121,24 @@
             </a>
           </template>
         </span>
+        <br>
+        <br>
+        <template v-if="rolloverContractAddress">
+          Rollover contract: {{
+            parseBN(rolloverVeth2Input || BN(0))
+          }} vETH2 deposited.
+          <br>
+          <span class="text-xs text-gray-400">
+            <a
+              :href="`https://etherscan.io/address/${rolloverContractAddress}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-300 underline hover:text-blue-200"
+            >
+              View Rollover Contract on Etherscan
+            </a>
+          </span>
+        </template>
       </template>
     </QuestionAnswer>
 
@@ -178,7 +196,9 @@ export default {
     'userTotalDeposited',
     'totalVeth2Staked',
     'totalEthRedeemed',
-    'deprecatedContractAddresses'
+    'deprecatedContractAddresses',
+    'rolloverContractAddress',
+    'rolloverVeth2Input'
   ],
   methods: {
     parseBN,

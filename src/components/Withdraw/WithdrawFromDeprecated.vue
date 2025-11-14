@@ -124,6 +124,8 @@
           :total-veth2-staked="totalVeth2Staked"
           :total-eth-redeemed="totalEthRedeemed"
           :deprecated-contract-addresses="deprecatedContractAddresses"
+          :rollover-contract-address="rolloverContractAddress"
+          :rollover-veth2-input="rolloverVeth2Input"
         />
       </div>
     </section>
@@ -171,6 +173,8 @@ export default {
       totalEthRedeemed: BN(0),
       calculatingTotals: false,
       deprecatedContractAddresses: [],
+      rolloverContractAddress: null,
+      rolloverVeth2Input: BN(0),
     };
   },
   computed: {
@@ -374,22 +378,50 @@ export default {
         totalVeth2 = totals.reduce((sum, t) => sum.plus(t.veth2), BN(0));
         totalRedeemed = totals.reduce((sum, t) => sum.plus(t.redeemed), BN(0));
 
-        // Add rollover contract totalOut to total ETH redeemed
+        // Calculate rollover contract totals
+        let rolloverAddress = null;
+        let rolloverVeth2InputBN = BN(0);
         try {
           const rolloverContract = rollovers(false);
           if (rolloverContract) {
             try {
-              const rolloverTotalOut = await rolloverContract.totalOut();
-              totalRedeemed = totalRedeemed.plus(BN(rolloverTotalOut.toString()));
-            } catch (err) {
-              // Rollover contract might not have totalOut method or might fail - this is OK
-              if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION" && err.code !== "UNPREDICTABLE_GAS_LIMIT") {
-                console.warn("Error getting rollover contract totalOut:", err);
+              // Get rollover contract address
+              rolloverAddress = await rolloverContract.getAddress();
+              this.rolloverContractAddress = rolloverAddress;
+
+              // Get vETH2 balance (total input) of rollover contract
+              try {
+                const rolloverVeth2Bal = await vEth2Contract.balanceOf(rolloverAddress);
+                rolloverVeth2InputBN = BN(rolloverVeth2Bal.toString());
+                this.rolloverVeth2Input = rolloverVeth2InputBN;
+              } catch (err) {
+                console.warn("Error getting rollover contract vETH2 balance:", err);
+                this.rolloverVeth2Input = BN(0);
               }
+
+              // Add rollover contract totalOut to total ETH redeemed
+              try {
+                const rolloverTotalOut = await rolloverContract.totalOut();
+                totalRedeemed = totalRedeemed.plus(BN(rolloverTotalOut.toString()));
+              } catch (err) {
+                // Rollover contract might not have totalOut method or might fail - this is OK
+                if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION" && err.code !== "UNPREDICTABLE_GAS_LIMIT") {
+                  console.warn("Error getting rollover contract totalOut:", err);
+                }
+              }
+            } catch (err) {
+              console.warn("Error getting rollover contract address:", err);
+              this.rolloverContractAddress = null;
+              this.rolloverVeth2Input = BN(0);
             }
+          } else {
+            this.rolloverContractAddress = null;
+            this.rolloverVeth2Input = BN(0);
           }
         } catch (error) {
           console.warn("Error accessing rollover contract:", error);
+          this.rolloverContractAddress = null;
+          this.rolloverVeth2Input = BN(0);
         }
 
         this.totalVeth2Staked = totalVeth2;
@@ -399,6 +431,8 @@ export default {
         // Set to zero on error so UI shows 0 instead of undefined
         this.totalVeth2Staked = BN(0);
         this.totalEthRedeemed = BN(0);
+        this.rolloverContractAddress = null;
+        this.rolloverVeth2Input = BN(0);
       } finally {
         this.calculatingTotals = false;
       }
