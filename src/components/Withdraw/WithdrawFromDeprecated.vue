@@ -142,6 +142,7 @@ import {
   getDeprecatedWithdrawalsAddresses,
   createDeprecatedWithdrawalsContract,
   vEth2,
+  rollovers,
 } from "@/contracts";
 
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
@@ -372,6 +373,24 @@ export default {
         const totals = await Promise.all(totalPromises);
         totalVeth2 = totals.reduce((sum, t) => sum.plus(t.veth2), BN(0));
         totalRedeemed = totals.reduce((sum, t) => sum.plus(t.redeemed), BN(0));
+
+        // Add rollover contract totalOut to total ETH redeemed
+        try {
+          const rolloverContract = rollovers(false);
+          if (rolloverContract) {
+            try {
+              const rolloverTotalOut = await rolloverContract.totalOut();
+              totalRedeemed = totalRedeemed.plus(BN(rolloverTotalOut.toString()));
+            } catch (err) {
+              // Rollover contract might not have totalOut method or might fail - this is OK
+              if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION" && err.code !== "UNPREDICTABLE_GAS_LIMIT") {
+                console.warn("Error getting rollover contract totalOut:", err);
+              }
+            }
+          }
+        } catch (error) {
+          console.warn("Error accessing rollover contract:", error);
+        }
 
         this.totalVeth2Staked = totalVeth2;
         this.totalEthRedeemed = totalRedeemed;
