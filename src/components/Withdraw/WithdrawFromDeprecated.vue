@@ -169,6 +169,7 @@ export default {
       totalVeth2Staked: BN(0),
       totalEthRedeemed: BN(0),
       calculatingTotals: false,
+      deprecatedContractAddresses: [],
     };
   },
   computed: {
@@ -180,15 +181,17 @@ export default {
         return total.plus(contract.userDeposited);
       }, BN(0));
     },
-    deprecatedContractAddresses() {
-      return getDeprecatedWithdrawalsAddresses();
-    },
   },
   watch: {
     userConnectedWalletAddress: {
       immediate: true,
       async handler(address) {
         if (address) {
+          // Update addresses when wallet connects (provider should be ready)
+          const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+          if (deprecatedAddresses && deprecatedAddresses.length > 0) {
+            this.deprecatedContractAddresses = deprecatedAddresses;
+          }
           await this.scanDeprecatedContracts();
           // Recalculate totals when wallet connects (provider should be ready now)
           await this.calculateTotals();
@@ -211,6 +214,8 @@ export default {
         try {
           const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
           if (deprecatedAddresses && deprecatedAddresses.length > 0) {
+            // Update component data with addresses for reactivity
+            this.deprecatedContractAddresses = deprecatedAddresses;
             const vEth2Contract = vEth2();
             if (vEth2Contract) {
               // Provider seems ready, calculate totals
@@ -229,6 +234,11 @@ export default {
       }
       
       // If all retries failed, try one more time (might work now)
+      // Also update addresses one more time
+      const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+      if (deprecatedAddresses && deprecatedAddresses.length > 0) {
+        this.deprecatedContractAddresses = deprecatedAddresses;
+      }
       await this.calculateTotals();
     },
 
@@ -316,6 +326,9 @@ export default {
           console.warn("No deprecated contract addresses found");
           return;
         }
+        
+        // Update component data with addresses for reactivity
+        this.deprecatedContractAddresses = deprecatedAddresses;
 
         let totalVeth2 = BN(0);
         let totalRedeemed = BN(0);
