@@ -169,6 +169,7 @@ export default {
       totalVeth2Staked: BN(0),
       totalEthRedeemed: BN(0),
       calculatingTotals: false,
+      deprecatedContractAddresses: [],
     };
   },
   computed: {
@@ -180,16 +181,20 @@ export default {
         return total.plus(contract.userDeposited);
       }, BN(0));
     },
-    deprecatedContractAddresses() {
-      return getDeprecatedWithdrawalsAddresses();
-    },
   },
   watch: {
     userConnectedWalletAddress: {
       immediate: true,
       async handler(address) {
         if (address) {
+          // Update addresses when wallet connects (provider should be ready)
+          const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+          if (deprecatedAddresses && deprecatedAddresses.length > 0) {
+            this.deprecatedContractAddresses = deprecatedAddresses;
+          }
           await this.scanDeprecatedContracts();
+          // Recalculate totals when wallet connects (provider should be ready now)
+          await this.calculateTotals();
         } else {
           this.deprecatedContracts = [];
         }
@@ -198,10 +203,44 @@ export default {
   },
   mounted: async function() {
     // Calculate totals on mount (works even if user isn't connected)
-    await this.calculateTotals();
+    // Wait a bit for provider to initialize, then retry if needed
+    await this.waitForProviderAndCalculateTotals();
   },
   methods: {
     parseBN,
+
+    async waitForProviderAndCalculateTotals(retries = 5, delay = 500) {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+          if (deprecatedAddresses && deprecatedAddresses.length > 0) {
+            // Update component data with addresses for reactivity
+            this.deprecatedContractAddresses = deprecatedAddresses;
+            const vEth2Contract = vEth2();
+            if (vEth2Contract) {
+              // Provider seems ready, calculate totals
+              await this.calculateTotals();
+              return;
+            }
+          }
+        } catch (error) {
+          console.warn(`Attempt ${i + 1} to calculate totals failed:`, error);
+        }
+        
+        // Wait before retrying
+        if (i < retries - 1) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+      
+      // If all retries failed, try one more time (might work now)
+      // Also update addresses one more time
+      const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+      if (deprecatedAddresses && deprecatedAddresses.length > 0) {
+        this.deprecatedContractAddresses = deprecatedAddresses;
+      }
+      await this.calculateTotals();
+    },
 
     async scanDeprecatedContracts() {
       this.loading = true;
@@ -278,14 +317,18 @@ export default {
       try {
         const vEth2Contract = vEth2();
         if (!vEth2Contract) {
-          console.warn("vETH2 contract not available for totals calculation");
+          console.warn("vETH2 contract not available for totals calculation - provider may not be initialized");
           return;
         }
 
         const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
         if (!deprecatedAddresses || deprecatedAddresses.length === 0) {
+          console.warn("No deprecated contract addresses found");
           return;
         }
+        
+        // Update component data with addresses for reactivity
+        this.deprecatedContractAddresses = deprecatedAddresses;
 
         let totalVeth2 = BN(0);
         let totalRedeemed = BN(0);
@@ -294,8 +337,13 @@ export default {
         const totalPromises = deprecatedAddresses.map(async (address) => {
           try {
             // Get vETH2 balance of the contract
-            const veth2Bal = await vEth2Contract.balanceOf(address);
-            const veth2BN = BN(veth2Bal.toString());
+            let veth2BN = BN(0);
+            try {
+              const veth2Bal = await vEth2Contract.balanceOf(address);
+              veth2BN = BN(veth2Bal.toString());
+            } catch (err) {
+              console.warn(`Error getting vETH2 balance for ${address}:`, err);
+            }
             
             // Get totalOut (total ETH redeemed) from the contract
             let totalOutBN = BN(0);
@@ -306,15 +354,17 @@ export default {
                 totalOutBN = BN(totalOut.toString());
               } catch (err) {
                 // Contract might not have totalOut method - this is OK for old contracts
-                if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION") {
+                if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION" && err.code !== "UNPREDICTABLE_GAS_LIMIT") {
                   console.warn(`Error getting totalOut for ${address}:`, err);
                 }
               }
+            } else {
+              console.warn(`Could not create contract instance for ${address}`);
             }
             
             return { veth2: veth2BN, redeemed: totalOutBN };
           } catch (error) {
-            console.warn(`Error calculating totals for ${address}:`, error);
+            console.error(`Error calculating totals for ${address}:`, error);
             return { veth2: BN(0), redeemed: BN(0) };
           }
         });
@@ -327,6 +377,9 @@ export default {
         this.totalEthRedeemed = totalRedeemed;
       } catch (error) {
         console.error("Error calculating totals:", error);
+        // Set to zero on error so UI shows 0 instead of undefined
+        this.totalVeth2Staked = BN(0);
+        this.totalEthRedeemed = BN(0);
       } finally {
         this.calculatingTotals = false;
       }
