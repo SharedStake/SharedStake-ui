@@ -124,6 +124,11 @@
           :total-veth2-staked="totalVeth2Staked"
           :total-eth-redeemed="totalEthRedeemed"
           :deprecated-contract-addresses="deprecatedContractAddresses"
+          :contract-details="contractDetails"
+          :total-eth-balance="totalEthBalance"
+          :total-redeemable="totalRedeemable"
+          :has-sg-eth-balance="hasSgEthBalance"
+          :total-sg-eth-balance="totalSgEthBalance"
         />
       </div>
     </section>
@@ -168,6 +173,10 @@ export default {
       deprecatedContracts: [],
       totalVeth2Staked: BN(0),
       totalEthRedeemed: BN(0),
+      totalEthBalance: BN(0),
+      totalRedeemable: BN(0),
+      totalSgEthBalance: BN(0),
+      contractDetails: [],
       calculatingTotals: false,
       deprecatedContractAddresses: [],
     };
@@ -180,6 +189,9 @@ export default {
       return this.deprecatedContracts.reduce((total, contract) => {
         return total.plus(contract.userDeposited);
       }, BN(0));
+    },
+    hasSgEthBalance() {
+      return this.totalSgEthBalance && this.totalSgEthBalance.gt(0);
     },
   },
   watch: {
@@ -332,9 +344,13 @@ export default {
 
         let totalVeth2 = BN(0);
         let totalRedeemed = BN(0);
+        let totalEthBal = BN(0);
+        let totalRedeem = BN(0);
+        let totalSgEth = BN(0);
+        const contractDetailsArray = [];
 
-        // Calculate totals for ALL deprecated contracts (not just user deposits)
-        const totalPromises = deprecatedAddresses.map(async (address) => {
+        // Calculate totals and details for ALL deprecated contracts (not just user deposits)
+        const totalPromises = deprecatedAddresses.map(async (address, index) => {
           try {
             // Get vETH2 balance of the contract
             let veth2BN = BN(0);
@@ -345,9 +361,13 @@ export default {
               console.warn(`Error getting vETH2 balance for ${address}:`, err);
             }
             
-            // Get totalOut (total ETH redeemed) from the contract
-            let totalOutBN = BN(0);
+            // Get contract instance
             const contract = createDeprecatedWithdrawalsContract(address, false);
+            let totalOutBN = BN(0);
+            let ethBalanceBN = BN(0);
+            let redeemableBN = BN(0);
+            let sgEthBalanceBN = BN(0);
+            
             if (contract) {
               try {
                 const totalOut = await contract.totalOut();
@@ -358,28 +378,106 @@ export default {
                   console.warn(`Error getting totalOut for ${address}:`, err);
                 }
               }
+              
+              // Try to get ETH balance
+              try {
+                const provider = contract.provider || contract.signer?.provider;
+                if (provider) {
+                  const ethBal = await provider.getBalance(address);
+                  ethBalanceBN = BN(ethBal.toString());
+                }
+              } catch (err) {
+                console.warn(`Error getting ETH balance for ${address}:`, err);
+              }
+              
+              // Try to get redeemable amount (if method exists)
+              try {
+                if (contract.redeemable) {
+                  const redeemable = await contract.redeemable();
+                  redeemableBN = BN(redeemable.toString());
+                }
+              } catch (err) {
+                // Method might not exist - this is OK
+              }
+              
+              // Try to get sgETH balance (if method exists)
+              try {
+                if (contract.sgEthBalance) {
+                  const sgEthBal = await contract.sgEthBalance();
+                  sgEthBalanceBN = BN(sgEthBal.toString());
+                }
+              } catch (err) {
+                // Method might not exist - this is OK
+              }
             } else {
               console.warn(`Could not create contract instance for ${address}`);
             }
             
-            return { veth2: veth2BN, redeemed: totalOutBN };
+            // Create contract detail object
+            const contractDetail = {
+              name: `Deprecated ${index + 1}`,
+              address,
+              veth2: veth2BN,
+              redeemed: totalOutBN,
+              ethBalance: ethBalanceBN,
+              redeemable: redeemableBN,
+              sgEthBalance: sgEthBalanceBN.gt(0) ? sgEthBalanceBN : null,
+            };
+            
+            return { 
+              detail: contractDetail,
+              veth2: veth2BN, 
+              redeemed: totalOutBN,
+              ethBalance: ethBalanceBN,
+              redeemable: redeemableBN,
+              sgEthBalance: sgEthBalanceBN,
+            };
           } catch (error) {
             console.error(`Error calculating totals for ${address}:`, error);
-            return { veth2: BN(0), redeemed: BN(0) };
+            return { 
+              detail: {
+                name: `Deprecated ${index + 1}`,
+                address,
+                veth2: BN(0),
+                redeemed: BN(0),
+                ethBalance: BN(0),
+                redeemable: BN(0),
+                sgEthBalance: null,
+              },
+              veth2: BN(0), 
+              redeemed: BN(0),
+              ethBalance: BN(0),
+              redeemable: BN(0),
+              sgEthBalance: BN(0),
+            };
           }
         });
 
         const totals = await Promise.all(totalPromises);
         totalVeth2 = totals.reduce((sum, t) => sum.plus(t.veth2), BN(0));
         totalRedeemed = totals.reduce((sum, t) => sum.plus(t.redeemed), BN(0));
+        totalEthBal = totals.reduce((sum, t) => sum.plus(t.ethBalance), BN(0));
+        totalRedeem = totals.reduce((sum, t) => sum.plus(t.redeemable), BN(0));
+        totalSgEth = totals.reduce((sum, t) => sum.plus(t.sgEthBalance), BN(0));
+        
+        // Extract contract details from results
+        contractDetailsArray.push(...totals.map(t => t.detail));
 
         this.totalVeth2Staked = totalVeth2;
         this.totalEthRedeemed = totalRedeemed;
+        this.totalEthBalance = totalEthBal;
+        this.totalRedeemable = totalRedeem;
+        this.totalSgEthBalance = totalSgEth;
+        this.contractDetails = contractDetailsArray;
       } catch (error) {
         console.error("Error calculating totals:", error);
         // Set to zero on error so UI shows 0 instead of undefined
         this.totalVeth2Staked = BN(0);
         this.totalEthRedeemed = BN(0);
+        this.totalEthBalance = BN(0);
+        this.totalRedeemable = BN(0);
+        this.totalSgEthBalance = BN(0);
+        this.contractDetails = [];
       } finally {
         this.calculatingTotals = false;
       }
