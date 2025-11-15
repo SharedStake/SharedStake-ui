@@ -81,6 +81,12 @@ let provider = null;
 let signer = null;
 let isInitialized = false;
 
+// Helper function to get provider/signer based on useSigner flag
+// Moved to module scope so it can be reused by createContractWithAddress
+const getContractProvider = (useSigner = false) => {
+    return useSigner && signer ? signer : provider;
+};
+
 // Function to initialize ethers.js and contracts
 const initializeEthers = async () => {
     if (window.ethereum && !isInitialized) {
@@ -196,11 +202,6 @@ const initializeEthers = async () => {
                     withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
                     RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
                 }
-            }
-
-            // Helper function to get provider/signer based on useSigner flag
-            const getContractProvider = (useSigner = false) => {
-                return useSigner && signer ? signer : provider;
             }
 
             // Always define contract creation functions
@@ -362,7 +363,7 @@ const createContractWithAddress = (address, abi, useSigner = false) => {
         return null;
     }
     // Reuse the same provider/signer logic as createContract
-    const contractProvider = useSigner && signer ? signer : provider;
+    const contractProvider = getContractProvider(useSigner);
     if (!contractProvider) {
         console.warn("Provider not available for contract:", abi, "->", address);
         return null;
