@@ -135,10 +135,6 @@
                 <span class="text-gray-400">ETH Balance:</span>
                 <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.ethBalance)) }}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-gray-400">Redeemable:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.redeemable)) }}</span>
-              </div>
             </div>
           </div>
           <!-- Totals Card -->
@@ -158,10 +154,6 @@
               <div class="flex justify-between">
                 <span class="text-gray-400">ETH Balance:</span>
                 <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalEthBalance)) }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-400">Redeemable:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalRedeemable)) }}</span>
               </div>
             </div>
           </div>
@@ -198,9 +190,6 @@
                       <th class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight">
                         ETH Balance
                       </th>
-                      <th class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight">
-                        Redeemable
-                      </th>
                     </tr>
                   </thead>
                   <tbody class="bg-gray-800 divide-y divide-gray-700">
@@ -234,15 +223,12 @@
                         <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                           {{ parseBN(getBN(contract.ethBalance)) }}
                         </td>
-                        <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
-                          {{ parseBN(getBN(contract.redeemable)) }}
-                        </td>
                       </tr>
                     </template>
                     <template v-else>
                       <tr class="bg-gray-800">
                         <td
-                          colspan="6"
+                          colspan="5"
                           class="px-1.5 py-2 text-center text-gray-400"
                         >
                           Loading contract data...
@@ -269,9 +255,6 @@
                       </td>
                       <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                         {{ parseBN(getBN(totalEthBalance)) }}
-                      </td>
-                      <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
-                        {{ parseBN(getBN(totalRedeemable)) }}
                       </td>
                     </tr>
                   </tfoot>
