@@ -198,13 +198,22 @@ const initializeEthers = async () => {
                 }
             }
 
+            // Helper function to get provider/signer based on useSigner flag
+            const getContractProvider = (useSigner = false) => {
+                return useSigner && signer ? signer : provider;
+            }
+
             // Always define contract creation functions
             createContract = (abi, address, useSigner = false) => {
                 if (
                     _addresses && _ABIs &&
                     _addresses[address] && _ABIs[abi]
                 ) {
-                    const contractProvider = useSigner && signer ? signer : provider;
+                    const contractProvider = getContractProvider(useSigner);
+                    if (!contractProvider) {
+                        console.warn("Provider not available for contract:", abi, "->", address);
+                        return null;
+                    }
                     return new ethers.Contract(_addresses[address], _ABIs[abi], contractProvider);
                 }
                     console.warn("Contract creation failed for:", abi, "->", address);
@@ -346,14 +355,26 @@ export const getDeprecatedWithdrawalsAddresses = () => {
     return deprecatedAddresses;
 };
 
-// Create contract instance for a specific address (for deprecated contracts)
-export const createDeprecatedWithdrawalsContract = (address, useSigner = false) => {
-    if (!address || !_ABIs || !_ABIs.withdrawals) {
-        console.warn("Cannot create deprecated contract:", address);
+// Helper function to create contract with address directly (reuses createContract provider/signer logic)
+const createContractWithAddress = (address, abi, useSigner = false) => {
+    if (!address || !_ABIs || !_ABIs[abi]) {
+        console.warn("Cannot create contract:", abi, "->", address);
         return null;
     }
+    // Reuse the same provider/signer logic as createContract
     const contractProvider = useSigner && signer ? signer : provider;
-    return new ethers.Contract(address, _ABIs.withdrawals, contractProvider);
+    if (!contractProvider) {
+        console.warn("Provider not available for contract:", abi, "->", address);
+        return null;
+    }
+    // Use the same contract creation pattern as createContract
+    return new ethers.Contract(address, _ABIs[abi], contractProvider);
+};
+
+// Create contract instance for a specific address (for deprecated contracts)
+// Reuses createContract logic via createContractWithAddress helper
+export const createDeprecatedWithdrawalsContract = (address, useSigner = false) => {
+    return createContractWithAddress(address, 'withdrawals', useSigner);
 };
 
 export const oldPools = {
