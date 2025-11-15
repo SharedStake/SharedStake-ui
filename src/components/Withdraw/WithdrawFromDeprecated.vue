@@ -49,7 +49,7 @@
         <!-- Contract list -->
         <div v-else-if="!loading && deprecatedContracts.length > 0" class="w-full">
           <p class="mb-4 text-sm font-semibold text-gray-300 text-center">
-            Found {{ deprecatedContracts.length }} deprecated contract(s) with your deposits
+            Found {{ deprecatedContracts.length }} contract(s) with your deposits
           </p>
 
           <div
@@ -60,7 +60,7 @@
             <div class="flex flex-col gap-3">
               <div>
                 <p class="text-sm font-semibold text-gray-400">
-                  Contract {{ index + 1 }}
+                  {{ contract.contractType === 'rollover' ? 'Rollover Contract' : `Deprecated Contract ${contract.deprecatedIndex || index + 1}` }}
                 </p>
                 <p class="text-xs text-gray-500 font-mono break-all">
                   {{ contract.address }}
@@ -104,7 +104,7 @@
           v-else-if="!loading && deprecatedContracts.length === 0"
           class="p-4 text-center text-gray-400"
         >
-          <p>No vETH2 deposits found in deprecated contracts for your address.</p>
+          <p>No vETH2 deposits found in deprecated contracts or rollover contract for your address.</p>
           <p class="text-sm mt-2">
             If you had deposits in old contracts, they may have already been withdrawn.
           </p>
@@ -124,6 +124,10 @@
           :total-veth2-staked="totalVeth2Staked"
           :total-eth-redeemed="totalEthRedeemed"
           :deprecated-contract-addresses="deprecatedContractAddresses"
+          :rollover-contract-address="rolloverContractAddress"
+          :rollover-veth2-input="rolloverVeth2Input"
+          :rollover-eth-redeemed="rolloverEthRedeemed"
+          :contract-details="contractDetails"
         />
       </div>
     </section>
@@ -142,10 +146,15 @@ import {
   getDeprecatedWithdrawalsAddresses,
   createDeprecatedWithdrawalsContract,
   vEth2,
+  rollovers,
+  sgETH,
 } from "@/contracts";
 
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
+
+// Virtual price constant for redemption calculations
+const VIRTUAL_PRICE = BN('1.08');
 
 export default {
   name: "WithdrawFromDeprecated",
@@ -170,6 +179,10 @@ export default {
       totalEthRedeemed: BN(0),
       calculatingTotals: false,
       deprecatedContractAddresses: [],
+      rolloverContractAddress: null,
+      rolloverVeth2Input: BN(0),
+      rolloverEthRedeemed: BN(0),
+      contractDetails: [],
     };
   },
   computed: {
@@ -256,7 +269,7 @@ export default {
           return;
         }
 
-        const contractPromises = deprecatedAddresses.map(async (address) => {
+        const contractPromises = deprecatedAddresses.map(async (address, index) => {
           try {
             const contract = createDeprecatedWithdrawalsContract(address, false);
             if (!contract) {
@@ -288,6 +301,8 @@ export default {
                 address,
                 contract,
                 userDeposited,
+                contractType: 'deprecated',
+                deprecatedIndex: index + 1, // Track deprecated contract number separately
               };
             }
             return null;
@@ -298,7 +313,51 @@ export default {
         });
 
         const results = await Promise.all(contractPromises);
-        this.deprecatedContracts = results.filter((r) => r !== null);
+        const deprecatedResults = results.filter((r) => r !== null);
+
+        // Also check rollover contract for user deposits
+        let rolloverResult = null;
+        try {
+          const rolloverContract = rollovers(false);
+          if (rolloverContract) {
+            const rolloverAddress = await rolloverContract.getAddress();
+            let userDeposited = BN(0);
+            try {
+              const userEntries = await rolloverContract.userEntries(
+                this.userConnectedWalletAddress
+              );
+              userDeposited = userEntries?.[0]
+                ? BN(userEntries[0].toString())
+                : BN(0);
+            } catch (err) {
+              // Contract might not have userEntries method or user has no deposits
+              if (err.code !== "BAD_DATA") {
+                console.warn(
+                  `Error checking user deposits for rollover contract:`,
+                  err
+                );
+              }
+            }
+
+            // Include rollover contract if user has deposits
+            if (userDeposited.gt(0)) {
+              rolloverResult = {
+                address: rolloverAddress,
+                contract: rolloverContract,
+                userDeposited,
+                contractType: 'rollover',
+              };
+            }
+          }
+        } catch (error) {
+          console.warn("Error scanning rollover contract:", error);
+        }
+
+        // Combine deprecated and rollover contracts
+        this.deprecatedContracts = [...deprecatedResults];
+        if (rolloverResult) {
+          this.deprecatedContracts.push(rolloverResult);
+        }
       } catch (error) {
         console.error("Error scanning deprecated contracts:", error);
         this.error = "Failed to scan deprecated contracts. Please try again.";
@@ -334,7 +393,7 @@ export default {
         let totalRedeemed = BN(0);
 
         // Calculate totals for ALL deprecated contracts (not just user deposits)
-        const totalPromises = deprecatedAddresses.map(async (address) => {
+        const totalPromises = deprecatedAddresses.map(async (address, index) => {
           try {
             // Get vETH2 balance of the contract
             let veth2BN = BN(0);
@@ -347,6 +406,7 @@ export default {
             
             // Get totalOut (total ETH redeemed) from the contract
             let totalOutBN = BN(0);
+            let ethBalanceBN = BN(0);
             const contract = createDeprecatedWithdrawalsContract(address, false);
             if (contract) {
               try {
@@ -361,11 +421,41 @@ export default {
             } else {
               console.warn(`Could not create contract instance for ${address}`);
             }
+
+            // Get ETH balance of the contract
+            try {
+              if (window.ethereum) {
+                const ethBal = await window.ethereum.request({
+                  method: "eth_getBalance",
+                  params: [address, "latest"],
+                });
+                ethBalanceBN = BN(ethBal);
+              }
+            } catch (err) {
+              console.warn(`Error getting ETH balance for ${address}:`, err);
+            }
+
+            // Calculate redeemable amount (vETH2 * 1.08 - redeemed)
+            const redeemableBN = veth2BN.multipliedBy(VIRTUAL_PRICE).minus(totalOutBN);
             
-            return { veth2: veth2BN, redeemed: totalOutBN };
+            return { 
+              address,
+              name: `Deprecated Contract ${index + 1}`,
+              veth2: veth2BN, 
+              redeemed: totalOutBN,
+              ethBalance: ethBalanceBN,
+              redeemable: redeemableBN.gt(0) ? redeemableBN : BN(0),
+            };
           } catch (error) {
             console.error(`Error calculating totals for ${address}:`, error);
-            return { veth2: BN(0), redeemed: BN(0) };
+            return { 
+              address,
+              name: `Deprecated Contract ${index + 1}`,
+              veth2: BN(0), 
+              redeemed: BN(0),
+              ethBalance: BN(0),
+              redeemable: BN(0),
+            };
           }
         });
 
@@ -373,6 +463,107 @@ export default {
         totalVeth2 = totals.reduce((sum, t) => sum.plus(t.veth2), BN(0));
         totalRedeemed = totals.reduce((sum, t) => sum.plus(t.redeemed), BN(0));
 
+        // Store contract details for table display
+        const contractDetailsList = [...totals];
+
+        // Calculate rollover contract totals
+        let rolloverAddress = null;
+        let rolloverVeth2InputBN = BN(0);
+        let rolloverEthRedeemedBN = BN(0);
+        let rolloverEthBalanceBN = BN(0);
+        let rolloverSgEthBalanceBN = BN(0);
+        try {
+          const rolloverContract = rollovers(false);
+          if (rolloverContract) {
+            try {
+              // Get rollover contract address
+              rolloverAddress = await rolloverContract.getAddress();
+              this.rolloverContractAddress = rolloverAddress;
+
+              // Get vETH2 balance (total input) of rollover contract
+              try {
+                const rolloverVeth2Bal = await vEth2Contract.balanceOf(rolloverAddress);
+                rolloverVeth2InputBN = BN(rolloverVeth2Bal.toString());
+                this.rolloverVeth2Input = rolloverVeth2InputBN;
+                // Add rollover contract vETH2 to total vETH2 staked
+                totalVeth2 = totalVeth2.plus(rolloverVeth2InputBN);
+              } catch (err) {
+                console.warn("Error getting rollover contract vETH2 balance:", err);
+                this.rolloverVeth2Input = BN(0);
+              }
+
+              // Add rollover contract totalOut to total ETH redeemed
+              try {
+                const rolloverTotalOut = await rolloverContract.totalOut();
+                rolloverEthRedeemedBN = BN(rolloverTotalOut.toString());
+                totalRedeemed = totalRedeemed.plus(rolloverEthRedeemedBN);
+                this.rolloverEthRedeemed = rolloverEthRedeemedBN;
+              } catch (err) {
+                // Rollover contract might not have totalOut method or might fail - this is OK
+                if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION" && err.code !== "UNPREDICTABLE_GAS_LIMIT") {
+                  console.warn("Error getting rollover contract totalOut:", err);
+                }
+                this.rolloverEthRedeemed = BN(0);
+              }
+
+              // Get ETH balance of rollover contract
+              try {
+                if (window.ethereum) {
+                  const ethBal = await window.ethereum.request({
+                    method: "eth_getBalance",
+                    params: [rolloverAddress, "latest"],
+                  });
+                  rolloverEthBalanceBN = BN(ethBal);
+                }
+              } catch (err) {
+                console.warn("Error getting rollover contract ETH balance:", err);
+              }
+
+              // Get sgETH balance (for rollover contract, output token is sgETH)
+              try {
+                const sgETHContract = sgETH();
+                if (sgETHContract) {
+                  const sgEthBal = await sgETHContract.balanceOf(rolloverAddress);
+                  rolloverSgEthBalanceBN = BN(sgEthBal.toString());
+                }
+              } catch (err) {
+                console.warn("Error getting rollover contract sgETH balance:", err);
+              }
+
+              // Calculate redeemable amount for rollover (vETH2 * 1.08 - redeemed)
+              const rolloverRedeemableBN = rolloverVeth2InputBN.multipliedBy(VIRTUAL_PRICE).minus(rolloverEthRedeemedBN);
+
+              // Add rollover contract to contract details
+              if (rolloverAddress) {
+                contractDetailsList.push({
+                  address: rolloverAddress,
+                  name: "Rollover Contract",
+                  veth2: rolloverVeth2InputBN,
+                  redeemed: rolloverEthRedeemedBN,
+                  ethBalance: rolloverEthBalanceBN,
+                  sgEthBalance: rolloverSgEthBalanceBN,
+                  redeemable: rolloverRedeemableBN.gt(0) ? rolloverRedeemableBN : BN(0),
+                });
+              }
+            } catch (err) {
+              console.warn("Error getting rollover contract address:", err);
+              this.rolloverContractAddress = null;
+              this.rolloverVeth2Input = BN(0);
+              this.rolloverEthRedeemed = BN(0);
+            }
+          } else {
+            this.rolloverContractAddress = null;
+            this.rolloverVeth2Input = BN(0);
+            this.rolloverEthRedeemed = BN(0);
+          }
+        } catch (error) {
+          console.warn("Error accessing rollover contract:", error);
+          this.rolloverContractAddress = null;
+          this.rolloverVeth2Input = BN(0);
+          this.rolloverEthRedeemed = BN(0);
+        }
+
+        this.contractDetails = contractDetailsList;
         this.totalVeth2Staked = totalVeth2;
         this.totalEthRedeemed = totalRedeemed;
       } catch (error) {
@@ -380,6 +571,10 @@ export default {
         // Set to zero on error so UI shows 0 instead of undefined
         this.totalVeth2Staked = BN(0);
         this.totalEthRedeemed = BN(0);
+        this.rolloverContractAddress = null;
+        this.rolloverVeth2Input = BN(0);
+        this.rolloverEthRedeemed = BN(0);
+        this.contractDetails = [];
       } finally {
         this.calculatingTotals = false;
       }
@@ -388,15 +583,23 @@ export default {
     handleWithdrawVeth(contractData) {
       return {
         abiCall: async (...args) => {
-          const contract = createDeprecatedWithdrawalsContract(
-            contractData.address,
-            true
-          );
+          let contract;
+          
+          // Use appropriate contract instance based on contract type
+          if (contractData.contractType === 'rollover') {
+            contract = rollovers(true);
+          } else {
+            contract = createDeprecatedWithdrawalsContract(
+              contractData.address,
+              true
+            );
+          }
+          
           if (!contract) {
             throw new Error("Contract not available");
           }
           
-          // Deprecated contracts may have different methods
+          // Deprecated contracts and rollover contracts may have different methods
           // Try common withdrawal methods in order
           const methods = ['withdraw', 'requestRedeem'];
           
