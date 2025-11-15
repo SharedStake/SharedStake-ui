@@ -62,18 +62,18 @@
         <template v-if="userTotalDeposited && userTotalDeposited.gt(0)">
           Yes! You have a total of {{
             parseBN(userTotalDeposited)
-          }} vETH2 deposited across deprecated contracts. 
+          }} vETH2 deposited across deprecated contracts and/or the rollover contract. 
           You can withdraw these using the buttons above.
         </template>
         <template v-else>
-          No deposits found in deprecated contracts for your address. 
+          No deposits found in deprecated contracts or rollover contract for your address. 
           <br>
           <br>
           If you believe you should have deposits but don't see them, it could mean:
           <br>
           • You never deposited vETH2 into the old contracts
           <br>
-          • You already withdrew your vETH2 from the deprecated contracts
+          • You already withdrew your vETH2 from the deprecated contracts or rollover contract
           <br>
           • Your deposits were in a different contract that isn't tracked here
           <br>

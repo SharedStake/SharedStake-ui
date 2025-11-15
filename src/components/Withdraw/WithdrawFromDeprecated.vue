@@ -49,7 +49,7 @@
         <!-- Contract list -->
         <div v-else-if="!loading && deprecatedContracts.length > 0" class="w-full">
           <p class="mb-4 text-sm font-semibold text-gray-300 text-center">
-            Found {{ deprecatedContracts.length }} deprecated contract(s) with your deposits
+            Found {{ deprecatedContracts.length }} contract(s) with your deposits
           </p>
 
           <div
@@ -60,7 +60,7 @@
             <div class="flex flex-col gap-3">
               <div>
                 <p class="text-sm font-semibold text-gray-400">
-                  Contract {{ index + 1 }}
+                  {{ contract.contractType === 'rollover' ? 'Rollover Contract' : `Deprecated Contract ${index + 1}` }}
                 </p>
                 <p class="text-xs text-gray-500 font-mono break-all">
                   {{ contract.address }}
@@ -104,7 +104,7 @@
           v-else-if="!loading && deprecatedContracts.length === 0"
           class="p-4 text-center text-gray-400"
         >
-          <p>No vETH2 deposits found in deprecated contracts for your address.</p>
+          <p>No vETH2 deposits found in deprecated contracts or rollover contract for your address.</p>
           <p class="text-sm mt-2">
             If you had deposits in old contracts, they may have already been withdrawn.
           </p>
@@ -298,6 +298,7 @@ export default {
                 address,
                 contract,
                 userDeposited,
+                contractType: 'deprecated',
               };
             }
             return null;
@@ -308,7 +309,51 @@ export default {
         });
 
         const results = await Promise.all(contractPromises);
-        this.deprecatedContracts = results.filter((r) => r !== null);
+        const deprecatedResults = results.filter((r) => r !== null);
+
+        // Also check rollover contract for user deposits
+        let rolloverResult = null;
+        try {
+          const rolloverContract = rollovers(false);
+          if (rolloverContract) {
+            const rolloverAddress = await rolloverContract.getAddress();
+            let userDeposited = BN(0);
+            try {
+              const userEntries = await rolloverContract.userEntries(
+                this.userConnectedWalletAddress
+              );
+              userDeposited = userEntries?.[0]
+                ? BN(userEntries[0].toString())
+                : BN(0);
+            } catch (err) {
+              // Contract might not have userEntries method or user has no deposits
+              if (err.code !== "BAD_DATA") {
+                console.warn(
+                  `Error checking user deposits for rollover contract:`,
+                  err
+                );
+              }
+            }
+
+            // Include rollover contract if user has deposits
+            if (userDeposited.gt(0)) {
+              rolloverResult = {
+                address: rolloverAddress,
+                contract: rolloverContract,
+                userDeposited,
+                contractType: 'rollover',
+              };
+            }
+          }
+        } catch (error) {
+          console.warn("Error scanning rollover contract:", error);
+        }
+
+        // Combine deprecated and rollover contracts
+        this.deprecatedContracts = [...deprecatedResults];
+        if (rolloverResult) {
+          this.deprecatedContracts.push(rolloverResult);
+        }
       } catch (error) {
         console.error("Error scanning deprecated contracts:", error);
         this.error = "Failed to scan deprecated contracts. Please try again.";
@@ -536,15 +581,23 @@ export default {
     handleWithdrawVeth(contractData) {
       return {
         abiCall: async (...args) => {
-          const contract = createDeprecatedWithdrawalsContract(
-            contractData.address,
-            true
-          );
+          let contract;
+          
+          // Use appropriate contract instance based on contract type
+          if (contractData.contractType === 'rollover') {
+            contract = rollovers(true);
+          } else {
+            contract = createDeprecatedWithdrawalsContract(
+              contractData.address,
+              true
+            );
+          }
+          
           if (!contract) {
             throw new Error("Contract not available");
           }
           
-          // Deprecated contracts may have different methods
+          // Deprecated contracts and rollover contracts may have different methods
           // Try common withdrawal methods in order
           const methods = ['withdraw', 'requestRedeem'];
           
