@@ -60,7 +60,7 @@
             <div class="flex flex-col gap-3">
               <div>
                 <p class="text-sm font-semibold text-gray-400">
-                  {{ contract.contractType === 'rollover' ? 'Rollover Contract' : `Deprecated Contract ${index + 1}` }}
+                  {{ contract.contractType === 'rollover' ? 'Rollover Contract' : `Deprecated Contract ${contract.deprecatedIndex || index + 1}` }}
                 </p>
                 <p class="text-xs text-gray-500 font-mono break-all">
                   {{ contract.address }}
@@ -152,6 +152,9 @@ import {
 
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
 BN.config({ EXPONENTIAL_AT: 100 });
+
+// Virtual price constant for redemption calculations
+const VIRTUAL_PRICE = BN('1.08');
 
 export default {
   name: "WithdrawFromDeprecated",
@@ -266,7 +269,7 @@ export default {
           return;
         }
 
-        const contractPromises = deprecatedAddresses.map(async (address) => {
+        const contractPromises = deprecatedAddresses.map(async (address, index) => {
           try {
             const contract = createDeprecatedWithdrawalsContract(address, false);
             if (!contract) {
@@ -299,6 +302,7 @@ export default {
                 contract,
                 userDeposited,
                 contractType: 'deprecated',
+                deprecatedIndex: index + 1, // Track deprecated contract number separately
               };
             }
             return null;
@@ -432,8 +436,7 @@ export default {
             }
 
             // Calculate redeemable amount (vETH2 * 1.08 - redeemed)
-            const virtualPrice = BN('1.08');
-            const redeemableBN = veth2BN.multipliedBy(virtualPrice).minus(totalOutBN);
+            const redeemableBN = veth2BN.multipliedBy(VIRTUAL_PRICE).minus(totalOutBN);
             
             return { 
               address,
@@ -528,8 +531,7 @@ export default {
               }
 
               // Calculate redeemable amount for rollover (vETH2 * 1.08 - redeemed)
-              const virtualPrice = BN('1.08');
-              const rolloverRedeemableBN = rolloverVeth2InputBN.multipliedBy(virtualPrice).minus(rolloverEthRedeemedBN);
+              const rolloverRedeemableBN = rolloverVeth2InputBN.multipliedBy(VIRTUAL_PRICE).minus(rolloverEthRedeemedBN);
 
               // Add rollover contract to contract details
               if (rolloverAddress) {

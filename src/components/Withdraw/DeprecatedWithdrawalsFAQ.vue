@@ -248,19 +248,30 @@ export default {
   ],
   computed: {
     hasSgEthBalance() {
-      return this.contractDetails && this.contractDetails.some(c => c.sgEthBalance && c.sgEthBalance.gt(0));
+      return this.contractDetails && this.contractDetails.some(c => 
+        c.sgEthBalance && BN.isBigNumber(c.sgEthBalance) && c.sgEthBalance.gt(0)
+      );
     },
     totalEthBalance() {
       if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
-      return this.contractDetails.reduce((sum, c) => sum.plus(c.ethBalance || BN(0)), BN(0));
+      return this.contractDetails.reduce((sum, c) => {
+        const balance = (c.ethBalance && BN.isBigNumber(c.ethBalance)) ? c.ethBalance : BN(0);
+        return sum.plus(balance);
+      }, BN(0));
     },
     totalRedeemable() {
       if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
-      return this.contractDetails.reduce((sum, c) => sum.plus(c.redeemable || BN(0)), BN(0));
+      return this.contractDetails.reduce((sum, c) => {
+        const redeemable = (c.redeemable && BN.isBigNumber(c.redeemable)) ? c.redeemable : BN(0);
+        return sum.plus(redeemable);
+      }, BN(0));
     },
     totalSgEthBalance() {
       if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
-      return this.contractDetails.reduce((sum, c) => sum.plus(c.sgEthBalance || BN(0)), BN(0));
+      return this.contractDetails.reduce((sum, c) => {
+        const balance = (c.sgEthBalance && BN.isBigNumber(c.sgEthBalance)) ? c.sgEthBalance : BN(0);
+        return sum.plus(balance);
+      }, BN(0));
     },
   },
   methods: {
