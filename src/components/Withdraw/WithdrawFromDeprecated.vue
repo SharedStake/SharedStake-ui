@@ -33,7 +33,10 @@
         </div>
 
         <!-- Loading state -->
-        <div v-if="loading" class="my-6">
+        <div
+          v-if="loading"
+          class="my-6"
+        >
           <ImageVue
             :src="'loading.svg'"
             :size="'45px'"
@@ -47,7 +50,10 @@
         <ConnectButton v-if="!userConnectedWalletAddress" />
 
         <!-- Contract list -->
-        <div v-else-if="!loading && deprecatedContracts.length > 0" class="w-full">
+        <div
+          v-else-if="!loading && deprecatedContracts.length > 0"
+          class="w-full"
+        >
           <p class="mb-4 text-sm font-semibold text-gray-300 text-center">
             Found {{ deprecatedContracts.length }} contract(s) with your deposits
           </p>
@@ -115,7 +121,9 @@
           v-if="error"
           class="p-4 mt-4 text-center bg-red-900 border border-red-700 rounded-lg"
         >
-          <p class="text-sm text-red-200">{{ error }}</p>
+          <p class="text-sm text-red-200">
+            {{ error }}
+          </p>
         </div>
 
         <!-- FAQ Section -->
