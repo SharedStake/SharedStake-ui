@@ -59,13 +59,13 @@
         Do I have vETH2 deposited in deprecated contracts?
       </template>
       <template #answer>
-        <template v-if="userTotalDeposited && userTotalDeposited.gt(0)">
+        <div v-if="userTotalDeposited && userTotalDeposited.gt(0)">
           Yes! You have a total of {{
             parseBN(userTotalDeposited)
           }} vETH2 deposited across deprecated contracts and/or the rollover contract. 
           You can withdraw these using the buttons above.
-        </template>
-        <template v-else>
+        </div>
+        <div v-else>
           No deposits found in deprecated contracts or rollover contract for your address. 
           <br>
           <br>
@@ -79,7 +79,7 @@
           <br>
           <br>
           You can check your transaction history on Etherscan to verify which contracts you interacted with.
-        </template>
+        </div>
       </template>
     </QuestionAnswer>
 
@@ -174,8 +174,8 @@
         </div>
 
         <!-- Desktop Table Layout -->
-        <div class="hidden md:block mt-4 -mx-2">
-          <div class="overflow-x-auto px-2">
+        <div class="hidden md:block mt-4">
+          <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
               <div class="overflow-hidden border border-gray-700 rounded-lg">
                 <table class="min-w-full divide-y divide-gray-700 text-sm">
