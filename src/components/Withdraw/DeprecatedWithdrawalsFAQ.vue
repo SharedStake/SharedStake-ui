@@ -59,9 +59,9 @@
         Do I have vETH2 deposited in deprecated contracts?
       </template>
       <template #answer>
-        <div v-if="userTotalDeposited && userTotalDeposited.gt(0)">
+        <div v-if="userTotalDeposited && BN.isBigNumber(userTotalDeposited) && userTotalDeposited.gt(0)">
           Yes! You have a total of {{
-            parseBN(userTotalDeposited)
+            parseBN(getBN(userTotalDeposited))
           }} vETH2 deposited across deprecated contracts and/or the rollover contract. 
           You can withdraw these using the buttons above.
         </div>
@@ -89,12 +89,12 @@
       </template>
       <template #answer>
         Across deprecated withdrawal contracts and the rollover contract, there is a total of {{
-          parseBN(totalVeth2Staked || BN(0))
+          parseBN(getBN(totalVeth2Staked))
         }} vETH2 deposited.
         <br>
         <br>
         From these contracts, a total of {{
-          parseBN(totalEthRedeemed || BN(0))
+          parseBN(getBN(totalEthRedeemed))
         }} ETH has already been redeemed.
         <br>
         <br>
@@ -120,23 +120,23 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">vETH2 Deposited:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(contract.veth2 || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.veth2)) }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">ETH Redeemed:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(contract.redeemed || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.redeemed)) }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">ETH Balance:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(contract.ethBalance || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.ethBalance)) }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">Redeemable:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(contract.redeemable || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.redeemable)) }}</span>
               </div>
               <div v-if="hasSgEthBalance && contract.sgEthBalance" class="flex justify-between">
                 <span class="text-gray-400">sgETH Balance:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(contract.sgEthBalance) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.sgEthBalance)) }}</span>
               </div>
             </div>
           </div>
@@ -146,23 +146,23 @@
             <div class="space-y-2 text-xs">
               <div class="flex justify-between">
                 <span class="text-gray-400">vETH2 Deposited:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(totalVeth2Staked || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalVeth2Staked)) }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">ETH Redeemed:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(totalEthRedeemed || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalEthRedeemed)) }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">ETH Balance:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(totalEthBalance || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalEthBalance)) }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">Redeemable:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(totalRedeemable || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalRedeemable)) }}</span>
               </div>
               <div v-if="hasSgEthBalance" class="flex justify-between">
                 <span class="text-gray-400">sgETH Balance:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(totalSgEthBalance || BN(0)) }}</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalSgEthBalance)) }}</span>
               </div>
             </div>
           </div>
@@ -212,22 +212,22 @@
                           </a>
                         </td>
                         <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                          {{ parseBN(contract.veth2 || BN(0)) }}
+                          {{ parseBN(getBN(contract.veth2)) }}
                         </td>
                         <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                          {{ parseBN(contract.redeemed || BN(0)) }}
+                          {{ parseBN(getBN(contract.redeemed)) }}
                         </td>
                         <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                          {{ parseBN(contract.ethBalance || BN(0)) }}
+                          {{ parseBN(getBN(contract.ethBalance)) }}
                         </td>
                         <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                          {{ parseBN(contract.redeemable || BN(0)) }}
+                          {{ parseBN(getBN(contract.redeemable)) }}
                         </td>
                         <td 
                           v-if="hasSgEthBalance"
                           class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono"
                         >
-                          {{ contract.sgEthBalance ? parseBN(contract.sgEthBalance) : 'N/A' }}
+                          {{ contract.sgEthBalance ? parseBN(getBN(contract.sgEthBalance)) : 'N/A' }}
                         </td>
                       </tr>
                     </template>
@@ -243,22 +243,22 @@
                     <tr class="font-semibold border-t-2 border-gray-600">
                       <td class="px-3 py-3 text-gray-200" colspan="2">Total</td>
                       <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                        {{ parseBN(totalVeth2Staked || BN(0)) }}
+                        {{ parseBN(getBN(totalVeth2Staked)) }}
                       </td>
                       <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                        {{ parseBN(totalEthRedeemed || BN(0)) }}
+                        {{ parseBN(getBN(totalEthRedeemed)) }}
                       </td>
                       <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                        {{ parseBN(totalEthBalance || BN(0)) }}
+                        {{ parseBN(getBN(totalEthBalance)) }}
                       </td>
                       <td class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono">
-                        {{ parseBN(totalRedeemable || BN(0)) }}
+                        {{ parseBN(getBN(totalRedeemable)) }}
                       </td>
                       <td 
                         v-if="hasSgEthBalance"
                         class="px-3 py-3 whitespace-nowrap text-right text-gray-200 font-mono"
                       >
-                        {{ parseBN(totalSgEthBalance || BN(0)) }}
+                        {{ parseBN(getBN(totalSgEthBalance)) }}
                       </td>
                     </tr>
                   </tfoot>
@@ -332,7 +332,8 @@ export default {
   ],
   computed: {
     hasSgEthBalance() {
-      return this.contractDetails && this.contractDetails.some(c => 
+      if (!this.contractDetails || this.contractDetails.length === 0) return false;
+      return this.contractDetails.some(c => 
         c.sgEthBalance && BN.isBigNumber(c.sgEthBalance) && c.sgEthBalance.gt(0)
       );
     },
@@ -360,6 +361,10 @@ export default {
   },
   methods: {
     parseBN,
+    getBN(value) {
+      if (!value || !BN.isBigNumber(value)) return BN(0);
+      return value;
+    },
   },
 }
 </script>
