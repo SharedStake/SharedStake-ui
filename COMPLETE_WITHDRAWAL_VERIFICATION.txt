@@ -1,0 +1,69 @@
+====================================================================================================
+COMPREHENSIVE VALIDATOR WITHDRAWAL VERIFICATION REPORT
+====================================================================================================
+Generated: 2025-11-15T14:46:12.673Z
+
+EXECUTIVE SUMMARY
+----------------------------------------------------------------------------------------------------
+Withdrawal Address: 0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e
+Total Validators Analyzed: 500
+Active Validators: 40
+Exited Validators: 460
+
+ACTIVE VALIDATOR STATUS
+----------------------------------------------------------------------------------------------------
+Total Active Balance: 1341.6639 ETH
+  - With ETH1 Withdrawal Address: 30 validators
+    Balance: 960.2049 ETH
+  - With BLS Credentials (cannot withdraw yet): 10 validators
+    Balance: 381.4590 ETH
+
+EXITED VALIDATOR WITHDRAWALS
+----------------------------------------------------------------------------------------------------
+Total Exited Validators: 460
+Sampled for Verification: 50
+Validators with Withdrawals Found: 0
+
+Note: Could not fetch withdrawal data from API.
+This may be due to API limitations or withdrawals not yet processed.
+Minimum Expected (32 ETH × 460): 14720.0000 ETH
+
+VERIFICATION METHODS
+----------------------------------------------------------------------------------------------------
+To verify actual withdrawals on-chain:
+
+1. Beacon Chain Explorer (Best for withdrawal details):
+   https://beaconscan.com/withdrawals?address=0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e
+   - Shows all withdrawals from beacon chain
+   - Includes validator indices and amounts
+   - Shows withdrawal epochs and slots
+
+2. Ethereum Mainnet Explorer:
+   https://etherscan.io/address/0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e
+   - Shows all incoming transactions
+   - Current balance
+   - Transaction history
+
+3. Check Individual Validators:
+   https://beaconscan.com/validator/[INDEX]/withdrawals
+   Example: https://beaconscan.com/validator/99532/withdrawals
+
+VALIDATION CHECKLIST
+----------------------------------------------------------------------------------------------------
+□ Visit beaconscan.com withdrawal page for the address
+□ Count total withdrawal transactions
+□ Sum all withdrawal amounts
+□ Verify count matches ~460 validators (may be more due to partial withdrawals)
+□ Verify all withdrawals went to correct address
+□ Check for any withdrawals to other addresses
+□ Compare total with estimated range
+
+IMPORTANT NOTES
+----------------------------------------------------------------------------------------------------
+1. Withdrawal Delay: After exit, validators wait for withdrawal delay before funds are withdrawn.
+2. Partial Withdrawals: Validators with balances >32 ETH may have had partial withdrawals.
+3. Multiple Transactions: Each validator may have multiple withdrawal transactions.
+4. Current Balance: Address balance may include active validator rewards accumulating.
+5. BLS Validators: 10 active validators cannot withdraw until credentials are updated.
+
+====================================================================================================
