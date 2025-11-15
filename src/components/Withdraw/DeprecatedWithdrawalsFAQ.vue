@@ -197,29 +197,29 @@
                 <table class="w-full divide-y divide-gray-700 text-xs">
                   <thead class="bg-gray-900">
                     <tr>
-                      <th class="px-2 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                      <th class="px-1.5 py-1.5 text-left text-xs font-semibold text-gray-300 uppercase tracking-tight">
                         Contract
                       </th>
-                      <th class="px-2 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                      <th class="px-1.5 py-1.5 text-left text-xs font-semibold text-gray-300 uppercase tracking-tight">
                         Address
                       </th>
-                      <th class="px-2 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">
-                        vETH2 Deposited
+                      <th class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight">
+                        vETH2
                       </th>
-                      <th class="px-2 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                      <th class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight">
                         ETH Redeemed
                       </th>
-                      <th class="px-2 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                      <th class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight">
                         ETH Balance
                       </th>
-                      <th class="px-2 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                      <th class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight">
                         Redeemable
                       </th>
                       <th
                         v-if="hasSgEthBalance"
-                        class="px-2 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider"
+                        class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight"
                       >
-                        sgETH Balance
+                        sgETH
                       </th>
                     </tr>
                   </thead>
@@ -231,10 +231,10 @@
                         :class="index % 2 === 0 ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-900 hover:bg-gray-800'"
                         class="transition-colors"
                       >
-                        <td class="px-2 py-2 whitespace-nowrap text-gray-200 font-medium text-xs">
+                        <td class="px-1.5 py-1.5 whitespace-nowrap text-gray-200 font-medium text-xs">
                           {{ contract.name }}
                         </td>
-                        <td class="px-2 py-2 max-w-[200px]">
+                        <td class="px-1.5 py-1.5 max-w-[180px]">
                           <a
                             :href="`https://etherscan.io/address/${contract.address}`"
                             target="_blank"
@@ -245,21 +245,21 @@
                             {{ contract.address.slice(0, 6) }}...{{ contract.address.slice(-4) }}
                           </a>
                         </td>
-                        <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                        <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                           {{ parseBN(getBN(contract.veth2)) }}
                         </td>
-                        <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                        <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                           {{ parseBN(getBN(contract.redeemed)) }}
                         </td>
-                        <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                        <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                           {{ parseBN(getBN(contract.ethBalance)) }}
                         </td>
-                        <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                        <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                           {{ parseBN(getBN(contract.redeemable)) }}
                         </td>
                         <td 
                           v-if="hasSgEthBalance"
-                          class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs"
+                          class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs"
                         >
                           {{ contract.sgEthBalance ? parseBN(getBN(contract.sgEthBalance)) : 'N/A' }}
                         </td>
@@ -269,7 +269,7 @@
                       <tr class="bg-gray-800">
                         <td
                           :colspan="hasSgEthBalance ? 7 : 6"
-                          class="px-2 py-3 text-center text-gray-400"
+                          class="px-1.5 py-2 text-center text-gray-400"
                         >
                           Loading contract data...
                         </td>
@@ -282,26 +282,26 @@
                   >
                     <tr class="font-semibold border-t-2 border-gray-600">
                       <td
-                        class="px-2 py-2 text-gray-200 text-xs"
+                        class="px-1.5 py-1.5 text-gray-200 text-xs"
                         colspan="2"
                       >
                         Total
                       </td>
-                      <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                      <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                         {{ parseBN(getBN(totalVeth2Staked)) }}
                       </td>
-                      <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                      <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                         {{ parseBN(getBN(totalEthRedeemed)) }}
                       </td>
-                      <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                      <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                         {{ parseBN(getBN(totalEthBalance)) }}
                       </td>
-                      <td class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
+                      <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                         {{ parseBN(getBN(totalRedeemable)) }}
                       </td>
                       <td 
                         v-if="hasSgEthBalance"
-                        class="px-2 py-2 whitespace-nowrap text-right text-gray-200 font-mono text-xs"
+                        class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs"
                       >
                         {{ parseBN(getBN(totalSgEthBalance)) }}
                       </td>
