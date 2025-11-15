@@ -88,7 +88,7 @@
         How much vETH2 is staked in deprecated contracts?
       </template>
       <template #answer>
-        Across both deprecated withdrawal contracts, there is a total of {{
+        Across deprecated withdrawal contracts and the rollover contract, there is a total of {{
           parseBN(totalVeth2Staked || BN(0))
         }} vETH2 deposited.
         <br>

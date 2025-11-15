@@ -394,6 +394,8 @@ export default {
                 const rolloverVeth2Bal = await vEth2Contract.balanceOf(rolloverAddress);
                 rolloverVeth2InputBN = BN(rolloverVeth2Bal.toString());
                 this.rolloverVeth2Input = rolloverVeth2InputBN;
+                // Add rollover contract vETH2 to total vETH2 staked
+                totalVeth2 = totalVeth2.plus(rolloverVeth2InputBN);
               } catch (err) {
                 console.warn("Error getting rollover contract vETH2 balance:", err);
                 this.rolloverVeth2Input = BN(0);
