@@ -139,13 +139,6 @@
                 <span class="text-gray-400">Redeemable:</span>
                 <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.redeemable)) }}</span>
               </div>
-              <div
-                v-if="hasSgEthBalance && contract.sgEthBalance"
-                class="flex justify-between"
-              >
-                <span class="text-gray-400">sgETH Balance:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(getBN(contract.sgEthBalance)) }}</span>
-              </div>
             </div>
           </div>
           <!-- Totals Card -->
@@ -169,13 +162,6 @@
               <div class="flex justify-between">
                 <span class="text-gray-400">Redeemable:</span>
                 <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalRedeemable)) }}</span>
-              </div>
-              <div
-                v-if="hasSgEthBalance"
-                class="flex justify-between"
-              >
-                <span class="text-gray-400">sgETH Balance:</span>
-                <span class="text-gray-200 font-mono">{{ parseBN(getBN(totalSgEthBalance)) }}</span>
               </div>
             </div>
           </div>
@@ -215,12 +201,6 @@
                       <th class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight">
                         Redeemable
                       </th>
-                      <th
-                        v-if="hasSgEthBalance"
-                        class="px-1.5 py-1.5 text-right text-xs font-semibold text-gray-300 uppercase tracking-tight"
-                      >
-                        sgETH
-                      </th>
                     </tr>
                   </thead>
                   <tbody class="bg-gray-800 divide-y divide-gray-700">
@@ -257,18 +237,12 @@
                         <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                           {{ parseBN(getBN(contract.redeemable)) }}
                         </td>
-                        <td 
-                          v-if="hasSgEthBalance"
-                          class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs"
-                        >
-                          {{ contract.sgEthBalance ? parseBN(getBN(contract.sgEthBalance)) : 'N/A' }}
-                        </td>
                       </tr>
                     </template>
                     <template v-else>
                       <tr class="bg-gray-800">
                         <td
-                          :colspan="hasSgEthBalance ? 7 : 6"
+                          colspan="6"
                           class="px-1.5 py-2 text-center text-gray-400"
                         >
                           Loading contract data...
@@ -298,12 +272,6 @@
                       </td>
                       <td class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs">
                         {{ parseBN(getBN(totalRedeemable)) }}
-                      </td>
-                      <td 
-                        v-if="hasSgEthBalance"
-                        class="px-1.5 py-1.5 whitespace-nowrap text-right text-gray-200 font-mono text-xs"
-                      >
-                        {{ parseBN(getBN(totalSgEthBalance)) }}
                       </td>
                     </tr>
                   </tfoot>
