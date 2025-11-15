@@ -99,13 +99,16 @@
         <br>
         <br>
         <div class="overflow-x-auto mt-4">
-          <table class="w-full text-sm border-collapse border border-gray-700">
+          <table class="w-full text-sm border-collapse border border-gray-700 rounded-lg overflow-hidden">
             <thead>
               <tr class="bg-gray-900">
-                <th class="border border-gray-700 px-4 py-2 text-left text-gray-300 font-semibold">Contract</th>
-                <th class="border border-gray-700 px-4 py-2 text-left text-gray-300 font-semibold">Address</th>
-                <th class="border border-gray-700 px-4 py-2 text-right text-gray-300 font-semibold">vETH2 Deposited</th>
-                <th class="border border-gray-700 px-4 py-2 text-right text-gray-300 font-semibold">ETH Redeemed</th>
+                <th class="border border-gray-700 px-4 py-3 text-left text-gray-300 font-semibold">Contract</th>
+                <th class="border border-gray-700 px-4 py-3 text-left text-gray-300 font-semibold">Address</th>
+                <th class="border border-gray-700 px-4 py-3 text-right text-gray-300 font-semibold">vETH2 Deposited</th>
+                <th class="border border-gray-700 px-4 py-3 text-right text-gray-300 font-semibold">ETH Redeemed</th>
+                <th class="border border-gray-700 px-4 py-3 text-right text-gray-300 font-semibold">ETH Balance</th>
+                <th class="border border-gray-700 px-4 py-3 text-right text-gray-300 font-semibold">Redeemable</th>
+                <th class="border border-gray-700 px-4 py-3 text-right text-gray-300 font-semibold" v-if="hasSgEthBalance">sgETH Balance</th>
               </tr>
             </thead>
             <tbody>
@@ -113,43 +116,68 @@
                 <tr
                   v-for="(contract, index) in contractDetails"
                   :key="contract.address"
-                  :class="index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-900'"
+                  :class="index % 2 === 0 ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-900 hover:bg-gray-800'"
+                  class="transition-colors"
                 >
-                  <td class="border border-gray-700 px-4 py-2 text-gray-200">
+                  <td class="border border-gray-700 px-4 py-3 text-gray-200 font-medium">
                     {{ contract.name }}
                   </td>
-                  <td class="border border-gray-700 px-4 py-2">
+                  <td class="border border-gray-700 px-4 py-3">
                     <a
                       :href="`https://etherscan.io/address/${contract.address}`"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="text-blue-300 underline hover:text-blue-200 font-mono text-xs break-all"
+                      class="text-blue-300 underline hover:text-blue-200 font-mono text-xs break-all transition-colors"
                     >
                       {{ contract.address }}
                     </a>
                   </td>
-                  <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+                  <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
                     {{ parseBN(contract.veth2 || BN(0)) }}
                   </td>
-                  <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+                  <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
                     {{ parseBN(contract.redeemed || BN(0)) }}
+                  </td>
+                  <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
+                    {{ parseBN(contract.ethBalance || BN(0)) }}
+                  </td>
+                  <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
+                    {{ parseBN(contract.redeemable || BN(0)) }}
+                  </td>
+                  <td 
+                    v-if="hasSgEthBalance"
+                    class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono"
+                  >
+                    {{ contract.sgEthBalance ? parseBN(contract.sgEthBalance) : 'N/A' }}
                   </td>
                 </tr>
               </template>
               <tr v-else class="bg-gray-800">
-                <td colspan="4" class="border border-gray-700 px-4 py-2 text-center text-gray-400">
+                <td :colspan="hasSgEthBalance ? 7 : 6" class="border border-gray-700 px-4 py-4 text-center text-gray-400">
                   Loading contract data...
                 </td>
               </tr>
             </tbody>
             <tfoot v-if="contractDetails && contractDetails.length > 0">
-              <tr class="bg-gray-900 font-semibold">
-                <td class="border border-gray-700 px-4 py-2 text-gray-200" colspan="2">Total</td>
-                <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+              <tr class="bg-gray-900 font-semibold border-t-2 border-gray-600">
+                <td class="border border-gray-700 px-4 py-3 text-gray-200" colspan="2">Total</td>
+                <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
                   {{ parseBN(totalVeth2Staked || BN(0)) }}
                 </td>
-                <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+                <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
                   {{ parseBN(totalEthRedeemed || BN(0)) }}
+                </td>
+                <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
+                  {{ parseBN(totalEthBalance || BN(0)) }}
+                </td>
+                <td class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono">
+                  {{ parseBN(totalRedeemable || BN(0)) }}
+                </td>
+                <td 
+                  v-if="hasSgEthBalance"
+                  class="border border-gray-700 px-4 py-3 text-right text-gray-200 font-mono"
+                >
+                  {{ parseBN(totalSgEthBalance || BN(0)) }}
                 </td>
               </tr>
             </tfoot>
@@ -218,6 +246,23 @@ export default {
     'rolloverEthRedeemed',
     'contractDetails'
   ],
+  computed: {
+    hasSgEthBalance() {
+      return this.contractDetails && this.contractDetails.some(c => c.sgEthBalance && c.sgEthBalance.gt(0));
+    },
+    totalEthBalance() {
+      if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
+      return this.contractDetails.reduce((sum, c) => sum.plus(c.ethBalance || BN(0)), BN(0));
+    },
+    totalRedeemable() {
+      if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
+      return this.contractDetails.reduce((sum, c) => sum.plus(c.redeemable || BN(0)), BN(0));
+    },
+    totalSgEthBalance() {
+      if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
+      return this.contractDetails.reduce((sum, c) => sum.plus(c.sgEthBalance || BN(0)), BN(0));
+    },
+  },
   methods: {
     parseBN,
   },

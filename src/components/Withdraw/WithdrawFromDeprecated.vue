@@ -147,6 +147,7 @@ import {
   createDeprecatedWithdrawalsContract,
   vEth2,
   rollovers,
+  sgETH,
 } from "@/contracts";
 
 BN.config({ ROUNDING_MODE: BN.ROUND_DOWN });
@@ -356,6 +357,7 @@ export default {
             
             // Get totalOut (total ETH redeemed) from the contract
             let totalOutBN = BN(0);
+            let ethBalanceBN = BN(0);
             const contract = createDeprecatedWithdrawalsContract(address, false);
             if (contract) {
               try {
@@ -370,12 +372,31 @@ export default {
             } else {
               console.warn(`Could not create contract instance for ${address}`);
             }
+
+            // Get ETH balance of the contract
+            try {
+              if (window.ethereum) {
+                const ethBal = await window.ethereum.request({
+                  method: "eth_getBalance",
+                  params: [address, "latest"],
+                });
+                ethBalanceBN = BN(ethBal);
+              }
+            } catch (err) {
+              console.warn(`Error getting ETH balance for ${address}:`, err);
+            }
+
+            // Calculate redeemable amount (vETH2 * 1.08 - redeemed)
+            const virtualPrice = BN('1.08');
+            const redeemableBN = veth2BN.multipliedBy(virtualPrice).minus(totalOutBN);
             
             return { 
               address,
               name: `Deprecated Contract ${index + 1}`,
               veth2: veth2BN, 
-              redeemed: totalOutBN 
+              redeemed: totalOutBN,
+              ethBalance: ethBalanceBN,
+              redeemable: redeemableBN.gt(0) ? redeemableBN : BN(0),
             };
           } catch (error) {
             console.error(`Error calculating totals for ${address}:`, error);
@@ -383,7 +404,9 @@ export default {
               address,
               name: `Deprecated Contract ${index + 1}`,
               veth2: BN(0), 
-              redeemed: BN(0) 
+              redeemed: BN(0),
+              ethBalance: BN(0),
+              redeemable: BN(0),
             };
           }
         });
@@ -399,6 +422,8 @@ export default {
         let rolloverAddress = null;
         let rolloverVeth2InputBN = BN(0);
         let rolloverEthRedeemedBN = BN(0);
+        let rolloverEthBalanceBN = BN(0);
+        let rolloverSgEthBalanceBN = BN(0);
         try {
           const rolloverContract = rollovers(false);
           if (rolloverContract) {
@@ -433,6 +458,34 @@ export default {
                 this.rolloverEthRedeemed = BN(0);
               }
 
+              // Get ETH balance of rollover contract
+              try {
+                if (window.ethereum) {
+                  const ethBal = await window.ethereum.request({
+                    method: "eth_getBalance",
+                    params: [rolloverAddress, "latest"],
+                  });
+                  rolloverEthBalanceBN = BN(ethBal);
+                }
+              } catch (err) {
+                console.warn("Error getting rollover contract ETH balance:", err);
+              }
+
+              // Get sgETH balance (for rollover contract, output token is sgETH)
+              try {
+                const sgETHContract = sgETH();
+                if (sgETHContract) {
+                  const sgEthBal = await sgETHContract.balanceOf(rolloverAddress);
+                  rolloverSgEthBalanceBN = BN(sgEthBal.toString());
+                }
+              } catch (err) {
+                console.warn("Error getting rollover contract sgETH balance:", err);
+              }
+
+              // Calculate redeemable amount for rollover (vETH2 * 1.08 - redeemed)
+              const virtualPrice = BN('1.08');
+              const rolloverRedeemableBN = rolloverVeth2InputBN.multipliedBy(virtualPrice).minus(rolloverEthRedeemedBN);
+
               // Add rollover contract to contract details
               if (rolloverAddress) {
                 contractDetailsList.push({
@@ -440,6 +493,9 @@ export default {
                   name: "Rollover Contract",
                   veth2: rolloverVeth2InputBN,
                   redeemed: rolloverEthRedeemedBN,
+                  ethBalance: rolloverEthBalanceBN,
+                  sgEthBalance: rolloverSgEthBalanceBN,
+                  redeemable: rolloverRedeemableBN.gt(0) ? rolloverRedeemableBN : BN(0),
                 });
               }
             } catch (err) {
