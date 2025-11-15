@@ -99,76 +99,76 @@
         <br>
         <br>
         <!-- Mobile Card Layout -->
-        <div class="block md:hidden mt-4 space-y-4">
-          <template v-if="contractDetails && contractDetails.length > 0">
-            <div
-              v-for="(contract, index) in contractDetails"
-              :key="contract.address"
-              class="bg-gray-800 border border-gray-700 rounded-lg p-4"
-            >
-              <h4 class="text-sm font-semibold text-gray-300 mb-3">{{ contract.name }}</h4>
-              <div class="space-y-2 text-xs">
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Address:</span>
-                  <a
-                    :href="`https://etherscan.io/address/${contract.address}`"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-blue-300 underline hover:text-blue-200 font-mono break-all text-right max-w-[60%]"
-                  >
-                    {{ contract.address }}
-                  </a>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">vETH2 Deposited:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(contract.veth2 || BN(0)) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">ETH Redeemed:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(contract.redeemed || BN(0)) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">ETH Balance:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(contract.ethBalance || BN(0)) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Redeemable:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(contract.redeemable || BN(0)) }}</span>
-                </div>
-                <div v-if="hasSgEthBalance && contract.sgEthBalance" class="flex justify-between">
-                  <span class="text-gray-400">sgETH Balance:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(contract.sgEthBalance) }}</span>
-                </div>
+        <div v-if="contractDetails && contractDetails.length > 0" class="block md:hidden mt-4 space-y-4">
+          <div
+            v-for="(contract, index) in contractDetails"
+            :key="contract.address"
+            class="bg-gray-800 border border-gray-700 rounded-lg p-4"
+          >
+            <h4 class="text-sm font-semibold text-gray-300 mb-3">{{ contract.name }}</h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between">
+                <span class="text-gray-400">Address:</span>
+                <a
+                  :href="`https://etherscan.io/address/${contract.address}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-300 underline hover:text-blue-200 font-mono break-all text-right max-w-[60%]"
+                >
+                  {{ contract.address }}
+                </a>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">vETH2 Deposited:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(contract.veth2 || BN(0)) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">ETH Redeemed:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(contract.redeemed || BN(0)) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">ETH Balance:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(contract.ethBalance || BN(0)) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Redeemable:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(contract.redeemable || BN(0)) }}</span>
+              </div>
+              <div v-if="hasSgEthBalance && contract.sgEthBalance" class="flex justify-between">
+                <span class="text-gray-400">sgETH Balance:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(contract.sgEthBalance) }}</span>
               </div>
             </div>
-            <!-- Totals Card -->
-            <div class="bg-gray-900 border-2 border-gray-600 rounded-lg p-4 font-semibold">
-              <h4 class="text-sm font-semibold text-gray-300 mb-3">Total</h4>
-              <div class="space-y-2 text-xs">
-                <div class="flex justify-between">
-                  <span class="text-gray-400">vETH2 Deposited:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(totalVeth2Staked || BN(0)) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">ETH Redeemed:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(totalEthRedeemed || BN(0)) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">ETH Balance:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(totalEthBalance || BN(0)) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Redeemable:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(totalRedeemable || BN(0)) }}</span>
-                </div>
-                <div v-if="hasSgEthBalance" class="flex justify-between">
-                  <span class="text-gray-400">sgETH Balance:</span>
-                  <span class="text-gray-200 font-mono">{{ parseBN(totalSgEthBalance || BN(0)) }}</span>
-                </div>
+          </div>
+          <!-- Totals Card -->
+          <div class="bg-gray-900 border-2 border-gray-600 rounded-lg p-4 font-semibold">
+            <h4 class="text-sm font-semibold text-gray-300 mb-3">Total</h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between">
+                <span class="text-gray-400">vETH2 Deposited:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(totalVeth2Staked || BN(0)) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">ETH Redeemed:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(totalEthRedeemed || BN(0)) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">ETH Balance:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(totalEthBalance || BN(0)) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Redeemable:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(totalRedeemable || BN(0)) }}</span>
+              </div>
+              <div v-if="hasSgEthBalance" class="flex justify-between">
+                <span class="text-gray-400">sgETH Balance:</span>
+                <span class="text-gray-200 font-mono">{{ parseBN(totalSgEthBalance || BN(0)) }}</span>
               </div>
             </div>
-          </template>
-          <div v-else class="bg-gray-800 border border-gray-700 rounded-lg p-4 text-center text-gray-400">
+          </div>
+        </div>
+        <div v-else class="block md:hidden mt-4">
+          <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 text-center text-gray-400">
             Loading contract data...
           </div>
         </div>
@@ -231,11 +231,13 @@
                         </td>
                       </tr>
                     </template>
-                    <tr v-else class="bg-gray-800">
-                      <td :colspan="hasSgEthBalance ? 7 : 6" class="px-3 py-4 text-center text-gray-400">
-                        Loading contract data...
-                      </td>
-                    </tr>
+                    <template v-else>
+                      <tr class="bg-gray-800">
+                        <td :colspan="hasSgEthBalance ? 7 : 6" class="px-3 py-4 text-center text-gray-400">
+                          Loading contract data...
+                        </td>
+                      </tr>
+                    </template>
                   </tbody>
                   <tfoot v-if="contractDetails && contractDetails.length > 0" class="bg-gray-900">
                     <tr class="font-semibold border-t-2 border-gray-600">
