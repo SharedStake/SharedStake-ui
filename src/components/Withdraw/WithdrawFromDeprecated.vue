@@ -270,60 +270,58 @@ export default {
 
       try {
         const deprecatedAddresses = getDeprecatedWithdrawalsAddresses();
+        let deprecatedResults = [];
 
-        if (!deprecatedAddresses || deprecatedAddresses.length === 0) {
-          this.error = "No deprecated contracts configured.";
-          this.loading = false;
-          return;
-        }
+        // Check deprecated contracts if they exist
+        if (deprecatedAddresses && deprecatedAddresses.length > 0) {
+          const contractPromises = deprecatedAddresses.map(async (address, index) => {
+            try {
+              const contract = createDeprecatedWithdrawalsContract(address, false);
+              if (!contract) {
+                return null;
+              }
 
-        const contractPromises = deprecatedAddresses.map(async (address, index) => {
-          try {
-            const contract = createDeprecatedWithdrawalsContract(address, false);
-            if (!contract) {
+              // Check user deposits
+              let userDeposited = BN(0);
+              try {
+                const userEntries = await contract.userEntries(
+                  this.userConnectedWalletAddress
+                );
+                userDeposited = userEntries?.[0]
+                  ? BN(userEntries[0].toString())
+                  : BN(0);
+              } catch (err) {
+                // Contract might not have userEntries method or user has no deposits
+                if (err.code !== "BAD_DATA") {
+                  console.warn(
+                    `Error checking user deposits for ${address}:`,
+                    err
+                  );
+                }
+              }
+
+              // Only include contracts where user has deposits
+              if (userDeposited.gt(0)) {
+                return {
+                  address,
+                  contract,
+                  userDeposited,
+                  contractType: 'deprecated',
+                  deprecatedIndex: index + 1, // Track deprecated contract number separately
+                };
+              }
+              return null;
+            } catch (error) {
+              console.error(`Error scanning contract ${address}:`, error);
               return null;
             }
+          });
 
-            // Check user deposits
-            let userDeposited = BN(0);
-            try {
-              const userEntries = await contract.userEntries(
-                this.userConnectedWalletAddress
-              );
-              userDeposited = userEntries?.[0]
-                ? BN(userEntries[0].toString())
-                : BN(0);
-            } catch (err) {
-              // Contract might not have userEntries method or user has no deposits
-              if (err.code !== "BAD_DATA") {
-                console.warn(
-                  `Error checking user deposits for ${address}:`,
-                  err
-                );
-              }
-            }
+          const results = await Promise.all(contractPromises);
+          deprecatedResults = results.filter((r) => r !== null);
+        }
 
-            // Only include contracts where user has deposits
-            if (userDeposited.gt(0)) {
-              return {
-                address,
-                contract,
-                userDeposited,
-                contractType: 'deprecated',
-                deprecatedIndex: index + 1, // Track deprecated contract number separately
-              };
-            }
-            return null;
-          } catch (error) {
-            console.error(`Error scanning contract ${address}:`, error);
-            return null;
-          }
-        });
-
-        const results = await Promise.all(contractPromises);
-        const deprecatedResults = results.filter((r) => r !== null);
-
-        // Also check rollover contract for user deposits
+        // Always check rollover contract for user deposits (even if no deprecated contracts)
         let rolloverResult = null;
         try {
           const rolloverContract = rollovers(false);
@@ -365,6 +363,15 @@ export default {
         this.deprecatedContracts = [...deprecatedResults];
         if (rolloverResult) {
           this.deprecatedContracts.push(rolloverResult);
+        }
+
+        // Set error only if no contracts found at all
+        if (this.deprecatedContracts.length === 0) {
+          if (!deprecatedAddresses || deprecatedAddresses.length === 0) {
+            // No deprecated contracts configured and no rollover deposits found
+            this.error = "No deprecated contracts configured and no deposits found in rollover contract.";
+          }
+          // If deprecated contracts exist but none have deposits, error is already handled by UI
         }
       } catch (error) {
         console.error("Error scanning deprecated contracts:", error);
