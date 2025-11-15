@@ -126,6 +126,8 @@
           :deprecated-contract-addresses="deprecatedContractAddresses"
           :rollover-contract-address="rolloverContractAddress"
           :rollover-veth2-input="rolloverVeth2Input"
+          :rollover-eth-redeemed="rolloverEthRedeemed"
+          :contract-details="contractDetails"
         />
       </div>
     </section>
@@ -175,6 +177,8 @@ export default {
       deprecatedContractAddresses: [],
       rolloverContractAddress: null,
       rolloverVeth2Input: BN(0),
+      rolloverEthRedeemed: BN(0),
+      contractDetails: [],
     };
   },
   computed: {
@@ -339,7 +343,7 @@ export default {
         let totalRedeemed = BN(0);
 
         // Calculate totals for ALL deprecated contracts (not just user deposits)
-        const totalPromises = deprecatedAddresses.map(async (address) => {
+        const totalPromises = deprecatedAddresses.map(async (address, index) => {
           try {
             // Get vETH2 balance of the contract
             let veth2BN = BN(0);
@@ -367,10 +371,20 @@ export default {
               console.warn(`Could not create contract instance for ${address}`);
             }
             
-            return { veth2: veth2BN, redeemed: totalOutBN };
+            return { 
+              address,
+              name: `Deprecated Contract ${index + 1}`,
+              veth2: veth2BN, 
+              redeemed: totalOutBN 
+            };
           } catch (error) {
             console.error(`Error calculating totals for ${address}:`, error);
-            return { veth2: BN(0), redeemed: BN(0) };
+            return { 
+              address,
+              name: `Deprecated Contract ${index + 1}`,
+              veth2: BN(0), 
+              redeemed: BN(0) 
+            };
           }
         });
 
@@ -378,9 +392,13 @@ export default {
         totalVeth2 = totals.reduce((sum, t) => sum.plus(t.veth2), BN(0));
         totalRedeemed = totals.reduce((sum, t) => sum.plus(t.redeemed), BN(0));
 
+        // Store contract details for table display
+        const contractDetailsList = [...totals];
+
         // Calculate rollover contract totals
         let rolloverAddress = null;
         let rolloverVeth2InputBN = BN(0);
+        let rolloverEthRedeemedBN = BN(0);
         try {
           const rolloverContract = rollovers(false);
           if (rolloverContract) {
@@ -404,28 +422,45 @@ export default {
               // Add rollover contract totalOut to total ETH redeemed
               try {
                 const rolloverTotalOut = await rolloverContract.totalOut();
-                totalRedeemed = totalRedeemed.plus(BN(rolloverTotalOut.toString()));
+                rolloverEthRedeemedBN = BN(rolloverTotalOut.toString());
+                totalRedeemed = totalRedeemed.plus(rolloverEthRedeemedBN);
+                this.rolloverEthRedeemed = rolloverEthRedeemedBN;
               } catch (err) {
                 // Rollover contract might not have totalOut method or might fail - this is OK
                 if (err.code !== "BAD_DATA" && err.code !== "CALL_EXCEPTION" && err.code !== "UNPREDICTABLE_GAS_LIMIT") {
                   console.warn("Error getting rollover contract totalOut:", err);
                 }
+                this.rolloverEthRedeemed = BN(0);
+              }
+
+              // Add rollover contract to contract details
+              if (rolloverAddress) {
+                contractDetailsList.push({
+                  address: rolloverAddress,
+                  name: "Rollover Contract",
+                  veth2: rolloverVeth2InputBN,
+                  redeemed: rolloverEthRedeemedBN,
+                });
               }
             } catch (err) {
               console.warn("Error getting rollover contract address:", err);
               this.rolloverContractAddress = null;
               this.rolloverVeth2Input = BN(0);
+              this.rolloverEthRedeemed = BN(0);
             }
           } else {
             this.rolloverContractAddress = null;
             this.rolloverVeth2Input = BN(0);
+            this.rolloverEthRedeemed = BN(0);
           }
         } catch (error) {
           console.warn("Error accessing rollover contract:", error);
           this.rolloverContractAddress = null;
           this.rolloverVeth2Input = BN(0);
+          this.rolloverEthRedeemed = BN(0);
         }
 
+        this.contractDetails = contractDetailsList;
         this.totalVeth2Staked = totalVeth2;
         this.totalEthRedeemed = totalRedeemed;
       } catch (error) {
@@ -435,6 +470,8 @@ export default {
         this.totalEthRedeemed = BN(0);
         this.rolloverContractAddress = null;
         this.rolloverVeth2Input = BN(0);
+        this.rolloverEthRedeemed = BN(0);
+        this.contractDetails = [];
       } finally {
         this.calculatingTotals = false;
       }

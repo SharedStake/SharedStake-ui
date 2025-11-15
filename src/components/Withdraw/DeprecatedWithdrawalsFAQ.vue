@@ -98,47 +98,63 @@
         }} ETH has already been redeemed.
         <br>
         <br>
-        <span class="text-xs text-gray-400">
-          For power users: Review the contracts on Etherscan - 
-          <a
-            v-if="deprecatedContractAddresses && deprecatedContractAddresses.length > 0"
-            :href="`https://etherscan.io/address/${deprecatedContractAddresses[0]}`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-300 underline hover:text-blue-200"
-          >
-            Contract 1
-          </a>
-          <template v-if="deprecatedContractAddresses && deprecatedContractAddresses.length > 1">
-            <span class="text-gray-500"> | </span>
-            <a
-              :href="`https://etherscan.io/address/${deprecatedContractAddresses[1]}`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-300 underline hover:text-blue-200"
-            >
-              Contract 2
-            </a>
-          </template>
-        </span>
-        <br>
-        <br>
-        <template v-if="rolloverContractAddress">
-          Rollover contract: {{
-            parseBN(rolloverVeth2Input || BN(0))
-          }} vETH2 deposited.
-          <br>
-          <span class="text-xs text-gray-400">
-            <a
-              :href="`https://etherscan.io/address/${rolloverContractAddress}`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-300 underline hover:text-blue-200"
-            >
-              View Rollover Contract on Etherscan
-            </a>
-          </span>
-        </template>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm border-collapse border border-gray-700">
+            <thead>
+              <tr class="bg-gray-900">
+                <th class="border border-gray-700 px-4 py-2 text-left text-gray-300 font-semibold">Contract</th>
+                <th class="border border-gray-700 px-4 py-2 text-left text-gray-300 font-semibold">Address</th>
+                <th class="border border-gray-700 px-4 py-2 text-right text-gray-300 font-semibold">vETH2 Deposited</th>
+                <th class="border border-gray-700 px-4 py-2 text-right text-gray-300 font-semibold">ETH Redeemed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-if="contractDetails && contractDetails.length > 0">
+                <tr
+                  v-for="(contract, index) in contractDetails"
+                  :key="contract.address"
+                  :class="index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-900'"
+                >
+                  <td class="border border-gray-700 px-4 py-2 text-gray-200">
+                    {{ contract.name }}
+                  </td>
+                  <td class="border border-gray-700 px-4 py-2">
+                    <a
+                      :href="`https://etherscan.io/address/${contract.address}`"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-blue-300 underline hover:text-blue-200 font-mono text-xs break-all"
+                    >
+                      {{ contract.address }}
+                    </a>
+                  </td>
+                  <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+                    {{ parseBN(contract.veth2 || BN(0)) }}
+                  </td>
+                  <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+                    {{ parseBN(contract.redeemed || BN(0)) }}
+                  </td>
+                </tr>
+              </template>
+              <tr v-else class="bg-gray-800">
+                <td colspan="4" class="border border-gray-700 px-4 py-2 text-center text-gray-400">
+                  Loading contract data...
+                </td>
+              </tr>
+            </tbody>
+            <tfoot v-if="contractDetails && contractDetails.length > 0">
+              <tr class="bg-gray-900 font-semibold">
+                <td class="border border-gray-700 px-4 py-2 text-gray-200" colspan="2">Total</td>
+                <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+                  {{ parseBN(totalVeth2Staked || BN(0)) }}
+                </td>
+                <td class="border border-gray-700 px-4 py-2 text-right text-gray-200">
+                  {{ parseBN(totalEthRedeemed || BN(0)) }}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </template>
     </QuestionAnswer>
 
@@ -198,7 +214,9 @@ export default {
     'totalEthRedeemed',
     'deprecatedContractAddresses',
     'rolloverContractAddress',
-    'rolloverVeth2Input'
+    'rolloverVeth2Input',
+    'rolloverEthRedeemed',
+    'contractDetails'
   ],
   methods: {
     parseBN,
