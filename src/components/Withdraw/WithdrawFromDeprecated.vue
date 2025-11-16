@@ -74,7 +74,7 @@
               </div>
 
               <div class="flex flex-col gap-2">
-                <div v-if="contract.userDeposited.gt(0)">
+                <div v-if="hasDeposits(contract)">
                   <p class="text-sm text-gray-300">
                     Your Deposited vETH2:
                     <span class="font-semibold text-white text-lg">
@@ -89,7 +89,7 @@
 
               <!-- Withdrawal button -->
               <div
-                v-if="contract.userDeposited.gt(0)"
+                v-if="hasDeposits(contract)"
                 class="flex flex-col gap-2 mt-3"
               >
                 <dapp-tx-btn
@@ -200,8 +200,14 @@ export default {
       return this.walletStore.userAddress;
     },
     userTotalDeposited() {
+      if (!this.deprecatedContracts || this.deprecatedContracts.length === 0) {
+        return BN(0);
+      }
       return this.deprecatedContracts.reduce((total, contract) => {
-        return total.plus(contract.userDeposited);
+        const deposited = contract?.userDeposited && BN.isBigNumber(contract.userDeposited) 
+          ? contract.userDeposited 
+          : BN(0);
+        return total.plus(deposited);
       }, BN(0));
     },
   },
@@ -231,6 +237,9 @@ export default {
   },
   methods: {
     parseBN,
+    hasDeposits(contract) {
+      return contract?.userDeposited && BN.isBigNumber(contract.userDeposited) && contract.userDeposited.gt(0);
+    },
 
     async waitForProviderAndCalculateTotals(retries = 5, delay = 500) {
       for (let i = 0; i < retries; i++) {
