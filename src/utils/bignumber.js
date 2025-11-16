@@ -11,7 +11,7 @@ import BN from "bignumber.js";
  * @returns {string} Formatted number string
  */
 export function parseBN(n, decimals = 18, displayDecimals = 6) {
-  if (!n || BN.isBigNumber(n) === false) {
+  if (!n || !BN || !BN.isBigNumber || BN.isBigNumber(n) === false) {
     return "0";
   }
   return BN(n)

@@ -59,7 +59,7 @@
         Do I have vETH2 deposited in deprecated contracts?
       </template>
       <template #answer>
-        <div v-if="userTotalDeposited && BN.isBigNumber(userTotalDeposited) && userTotalDeposited.gt(0)">
+        <div v-if="hasUserDeposits">
           Yes! You have a total of {{
             parseBN(getBN(userTotalDeposited))
           }} vETH2 deposited across deprecated contracts and/or the rollover contract. 
@@ -327,38 +327,44 @@ export default {
     'contractDetails'
   ],
   computed: {
+    hasUserDeposits() {
+      return this.isBigNumber(this.userTotalDeposited) && this.userTotalDeposited.gt(0);
+    },
     hasSgEthBalance() {
       if (!this.contractDetails || this.contractDetails.length === 0) return false;
       return this.contractDetails.some(c => 
-        c.sgEthBalance && BN.isBigNumber(c.sgEthBalance) && c.sgEthBalance.gt(0)
+        this.isBigNumber(c.sgEthBalance) && c.sgEthBalance.gt(0)
       );
     },
     totalEthBalance() {
       if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
       return this.contractDetails.reduce((sum, c) => {
-        const balance = (c.ethBalance && BN.isBigNumber(c.ethBalance)) ? c.ethBalance : BN(0);
+        const balance = this.isBigNumber(c.ethBalance) ? c.ethBalance : BN(0);
         return sum.plus(balance);
       }, BN(0));
     },
     totalRedeemable() {
       if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
       return this.contractDetails.reduce((sum, c) => {
-        const redeemable = (c.redeemable && BN.isBigNumber(c.redeemable)) ? c.redeemable : BN(0);
+        const redeemable = this.isBigNumber(c.redeemable) ? c.redeemable : BN(0);
         return sum.plus(redeemable);
       }, BN(0));
     },
     totalSgEthBalance() {
       if (!this.contractDetails || this.contractDetails.length === 0) return BN(0);
       return this.contractDetails.reduce((sum, c) => {
-        const balance = (c.sgEthBalance && BN.isBigNumber(c.sgEthBalance)) ? c.sgEthBalance : BN(0);
+        const balance = this.isBigNumber(c.sgEthBalance) ? c.sgEthBalance : BN(0);
         return sum.plus(balance);
       }, BN(0));
     },
   },
   methods: {
     parseBN,
+    isBigNumber(value) {
+      return value && BN && BN.isBigNumber && BN.isBigNumber(value);
+    },
     getBN(value) {
-      if (!value || !BN.isBigNumber(value)) return BN(0);
+      if (!value || !this.isBigNumber(value)) return BN(0);
       return value;
     },
   },
