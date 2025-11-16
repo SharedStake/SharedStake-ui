@@ -23,6 +23,11 @@ import rolloversABI from './abis/rollovers.json'
 import sgETHABI from './abis/sgETH.json'
 import wsgETHABI from './abis/wsgETH.json'
 
+// Chain-specific contract addresses
+import mainnetAddresses from './addresses/mainnet.json'
+import goerliAddresses from './addresses/goerli.json'
+import sepoliaAddresses from './addresses/sepolia.json'
+
 let _addresses = {};
 
 let _geyser_vEth2_old;
@@ -129,79 +134,11 @@ const initializeEthers = async () => {
             let addressTemp = {};
 
             if (chainId == CHAIN_IDS.MAINNET) {
-                addressTemp = {
-                    validator: "0x85Bc06f4e3439d41f610a440Ba0FbE333736B310",// break for now - on mainnet, till we deploy audited new v2
-                    // Protocol Tokens
-                    vEth2: "0x898bad2774eb97cf6b94605677f43b41871410b1",
-                    SGT: "0x84810bcF08744d5862B8181f12d17bfd57d3b078",
-                    // OTHER Tokens
-                    SGT_uniswap: "0x3d07f6e1627DA96B8836190De64c1aED70e3FC55",
-                    SGT_vEth2_uniswap: "0xC794746Df95C4B7043E8d6B521cFECaB1b14C6cE",
-                    vEth2_saddle: "0xe37E2a01feA778BC1717d72Bd9f018B6A6B241D5",
-                    // Geysers
-                    geyser_vEth2: "0x2b228842b97ab8a1f3dcd216ec5d553ada957915",
-                    geyser_vEth2_saddle: "0x6f27C4E4888A7090CAD2e1b82D6e02eBb4FA06EC",
-                    geyser_SGT: "0x3FD816A5943a77FA10DE73B44d891676bD818C9C",
-                    geyser_SGT_uniswap: "0x77d03ecC4d6a15C320dd3849973aA3a599cBB07F", 
-                    geyser_SGT_vEth2_uniswap: "0x53dc9D5deB3B7f5cD9A3E4D19A2beCda559D57Aa",
-                    // OLD Geysers
-                    geyser_vEth2_old: "0xA919D7a5fb7ad4ab6F2aae82b6F39d181A027d35",
-                    geyser_SGT_old: "0xc637dB981e417869814B2Ea2F1bD115d2D993597",
-                    geyser_SGT_uniswap_old: "0x64A1DB33f68695df773924682D2EFb1161B329e8",
-                    geyser_vEth2_saddle_old: "0xCF91812631e37C01c443a4fa02DfB59ee2DDbA7c",
-
-                    // SGT airdrop
-                    airdrop_distributor: "0x5d918012f56C7EF4c9b78fCA97c126ae13C0F639",
-                    
-                    //V2
-                    migrator:"0x9615460582Efa2a9b1d8D21e7E02afE43A415E13",
-                    SGT_sushiswap: '0x41bfba56b9ba48d0a83775d89c247180617266bc',
-                    veSGT: '0x21b555305e9d65c8b8ae232e60fd806edc9c5d78',
-                    vETH2_CRV: '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
-                    masterchef: '0x84B7644095d9a8BFDD2e5bfD8e41740bc1f4f412',
-
-                    // New contracts. shareddeposit v2
-                    withdrawals: "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432",
-                    rollovers: "0x68a31dfD0c81A411C5adadc8A40225425777466C",
-
-                    // Deprecated withdrawals contracts (for withdrawal from old contracts)
-                    // These contracts are deprecated and users can withdraw their vETH2
-                    // Old contract (deployed Jul 19 2023): 0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4
-                    // Current contract (also deprecated): 0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432
-                    withdrawals_deprecated_v1: "0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4", // Previous deprecated contract (Jul 19 2023)
-                    withdrawals_deprecated_v2: "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432", // Current contract (also deprecated)
-
-                    sgETH: "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
-                    wsgETH: "0x31AA035313b1D2109e61Ee0E3662A86A8615fF1d"
-                }
+                addressTemp = mainnetAddresses;
             } else if (chainId == CHAIN_IDS.GOERLI) {
-                addressTemp = {
-                    validator: "0xb6F4a4ae69df1EB0d7dE4141CAd600104FAC28f6",// 
-                    // Protocol Tokens
-                    vEth2: "0x0D3C0916B0DF1Ae387eDa7fD1cb77d2e244826E6",// 
-                    SGT: "0x523371408DCc722e70cb53C3800b355fd9485e05", // 
-                    // Geysers
-                    geyser_SGT: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// 
-                    geyser_vEth2: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
-                    geyser_SGT_uniswap: "0x02815a0df29858a41c9fb948103f7aa496d13e02",// no need to edit
-                    
-                    // New withdrawals contract.
-                    withdrawals: "0x330B12204596812946d010c24b0Da3c8Af37B37c",
-                    rollovers: "0x8CcE3694d698cb5DF1e1bD8A948899449Ea94ffB",
-
-                    sgETH: "0x0056390361289CAFc3E10b65AC4C49e44C08B7df",
-                    wsgETH: "0x7b569f6eC245403B5fbF68aDa4aef95cb26b6351"
-                }
+                addressTemp = goerliAddresses;
             } else if (chainId == CHAIN_IDS.SEPOLIA) {
-                addressTemp =
-                {
-                    sgETH: '0xCF4831EBE785437DC54a90018b1b410Bd16c8533',
-                    wsgETH: '0x514dfd2d10eC6775f030BA2abcf7A2445C0CA6Fb',
-                    validator: '0xd6Ad9a646330F1a937347a5cfaaDE57990109b5C',
-                    PaymentSplitter: '0x38E86964A811Ee66D1139CD97C838B713F63779B',
-                    withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
-                    RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
-                }
+                addressTemp = sepoliaAddresses;
             }
 
             // Always define contract creation functions
@@ -242,13 +179,7 @@ const initializeEthers = async () => {
                 // For development networks (high chain IDs), use Sepolia as fallback
                 if (chainDecimal > 1000) { 
                     console.info("Using Sepolia addresses as fallback for development network");
-                    addressTemp = {
-                        sgETH: '0xCF4831EBE785437DC54a90018b1b410Bd16c8533',
-                        wsgETH: '0x514dfd2d10eC6775f030BA2abcf7A2445C0CA6Fb',
-                        validator: '0xd6Ad9a646330F1a937347a5cfaaDE57990109b5C',
-                        withdrawals: '0x93Ec5A17176336C95Bfb537A71130d6eEA6eF73D',
-                        RewardsReceiver: '0xAeBD9A9b883f539894A28CBCD866d50ca34000FD'
-                    };
+                    addressTemp = sepoliaAddresses;
                     _addresses = addressTemp;
                     console.warn("⚠️ Using fallback addresses - contracts may not function correctly on this network");
                 } else {
