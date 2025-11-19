@@ -1,0 +1,70 @@
+====================================================================================================
+EXITED VALIDATOR WITHDRAWAL ESTIMATE & VERIFICATION
+====================================================================================================
+Generated: 2025-11-14T23:58:10.692Z
+Withdrawal Address: 0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e
+
+IMPORTANT NOTES:
+  - These are ESTIMATES based on validator lifecycle
+  - Actual withdrawals must be verified on-chain
+  - Each validator started with 32 ETH deposit
+  - Rewards accumulated based on staking duration
+
+====================================================================================================
+ESTIMATED TOTALS
+====================================================================================================
+  Total Exited Validators: 460
+  Estimated Average per Validator: 56.2051 ETH
+  Estimated Total Withdrawn: 25854.3474 ETH
+  Minimum (32 ETH each): 14720.0000 ETH
+  Maximum Estimate: 31025.2169 ETH (with 20% variance)
+
+====================================================================================================
+VERIFICATION METHODS
+====================================================================================================
+
+1. CHECK BEACON CHAIN WITHDRAWALS:
+   https://beaconscan.com/withdrawals?address=0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e
+   This shows all withdrawals to this address from the beacon chain.
+
+2. CHECK ETHERSCAN:
+   https://etherscan.io/address/0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e
+   View all transactions and balance history.
+
+3. CHECK BY VALIDATOR INDEX:
+   For each exited validator, check:
+   https://beaconscan.com/validator/[INDEX]/withdrawals
+
+4. USE ETHEREUM RPC:
+   Query withdrawal events from the Withdrawal contract:
+   0x00000000219ab540356cBB839Cbe05303d7705Fa
+
+====================================================================================================
+SAMPLE VALIDATOR ANALYSIS
+====================================================================================================
+
+Index     Exit Epoch     Epochs Active       Est. Total (ETH)
+----------------------------------------------------------------------------------------------------
+99532     289930         270268              59.0268
+99645     249786         230096              55.0096
+99643     249786         230096              55.0096
+99544     289929         270264              59.0264
+99540     289929         270265              59.0265
+99539     289929         270265              59.0265
+99652     225080         205388              52.5388
+99549     269072         249406              56.9406
+99518     291516         271858              59.1858
+99589     264608         244932              56.4932
+99644     249786         230096              55.0096
+99606     249789         230109              55.0109
+99538     289929         270266              59.0266
+99639     249787         230098              55.0098
+99522     291516         271857              59.1857
+99520     291516         271857              59.1857
+99594     264608         244931              56.4931
+99592     264608         244931              56.4931
+99636     249787         230099              55.0099
+99533     289930         270268              59.0268
+----------------------------------------------------------------------------------------------------
+
+====================================================================================================

@@ -1,0 +1,51 @@
+==========================================================================================
+ACTIVE VALIDATORS WITH WITHDRAWAL ADDRESSES
+==========================================================================================
+Generated: 2025-11-14T23:46:38.871Z
+Total Active Validators: 40
+
+Index     Balance (ETH)       Withdrawal Address                           Status
+------------------------------------------------------------------------------------------
+91086     32.0069             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99502     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99506     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99512     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91090     32.0069             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91063     37.9736             N/A (BLS credentials)                        active_online
+99492     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99513     32.0069             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91084     37.7571             N/A (BLS credentials)                        active_online
+91135     32.0069             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99507     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91083     38.2850             N/A (BLS credentials)                        active_online
+99516     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91081     37.9926             N/A (BLS credentials)                        active_online
+91089     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91085     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99503     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91050     38.0885             N/A (BLS credentials)                        active_online
+99494     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99511     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91053     38.3366             N/A (BLS credentials)                        active_online
+99491     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91082     38.4220             N/A (BLS credentials)                        active_online
+99493     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99505     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91049     38.2734             N/A (BLS credentials)                        active_online
+91088     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91052     38.2059             N/A (BLS credentials)                        active_online
+99498     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91087     32.0069             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99510     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99497     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99514     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99509     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99496     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99504     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99515     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+99495     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+91047     38.1243             N/A (BLS credentials)                        active_online
+99508     32.0068             0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e   active_online
+------------------------------------------------------------------------------------------
+Total Balance: 1341.6639 ETH
+==========================================================================================
