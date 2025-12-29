@@ -1,6 +1,9 @@
-# Improved Gap Analysis & Agent Prompt Engineering Template
+# Gap Analysis & Agent Prompt Engineering Methodology
 
-**Document Purpose:** This document demonstrates an improved approach to gap analysis and agent prompt engineering, based on analysis of three pull requests (PRs 104, 112, 113) that created gap analysis documents for an Aztec liquid staking protocol.
+**Document Purpose:** This document provides a comprehensive methodology for conducting gap analysis and engineering effective agent prompts for technical projects. Based on analysis of three pull requests (PRs 104, 112, 113) that created gap analysis documents for an Aztec liquid staking protocol.
+
+**Status:** Reference Document / Template  
+**Last Updated:** December 29, 2025
 
 **Key Improvements:**
 - Enhanced prompt structure with clearer context, constraints, and success criteria

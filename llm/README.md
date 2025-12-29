@@ -197,6 +197,11 @@ bun run lint
 - `src/components/Blog/posts/` - Markdown blog posts
 - `src/utils/markdown.js` - Markdown parsing utility
 
+### Documentation
+- `llm/ARCHITECTURE.md` - System architecture and technical documentation
+- `llm/DESIGN.md` - Design system and UI/UX guidelines
+- `llm/AGENT_HANDOFF.md` - Next steps for agent sessions
+
 ### Documentation Structure
 
 **Core Documentation:**
@@ -204,6 +209,14 @@ bun run lint
 - `CURRENT_STATUS_VERIFIED.md` - **CRITICAL** - Verified current status and accurate assessment
 - `DEVELOPMENT_SETUP.md` - Development environment setup guide
 - `PRE_COMMIT_HOOK.md` - Pre-commit hook system documentation
+
+**Architecture & Design:**
+- `ARCHITECTURE.md` - **NEW** - Complete system architecture documentation (tech stack, component structure, data flow)
+- `DESIGN.md` - **NEW** - Design system and UI/UX guidelines (colors, typography, components, accessibility)
+
+**Methodology & Planning:**
+- `IMPROVED_GAP_ANALYSIS_TEMPLATE.md` - **NEW** - Gap analysis methodology and agent prompt engineering templates
+- `AGENT_HANDOFF.md` - **NEW** - Handoff document for next agent session with clear next steps
 
 **Migration & History:**
 - `VUE3_MIGRATION_COMPLETE.md` - Vue 3 migration completion summary (historical)

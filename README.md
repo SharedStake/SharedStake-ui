@@ -48,3 +48,10 @@ bun run lint     # Code linting
 ## 🤖 AI Documentation
 
 **📁 For AI Agents**: See [`/llm/`](./llm/) folder for comprehensive project context, migration history, and optimization guides. See [`.cursorrules`](.cursorrules) for project-specific AI guidelines.
+
+### Key Documentation Files
+- [`llm/README.md`](./llm/README.md) - Comprehensive project overview and status
+- [`llm/ARCHITECTURE.md`](./llm/ARCHITECTURE.md) - System architecture and technical documentation
+- [`llm/DESIGN.md`](./llm/DESIGN.md) - Design system and UI/UX guidelines
+- [`llm/AGENT_HANDOFF.md`](./llm/AGENT_HANDOFF.md) - Handoff document for next agent session
+- [`llm/DEVELOPMENT_SETUP.md`](./llm/DEVELOPMENT_SETUP.md) - Development environment setup
