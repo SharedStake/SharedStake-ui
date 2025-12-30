@@ -66,10 +66,11 @@ SharedStake UI is a Vue 3-based decentralized application (dApp) for liquid stak
   - Type-safe store definitions
 
 ### Routing
-- **Vue Router 4.6.3** - Client-side routing
-  - Route definitions: `/`, `/stake`, `/earn`, `/withdraw`, `/blog`
-  - Dynamic routes for blog posts
+- **Vue Router 4.6.4** - Client-side routing
+  - Route definitions: `/`, `/stake`, `/earn`, `/withdraw`, `/rollover`, `/withdraw-from-deprecated`, `/blog`
+  - Dynamic routes for blog posts (`/blog/:slug`)
   - Navigation guards for protected routes
+  - Route preloading for critical paths
 
 ### Web3 Integration
 - **ethers.js 6.16.0** - Ethereum JavaScript library
@@ -99,10 +100,17 @@ SharedStake UI is a Vue 3-based decentralized application (dApp) for liquid stak
   - PostCSS processing
 
 ### Additional Libraries
-- **marked 16.4.1** - Markdown parsing for blog posts
-- **bignumber.js 9.3.1** - Arbitrary precision decimal arithmetic
+- **marked 17.0.1** - Markdown parsing for blog posts
+- **bignumber.js 9.3.1** - Arbitrary precision decimal arithmetic (improved handling)
 - **axios 1.13.2** - HTTP client for API calls
 - **vue-toastification 2.0.0-rc.5** - Toast notifications
+
+### Recent Features (December 2025)
+- **WithdrawFromDeprecated** - New page for withdrawing from deprecated contracts
+- **Rollover** - Rollover functionality for vETH2 to sgETH
+- **Deprecated Contracts Support** - Support for multiple deprecated withdrawal contract versions
+- **BigNumber Improvements** - Enhanced BigNumber handling and component logic
+- **Google Analytics** - Updated Google Analytics ID integration
 
 ---
 
@@ -128,6 +136,10 @@ src/
 │   │   └── geyser.vue
 │   ├── Withdraw/        # Withdrawal functionality
 │   │   ├── Withdraw.vue
+│   │   ├── Rollover.vue
+│   │   ├── WithdrawFromDeprecated.vue  # NEW: Deprecated contract withdrawals
+│   │   ├── DeprecatedWithdrawalsFAQ.vue
+│   │   ├── RedemptionBase.vue
 │   │   └── ...
 │   ├── Blog/            # Blog system
 │   │   ├── Blog.vue
@@ -269,7 +281,17 @@ All contract ABIs stored in `src/contracts/abis/`:
 - `vEth2Token.json` - Liquid staking token
 - `geyser.json` / `geyserV2.json` - Rewards contracts
 - `withdrawals.json` - Withdrawal functionality
+- `rollovers.json` - Rollover functionality (vETH2 to sgETH)
 - `migrator.json` - Migration functionality
+- `sgETH.json` - sgETH token contract
+- `wsgETH.json` - Wrapped sgETH token contract
+
+### Deprecated Contracts
+
+The system supports multiple deprecated contract versions:
+- `withdrawals_deprecated_v1` - First deprecated withdrawal contract
+- `withdrawals_deprecated_v2` - Second deprecated withdrawal contract
+- Dynamic detection and support for user deposits in deprecated contracts
 
 ### Contract Interaction Pattern
 
