@@ -57,7 +57,7 @@
     "@babel/eslint-parser": "7.28.5",
     "@types/webpack-env": "1.18.8",
     "@vitejs/plugin-vue": "6.0.2",
-    "autoprefixer": "10.4.22",
+    "autoprefixer": "10.4.23",
     "eslint": "9.39.1",
     "eslint-plugin-vue": "10.6.2",
     "globals": "16.5.0",
