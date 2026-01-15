@@ -622,7 +622,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="flex_column" v-show="scrolled >= 5500">
+    <div class="flex_column" v-show="scrolled >= 5500">
       <div class="exp Information" v-show="scrolled >= 5500">
         <div class="InfoHeader centertext" v-show="scrolled >= 5500">
           Subscribe for updates from the team
@@ -631,13 +631,13 @@
           <MailingListSubscribeForm />
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
 <script>
 import ImageVue from "../Handlers/ImageVue.vue";
-// import MailingListSubscribeForm from "../Common/MailingListSubscribeForm";
+import MailingListSubscribeForm from "../Common/MailingListSubscribeForm.vue";
 import Partners from "./Partners.vue";
 import axios from "axios";
 import BN from "bignumber.js";
@@ -647,6 +647,7 @@ import { priceInUsdAsync } from "@/utils/coingecko";
 export default {
   components: {
     ImageVue,
+    MailingListSubscribeForm,
     Partners,
   },
   props: ["scrolled", "windowWidth"],

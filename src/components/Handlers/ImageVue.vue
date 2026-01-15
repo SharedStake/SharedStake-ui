@@ -12,7 +12,7 @@ export default {
   props: { size: String, src: String },
   computed: {
     publicPath() {
-      return process.env.BASE_URL || '/';
+      return import.meta.env.BASE_URL || "/";
     },
   },
   created: function () {},
