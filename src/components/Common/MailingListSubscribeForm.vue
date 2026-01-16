@@ -21,14 +21,17 @@
 
 <style scoped>
 .signup {
-  width: 70%;
+  width: 100%;
+  max-width: 860px;
   margin: 0 auto;
+  padding: 0 16px;
 }
 
 .airtable-frame {
   background: transparent;
   border: 2px solid #fff;
   border-radius: 12px;
+  height: clamp(360px, 60vh, 520px);
 }
 
 .fallback {
@@ -41,15 +44,5 @@
 .fallback a {
   color: #fff;
   text-decoration: underline;
-}
-
-@media only screen and (max-width: 1270px) {
-  .signup {
-    width: 95%;
-  }
-
-  .airtable-frame {
-    height: 360px;
-  }
 }
 </style>

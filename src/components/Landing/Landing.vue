@@ -42,7 +42,7 @@
           </div>
         </div>
         <div
-          class="flex items-center justify-center gap-6 mb-8 md-large:justify-start"
+          class="flex items-center justify-center gap-6 mb-8 md-large:justify-start flex-wrap"
         >
           <div
             class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
@@ -60,6 +60,13 @@
           >
             MINT NFT
           </a>
+          <button
+            type="button"
+            class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-white/30 rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-white/10 hover:bg-white/15 hover:scale-105 hover:shadow-xl text-white"
+            @click="scrollToEmailSignup"
+          >
+            Sign up for our email list
+          </button>
         </div>
 
         <div class="flex items-center justify-center md-large:justify-start">
@@ -622,12 +629,15 @@
         </div>
       </div>
     </div>
-    <div class="flex_column" v-show="scrolled >= 5500">
-      <div class="exp Information" v-show="scrolled >= 5500">
-        <div class="InfoHeader centertext" v-show="scrolled >= 5500">
+    <div
+      id="email-signup"
+      class="flex_column"
+    >
+      <div class="exp Information">
+        <div class="InfoHeader centertext">
           Subscribe for updates from the team
         </div>
-        <div class="exp Info" v-show="scrolled >= 5500">
+        <div class="exp Info">
           <MailingListSubscribeForm />
         </div>
       </div>
@@ -1176,6 +1186,12 @@ export default {
     }
   },
   methods: {
+    scrollToEmailSignup() {
+      const target = document.getElementById("email-signup");
+      if (!target) return;
+
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
     isMobile() {
       // https://stackoverflow.com/questions/48515023/display-different-vuejs-components-for-mobile-browsers
       if (
