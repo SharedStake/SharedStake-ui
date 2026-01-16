@@ -1190,7 +1190,17 @@ export default {
       const target = document.getElementById("email-signup");
       if (!target) return;
 
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      const scrollAttempt = (triesRemaining) => {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        if (triesRemaining <= 0) return;
+        setTimeout(() => scrollAttempt(triesRemaining - 1), 350);
+      };
+
+      // This landing page progressively reveals sections based on scroll position.
+      // As the user scrolls, new sections become visible and push the target down.
+      // Retrying the scroll a few times ensures we land on the actual signup section.
+      scrollAttempt(3);
     },
     isMobile() {
       // https://stackoverflow.com/questions/48515023/display-different-vuejs-components-for-mobile-browsers
@@ -2234,6 +2244,11 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
       "harvest"
       "harvestExp";
     padding-bottom: 15vh;
+  }
+
+  .Information {
+    width: 100%;
+    padding: 24px 16px;
   }
 
   .certikLogo {
