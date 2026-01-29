@@ -227,6 +227,12 @@
             Coming Soon
           </div>
         </div>
+        <span class="link">
+          <a
+            href="mailto:admin@sharedstake.org"
+          >Contact Us
+          </a>
+        </span>
       </div>
 
       <!-- Trading Section -->
@@ -394,6 +400,11 @@
             <span class="link footerLink">
               <router-link to="/terms">Terms of Service </router-link>
             </span>
+            <span class="link footerLink">
+              <a
+                href="mailto:admin@sharedstake.org"
+              >Contact Us
+              </a></span>
           </div>
         </div>
       </div>
