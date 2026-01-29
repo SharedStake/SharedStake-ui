@@ -72,6 +72,9 @@
         <DropdownItemAnchor href="https://twitter.com/ChimeraDefi">
           Twitter
         </DropdownItemAnchor>
+        <DropdownItemAnchor href="mailto:admin@sharedstake.org">
+          Contact Us
+        </DropdownItemAnchor>
       </DropdownGroup>
     </div>
 
