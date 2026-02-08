@@ -140,7 +140,7 @@ export default {
         try {
           address = ethers.getAddress(this.address);
         } catch (error) {
-          console.error("Invalid Ethereum address:", this.address);
+          console.error("Invalid Ethereum address:", this.address, error);
           this.eligible = false;
           return;
         }

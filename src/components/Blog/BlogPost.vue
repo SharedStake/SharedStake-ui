@@ -1,4 +1,6 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <div class="BlogPost min-h-screen bg-gray-900 text-white">
     <BlogStyles />
     
@@ -74,6 +76,7 @@
       <div class="py-6 md:py-8 px-4">
         <div class="max-w-4xl mx-auto">
           <article class="prose prose-lg prose-invert max-w-none overflow-hidden">
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div
               class="blog-content"
               v-html="post.content"

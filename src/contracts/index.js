@@ -253,7 +253,54 @@ export const geyser_SGT_uniswap_old = (useSigner = false) => createContract("gey
 export const geyser_vEth2_saddle_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_saddle_old", useSigner);
 
 // Utility contracts
-export const airdrop = (useSigner = false) => createContractDefault("airdrop_distributor", useSigner);
+const isDevMode = typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV;
+const mockAirdropState = {
+    claimedIndexes: new Set()
+};
+let mockAirdropContract = null;
+
+const normalizeClaimIndex = (index) => {
+    try {
+        return BigInt(index).toString();
+    } catch (error) {
+        console.warn("Invalid claim index:", index, error);
+        return null;
+    }
+};
+
+const getMockAirdropContract = () => {
+    if (mockAirdropContract) return mockAirdropContract;
+    mockAirdropContract = {
+        async isClaimed(index) {
+            const normalized = normalizeClaimIndex(index);
+            if (!normalized) return false;
+            return mockAirdropState.claimedIndexes.has(normalized);
+        },
+        async claim(index) {
+            const normalized = normalizeClaimIndex(index);
+            if (!normalized) {
+                throw new Error("Invalid claim index");
+            }
+            if (mockAirdropState.claimedIndexes.has(normalized)) {
+                throw new Error("Airdrop already claimed");
+            }
+            mockAirdropState.claimedIndexes.add(normalized);
+            const hash = ethers.hexlify(ethers.randomBytes(32));
+            return {
+                hash,
+                wait: async () => ({ status: 1, hash })
+            };
+        }
+    };
+    return mockAirdropContract;
+};
+
+export const airdrop = (useSigner = false) => {
+    const contract = createContractDefault("airdrop_distributor", useSigner);
+    if (contract) return contract;
+    if (!isDevMode) return null;
+    return getMockAirdropContract();
+};
 export const migrator = (useSigner = false) => createContractDefault("migrator", useSigner);
 
 export const masterchef = (useSigner = false) => createContract('geyser_new', 'masterchef', useSigner);

@@ -97,7 +97,7 @@ export function toChecksumAddress(address) {
   try {
     return ethers.getAddress(address);
   } catch (error) {
-    console.error("Invalid address:", address);
+    console.error("Invalid address:", address, error);
     return address;
   }
 }
