@@ -392,7 +392,7 @@
           vEth2
         </div>
       </div>
-      <div class="exp InfoHeader DropShadow centertext gradient-text">
+      <div class="exp InfoHeader DropShadow centertext text-gray-200">
         Yield Bearing Wrapped Ether
       </div>
       <div class="exp background3" />
