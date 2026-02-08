@@ -4,6 +4,8 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import '../public/assets/styles/main.css';
+import { ethers } from 'ethers'
+import { useWalletStore } from './stores/wallet'
 
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
@@ -37,6 +39,19 @@ app.use(Toast, {
   newestOnTop: true
 })
 app.use(VueEllipseProgress, "vep");// you can define a name and use the plugin like <vep/>
+
+if (import.meta.env.DEV) {
+  const params = new URLSearchParams(window.location.search);
+  const e2eAddress = params.get('e2eAddress');
+  if (e2eAddress) {
+    try {
+      const walletStore = useWalletStore(pinia);
+      walletStore.setAddressOnboard(ethers.getAddress(e2eAddress));
+    } catch (error) {
+      console.warn('Invalid e2eAddress supplied:', e2eAddress, error);
+    }
+  }
+}
 
 // Initialize performance monitoring and lazy loading
 initPerformanceMonitoring({

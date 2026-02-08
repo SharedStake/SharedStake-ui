@@ -69,6 +69,7 @@
 <script>
 import BN from "bignumber.js";
 import { useWalletStore } from "@/stores/wallet";
+import { defineAsyncComponent } from "vue";
 import geyser from "./geyser.vue";
 import newGeyser from "./geyserV2.vue";
 // import migrator from "./migrate.vue";
@@ -87,7 +88,7 @@ import {
   vETH2_CRV,
   oldPools,
 } from "@/contracts";
-const Claim = () => import("./claim.vue");
+const Claim = defineAsyncComponent(() => import("./claim.vue"));
 import { vEth2Price } from "@/utils/veth2.js";
 
 export default {
