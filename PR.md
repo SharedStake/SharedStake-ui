@@ -9,6 +9,7 @@
 - add dev-only mock airdrop contract fallback for local/dev use
 - seed wallet store in dev via `?e2eAddress=...` query
 - add Playwright config + airdrop flow test
+- fix mobile sidebar overlay gap and soften vEth2 panel header styling
 
 ## Risk
 - Low: dev-only wallet injection and mock airdrop are guarded by `import.meta.env.DEV`

@@ -598,12 +598,12 @@ export default {
 }
 .sidebar {
   position: fixed;
-  top: 127px;
+  top: 0;
   bottom: 0;
   overflow-y: auto;
   width: 100%;
   padding: 1.5rem;
-  padding-top: 0;
+  padding-top: 127px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
