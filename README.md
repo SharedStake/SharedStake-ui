@@ -31,6 +31,21 @@ bun run build    # Production build
 bun run lint     # Code linting
 ```
 
+### Changelog Generation
+```bash
+bun run changelog:generate
+```
+
+Defaults:
+- Uses commits from latest tag to `HEAD` (falls back to full history when no tag exists)
+- Writes to `CHANGELOG.md` in replace mode
+
+Range and output overrides:
+```bash
+node scripts/generate-changelog.js --from v0.1.0 --to HEAD --output CHANGELOG.md --replace
+node scripts/generate-changelog.js --from v0.1.0 --to HEAD --append
+```
+
 ## 📊 Project Status
 
 **Tech Stack**: Vue 3.5.22 • Pinia 3.0.3 • Vite 7.1.12 • Bun 1.x • ethers.js v6.15.0 • Tailwind CSS 3.4.18
