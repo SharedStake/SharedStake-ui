@@ -45,6 +45,7 @@
     "bignumber.js": "9.3.1",
     "bnc-notify": "1.9.8",
     "core-js": "3.47.0",
+    "dompurify": "^3.3.1",
     "ethers": "6.16.0",
     "marked": "16.4.1",
     "pinia": "3.0.4",

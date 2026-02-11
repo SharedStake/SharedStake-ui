@@ -153,6 +153,7 @@
 
 <script>
 import { h } from 'vue';
+import DOMPurify from 'dompurify';
 import BlogStyles from './BlogStyles.vue';
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
 import BlogPostCard from './BlogPostCard.vue';
@@ -160,45 +161,18 @@ import { useBlog } from '@/composables/useBlog.js';
 import { useStructuredData } from '@/composables/useStructuredData.js';
 import { generateTwitterShareUrl } from '@/utils/blogUtils.js';
 
-const BLOCKED_HTML_TAGS = new Set(['script', 'iframe', 'object', 'embed', 'form', 'style', 'meta', 'link']);
-const URL_ATTRIBUTES = new Set(['href', 'src', 'xlink:href', 'action', 'formaction']);
+const FORBID_TAGS = ['script', 'iframe', 'object', 'embed', 'form', 'style', 'meta', 'link'];
 
 function sanitizeHtml(content) {
   if (typeof content !== 'string' || content.length === 0) {
     return '';
   }
-
-  if (typeof document === 'undefined') {
-    return content;
-  }
-
-  const template = document.createElement('template');
-  template.innerHTML = content;
-
-  template.content.querySelectorAll('*').forEach((node) => {
-    const tagName = node.tagName.toLowerCase();
-
-    if (BLOCKED_HTML_TAGS.has(tagName)) {
-      node.remove();
-      return;
-    }
-
-    Array.from(node.attributes).forEach((attribute) => {
-      const name = attribute.name.toLowerCase();
-      const value = attribute.value.trim();
-
-      if (name.startsWith('on') || name === 'style') {
-        node.removeAttribute(attribute.name);
-        return;
-      }
-
-      if (URL_ATTRIBUTES.has(name) && /^javascript:/i.test(value)) {
-        node.removeAttribute(attribute.name);
-      }
-    });
+  return DOMPurify.sanitize(content, {
+    USE_PROFILES: { html: true },
+    FORBID_TAGS,
+    FORBID_ATTR: ['style'],
+    ALLOW_UNKNOWN_PROTOCOLS: false
   });
-
-  return template.innerHTML;
 }
 
 const SafeHtmlContent = {
