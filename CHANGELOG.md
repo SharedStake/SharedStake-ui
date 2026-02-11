@@ -3,6 +3,11 @@
 Generated from `v2.0rc2` to `HEAD`.
 Compare: [v2.0rc2...HEAD](https://github.com/SharedStake/SharedStake-ui/compare/v2.0rc2...HEAD).
 
+## 2026-02-11
+
+### Other
+- Add git-based changelog synthesizer ([35da88f](https://github.com/SharedStake/SharedStake-ui/commit/35da88f431e46dbbba4bd80a2f6ab594ed524d1d))
+
 ## 2026-02-08
 
 ### Other

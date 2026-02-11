@@ -33,10 +33,23 @@ const SECTION_MAP = {
   revert: 'Reverts',
 };
 
-function run(command, fallback = '') {
+function run(command, options = {}) {
+  const {
+    fallback = '',
+    allowFailure = true,
+  } = options;
+
   try {
-    return execSync(command, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  } catch {
+    return execSync(command, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  } catch (error) {
+    if (!allowFailure) {
+      const stderr = error?.stderr?.toString?.().trim?.() || '';
+      const detail = stderr || error.message;
+      if (detail.startsWith(`Command failed: ${command}`)) {
+        throw new Error(detail);
+      }
+      throw new Error(`Command failed: ${command}\n${detail}`);
+    }
     return fallback;
   }
 }
@@ -138,7 +151,7 @@ function classifySubject(subject) {
 }
 
 function getLatestTag() {
-  return run('git describe --tags --abbrev=0', '');
+  return run('git describe --tags --abbrev=0', { fallback: '' });
 }
 
 function getRange(fromRef, toRef) {
@@ -151,7 +164,7 @@ function getRange(fromRef, toRef) {
 function parseCommits(rangeExpr) {
   const format = '%H%x1f%h%x1f%ad%x1f%s%x1e';
   const command = `git log --date=short --pretty=format:${format} ${rangeExpr}`;
-  const raw = run(command);
+  const raw = run(command, { allowFailure: false });
 
   if (!raw) return [];
 
