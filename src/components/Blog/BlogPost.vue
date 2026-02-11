@@ -74,9 +74,9 @@
       <div class="py-6 md:py-8 px-4">
         <div class="max-w-4xl mx-auto">
           <article class="prose prose-lg prose-invert max-w-none overflow-hidden">
-            <div
+            <SafeHtmlContent
               class="blog-content"
-              v-html="post.content"
+              :content="post.content"
             />
           </article>
 
@@ -152,6 +152,7 @@
 </template>
 
 <script>
+import { h } from 'vue';
 import BlogStyles from './BlogStyles.vue';
 import Breadcrumb from '@/components/Common/Breadcrumb.vue';
 import BlogPostCard from './BlogPostCard.vue';
@@ -159,12 +160,72 @@ import { useBlog } from '@/composables/useBlog.js';
 import { useStructuredData } from '@/composables/useStructuredData.js';
 import { generateTwitterShareUrl } from '@/utils/blogUtils.js';
 
+const BLOCKED_HTML_TAGS = new Set(['script', 'iframe', 'object', 'embed', 'form', 'style', 'meta', 'link']);
+const URL_ATTRIBUTES = new Set(['href', 'src', 'xlink:href', 'action', 'formaction']);
+
+function sanitizeHtml(content) {
+  if (typeof content !== 'string' || content.length === 0) {
+    return '';
+  }
+
+  if (typeof document === 'undefined') {
+    return content;
+  }
+
+  const template = document.createElement('template');
+  template.innerHTML = content;
+
+  template.content.querySelectorAll('*').forEach((node) => {
+    const tagName = node.tagName.toLowerCase();
+
+    if (BLOCKED_HTML_TAGS.has(tagName)) {
+      node.remove();
+      return;
+    }
+
+    Array.from(node.attributes).forEach((attribute) => {
+      const name = attribute.name.toLowerCase();
+      const value = attribute.value.trim();
+
+      if (name.startsWith('on') || name === 'style') {
+        node.removeAttribute(attribute.name);
+        return;
+      }
+
+      if (URL_ATTRIBUTES.has(name) && /^javascript:/i.test(value)) {
+        node.removeAttribute(attribute.name);
+      }
+    });
+  });
+
+  return template.innerHTML;
+}
+
+const SafeHtmlContent = {
+  name: 'SafeHtmlContent',
+  props: {
+    content: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    sanitizedContent() {
+      return sanitizeHtml(this.content);
+    }
+  },
+  render() {
+    return h('div', { ...this.$attrs, innerHTML: this.sanitizedContent });
+  }
+};
+
 export default {
   name: 'BlogPost',
   components: {
     BlogStyles,
     Breadcrumb,
-    BlogPostCard
+    BlogPostCard,
+    SafeHtmlContent
   },
   data() {
     const blogUtils = useBlog();

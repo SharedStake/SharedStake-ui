@@ -96,7 +96,7 @@ export function toWei(value) {
 export function toChecksumAddress(address) {
   try {
     return ethers.getAddress(address);
-  } catch (error) {
+  } catch {
     console.error("Invalid address:", address);
     return address;
   }
