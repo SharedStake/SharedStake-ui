@@ -7,7 +7,7 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "setup": "bun install && bash scripts/install-pre-commit-hook.sh",
+    "setup": "bash scripts/install-deps.sh && bash scripts/install-pre-commit-hook.sh",
     "postinstall": "bash scripts/install-pre-commit-hook.sh",
     "serve": "vite",
     "build": "vite build",
@@ -33,7 +33,8 @@
     "analyze:security": "bun audit --level moderate",
     "pre-commit": "bash scripts/pre-commit-check.sh",
     "pre-commit:fix": "bash scripts/fix-pre-commit-issues.sh",
-    "pre-commit:install": "bash scripts/install-pre-commit-hook.sh"
+    "pre-commit:install": "bash scripts/install-pre-commit-hook.sh",
+    "deps:install": "bash scripts/install-deps.sh"
   },
   "dependencies": {
     "@babel/core": "7.29.0",

@@ -30,3 +30,7 @@ pnpm-lock.yaml
 *.sw?
 
 # devNotes.md // create a new repo when everyting is done we don't want people to know this shit
+
+# Local assistant/worktree directories
+.claude/
+.worktrees/

@@ -17,8 +17,9 @@ Vue.js implementation of SharedStake DeFi protocol with optimized Bun-based buil
 # Install Bun (if not already installed)
 curl -fsSL https://bun.sh/install | bash
 
-# Install dependencies
-bun install
+# Install dependencies (lockfile-driven: bun/pnpm/npm)
+bash scripts/install-deps.sh
+# or: bun run deps:install
 
 # Start development server
 bun run dev
