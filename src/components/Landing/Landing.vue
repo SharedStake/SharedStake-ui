@@ -32,7 +32,7 @@
             >
               EST. 2020
             </span>
-            <span class="gradient-text">ETHEREUM LIQUID STAKING DERIVATIVE!</span> <br>
+            <span class="text-white">ETHEREUM LIQUID STAKING DERIVATIVE!</span> <br>
             <span class="subtitle-text">Experience the Future of DeFi</span>
           </h1>
           <div class="exp">
@@ -52,14 +52,13 @@
               Coming Soon
             </div>
           </div>
-          <a
-            class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 hover:scale-105 hover:shadow-xl text-white"
-            rel="noopener noreferrer nofollow"
-            href="https://app.passch.com/"
-            target="_blank"
+          <router-link
+            class="px-6 py-3 text-xl font-medium transition-all duration-300 rounded-full whitespace-nowrap md:text-2xl md:px-8 hover:scale-105 hover:shadow-xl text-white"
+            style="background-color: #e6007a;"
+            to="/wrap"
           >
-            MINT NFT
-          </a>
+            Stake ETH
+          </router-link>
           <button
             type="button"
             class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-white/30 rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-white/10 hover:bg-white/15 hover:scale-105 hover:shadow-xl text-white"
@@ -464,13 +463,13 @@
           />
         </div>
       </div>
-      <div class="LearnButton enhanced-learn-button">
+      <div class="LearnButton">
         <a
           href="https://sips.sharedstake.org/SIPS/sip-3.html"
           target="_blank"
           rel="noopener noreferrer"
-        >
-          Learn More</a>
+          class="px-6 py-3 text-base font-medium border border-[#e6007a] rounded-lg text-white hover:bg-[#e6007a]/20 transition-all duration-300"
+        >Learn More</a>
       </div>
     </div>
     <div v-show="scrolled > 3800">
@@ -1545,35 +1544,6 @@ export default {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Enhanced learn button */
-.enhanced-learn-button {
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-  border: 2px solid transparent;
-  background-clip: padding-box;
-  position: relative;
-  overflow: hidden;
-}
-
-.enhanced-learn-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.enhanced-learn-button:hover::before {
-  left: 100%;
-}
-
-.enhanced-learn-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-}
-
 .downSign {
   display: flex;
   justify-content: center;
@@ -1584,9 +1554,15 @@ export default {
 
 .Container {
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
   color: #fff;
   z-index: 1;
+}
+
+.Container,
+.Stats,
+.BadgeContainer {
+  transition: opacity 0.4s ease;
 }
 
 .LogoContainer {
