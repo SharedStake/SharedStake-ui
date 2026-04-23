@@ -19,7 +19,8 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.es2022
+        ...globals.es2022,
+        __APP_VERSION__: 'readonly'
       }
     },
     plugins: {

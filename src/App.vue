@@ -17,7 +17,7 @@ body {
   scroll-behavior: smooth;
   margin: 0;
   padding: 0;
-  font-size: 30px;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",

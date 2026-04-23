@@ -877,7 +877,7 @@ export default {
   .geyserwrapper {
     position: relative;
     transition: transform 0.2s ease-in-out;
-    font-family: "Work Sans";
+    font-family: "Inter";
     margin: 4vh 1vw 2vh 1vw;
     width: 90vw;
     border: 1px rgb(250, 82, 160) solid;

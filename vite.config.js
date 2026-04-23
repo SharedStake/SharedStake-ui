@@ -1,10 +1,17 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import { createRequire } from 'module'
+
+const _require = createRequire(import.meta.url)
+const pkg = _require('./package.json')
 
 export default defineConfig({
   plugins: [vue()],
   base: '/',
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')

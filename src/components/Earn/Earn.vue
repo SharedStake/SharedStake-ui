@@ -284,7 +284,7 @@ export default {
 
 <style scoped>
 .EarnWrapper {
-  font-family: "Work Sans";
+  font-family: "Inter";
   padding-top: 100px;
   padding-bottom: 5vh;
 }
