@@ -44,7 +44,7 @@
         <br>
         Over 90% of veth2 already redeemed! New v2 withdrawawls contracts with better UX coming soon for remaining users! 
         <br>
-        version: 1.0.6
+        version: {{ appVersion }}
       </p>
     </div>
     <div
@@ -442,6 +442,7 @@ export default {
       sgtPrice: null,
       maintenanceBannerVisible: true,
       footerBannerVisible: true,
+      appVersion: typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.0.7',
     };
   },
 
