@@ -313,7 +313,7 @@
           vEth2
         </div>
       </div>
-      <div class="exp InfoHeader DropShadow centertext text-gray-200">
+      <div class="exp InfoHeader centertext text-gray-200">
         Yield Bearing Wrapped Ether
       </div>
       <div class="exp background3" />
@@ -2027,10 +2027,6 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
 .reverse {
   filter: invert(1);
-}
-
-.DropShadow {
-  filter: drop-shadow(0px 0px 4px rgba(256, 256, 256, 1)) brightness(500%);
 }
 
 @keyframes LogoEnter {
