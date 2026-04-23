@@ -18,7 +18,7 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span>⚠️ UNDER MAINTENANCE ⚠️</span>
+        <span>UNDER MAINTENANCE</span>
         <svg
           class="w-6 h-6 animate-pulse"
           fill="currentColor"
@@ -36,7 +36,7 @@
       :class="{ 'element-hidden-bottom': !footerBannerVisible }"
       class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary transition-transform duration-500"
     >
-      🚀 v2 - Sepolia testnet live now! 🚀 Switch network to Sepolia and try staking/unstaking now for a chance to get an airdrop! 🚀
+      v2 - Sepolia testnet live now! Switch network to Sepolia and try staking/unstaking now for a chance to get an airdrop!
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
@@ -49,7 +49,8 @@
     </div>
     <div
       :class="{ 'navbar--hidden': !showNavbar }"
-      class="fixed top-16 w-full p-3 navbar"
+      class="fixed w-full p-3 navbar"
+      :style="{ top: maintenanceBannerVisible ? '4rem' : '0' }"
     >
       <div
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
