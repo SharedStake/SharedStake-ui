@@ -36,7 +36,7 @@
       :class="{ 'element-hidden-bottom': !footerBannerVisible }"
       class="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-2 text-sm font-semibold text-center text-white bg-brand-primary transition-transform duration-500"
     >
-      v2 - Sepolia testnet live now! Switch network to Sepolia and try staking/unstaking now for a chance to get an airdrop!
+      🚀 v2 - Sepolia testnet live now! 🚀 Switch network to Sepolia and try staking/unstaking now for a chance to get an airdrop! 🚀
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
@@ -290,27 +290,6 @@
     />
     <!--App-->
     <div class="footer">
-      <div class="disclaimer">
-        <p>
-          Please note that SharedStake protocol, its software, and all content
-          found on it are provided on an “as is” and “as available” basis.
-        </p>
-        <p>
-          While we have made reasonable efforts to ensure the security and
-          functionality of the SharedStake platform, including a formal audit by
-          Certik, we are constantly working on the front-end. Please inform us on
-          Discord if you are experiencing any bugs or odd behaviour on the UI.
-        </p>
-        <p>
-          We strongly advise caution to anyone who chooses to use the current
-          version.
-        </p>
-        <p>
-          By using the SharedStake software you agree to not hold SharedStake or
-          it's operators liable for any losses
-        </p>
-        <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
-      </div>
       <div class="LogoContainer flex items-center justify-evenly">
         <div class="footerLinks">
           <ImageVue
@@ -408,6 +387,27 @@
               </a></span>
           </div>
         </div>
+      </div>
+      <div class="disclaimer">
+        <p>
+          Please note that SharedStake protocol, its software, and all content
+          found on it are provided on an “as is” and “as available” basis.
+        </p>
+        <p>
+          While we have made reasonable efforts to ensure the security and
+          functionality of the SharedStake platform, including a formal audit by
+          Certik, we are constantly working on the front-end. Please inform us on
+          Discord if you are experiencing any bugs or odd behaviour on the UI.
+        </p>
+        <p>
+          We strongly advise caution to anyone who chooses to use the current
+          version.
+        </p>
+        <p>
+          By using the SharedStake software you agree to not hold SharedStake or
+          it's operators liable for any losses
+        </p>
+        <p>PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE</p>
       </div>
       <div class="bottom">
         SharedStake © 2025
@@ -590,10 +590,8 @@ export default {
 .links {
   box-sizing: border-box;
   display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   padding-left: 10px;
   transition: right 0.25s ease 0s;
 }
