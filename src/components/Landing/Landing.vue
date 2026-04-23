@@ -55,13 +55,14 @@
               Coming Soon
             </div>
           </div>
-          <router-link
-            class="px-6 py-3 text-xl font-medium transition-all duration-300 rounded-full whitespace-nowrap md:text-2xl md:px-8 hover:scale-105 hover:shadow-xl text-white"
-            style="background-color: #e6007a;"
-            to="/wrap"
+          <a
+            class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 hover:scale-105 hover:shadow-xl text-white"
+            rel="noopener noreferrer nofollow"
+            href="https://app.passch.com/"
+            target="_blank"
           >
-            Stake ETH
-          </router-link>
+            MINT NFT
+          </a>
           <button
             type="button"
             class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-white/30 rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-white/10 hover:bg-white/15 hover:scale-105 hover:shadow-xl text-white"
