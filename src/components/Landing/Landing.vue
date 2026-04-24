@@ -45,10 +45,12 @@
           </div>
         </div>
         <div
-          class="flex items-center justify-center gap-6 mb-8 md-large:justify-start flex-wrap"
+          class="hero-actions flex items-center justify-center gap-6 mb-8 md-large:justify-start flex-wrap"
         >
           <div
-            class="px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
+            class="hero-cta px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
+            aria-disabled="true"
+            role="status"
           >
             <span>STAKE V2</span>
             <div class="text-xs mt-1">
@@ -56,7 +58,7 @@
             </div>
           </div>
           <a
-            class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 hover:scale-105 hover:shadow-xl text-white"
+            class="hero-cta px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-[#e6007a] via-[#c30066] to-[#9f004f] hover:from-[#f30082] hover:via-[#d3006f] hover:to-[#ac0056] hover:scale-105 hover:shadow-xl text-white"
             rel="noopener noreferrer nofollow"
             href="https://app.passch.com/"
             target="_blank"
@@ -65,7 +67,7 @@
           </a>
           <button
             type="button"
-            class="px-6 py-3 text-xl font-medium transition-all duration-300 border border-white/30 rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-white/10 hover:bg-white/15 hover:scale-105 hover:shadow-xl text-white"
+            class="hero-cta px-6 py-3 text-xl font-medium transition-all duration-300 border border-white/30 rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-white/10 hover:bg-white/15 hover:scale-105 hover:shadow-xl text-white"
             @click="scrollToEmailSignup"
           >
             Sign up for our email list
@@ -85,6 +87,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="social-link"
+            aria-label="Join SharedStake on Discord"
           >
             <ImageVue
               :src="'socialmediaicons/Discord.svg'"
@@ -108,6 +111,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="social-link"
+            aria-label="SharedStake GitHub"
           >
             <ImageVue
               :src="'socialmediaicons/Git.svg'"
@@ -120,6 +124,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="social-link"
+            aria-label="SharedStake Medium"
           >
             <ImageVue
               :src="'socialmediaicons/Medium.svg'"
@@ -132,6 +137,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="social-link"
+            aria-label="SharedStake on X"
           >
             <ImageVue
               :src="'socialmediaicons/Twitter.svg'"
@@ -155,12 +161,14 @@
           >
             Rollover (Returning soon!)
           </router-link> -->
-          <span
-            class="px-4 py-2 text-base font-medium transition-all duration-300 border border-cyan-400 rounded-full whitespace-nowrap md:text-lg hover:border-cyan-300 hover:text-cyan-300 hover:bg-cyan-400/10 md:px-6 cursor-pointer"
-            to="/rollover"
+          <button
+            type="button"
+            class="px-4 py-2 text-base font-medium transition-all duration-300 border border-cyan-400 rounded-full whitespace-nowrap md:text-lg hover:border-cyan-300 hover:text-cyan-300 hover:bg-cyan-400/10 md:px-6 cursor-not-allowed opacity-70"
+            disabled
+            aria-disabled="true"
           >
             Rollover (Returning soon!)
-          </span>
+          </button>
           <div
             class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center bg-gradient-to-r from-gray-600 to-gray-700"
           >
@@ -312,7 +320,7 @@
           vEth2
         </div>
       </div>
-      <div class="exp InfoHeader centertext text-gray-200">
+      <div class="exp InfoHeader centertext text-gray-200 panel-subtitle">
         Yield Bearing Wrapped Ether
       </div>
       <div class="exp background3" />
@@ -553,7 +561,7 @@
       id="email-signup"
       class="email-signup-section"
     >
-      <div class="exp Information email-signup-info">
+      <div class="exp Information email-signup-info email-signup-card">
         <div class="InfoHeader centertext">
           Stay in the loop
         </div>
@@ -1578,6 +1586,29 @@ export default {
   text-wrap: pretty;
 }
 
+.hero-actions {
+  row-gap: 0.9rem;
+}
+
+.hero-cta {
+  min-width: 220px;
+  text-align: center;
+  justify-content: center;
+}
+
+.hero-cta:focus-visible,
+.LearnButton:focus-visible,
+.social-link:focus-visible {
+  outline: 2px solid rgba(255, 122, 193, 0.95);
+  outline-offset: 3px;
+}
+
+.panel-subtitle {
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+}
+
 .Information .exp,
 .Bubble .exp {
   max-width: 100%;
@@ -2214,6 +2245,14 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   width: min(70%, 860px);
 }
 
+.email-signup-card {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  background: radial-gradient(circle at top right, rgba(230, 0, 122, 0.2), rgba(0, 0, 0, 0.55));
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
 .email-signup-desc {
   font-size: 18px;
   line-height: 1.6;
@@ -2223,8 +2262,26 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 }
 
 @media only screen and (max-width: 900px) {
+  .hero-cta {
+    width: 100%;
+    min-width: 0;
+  }
+
   .email-signup-info {
     width: 90%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-orb,
+  .shape,
+  .gradient-text,
+  .exp,
+  .social-link,
+  .enhanced-bubble,
+  .LearnButton {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>
