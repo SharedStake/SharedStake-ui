@@ -286,15 +286,14 @@
             token with a 1:1 price ratio with Ether. vEth2 staking is also
             incentivized further with SGT, the SharedStake Governance Token.
           </div>
-          <div class="LearnButton">
-            <a
-              href="https://docs.sharedstake.finance/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn More
-            </a>
-          </div>
+          <a
+            class="LearnButton"
+            href="https://docs.sharedstake.finance/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn More
+          </a>
         </div>
       </div>
     </div>
@@ -385,14 +384,14 @@
           />
         </div>
       </div>
-      <div class="LearnButton">
-        <a
-          href="https://sips.sharedstake.org/SIPS/sip-3.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="px-6 py-3 text-base font-medium border border-[#e6007a] rounded-lg text-white hover:bg-[#e6007a]/20 transition-all duration-300"
-        >Learn More</a>
-      </div>
+      <a
+        class="LearnButton enhanced-learn-button"
+        href="https://sips.sharedstake.org/SIPS/sip-3.html"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Learn More
+      </a>
     </div>
     <div v-show="scrolled > 3800">
       <Partners />
@@ -552,11 +551,14 @@
     </div>
     <div
       id="email-signup"
-      class="flex_column"
+      class="email-signup-section"
     >
-      <div class="exp Information">
+      <div class="exp Information email-signup-info">
         <div class="InfoHeader centertext">
-          Subscribe for updates from the team
+          Stay in the loop
+        </div>
+        <div class="exp centertext email-signup-desc">
+          Get the latest on vETH2 staking rewards, governance proposals, and new DeFi integrations — straight from the team.
         </div>
         <div class="exp Info">
           <MailingListSubscribeForm />
@@ -1466,6 +1468,33 @@ export default {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+/* Enhanced learn button */
+.LearnButton.enhanced-learn-button {
+  background: linear-gradient(135deg, #e6007a 0%, #b0005c 100%);
+  border: 2px solid rgba(230, 0, 122, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.LearnButton.enhanced-learn-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.LearnButton.enhanced-learn-button:hover::before {
+  left: 100%;
+}
+
+.LearnButton.enhanced-learn-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(230, 0, 122, 0.4);
+}
 .downSign {
   display: flex;
   justify-content: center;
@@ -1574,10 +1603,11 @@ export default {
 }
 
 .LearnButton {
+  display: inline-block;
   width: fit-content;
   margin: 24px auto 0;
   font-size: 21px;
-  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   border: 2px solid #fff;
   border-radius: 10px;
   text-align: center;
@@ -1585,9 +1615,10 @@ export default {
   cursor: pointer;
   z-index: 3;
   grid-area: Button;
+  color: #fff;
 }
 
-.LearnButton:hover,
+.LearnButton:hover:not(.enhanced-learn-button),
 .StakeButton:hover {
   transform: scale(0.98);
 }
@@ -2168,6 +2199,32 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 @media only screen and (max-width: 375px) {
   .mainTitle {
     font-size: 36px;
+  }
+}
+
+.email-signup-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 1rem;
+}
+
+.email-signup-info {
+  grid-area: unset;
+  width: min(70%, 860px);
+}
+
+.email-signup-desc {
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 640px;
+  margin: 0 auto 2rem;
+}
+
+@media only screen and (max-width: 900px) {
+  .email-signup-info {
+    width: 90%;
   }
 }
 </style>
