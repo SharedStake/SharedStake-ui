@@ -1485,6 +1485,8 @@ export default {
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
+}
+
 .LearnButton.enhanced-learn-button:hover::before {
   left: 100%;
 }
