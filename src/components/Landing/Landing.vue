@@ -23,8 +23,8 @@
           :size="windowWidth > 900 ? '180px' : '20vw'"
         />
       </div>
-      <div class="flex flex-col justify-center h-full p-4">
-        <div class="mb-8 text-center md-large:max-w-xl md-large:text-left">
+      <div class="hero-content flex flex-col justify-center h-full p-4">
+        <div class="hero-copy mb-8 text-center md-large:max-w-xl md-large:text-left">
           <h1 class="relative mb-6 mainTitle">
             <span
               title="Established in 2020"
@@ -80,7 +80,7 @@
           </p>
         </div>
         <div
-          class="flex items-center justify-center gap-8 mb-8 md-large:justify-start"
+          class="hero-socials flex items-center justify-center gap-8 mb-8 md-large:justify-start"
         >
           <a
             href="https://discord.gg/C9GhCv86My"
@@ -153,7 +153,7 @@
           </p>
         </div>
         <div
-          class="flex items-center justify-center gap-4 mb-8 md-large:justify-start"
+          class="hero-redemption-actions flex items-center justify-center gap-4 mb-8 md-large:justify-start"
         >
           <!-- <router-link
             class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
@@ -1590,10 +1590,27 @@ export default {
   row-gap: 0.9rem;
 }
 
+.hero-copy {
+  max-width: 52rem;
+}
+
 .hero-cta {
   min-width: 220px;
   text-align: center;
   justify-content: center;
+}
+
+.hero-socials,
+.hero-redemption-actions {
+  flex-wrap: wrap;
+}
+
+.hero-socials {
+  row-gap: 0.65rem;
+}
+
+.hero-redemption-actions {
+  row-gap: 0.75rem;
 }
 
 .hero-cta:focus-visible,
@@ -2127,7 +2144,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
 @media only screen and (max-width: 900px) {
   .first {
-    padding-top: 125px;
+    padding-top: 112px;
     display: grid;
     gap: 0px 0px;
     grid-template-areas: ".";
@@ -2163,7 +2180,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 
   .Explanation {
-    padding: 0 23px 100px 23px;
+    padding: 0 20px 80px 20px;
     animation: TextEnter 0.4s ease-out backwards;
   }
 
@@ -2174,11 +2191,12 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 
   .StatsHeader {
-    font-size: 42px;
+    font-size: 40px;
   }
   .InfoHeader {
     padding: 15px 15px 15px 0;
-    font-size: 25px;
+    font-size: 24px;
+    line-height: 1.35;
   }
 
   .third {
@@ -2212,7 +2230,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
   .Information {
     width: 100%;
-    padding: 24px 16px;
+    padding: 20px 14px;
   }
 
   .certikLogo {
@@ -2221,9 +2239,9 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 
   .mainTitle {
-    font-size: 46px;
-    line-height: 1.1;
-    margin-bottom: 32px;
+    font-size: 42px;
+    line-height: 1.08;
+    margin-bottom: 24px;
   }
 }
 
@@ -2262,13 +2280,99 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 }
 
 @media only screen and (max-width: 900px) {
+  .hero-actions {
+    margin-bottom: 1.5rem;
+    row-gap: 0.7rem;
+  }
+
   .hero-cta {
     width: 100%;
     min-width: 0;
+    font-size: 1rem;
+    line-height: 1.35;
+    padding: 0.8rem 1.1rem;
+  }
+
+  .hero-socials {
+    gap: 0.5rem 0.9rem;
+  }
+
+  .hero-redemption-actions {
+    gap: 0.65rem;
+  }
+
+  .hero-redemption-actions > * {
+    flex: 1 1 240px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .panel-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.45;
+    letter-spacing: 0.03em;
+  }
+
+  .email-signup-section {
+    padding: 3.4rem 0.85rem;
   }
 
   .email-signup-info {
-    width: 90%;
+    width: min(95%, 860px);
+  }
+
+  .email-signup-desc {
+    font-size: 1rem;
+    line-height: 1.55;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media only screen and (max-width: 770px) {
+  .hero-cta {
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .subtitle-text {
+    font-size: 0.56em;
+    margin-top: 0.35rem;
+  }
+
+  .Explanation {
+    padding: 0 16px 64px 16px;
+  }
+
+  .hero-redemption-actions > * {
+    flex: 1 1 100%;
+    max-width: 320px;
+  }
+
+  .email-signup-info {
+    width: 100%;
+  }
+
+  .email-signup-card {
+    border-radius: 20px;
+  }
+
+  .panel-subtitle {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  .mainTitle {
+    font-size: 34px;
+  }
+
+  .hero-cta {
+    font-size: 0.9rem;
+  }
+
+  .email-signup-card {
+    border-radius: 16px;
   }
 }
 
