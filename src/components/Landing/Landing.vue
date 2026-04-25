@@ -314,7 +314,7 @@
         <ImageVue
           :src="'vEth2.png'"
           :size="'123px'"
-          class="exp"
+          class="exp veth2-panel-icon"
         />
         <div class="StatsHeader gradient-text">
           vEth2
@@ -1624,6 +1624,13 @@ export default {
   color: rgba(255, 255, 255, 0.92);
   letter-spacing: 0.04em;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+  width: fit-content;
+  margin: 0 auto 1.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(135deg, rgba(8, 12, 21, 0.75), rgba(18, 26, 40, 0.65));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
 }
 
 .Information .exp,
@@ -1949,6 +1956,9 @@ export default {
 .vEth2PanelHeader {
   padding-top: 5vw;
   z-index: 5;
+}
+
+.veth2-panel-icon {
   animation: Glow 2s ease-in-out alternate infinite;
 }
 
@@ -2122,11 +2132,11 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
 @keyframes Glow {
   from {
-    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.01)) brightness(110%);
+    filter: drop-shadow(0px 0px 3px rgba(255, 255, 255, 0.08)) brightness(102%);
   }
 
   to {
-    filter: drop-shadow(0px 0px 8px rgba(230, 0, 122, 0.6)) brightness(140%);
+    filter: drop-shadow(0px 0px 6px rgba(230, 0, 122, 0.42)) brightness(112%);
   }
 }
 
