@@ -1,7 +1,10 @@
 <template>
   <div class="Landing">
     <!-- Animated background elements -->
-    <div class="animated-bg">
+    <div
+      class="animated-bg"
+      aria-hidden="true"
+    >
       <div class="gradient-orb orb-1" />
       <div class="gradient-orb orb-2" />
       <div class="gradient-orb orb-3" />
@@ -96,7 +99,11 @@
             />
           </a>
 
-          <div class="cursor-not-allowed opacity-50 flex flex-col items-center">
+          <div
+            class="social-link social-link-disabled cursor-not-allowed opacity-50 flex flex-col items-center"
+            aria-disabled="true"
+            role="status"
+          >
             <ImageVue
               :src="'socialmediaicons/TG.svg'"
               size="24px"
@@ -183,6 +190,7 @@
     <div
       v-show="scrolled >= 0"
       class="downSign glow"
+      aria-hidden="true"
     >
       <ImageVue
         :src="'down.svg'"
@@ -1452,6 +1460,11 @@ export default {
 
 /* Enhanced social links */
 .social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   transition: all 0.3s ease;
   border-radius: 50%;
   padding: 8px;
@@ -1461,6 +1474,14 @@ export default {
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px) scale(1.1);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.social-link-disabled {
+  pointer-events: none;
+}
+
+.social-link-disabled .socialLogo {
+  filter: brightness(190%);
 }
 
 /* Enhanced bubble styling */
@@ -2198,6 +2219,8 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
   .mainTitle {
     margin: 0 auto;
+    font-size: clamp(2.7rem, 7vw, 3.6rem);
+    line-height: 1.06;
   }
 
   .Explanation {
@@ -2215,7 +2238,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     font-size: 40px;
   }
   .InfoHeader {
-    padding: 15px 15px 15px 0;
+    padding: 12px 0;
     font-size: 24px;
     line-height: 1.35;
   }
@@ -2302,6 +2325,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
 @media only screen and (max-width: 900px) {
   .hero-actions {
+    width: 100%;
     margin-bottom: 1.5rem;
     row-gap: 0.7rem;
   }
@@ -2312,10 +2336,14 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     font-size: 1rem;
     line-height: 1.35;
     padding: 0.8rem 1.1rem;
+    max-width: 34rem;
+    margin-inline: auto;
   }
 
   .hero-socials {
     gap: 0.5rem 0.9rem;
+    width: 100%;
+    justify-content: center;
   }
 
   .hero-redemption-actions {
@@ -2391,6 +2419,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   .panel-subtitle {
     font-size: 1.1rem;
     line-height: 1.4;
+    letter-spacing: 0.02em;
     max-width: calc(100% - 1rem);
     padding: 0.4rem 0.8rem;
   }
@@ -2407,6 +2436,11 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 
   .email-signup-card {
     border-radius: 16px;
+  }
+
+  .panel-subtitle {
+    font-size: 1rem;
+    line-height: 1.35;
   }
 }
 
