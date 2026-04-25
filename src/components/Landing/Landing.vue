@@ -316,7 +316,7 @@
           :size="'123px'"
           class="exp veth2-panel-icon"
         />
-        <div class="StatsHeader gradient-text">
+        <div class="StatsHeader gradient-text veth2-panel-title">
           vEth2
         </div>
       </div>
@@ -1625,12 +1625,14 @@ export default {
   letter-spacing: 0.04em;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
   width: fit-content;
+  max-width: calc(100% - 2rem);
   margin: 0 auto 1.5rem;
   padding: 0.45rem 0.95rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: linear-gradient(135deg, rgba(8, 12, 21, 0.75), rgba(18, 26, 40, 0.65));
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+  text-wrap: balance;
 }
 
 .Information .exp,
@@ -1956,10 +1958,19 @@ export default {
 .vEth2PanelHeader {
   padding-top: 5vw;
   z-index: 5;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .veth2-panel-icon {
   animation: Glow 2s ease-in-out alternate infinite;
+}
+
+.veth2-panel-title {
+  margin: 0 0 0 1rem;
+  padding: 0;
+  line-height: 1.08;
+  font-size: clamp(2.25rem, 5vw, 3.3rem);
 }
 
 .third {
@@ -2339,6 +2350,17 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
 }
 
 @media only screen and (max-width: 770px) {
+  .vEth2PanelHeader {
+    flex-direction: column;
+    gap: 0.65rem;
+    padding-top: 3.25rem;
+  }
+
+  .veth2-panel-title {
+    margin: 0;
+    font-size: clamp(2rem, 10vw, 2.6rem);
+  }
+
   .hero-cta {
     font-size: 0.95rem;
     padding: 0.75rem 1rem;
@@ -2369,6 +2391,8 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   .panel-subtitle {
     font-size: 1.1rem;
     line-height: 1.4;
+    max-width: calc(100% - 1rem);
+    padding: 0.4rem 0.8rem;
   }
 }
 
