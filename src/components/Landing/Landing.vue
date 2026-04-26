@@ -80,73 +80,40 @@
         <div
           class="hero-socials flex items-center justify-center gap-8 mb-8 md-large:justify-start"
         >
-          <a
-            href="https://discord.gg/C9GhCv86My"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            aria-label="Join SharedStake on Discord"
+          <template
+            v-for="social in socialLinks"
+            :key="social.key"
           >
-            <ImageVue
-              :src="'socialmediaicons/Discord.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
-
-          <div
-            class="social-link social-link-disabled cursor-not-allowed opacity-50 flex flex-col items-center"
-            aria-disabled="true"
-            aria-label="Telegram is coming soon"
-          >
-            <ImageVue
-              :src="'socialmediaicons/TG.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-            <div class="text-xs mt-1 text-center">
-              Coming Soon
+            <a
+              v-if="!social.disabled"
+              :href="social.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+              :aria-label="social.ariaLabel"
+            >
+              <ImageVue
+                :src="social.icon"
+                size="24px"
+                class="socialLogo"
+              />
+            </a>
+            <div
+              v-else
+              class="social-link social-link-disabled cursor-not-allowed opacity-50 flex flex-col items-center"
+              aria-disabled="true"
+              :aria-label="social.ariaLabel"
+            >
+              <ImageVue
+                :src="social.icon"
+                size="24px"
+                class="socialLogo"
+              />
+              <div class="text-xs mt-1 text-center">
+                {{ social.subLabel || "Coming Soon" }}
+              </div>
             </div>
-          </div>
-          <a
-            href="https://github.com/SharedStake"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            aria-label="SharedStake GitHub"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Git.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
-          <a
-            href="https://medium.com/@chimera_defi"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            aria-label="SharedStake Medium"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Medium.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
-          <a
-            href="https://twitter.com/ChimeraDefi"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            aria-label="SharedStake on X"
-          >
-            <ImageVue
-              :src="'socialmediaicons/Twitter.svg'"
-              size="24px"
-              class="socialLogo"
-            />
-          </a>
+          </template>
         </div>
 
         <div class="flex items-center justify-center md-large:justify-start">
@@ -422,120 +389,6 @@
       </div>
     </div>
     <div
-      v-show="false"
-      class="exp roadMap"
-    >
-      <div class="mainBox">
-        <div class="exp titleBox">
-          <div class="X">
-            Roadmap
-          </div>
-        </div>
-        <div class="main">
-          <div class="mainCon">
-            <div class="list">
-              <div class="item">
-                <div class="date">
-                  2020 Q4
-                </div>
-                <div class="text">
-                  Protocol Launch
-                </div>
-              </div>
-
-              <div class="item">
-                <div class="date">
-                  2021 Q1
-                </div>
-                <div class="text">
-                  Smart Contract Security Audit by Certik &amp; SGT Airdrop
-                </div>
-              </div>
-
-              <div class="item">
-                <div class="date">
-                  2021 Q2
-                </div>
-                <div class="text">
-                  500 Validators Created
-                </div>
-              </div>
-
-              <div class="item">
-                <div class="date">
-                  2021 Q3
-                </div>
-                <div class="text">
-                  Leveraged Eth2 Staking with Ruler
-                </div>
-              </div>
-
-              <div class="item">
-                <div class="date">
-                  2021 Q4
-                </div>
-                <div class="text">
-                  Decentralized Validators Backed by SGT
-                </div>
-              </div>
-
-              <div class="item">
-                <div class="date">
-                  2022
-                </div>
-                <div class="text">
-                  vEth2-backed AMM Provides Eth2 Staking Profits to LPs
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">
-                  2023
-                </div>
-                <div class="text">
-                  SGT-based Decentralized Automated Staking Mechanism on Mainnet
-                </div>
-              </div>
-            </div>
-            <div class="curve" />
-            <div class="list next">
-              <div class="item">
-                <div class="date">
-                  2021 Q1
-                </div>
-                <div class="text">
-                  DAO Launched
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">
-                  2021 Q2
-                </div>
-                <div class="text">
-                  First Incentivized Pools for vEth2 on Saddle
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">
-                  2023
-                </div>
-                <div class="text">
-                  Ethereum2 Deployed
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">
-                  Eth2 &amp; Beyond
-                </div>
-                <div class="text">
-                  Ethereum2 is just the beginning for SharedStake...
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
       id="email-signup"
       class="email-signup-section"
     >
@@ -559,6 +412,7 @@ import ImageVue from "../Handlers/ImageVue.vue";
 import MailingListSubscribeForm from "../Common/MailingListSubscribeForm.vue";
 import Partners from "./Partners.vue";
 import ComingSoonPill from "./ComingSoonPill.vue";
+import validatorIndices from "./validatorIndices";
 import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
@@ -585,507 +439,39 @@ export default {
       elapsed: 1,
       validatorsOnline: 500,
       profit: 543,
-      indices: [
-        "91086",
-        "99502",
-        "99532",
-        "99506",
-        "99645",
-        "99643",
-        "99544",
-        "99540",
-        "99539",
-        "99512",
-        "99652",
-        "91090",
-        "99549",
-        "99518",
-        "99589",
-        "99644",
-        "91063",
-        "99492",
-        "99513",
-        "99606",
-        "91084",
-        "91135",
-        "99538",
-        "99507",
-        "99639",
-        "91083",
-        "99522",
-        "99520",
-        "99594",
-        "99592",
-        "99636",
-        "99533",
-        "99529",
-        "99516",
-        "91081",
-        "99554",
-        "99552",
-        "99530",
-        "99601",
-        "99634",
-        "99627",
-        "91089",
-        "91085",
-        "99543",
-        "99524",
-        "99614",
-        "99597",
-        "99587",
-        "99651",
-        "99629",
-        "99555",
-        "99600",
-        "99607",
-        "99619",
-        "99630",
-        "99503",
-        "99631",
-        "99632",
-        "91050",
-        "99494",
-        "99525",
-        "99511",
-        "99655",
-        "91053",
-        "99491",
-        "99583",
-        "99654",
-        "91082",
-        "99493",
-        "99548",
-        "99505",
-        "99586",
-        "99576",
-        "99650",
-        "99547",
-        "99535",
-        "99534",
-        "99637",
-        "99541",
-        "99528",
-        "99519",
-        "99613",
-        "99605",
-        "99653",
-        "99635",
-        "99626",
-        "91049",
-        "99608",
-        "99648",
-        "99640",
-        "99641",
-        "99638",
-        "91088",
-        "91052",
-        "99584",
-        "99633",
-        "99628",
-        "99615",
-        "99498",
-        "99537",
-        "99610",
-        "99595",
-        "99591",
-        "99588",
-        "99617",
-        "99623",
-        "91087",
-        "99510",
-        "99579",
-        "99497",
-        "99527",
-        "99514",
-        "99521",
-        "99596",
-        "99581",
-        "99577",
-        "99649",
-        "99647",
-        "99536",
-        "99609",
-        "99612",
-        "99582",
-        "99621",
-        "99620",
-        "99509",
-        "99602",
-        "99578",
-        "99658",
-        "99496",
-        "99504",
-        "99515",
-        "99642",
-        "99551",
-        "99545",
-        "99604",
-        "99598",
-        "99656",
-        "99495",
-        "99542",
-        "99526",
-        "99603",
-        "99599",
-        "99646",
-        "91047",
-        "99523",
-        "99517",
-        "99616",
-        "99622",
-        "99590",
-        "99585",
-        "99657",
-        "99553",
-        "99546",
-        "99508",
-        "99611",
-        "99593",
-        "99618",
-        "99624",
-        "99575",
-        "99574",
-        "99566",
-        "99571",
-        "99564",
-        "99570",
-        "99568",
-        "99563",
-        "99567",
-        "99565",
-        "99572",
-        "99569",
-        "115084",
-        "115048",
-        "115059",
-        "115064",
-        "115074",
-        "115099",
-        "115101",
-        "115102",
-        "115038",
-        "115045",
-        "115076",
-        "115041",
-        "115054",
-        "115063",
-        "115070",
-        "115071",
-        "115080",
-        "115092",
-        "115028",
-        "115029",
-        "115051",
-        "115078",
-        "115088",
-        "115098",
-        "115030",
-        "115052",
-        "115073",
-        "115077",
-        "115090",
-        "115095",
-        "115106",
-        "115032",
-        "115061",
-        "115081",
-        "115097",
-        "115039",
-        "115068",
-        "115060",
-        "115067",
-        "115075",
-        "115086",
-        "115094",
-        "115105",
-        "115053",
-        "115057",
-        "115055",
-        "115044",
-        "115050",
-        "115066",
-        "115093",
-        "115103",
-        "115027",
-        "115037",
-        "115040",
-        "115065",
-        "115069",
-        "115079",
-        "115091",
-        "115104",
-        "115033",
-        "115035",
-        "115036",
-        "115046",
-        "115058",
-        "115082",
-        "115042",
-        "115043",
-        "115056",
-        "115062",
-        "115087",
-        "115034",
-        "115049",
-        "115072",
-        "115083",
-        "115085",
-        "115089",
-        "115096",
-        "115100",
-        "115031",
-        "115047",
-        "115282",
-        "115149",
-        "115212",
-        "115202",
-        "115289",
-        "115350",
-        "115359",
-        "115156",
-        "115177",
-        "115351",
-        "115365",
-        "115251",
-        "115276",
-        "115117",
-        "115304",
-        "115248",
-        "115279",
-        "115297",
-        "115303",
-        "115317",
-        "115328",
-        "115151",
-        "115205",
-        "115226",
-        "115249",
-        "115265",
-        "115321",
-        "115128",
-        "115172",
-        "115313",
-        "115349",
-        "115363",
-        "115267",
-        "115293",
-        "115284",
-        "115285",
-        "115220",
-        "115224",
-        "115228",
-        "115142",
-        "115179",
-        "115319",
-        "115244",
-        "115259",
-        "115233",
-        "115239",
-        "115258",
-        "115281",
-        "115296",
-        "115334",
-        "115165",
-        "115188",
-        "115342",
-        "115133",
-        "115158",
-        "115252",
-        "115268",
-        "115292",
-        "115298",
-        "115141",
-        "115214",
-        "115236",
-        "115126",
-        "115199",
-        "115335",
-        "115343",
-        "115352",
-        "115225",
-        "115324",
-        "115196",
-        "115294",
-        "115235",
-        "115253",
-        "115347",
-        "115184",
-        "115245",
-        "115169",
-        "115195",
-        "115201",
-        "115355",
-        "115153",
-        "115168",
-        "115280",
-        "115193",
-        "115210",
-        "115204",
-        "115264",
-        "115312",
-        "115358",
-        "115163",
-        "115185",
-        "115190",
-        "115367",
-        "115125",
-        "115131",
-        "115256",
-        "115339",
-        "115118",
-        "115132",
-        "115260",
-        "115307",
-        "115152",
-        "115240",
-        "115221",
-        "115291",
-        "115364",
-        "115139",
-        "115181",
-        "115208",
-        "115144",
-        "115150",
-        "115330",
-        "115160",
-        "115217",
-        "115242",
-        "115277",
-        "115301",
-        "115302",
-        "115306",
-        "115348",
-        "115136",
-        "115162",
-        "115299",
-        "115275",
-        "115194",
-        "115269",
-        "115340",
-        "115366",
-        "115166",
-        "115290",
-        "115287",
-        "115145",
-        "115237",
-        "115333",
-        "115219",
-        "115274",
-        "115211",
-        "115241",
-        "115261",
-        "115272",
-        "115273",
-        "115283",
-        "115171",
-        "115200",
-        "115305",
-        "115322",
-        "115310",
-        "115344",
-        "115122",
-        "115206",
-        "115356",
-        "115134",
-        "115222",
-        "115254",
-        "115320",
-        "115137",
-        "115154",
-        "115130",
-        "115255",
-        "115341",
-        "115138",
-        "115174",
-        "115246",
-        "115270",
-        "115327",
-        "115123",
-        "115209",
-        "115189",
-        "115243",
-        "115309",
-        "115121",
-        "115170",
-        "115215",
-        "115247",
-        "115311",
-        "115326",
-        "115135",
-        "115263",
-        "115198",
-        "115223",
-        "115250",
-        "115286",
-        "115300",
-        "115161",
-        "115213",
-        "115353",
-        "115357",
-        "115187",
-        "115191",
-        "115227",
-        "115176",
-        "115180",
-        "115148",
-        "115331",
-        "115119",
-        "115147",
-        "115257",
-        "115271",
-        "115323",
-        "115146",
-        "115173",
-        "115316",
-        "115329",
-        "115155",
-        "115182",
-        "115164",
-        "115175",
-        "115192",
-        "115216",
-        "115232",
-        "115345",
-        "115120",
-        "115143",
-        "115238",
-        "115278",
-        "115325",
-        "115360",
-        "115207",
-        "115229",
-        "115218",
-        "115346",
-        "115361",
-        "115183",
-        "115186",
-        "115315",
-        "115362",
-        "115178",
-        "115197",
-        "115140",
-        "115234",
-        "115332",
-        "115230",
-        "115262",
-        "115157",
-        "115295",
-        "115318",
-        "115337",
-        "115159",
-        "115266",
-        "115354",
-        "115129",
-        "115336",
-        "115338",
-        "115288",
-        "115308",
-        "115167",
-        "115203",
-        "115314",
-        "115124",
-        "115127",
+      indices: validatorIndices,
+      socialLinks: [
+        {
+          key: "discord",
+          href: "https://discord.gg/C9GhCv86My",
+          ariaLabel: "Join SharedStake on Discord",
+          icon: "socialmediaicons/Discord.svg",
+        },
+        {
+          key: "telegram",
+          disabled: true,
+          ariaLabel: "Telegram is coming soon",
+          icon: "socialmediaicons/TG.svg",
+          subLabel: "Coming Soon",
+        },
+        {
+          key: "github",
+          href: "https://github.com/SharedStake",
+          ariaLabel: "SharedStake GitHub",
+          icon: "socialmediaicons/Git.svg",
+        },
+        {
+          key: "medium",
+          href: "https://medium.com/@chimera_defi",
+          ariaLabel: "SharedStake Medium",
+          icon: "socialmediaicons/Medium.svg",
+        },
+        {
+          key: "twitter",
+          href: "https://twitter.com/ChimeraDefi",
+          ariaLabel: "SharedStake on X",
+          icon: "socialmediaicons/Twitter.svg",
+        },
       ],
     };
   },
@@ -2008,103 +1394,6 @@ export default {
   margin-bottom: 30px;
 }
 
-.roadMap {
-  padding-top: 2rem;
-  padding-bottom: 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mainBox {
-  padding-bottom: 1.13rem;
-  width: 80%;
-}
-
-.titleBox {
-  color: #ffffff;
-  font-size: 50px;
-  position: relative;
-  left: 0;
-  top: 0;
-  z-index: 10;
-}
-
-.main {
-  width: 100%;
-  padding-bottom: 0.5rem;
-  overflow-x: auto;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-.mainCon {
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
-}
-
-.curve {
-  width: 100%;
-  background-image: url(curve.png);
-  background-size: 100% auto;
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 90px;
-  margin: 0.6rem 0;
-  position: relative;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-}
-
-.mainCon .curve canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.mainCon .list {
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  position: relative;
-  left: 0;
-  top: 0;
-  padding-left: 0.1rem;
-}
-
-.mainCon .list .item {
-  width: 260px;
-  /**HERE */
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  -webkit-flex: none;
-  -moz-box-flex: 0;
-  -ms-flex: none;
-  flex: none;
-}
-
-.mainCon .list .item .date {
-  font-size: 17px;
-  color: #e6007a;
-  line-height: 1.43em;
-  padding-bottom: 0.3rem;
-}
-
-.mainCon .list .item .text {
-  font-size: 12px;
-  color: #ffffff;
-  line-height: 1.47em;
-  width: 60%;
-  padding-bottom: 20px;
-}
-
-.mainCon .list.next {
-  padding-left: 5rem;
-}
-
 .centertext {
   text-align: center;
 }
@@ -2149,6 +1438,35 @@ export default {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
+}
+
+.email-signup-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 1rem;
+  scroll-margin-top: 96px;
+}
+
+.email-signup-info {
+  grid-area: unset;
+  width: min(70%, 860px);
+}
+
+.email-signup-card {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  background: radial-gradient(circle at top right, rgba(230, 0, 122, 0.2), rgba(0, 0, 0, 0.55));
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+.email-signup-desc {
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 640px;
+  margin: 0 auto 2rem;
 }
 
 @media only screen and (max-width: 900px) {
@@ -2204,6 +1522,7 @@ export default {
   .StatsHeader {
     font-size: 40px;
   }
+
   .InfoHeader {
     padding: 12px 0;
     font-size: 24px;
@@ -2213,79 +1532,11 @@ export default {
   .third {
     grid-template-columns: 1fr;
   }
+
   .wide-bubble {
     grid-row: span 1;
   }
-}
 
-@media only screen and (max-width: 770px) {
-  .second {
-    grid-template-columns: 1fr;
-    grid-template-rows: 2fr 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
-    grid-template-areas:
-      "Information"
-      "Information"
-      "Eth"
-      "EthExp"
-      "next1"
-      "vEth2"
-      "vEth2Exp"
-      "next2"
-      "reward"
-      "rewardExp"
-      "next3"
-      "harvest"
-      "harvestExp";
-    padding-bottom: 15vh;
-  }
-
-  .Information {
-    width: 100%;
-    padding: 20px 14px;
-  }
-
-  .certikLogo {
-    max-width: 80%;
-    text-align: center;
-  }
-
-  .mainTitle {
-    font-size: 42px;
-    line-height: 1.08;
-    margin-bottom: 24px;
-  }
-}
-
-.email-signup-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 4rem 1rem;
-  scroll-margin-top: 96px;
-}
-
-.email-signup-info {
-  grid-area: unset;
-  width: min(70%, 860px);
-}
-
-.email-signup-card {
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 24px;
-  background: radial-gradient(circle at top right, rgba(230, 0, 122, 0.2), rgba(0, 0, 0, 0.55));
-  backdrop-filter: blur(8px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-}
-
-.email-signup-desc {
-  font-size: 18px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 640px;
-  margin: 0 auto 2rem;
-}
-
-@media only screen and (max-width: 900px) {
   .hero-actions {
     width: 100%;
     margin-bottom: 1.5rem;
@@ -2345,6 +1596,42 @@ export default {
 }
 
 @media only screen and (max-width: 770px) {
+  .second {
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr 0.2fr 1fr 0.2fr;
+    grid-template-areas:
+      "Information"
+      "Information"
+      "Eth"
+      "EthExp"
+      "next1"
+      "vEth2"
+      "vEth2Exp"
+      "next2"
+      "reward"
+      "rewardExp"
+      "next3"
+      "harvest"
+      "harvestExp";
+    padding-bottom: 15vh;
+  }
+
+  .Information {
+    width: 100%;
+    padding: 20px 14px;
+  }
+
+  .certikLogo {
+    max-width: 80%;
+    text-align: center;
+  }
+
+  .mainTitle {
+    font-size: 42px;
+    line-height: 1.08;
+    margin-bottom: 24px;
+  }
+
   .vEth2PanelHeader {
     flex-direction: column;
     gap: 0.65rem;
