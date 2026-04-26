@@ -41,7 +41,7 @@
             >Ethereum Liquid Staking Derivative!</span> <br>
             <span class="subtitle-text">Experience the Future of DeFi</span>
           </h1>
-          <div class="exp">
+          <div class="exp hero-description">
             SharedStake is a decentralized Ethereum 2 staking solution that
             allows users to stake any amount of Ether and earn additional yield
             on top of their ETH2 rewards.
@@ -53,7 +53,7 @@
           <div
             class="hero-cta px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
             aria-disabled="true"
-            role="status"
+            aria-label="Stake V2 is coming soon"
           >
             <span>STAKE V2</span>
             <div class="text-xs mt-1">
@@ -102,7 +102,7 @@
           <div
             class="social-link social-link-disabled cursor-not-allowed opacity-50 flex flex-col items-center"
             aria-disabled="true"
-            role="status"
+            aria-label="Telegram is coming soon"
           >
             <ImageVue
               :src="'socialmediaicons/TG.svg'"
@@ -1615,6 +1615,11 @@ export default {
   max-width: 52rem;
 }
 
+.hero-description {
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
 .hero-cta {
   min-width: 220px;
   text-align: center;
@@ -2300,6 +2305,7 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   flex-direction: column;
   align-items: center;
   padding: 4rem 1rem;
+  scroll-margin-top: 96px;
 }
 
 .email-signup-info {
@@ -2392,6 +2398,11 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   .hero-cta {
     font-size: 0.95rem;
     padding: 0.75rem 1rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    line-height: 1.58;
   }
 
   .subtitle-text {
