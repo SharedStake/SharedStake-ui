@@ -412,7 +412,6 @@ import ImageVue from "../Handlers/ImageVue.vue";
 import MailingListSubscribeForm from "../Common/MailingListSubscribeForm.vue";
 import Partners from "./Partners.vue";
 import ComingSoonPill from "./ComingSoonPill.vue";
-import validatorIndices from "./validatorIndices";
 import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
@@ -439,7 +438,8 @@ export default {
       elapsed: 1,
       validatorsOnline: 500,
       profit: 543,
-      indices: validatorIndices,
+      indices: [],
+      indicesLoaderPromise: null,
       socialLinks: [
         {
           key: "discord",
@@ -531,6 +531,7 @@ export default {
       }
     },
     async getValidatorInfo() {
+      const indices = await this.loadValidatorIndices();
       let results = [];
       let reqUrl = "https://beaconcha.in/api/v1/validator/";
       let chunkArray = (array, size) => {
@@ -541,17 +542,17 @@ export default {
       };
       async function getAllValidatorInfo(indices) {
         // disable the dashboard, exit early for now with just 1 validator
-        indices = indices[0];
+        const indicesToQuery = [indices[0]];
         // beacon chain api supports 100 indices per call, and a max of 10 calls/min for free tier
         await Promise.all(
-          chunkArray(indices, 100).map(async (chunk) => {
+          chunkArray(indicesToQuery, 100).map(async (chunk) => {
             let url = reqUrl.concat(chunk.toString());
             let res = await axios.get(url);
             results = results.concat(res.data.data);
           })
         );
       }
-      await getAllValidatorInfo(this.indices);
+      await getAllValidatorInfo(indices);
 
       let startTime = 1616502743000;
       let elapsed = Date.now() - startTime;
@@ -587,6 +588,22 @@ export default {
       this.vpPostFees = this.vpPostFees.toFixed(4);
       this.elapsed = ((12 * elapsed) / msInYr).toFixed(2);
 
+    },
+    async loadValidatorIndices() {
+      if (this.indices.length > 0) {
+        return this.indices;
+      }
+
+      if (!this.indicesLoaderPromise) {
+        this.indicesLoaderPromise = import("./validatorIndices").then(
+          (module) => {
+            this.indices = module.default;
+            return this.indices;
+          }
+        );
+      }
+
+      return this.indicesLoaderPromise;
     },
     async setupApy() {
       try {

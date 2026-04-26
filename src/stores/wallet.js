@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia'
-import { changeWallets } from './init/onboard'
+
+let changeWalletsLoader = null
+
+async function loadChangeWallets() {
+    if (!changeWalletsLoader) {
+        changeWalletsLoader = import('./init/onboard').then((module) => module.changeWallets)
+    }
+    return changeWalletsLoader
+}
 
 const networks = {
     0: "Olympic",
@@ -37,6 +45,7 @@ export const useWalletStore = defineStore('wallet', {
 
     actions: {
         async setAddress() {
+            const changeWallets = await loadChangeWallets()
             await changeWallets()
         },
         setAddressOnboard(address) {
