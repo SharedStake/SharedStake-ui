@@ -2294,12 +2294,6 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
   }
 }
 
-@media only screen and (max-width: 375px) {
-  .mainTitle {
-    font-size: 36px;
-  }
-}
-
 .email-signup-section {
   display: flex;
   flex-direction: column;
@@ -2344,6 +2338,11 @@ body .roadMap .mainBox .main::-webkit-scrollbar {
     padding: 0.8rem 1.1rem;
     max-width: 34rem;
     margin-inline: auto;
+  }
+
+  .hero-description {
+    font-size: 1.05rem;
+    line-height: 1.6;
   }
 
   .hero-socials {
