@@ -50,18 +50,11 @@
         <div
           class="hero-actions flex items-center justify-center gap-6 mb-8 md-large:justify-start flex-wrap"
         >
-          <button
-            type="button"
+          <ComingSoonPill
+            label="STAKE V2"
             class="hero-cta px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
-            disabled
-            aria-disabled="true"
             aria-label="Stake V2 is coming soon"
-          >
-            <span>STAKE V2</span>
-            <div class="text-xs mt-1">
-              Coming Soon
-            </div>
-          </button>
+          />
           <a
             class="hero-cta px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-[#e6007a] via-[#c30066] to-[#9f004f] hover:from-[#f30082] hover:via-[#d3006f] hover:to-[#ac0056] hover:scale-105 hover:shadow-xl text-white"
             rel="noopener noreferrer nofollow"
@@ -164,12 +157,6 @@
         <div
           class="hero-redemption-actions flex items-center justify-center gap-4 mb-8 md-large:justify-start"
         >
-          <!-- <router-link
-            class="px-4 py-2 text-base font-medium transition-all border border-white rounded-full whitespace-nowrap md:text-lg hover:border-brand-primary hover:text-brand-primary md:px-6"
-            to="/rollover"
-          >
-            Rollover (Returning soon!)
-          </router-link> -->
           <button
             type="button"
             class="px-4 py-2 text-base font-medium transition-all duration-300 border border-cyan-400 rounded-full whitespace-nowrap md:text-lg hover:border-cyan-300 hover:text-cyan-300 hover:bg-cyan-400/10 md:px-6 cursor-not-allowed opacity-70"
@@ -178,18 +165,11 @@
           >
             Rollover (Returning soon!)
           </button>
-          <button
-            type="button"
+          <ComingSoonPill
+            label="Withdraw"
             class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center bg-gradient-to-r from-gray-600 to-gray-700"
-            disabled
-            aria-disabled="true"
             aria-label="Withdraw is coming soon"
-          >
-            <span>Withdraw</span>
-            <div class="text-xs mt-1">
-              Coming Soon
-            </div>
-          </button>
+          />
         </div>
       </div>
     </div>
@@ -534,22 +514,6 @@
                   First Incentivized Pools for vEth2 on Saddle
                 </div>
               </div>
-              <!-- <div class="item">
-                <div class="date">2021 Q2</div>
-                <div class="text">DeFi Support with Barbecue.js</div>
-              </div>
-              <div class="item">
-                <div class="date">2021 Q3</div>
-                <div class="text">
-                  More Integrations with DeFi Protocols through Sauce.js...
-                </div>
-              </div>
-              <div class="item">
-                <div class="date">2022</div>
-                <div class="text">
-                  Staked Ether in Use on Multiple Blockchains
-                </div>
-              </div> -->
               <div class="item">
                 <div class="date">
                   2023
@@ -594,6 +558,7 @@
 import ImageVue from "../Handlers/ImageVue.vue";
 import MailingListSubscribeForm from "../Common/MailingListSubscribeForm.vue";
 import Partners from "./Partners.vue";
+import ComingSoonPill from "./ComingSoonPill.vue";
 import axios from "axios";
 import BN from "bignumber.js";
 import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
@@ -604,6 +569,7 @@ export default {
     ImageVue,
     MailingListSubscribeForm,
     Partners,
+    ComingSoonPill,
   },
   props: ["scrolled", "windowWidth"],
   data() {
@@ -1605,7 +1571,6 @@ export default {
   font-weight: 300;
   padding: 0px;
   color: rgba(255, 255, 255, 0.9);
-  /* text-align: justify; */
   text-justify: inter-word;
   animation: TextEnter 0.6s ease-out backwards 0.2s;
   z-index: 1;
@@ -1822,7 +1787,6 @@ export default {
   color: rgba(255, 255, 255, 0.9);
   z-index: 2;
   align-self: start;
-  /* text-align: justify; */
   text-justify: inter-word;
 }
 
@@ -2141,14 +2105,6 @@ export default {
   padding-left: 5rem;
 }
 
-/* body .roadMap .mainBox .main::-webkit-scrollbar-thumb {
-  height: 5px;
-  background: #555;
-}
-body .roadMap .mainBox .main::-webkit-scrollbar {
-  background: #888;
-  height: 4px;
-} */
 .centertext {
   text-align: center;
 }
