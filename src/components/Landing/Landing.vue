@@ -50,8 +50,10 @@
         <div
           class="hero-actions flex items-center justify-center gap-6 mb-8 md-large:justify-start flex-wrap"
         >
-          <div
+          <button
+            type="button"
             class="hero-cta px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
+            disabled
             aria-disabled="true"
             aria-label="Stake V2 is coming soon"
           >
@@ -59,7 +61,7 @@
             <div class="text-xs mt-1">
               Coming Soon
             </div>
-          </div>
+          </button>
           <a
             class="hero-cta px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-[#e6007a] via-[#c30066] to-[#9f004f] hover:from-[#f30082] hover:via-[#d3006f] hover:to-[#ac0056] hover:scale-105 hover:shadow-xl text-white"
             rel="noopener noreferrer nofollow"
@@ -176,14 +178,18 @@
           >
             Rollover (Returning soon!)
           </button>
-          <div
+          <button
+            type="button"
             class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center bg-gradient-to-r from-gray-600 to-gray-700"
+            disabled
+            aria-disabled="true"
+            aria-label="Withdraw is coming soon"
           >
             <span>Withdraw</span>
             <div class="text-xs mt-1">
               Coming Soon
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </div>
