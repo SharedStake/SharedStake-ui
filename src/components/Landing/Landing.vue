@@ -414,7 +414,6 @@ import Partners from "./Partners.vue";
 import ComingSoonPill from "./ComingSoonPill.vue";
 import axios from "axios";
 import BN from "bignumber.js";
-import { SGT_uniswap, geyser_SGT_uniswap, vEth2 } from "@/contracts";
 import { priceInUsdAsync } from "@/utils/coingecko";
 
 export default {
@@ -440,6 +439,7 @@ export default {
       profit: 543,
       indices: [],
       indicesLoaderPromise: null,
+      contractsLoaderPromise: null,
       socialLinks: [
         {
           key: "discord",
@@ -616,6 +616,7 @@ export default {
       // Temporary till defi mining starts again
       this.APY = 5;
       try {
+        const { SGT_uniswap, geyser_SGT_uniswap } = await this.loadContracts();
         let token = SGT_uniswap();
         let tokenGeyser = geyser_SGT_uniswap();
         if (!token || !tokenGeyser) {
@@ -671,6 +672,7 @@ export default {
         throw "Window doesn't have ethereum enabled";
       }
 
+      const { vEth2 } = await this.loadContracts();
       const vEth2Contract = vEth2();
       if (!vEth2Contract) {
         console.error("vETH2 contract not available");
@@ -686,6 +688,12 @@ export default {
     async setTvlInUsd(tvlInETH) {
       const etherPrice = await priceInUsdAsync("ethereum");
       this.TVLinUsd = etherPrice * tvlInETH;
+    },
+    async loadContracts() {
+      if (!this.contractsLoaderPromise) {
+        this.contractsLoaderPromise = import("@/contracts");
+      }
+      return this.contractsLoaderPromise;
     },
   },
 };

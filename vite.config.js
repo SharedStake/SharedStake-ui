@@ -29,8 +29,6 @@ export default defineConfig({
         manualChunks: {
           // Separate Vue ecosystem
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          // Separate Web3 ecosystem
-          'web3-vendor': ['ethers', '@web3-onboard/core', '@web3-onboard/injected-wallets'],
           // Separate UI libraries
           'ui-vendor': ['vue-toastification', 'vue-ellipse-progress', 'axios'],
           // Separate utility libraries

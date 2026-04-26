@@ -107,29 +107,4 @@ const router = createRouter({
     }
 });
 
-// Preload critical routes for better performance
-router.beforeEach((to, from, next) => {
-    // Preload critical routes that are likely to be visited
-    const criticalRoutes = ['/stake', '/earn', '/withdraw'];
-    
-    if (criticalRoutes.includes(to.path)) {
-        // Preload the next likely route
-        const nextRoute = criticalRoutes[criticalRoutes.indexOf(to.path) + 1];
-        if (nextRoute) {
-            // Preload the next route in the background
-            setTimeout(() => {
-                if (nextRoute === '/stake') {
-                    import('../components/Stake/Stake.vue');
-                } else if (nextRoute === '/earn') {
-                    import('../components/Earn/Earn.vue');
-                } else if (nextRoute === '/withdraw') {
-                    import('../components/Withdraw/Withdraw.vue');
-                }
-            }, 1000);
-        }
-    }
-    
-    next();
-});
-
 export default router;
