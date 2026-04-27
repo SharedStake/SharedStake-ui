@@ -18,6 +18,7 @@
     <div
       v-show="scrolled >= 0"
       class="Container first"
+      :style="windowWidth <= 900 ? { paddingTop: (headerOffset || 128) + 'px' } : {}"
     >
       <div class="LogoContainer">
         <ImageVue
@@ -423,7 +424,7 @@ export default {
     Partners,
     ComingSoonPill,
   },
-  props: ["scrolled", "windowWidth"],
+  props: ["scrolled", "windowWidth", "headerOffset"],
   data() {
     return {
       TVL: 16000,
@@ -1496,18 +1497,17 @@ export default {
 
 @media only screen and (max-width: 900px) {
   .first {
-    padding-top: 112px;
+    padding-top: 128px; /* fallback when headerOffset prop unavailable */
     display: grid;
     gap: 0px 0px;
     grid-template-areas: ".";
     background-image: url(bg-1.png);
     background-repeat: no-repeat;
     background-position: center;
-    display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 0.1fr 2fr;
+    grid-template-rows: auto 1fr;
     justify-content: center;
-    align-items: center;
+    align-items: start;
   }
 
   .Logo {

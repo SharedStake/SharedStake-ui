@@ -3,6 +3,7 @@
   <div class="Root">
     <!-- Maintenance Banner -->
     <div
+      ref="bannerEl"
       :class="{ 'element-hidden': !maintenanceBannerVisible }"
       class="maintenance-banner fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4 text-lg font-bold text-center text-white bg-red-600 shadow-lg transition-transform duration-500"
     >
@@ -48,9 +49,10 @@
       </p>
     </div>
     <div
+      ref="navbarEl"
       :class="{ 'navbar--hidden': !showNavbar }"
       class="fixed w-full p-3 navbar"
-      :style="{ top: maintenanceBannerVisible ? '4rem' : '0' }"
+      :style="{ top: navbarTop }"
     >
       <div
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
@@ -287,6 +289,7 @@
     <router-view
       :scrolled="currentScrollPosition"
       :window-width="windowWidth"
+      :header-offset="mobileHeaderOffset"
     />
     <!--App-->
     <div class="footer">
@@ -443,12 +446,21 @@ export default {
       maintenanceBannerVisible: true,
       footerBannerVisible: true,
       appVersion: typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.0.7',
+      bannerHeight: 60,
+      navbarHeight: 54,
     };
   },
 
   computed: {
     userAddress() {
       return this.walletStore.userAddress;
+    },
+    navbarTop() {
+      return this.maintenanceBannerVisible ? this.bannerHeight + 'px' : '0';
+    },
+    mobileHeaderOffset() {
+      const bannerH = this.maintenanceBannerVisible ? this.bannerHeight : 0;
+      return bannerH + this.navbarHeight + 16;
     },
   },
 
@@ -467,6 +479,7 @@ export default {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
     await this.setSgtPrice();
+    this.$nextTick(this.measureHeaderHeights);
   },
 
   goto(refName) {
@@ -483,8 +496,15 @@ export default {
     async Connect() {
       await this.walletStore.setAddress();
     },
+    measureHeaderHeights() {
+      const banner = this.$refs.bannerEl;
+      const navbar = this.$refs.navbarEl;
+      if (banner) this.bannerHeight = banner.offsetHeight;
+      if (navbar) this.navbarHeight = navbar.offsetHeight;
+    },
     handleResize() {
       this.windowWidth = window.innerWidth;
+      this.measureHeaderHeights();
     },
     onScroll() {
       const currentScrollPosition =
