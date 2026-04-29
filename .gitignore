@@ -6,6 +6,7 @@ node_modules
 # local env files
 .env.local
 .env.*.local
+.env.e2e.wallet
 secret.json
 
 # Log files
@@ -28,5 +29,16 @@ pnpm-lock.yaml
 *.njsproj
 *.sln
 *.sw?
+
+# Wallet E2E artifacts
+tests/e2e-wallet/.auth
+tests/e2e-wallet/.profiles
+playwright-wallet-report
+test-results-wallet
+test-results
+
+# Local generated contract sync artifacts
+scripts/contracts/.tmp
+scripts/contracts/generated
 
 # devNotes.md // create a new repo when everyting is done we don't want people to know this shit

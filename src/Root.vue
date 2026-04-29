@@ -3,6 +3,7 @@
   <div class="Root">
     <!-- Maintenance Banner -->
     <div
+      ref="bannerEl"
       :class="{ 'element-hidden': !maintenanceBannerVisible }"
       class="maintenance-banner fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4 text-lg font-bold text-center text-white bg-red-600 shadow-lg transition-transform duration-500"
     >
@@ -48,9 +49,10 @@
       </p>
     </div>
     <div
+      ref="navbarEl"
       :class="{ 'navbar--hidden': !showNavbar }"
       class="fixed w-full p-3 navbar"
-      :style="{ top: maintenanceBannerVisible ? '4rem' : '0' }"
+      :style="{ top: navbarTop }"
     >
       <div
         class="flex items-center justify-between gap-6 mx-auto max-w-content"
@@ -287,6 +289,7 @@
     <router-view
       :scrolled="currentScrollPosition"
       :window-width="windowWidth"
+      :header-offset="mobileHeaderOffset"
     />
     <!--App-->
     <div class="footer">
@@ -443,12 +446,24 @@ export default {
       maintenanceBannerVisible: true,
       footerBannerVisible: true,
       appVersion: typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.0.7',
+      // Use viewport-aware defaults so mobile doesn't start with a stale gap.
+      bannerHeight: window.innerWidth <= 700 ? 44 : 60,
+      navbarHeight: window.innerWidth < 960 ? 62 : 54,
+      headerResizeObserver: null,
     };
   },
 
   computed: {
     userAddress() {
       return this.walletStore.userAddress;
+    },
+    navbarTop() {
+      return this.maintenanceBannerVisible ? this.bannerHeight + 'px' : '0';
+    },
+    mobileHeaderOffset() {
+      const bannerH = this.maintenanceBannerVisible ? this.bannerHeight : 0;
+      // Round up and add 1px to avoid fractional overlap clipping on mobile compositing.
+      return Math.ceil(bannerH + this.navbarHeight) + 1;
     },
   },
 
@@ -466,7 +481,14 @@ export default {
   mounted: async function() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("scroll", this.onScroll);
+    window.addEventListener("load", this.measureHeaderHeights);
     await this.setSgtPrice();
+    this.$nextTick(() => {
+      this.measureHeaderHeights();
+      this.initHeaderResizeObserver();
+      requestAnimationFrame(() => this.measureHeaderHeights());
+      setTimeout(() => this.measureHeaderHeights(), 150);
+    });
   },
 
   goto(refName) {
@@ -478,13 +500,39 @@ export default {
   beforeUnmount() {
     window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("scroll", this.onScroll);
+    window.removeEventListener("load", this.measureHeaderHeights);
+    this.destroyHeaderResizeObserver();
   },
   methods: {
     async Connect() {
       await this.walletStore.setAddress();
     },
+    measureHeaderHeights() {
+      const banner = this.$refs.bannerEl;
+      const navbar = this.$refs.navbarEl;
+      if (banner) this.bannerHeight = banner.offsetHeight;
+      if (navbar) this.navbarHeight = navbar.offsetHeight;
+    },
     handleResize() {
       this.windowWidth = window.innerWidth;
+      this.measureHeaderHeights();
+    },
+    initHeaderResizeObserver() {
+      if (typeof ResizeObserver === "undefined" || this.headerResizeObserver) {
+        return;
+      }
+      this.headerResizeObserver = new ResizeObserver(() => {
+        this.measureHeaderHeights();
+      });
+      const banner = this.$refs.bannerEl;
+      const navbar = this.$refs.navbarEl;
+      if (banner) this.headerResizeObserver.observe(banner);
+      if (navbar) this.headerResizeObserver.observe(navbar);
+    },
+    destroyHeaderResizeObserver() {
+      if (!this.headerResizeObserver) return;
+      this.headerResizeObserver.disconnect();
+      this.headerResizeObserver = null;
     },
     onScroll() {
       const currentScrollPosition =

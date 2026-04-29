@@ -31,6 +31,60 @@ bun run build    # Production build
 bun run lint     # Code linting
 ```
 
+### Local Contract Deploy + UI Sync
+```bash
+# 1) Ensure SharedDeposit submodule is present
+bun run contracts:init
+
+# 2) Start a mainnet fork on localhost:8545
+~/.foundry/bin/anvil --fork-url "$MAINNET_RPC_URL" --host 127.0.0.1 --port 8545 --chain-id 31337
+
+# 3) Deploy SharedDeposit to localhost fork and sync UI addresses
+bun run contracts:deploy:local
+
+# 4) Verify UI address map matches latest deployment
+bun run contracts:drift:local
+```
+
+`contracts:deploy:local` exports normalized deployment addresses to
+`scripts/contracts/generated/shareddeposit-localhost-addresses.json` and syncs
+`src/contracts/addresses/local.json`.
+It prefers `yarn --frozen-lockfile` inside `SharedDeposit` when `yarn.lock` exists.
+
+### One-Command Fork E2E
+```bash
+# If no local fork is already running, provide an RPC URL for Anvil:
+export MAINNET_RPC_URL="https://your-mainnet-rpc"
+
+# Starts/reuses local fork, deploys contracts, syncs addresses, checks drift, runs browser E2E
+bun run test:e2e:fork
+
+# Same as above, plus wallet-extension E2E (requires wallet env vars)
+bun run test:e2e:fork:wallet
+```
+
+`test:e2e:fork:wallet` defaults to strict real wallet connection
+(`PW_WALLET_ENFORCE_REAL_CONNECT=true`) unless overridden.
+
+### Wallet E2E (Extension-Based)
+```bash
+# 1) Copy and fill wallet test env
+cp .env.e2e.wallet.example .env.e2e.wallet
+set -a; source .env.e2e.wallet; set +a
+
+# 2) Run wallet E2E suite
+bun run test:e2e:wallet
+
+# 3) CI/strict wallet suite (fails if required wallet env is missing)
+bun run test:e2e:wallet:strict
+```
+
+Notes:
+- The wallet suite uses a separate Playwright config: `playwright.wallet.config.js`.
+- `test:e2e:wallet` gracefully skips when wallet env vars are missing (local convenience).
+- `test:e2e:wallet:strict` is recommended for CI and release gating.
+- For fork/local E2E, set `VITE_ONBOARD_CHAIN_ID` and `VITE_ONBOARD_CHAIN_RPC_URL` (see `.env.example`).
+
 ## 📊 Project Status
 
 **Tech Stack**: Vue 3.5.22 • Pinia 3.0.3 • Vite 7.1.12 • Bun 1.x • ethers.js v6.15.0 • Tailwind CSS 3.4.18
