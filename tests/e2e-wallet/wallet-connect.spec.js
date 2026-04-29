@@ -2,6 +2,7 @@ import { test, expect } from './fixtures/test.js';
 
 const TRUE_RE = /^(1|true)$/i;
 const requireRealConnect = TRUE_RE.test(process.env.PW_WALLET_ENFORCE_REAL_CONNECT || '');
+const requireWalletEnv = TRUE_RE.test(process.env.PW_WALLET_REQUIRE_ENV || '');
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -18,10 +19,13 @@ const asTruncatedAddressPattern = (address) => {
 
 test.describe('wallet extension connect flow', () => {
   test.beforeEach(async ({ walletConfig }) => {
-    test.skip(
-      walletConfig.missingRequiredEnv.length > 0,
-      `Missing wallet env: ${walletConfig.missingRequiredEnv.join(', ')}`
-    );
+    if (walletConfig.missingRequiredEnv.length > 0) {
+      const missingEnvMessage = `Missing wallet env: ${walletConfig.missingRequiredEnv.join(', ')}`;
+      if (requireWalletEnv) {
+        throw new Error(missingEnvMessage);
+      }
+      test.skip(true, missingEnvMessage);
+    }
   });
 
   test('wallet connect path renders and connected account is visible', async ({

@@ -24,6 +24,7 @@
     "test:e2e:fork": "bash scripts/contracts/run-fork-e2e.sh",
     "test:e2e:fork:wallet": "bash scripts/contracts/run-fork-e2e.sh --with-wallet",
     "test:e2e:wallet": "playwright test -c playwright.wallet.config.js",
+    "test:e2e:wallet:strict": "bash scripts/contracts/validate-wallet-env.sh && PW_WALLET_REQUIRE_ENV=1 PW_WALLET_ENFORCE_REAL_CONNECT=true playwright test -c playwright.wallet.config.js",
     "test:e2e:wallet:headed": "PW_WALLET_HEADLESS=0 playwright test -c playwright.wallet.config.js --headed",
     "test:e2e:wallet:debug": "PWDEBUG=1 playwright test -c playwright.wallet.config.js --headed --workers=1",
     "contracts:init": "bash scripts/contracts/init-shareddeposit.sh",

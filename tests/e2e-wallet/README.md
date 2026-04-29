@@ -1,6 +1,7 @@
 # Wallet E2E Runbook
 
 This suite validates the extension wallet connection path using Playwright persistent contexts.
+By default, it skips when required wallet env vars are missing.
 
 ## 1) Prerequisites
 
@@ -67,6 +68,9 @@ bun run test:e2e:fork:wallet
 
 # Wallet suite only (assumes app/fork already running)
 bun run test:e2e:wallet
+
+# Strict wallet suite (fails if required wallet env is missing)
+bun run test:e2e:wallet:strict
 ```
 
 Headed and debug modes:
@@ -75,3 +79,14 @@ Headed and debug modes:
 bun run test:e2e:wallet:headed
 bun run test:e2e:wallet:debug
 ```
+
+## 5) Meta Learnings and Guardrails
+
+- Skip is useful locally, but CI should use strict mode to avoid false-green wallet runs.
+- Keep onboarding chain env names aligned across app/docs/scripts:
+  `VITE_ONBOARD_CHAIN_ID`, `VITE_ONBOARD_CHAIN_RPC_URL`,
+  `VITE_ONBOARD_CHAIN_LABEL`, `VITE_ONBOARD_CHAIN_TOKEN`.
+- Run drift checks before browser tests when deploying to local forks:
+  `bun run contracts:drift:local`.
+- For real wallet validation, use strict mode plus real connect enforcement
+  (`PW_WALLET_REQUIRE_ENV=1`, `PW_WALLET_ENFORCE_REAL_CONNECT=true`).

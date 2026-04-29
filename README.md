@@ -74,11 +74,15 @@ set -a; source .env.e2e.wallet; set +a
 
 # 2) Run wallet E2E suite
 bun run test:e2e:wallet
+
+# 3) CI/strict wallet suite (fails if required wallet env is missing)
+bun run test:e2e:wallet:strict
 ```
 
 Notes:
 - The wallet suite uses a separate Playwright config: `playwright.wallet.config.js`.
-- The first spec gracefully skips when required wallet env vars are missing.
+- `test:e2e:wallet` gracefully skips when wallet env vars are missing (local convenience).
+- `test:e2e:wallet:strict` is recommended for CI and release gating.
 - For fork/local E2E, set `VITE_ONBOARD_CHAIN_ID` and `VITE_ONBOARD_CHAIN_RPC_URL` (see `.env.example`).
 
 ## 📊 Project Status
