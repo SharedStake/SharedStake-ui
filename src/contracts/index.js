@@ -27,6 +27,7 @@ import wsgETHABI from './abis/wsgETH.json'
 import mainnetAddresses from './addresses/mainnet.json'
 import goerliAddresses from './addresses/goerli.json'
 import sepoliaAddresses from './addresses/sepolia.json'
+import localAddresses from './addresses/local.json'
 
 let _addresses = {};
 
@@ -46,6 +47,63 @@ const CHAIN_IDS = {
     // Common development networks
     LOCALHOST: "0x7a69", // 31337 - Hardhat default
     LOCALHOST_ALT: "0x539", // 1337 - Ganache default
+};
+
+const ADDRESS_OVERRIDES_QUERY_KEY = "e2eContracts";
+const ADDRESS_OVERRIDES_STORAGE_KEY = "e2eContractAddresses";
+
+const normalizeChainId = (chainId) => {
+    if (!chainId && chainId !== 0) return "";
+    if (typeof chainId === "number") return `0x${chainId.toString(16)}`;
+    if (typeof chainId === "bigint") return `0x${chainId.toString(16)}`;
+    if (typeof chainId !== "string") return "";
+    if (chainId.startsWith("0x")) {
+        const parsed = parseInt(chainId, 16);
+        if (!Number.isNaN(parsed)) return `0x${parsed.toString(16)}`;
+        return chainId.toLowerCase();
+    }
+    const parsed = Number(chainId);
+    if (!Number.isNaN(parsed)) return `0x${parsed.toString(16)}`;
+    return chainId.toLowerCase();
+};
+
+const parseAddressOverrides = (rawValue) => {
+    if (!rawValue) return null;
+    try {
+        const parsed = JSON.parse(rawValue);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+            return parsed;
+        }
+    } catch (error) {
+        console.warn("Failed to parse e2e contract address overrides:", error);
+    }
+    return null;
+};
+
+const getAddressOverrides = () => {
+    if (typeof window === "undefined") return null;
+    const params = new URLSearchParams(window.location.search);
+    const queryOverride = parseAddressOverrides(params.get(ADDRESS_OVERRIDES_QUERY_KEY));
+    if (queryOverride) return queryOverride;
+    const localStorageValue = window.localStorage?.getItem(ADDRESS_OVERRIDES_STORAGE_KEY);
+    return parseAddressOverrides(localStorageValue);
+};
+
+const getAddressMapForChain = (chainId) => {
+    const normalizedChainId = normalizeChainId(chainId);
+    const isLocalChain = normalizedChainId === CHAIN_IDS.LOCALHOST || normalizedChainId === CHAIN_IDS.LOCALHOST_ALT;
+    const baseAddresses = normalizedChainId === CHAIN_IDS.MAINNET
+        ? mainnetAddresses
+        : normalizedChainId === CHAIN_IDS.GOERLI
+            ? goerliAddresses
+            : normalizedChainId === CHAIN_IDS.SEPOLIA
+                ? sepoliaAddresses
+                : isLocalChain
+                    ? { ...sepoliaAddresses, ...localAddresses }
+                    : {};
+
+    const overrides = getAddressOverrides();
+    return overrides ? { ...baseAddresses, ...overrides } : baseAddresses;
 };
 
 
@@ -71,7 +129,7 @@ let connErr = () => {
 };
 let createContract = () => connErr();
 let createContractDefault = () => connErr();
-let isValidChain = (cid) => Object.values(CHAIN_IDS).indexOf(cid) > -1;
+let isValidChain = (cid) => Object.values(CHAIN_IDS).includes(normalizeChainId(cid));
 // makes sure all addresses are checksumed (not needed with ethers.js as it handles this automatically)
 // let checksumAddresses = (_addresses, web3) => {
 //     for (const x in _addresses) {
@@ -131,15 +189,8 @@ const initializeEthers = async () => {
                 chainId = "0x" + parseInt(chainId).toString(16);
             }
             
-            let addressTemp = {};
-
-            if (chainId == CHAIN_IDS.MAINNET) {
-                addressTemp = mainnetAddresses;
-            } else if (chainId == CHAIN_IDS.GOERLI) {
-                addressTemp = goerliAddresses;
-            } else if (chainId == CHAIN_IDS.SEPOLIA) {
-                addressTemp = sepoliaAddresses;
-            }
+            chainId = normalizeChainId(chainId);
+            let addressTemp = getAddressMapForChain(chainId);
 
             // Always define contract creation functions
             createContract = (abi, address, useSigner = false) => {
@@ -164,12 +215,12 @@ const initializeEthers = async () => {
                 console.info("Contracts initialized for chain:", chainId);
             } else {
                 const chainDecimal = parseInt(chainId, 16);
-                console.warn(`Unsupported chain detected: ${chainId} (${chainDecimal}). Supported chains: Mainnet (0x1), Goerli (0x5), Sepolia (0xaa36a7). App will run in limited mode.`);
+                console.warn(`Unsupported chain detected: ${chainId} (${chainDecimal}). Supported chains: Mainnet (0x1), Goerli (0x5), Sepolia (0xaa36a7), Localhost (0x7a69/0x539). App will run in limited mode.`);
                 
                 // Show user-friendly notification
                 try {
                     notifyNotification(
-                        `Unsupported network detected (Chain ID: ${chainDecimal}). Please switch to Ethereum Mainnet, Goerli, or Sepolia for full functionality.`,
+                        `Unsupported network detected (Chain ID: ${chainDecimal}). Please switch to Ethereum Mainnet, Goerli, Sepolia, or localhost for full functionality.`,
                         "error"
                     );
                 } catch (e) {

@@ -16,6 +16,27 @@ export const RPC_URL =
   import.meta.env.VITE_RPC_URL ||
   "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd";
 
+const normalizeChainId = (chainIdValue, fallback = "0x1") => {
+  if (!chainIdValue) return fallback;
+  if (typeof chainIdValue === "number") return `0x${chainIdValue.toString(16)}`;
+  const chainId = String(chainIdValue).trim().toLowerCase();
+  if (chainId.startsWith("0x")) {
+    const numeric = parseInt(chainId, 16);
+    return Number.isNaN(numeric) ? fallback : `0x${numeric.toString(16)}`;
+  }
+  const numeric = Number(chainId);
+  return Number.isNaN(numeric) ? fallback : `0x${numeric.toString(16)}`;
+};
+
+const ONBOARD_CHAIN_ID = normalizeChainId(import.meta.env.VITE_ONBOARD_CHAIN_ID, "0x1");
+const ONBOARD_CHAIN_RPC_URL = import.meta.env.VITE_ONBOARD_CHAIN_RPC_URL || RPC_URL;
+const ONBOARD_CHAIN_TOKEN = import.meta.env.VITE_ONBOARD_CHAIN_TOKEN || "ETH";
+const ONBOARD_CHAIN_LABEL =
+  import.meta.env.VITE_ONBOARD_CHAIN_LABEL ||
+  (ONBOARD_CHAIN_ID === "0x1"
+    ? "Ethereum Mainnet"
+    : `EVM Chain ${parseInt(ONBOARD_CHAIN_ID, 16)}`);
+
 // const APP_NAME = "SharedStake";
 const injected = injectedModule()
 // init({
@@ -23,10 +44,10 @@ const onboard = Onboard({
   wallets: [injected],
   chains: [
     {
-      id: '0x1',
-      token: 'ETH',
-      label: 'Ethereum Mainnet',
-      rpcUrl: RPC_URL
+      id: ONBOARD_CHAIN_ID,
+      token: ONBOARD_CHAIN_TOKEN,
+      label: ONBOARD_CHAIN_LABEL,
+      rpcUrl: ONBOARD_CHAIN_RPC_URL
     }
   ],
   // connect: {
