@@ -144,6 +144,26 @@ let provider = null;
 let signer = null;
 let isInitialized = false;
 
+const refreshSignerFromProvider = async () => {
+    if (!provider) {
+        signer = null;
+        return null;
+    }
+
+    try {
+        const accounts = await provider.send("eth_accounts", []);
+        if (Array.isArray(accounts) && accounts.length > 0) {
+            signer = await provider.getSigner(accounts[0]);
+            return signer;
+        }
+    } catch (error) {
+        console.warn("Could not refresh signer from provider:", error);
+    }
+
+    signer = null;
+    return null;
+};
+
 // Helper function to get provider/signer based on useSigner flag
 // Moved to module scope so it can be reused by createContractWithAddress
 const getContractProvider = (useSigner = false) => {
@@ -155,8 +175,9 @@ const initializeEthers = async () => {
     if (window.ethereum && !isInitialized) {
         try {
             provider = new ethers.BrowserProvider(window.ethereum);
-            signer = null; // Will be set when user connects wallet
+            signer = null; // Refreshed from provider accounts when available
             isInitialized = true;
+            await refreshSignerFromProvider();
             
             // Listen for network changes and reinitialize
             if (window.ethereum.on) {
@@ -170,6 +191,13 @@ const initializeEthers = async () => {
                             console.error("Error reinitializing after network change:", error);
                         });
                     }, 100);
+                });
+
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    console.log('Accounts changed:', accounts);
+                    refreshSignerFromProvider().catch(error => {
+                        console.error("Error refreshing signer after account change:", error);
+                    });
                 });
             }
             

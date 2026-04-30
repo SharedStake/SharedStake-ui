@@ -76,7 +76,12 @@ export default {
   methods: {
     async execTx() {
       this.loading = true;
-      let args = this.click();
+      let args = await this.click();
+      if (!args || typeof args !== "object") {
+        this.loading = false;
+        console.error("Transaction config not returned from click handler");
+        return;
+      }
       // Debug logging removed for production
       await this.wrapTx(args.abiCall, args.argsArr, args.senderObj, args.cb);
     },

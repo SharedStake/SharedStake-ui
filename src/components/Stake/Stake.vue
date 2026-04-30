@@ -244,6 +244,7 @@ export default {
     maxValShares: 0,
     remaining: BN(0),
     remainingByFee: BN(0),
+    contractLoadRetries: 0,
     loading: true,
     adminFee: 0,
     contractBal: 0,
@@ -480,19 +481,31 @@ export default {
       //balances
       try {
         let walletAddress = this.userAddress;
+        const validatorContract = validator();
+        const sgETHContract = sgETH();
+        const wsgETHContract = wsgETH();
+        if (!validatorContract || !sgETHContract || !wsgETHContract) {
+          // Contract factories initialize asynchronously after wallet/provider setup.
+          // Retry a few times to avoid pinning the UI in "Contract is Full" from zero defaults.
+          if (this.contractLoadRetries < 20) {
+            this.contractLoadRetries += 1;
+            this.buttonText = "waiting...";
+            setTimeout(() => {
+              this.initializeData();
+            }, 300);
+          } else {
+            this.buttonText = "Connect to wallet ↗";
+            console.error("Contracts not ready after retries");
+          }
+          return;
+        }
         let amount = await window.ethereum.request({
           method: "eth_getBalance",
           params: [walletAddress, "latest"],
         });
 
         this.EthBal = BN(amount);
-        
-        const sgETHContract = sgETH();
-        if (!sgETHContract) {
-          console.error("sgETH contract not initialized");
-          return;
-        }
-        
+
         let veth2 = await sgETHContract.balanceOf(walletAddress);
         let wsgeth = await this.getUserWsgETHBalance();
         this.vEth2Bal = BN(veth2);
@@ -510,12 +523,6 @@ export default {
             .dividedBy(1e18)
             .toFixed(6);
         }
-        const validatorContract = validator();
-        if (!validatorContract) {
-          console.error("Validator contract not initialized");
-          return;
-        }
-        
         let remaining = await validatorContract.remainingSpaceInEpoch();
         this.remaining = BN(remaining);
         let remainingByFee = await validatorContract.adminFeeTotal();
@@ -530,6 +537,7 @@ export default {
         await this.getUserApprovedwsgEth();
         await this.getWsgETHRedemption();
         // this.vEth2Price = await vEth2Price();
+        this.contractLoadRetries = 0;
         this.loading = false;
         this.amountCheck(true);
       } catch (err) {

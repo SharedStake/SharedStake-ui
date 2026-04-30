@@ -16,7 +16,12 @@ Options:
   --port <port>          Local fork port (default: 8545)
   --chain-id <id>        Local fork chain id, hex or decimal (default: 31337)
   --sync-target <path>   UI addresses target file (default: src/contracts/addresses/local.json)
+  --impersonator-address <addr>
+                         Address used for injected-wallet tx E2E (default: \$E2E_IMPERSONATOR_ADDRESS or 0x111...1111)
+  --impersonator-seed-eth <n>
+                         Exact ETH balance to set for impersonator address (default: \$E2E_IMPERSONATOR_SEED_ETH or 5)
   --with-wallet          Also run wallet extension E2E tests
+  --seed-wallet-eth <n>  Exact ETH balance to set for PW_WALLET_TEST_ADDRESS (default: \$PW_WALLET_SEED_ETH or 5)
   --keep-anvil           Keep spawned Anvil process alive after completion
   --skip-deploy          Skip contract deploy/sync and only run drift + tests
   -h, --help             Show this help message
@@ -29,7 +34,10 @@ PORT="8545"
 CHAIN_ID="31337"
 RPC_URL="${MAINNET_RPC_URL:-}"
 SYNC_TARGET="$REPO_ROOT/src/contracts/addresses/local.json"
+IMPERSONATOR_ADDRESS="${E2E_IMPERSONATOR_ADDRESS:-0x1111111111111111111111111111111111111111}"
+IMPERSONATOR_SEED_ETH="${E2E_IMPERSONATOR_SEED_ETH:-5}"
 RUN_WALLET=0
+SEED_WALLET_ETH="${PW_WALLET_SEED_ETH:-5}"
 KEEP_ANVIL=0
 SKIP_DEPLOY=0
 ANVIL_PID=""
@@ -67,9 +75,24 @@ while [[ $# -gt 0 ]]; do
       SYNC_TARGET="$2"
       shift 2
       ;;
+    --impersonator-address)
+      [[ $# -ge 2 ]] || die "Missing value for --impersonator-address"
+      IMPERSONATOR_ADDRESS="$2"
+      shift 2
+      ;;
+    --impersonator-seed-eth)
+      [[ $# -ge 2 ]] || die "Missing value for --impersonator-seed-eth"
+      IMPERSONATOR_SEED_ETH="$2"
+      shift 2
+      ;;
     --with-wallet)
       RUN_WALLET=1
       shift
+      ;;
+    --seed-wallet-eth)
+      [[ $# -ge 2 ]] || die "Missing value for --seed-wallet-eth"
+      SEED_WALLET_ETH="$2"
+      shift 2
       ;;
     --keep-anvil)
       KEEP_ANVIL=1
@@ -184,22 +207,38 @@ ONBOARD_CHAIN_RPC_URL="http://$HOST:$PORT"
 ONBOARD_CHAIN_LABEL="Localhost Fork"
 ONBOARD_CHAIN_TOKEN="ETH"
 
+log "Seeding impersonator wallet for base tx E2E"
+"$SCRIPT_DIR/seed-wallet.sh" \
+  --rpc-url "$ONBOARD_CHAIN_RPC_URL" \
+  --address "$IMPERSONATOR_ADDRESS" \
+  --eth "$IMPERSONATOR_SEED_ETH"
+
 log "Running base browser E2E on fork"
 VITE_ONBOARD_CHAIN_ID="$ONBOARD_CHAIN_ID" \
 VITE_ONBOARD_CHAIN_RPC_URL="$ONBOARD_CHAIN_RPC_URL" \
 VITE_ONBOARD_CHAIN_LABEL="$ONBOARD_CHAIN_LABEL" \
 VITE_ONBOARD_CHAIN_TOKEN="$ONBOARD_CHAIN_TOKEN" \
-bun run test:e2e -- tests/e2e/airdrop.spec.js
+E2E_IMPERSONATOR_RPC_URL="$ONBOARD_CHAIN_RPC_URL" \
+E2E_IMPERSONATOR_CHAIN_ID="$ONBOARD_CHAIN_ID" \
+E2E_IMPERSONATOR_ADDRESS="$IMPERSONATOR_ADDRESS" \
+E2E_IMPERSONATOR_SEED_ETH="$IMPERSONATOR_SEED_ETH" \
+bun run test:e2e -- tests/e2e/airdrop.spec.js tests/e2e/stake-approve-flow.spec.js
 
 if [[ "$RUN_WALLET" -eq 1 ]]; then
   if [[ -z "${PW_WALLET_EXTENSION_PATH:-}" || -z "${PW_WALLET_EXTENSION_ID:-}" || -z "${PW_WALLET_TEST_ADDRESS:-}" ]]; then
     die "Wallet E2E requested but required env is missing. Set PW_WALLET_EXTENSION_PATH, PW_WALLET_EXTENSION_ID, and PW_WALLET_TEST_ADDRESS."
   fi
+  log "Seeding wallet address for deterministic local tx execution"
+  "$SCRIPT_DIR/seed-wallet.sh" \
+    --rpc-url "$ONBOARD_CHAIN_RPC_URL" \
+    --address "$PW_WALLET_TEST_ADDRESS" \
+    --eth "$SEED_WALLET_ETH"
   log "Running wallet extension E2E on fork"
   VITE_ONBOARD_CHAIN_ID="$ONBOARD_CHAIN_ID" \
   VITE_ONBOARD_CHAIN_RPC_URL="$ONBOARD_CHAIN_RPC_URL" \
   VITE_ONBOARD_CHAIN_LABEL="$ONBOARD_CHAIN_LABEL" \
   VITE_ONBOARD_CHAIN_TOKEN="$ONBOARD_CHAIN_TOKEN" \
+  PW_WALLET_HEADLESS="${PW_WALLET_HEADLESS:-true}" \
   PW_WALLET_ENFORCE_REAL_CONNECT="${PW_WALLET_ENFORCE_REAL_CONNECT:-true}" \
   bun run test:e2e:wallet
 fi
