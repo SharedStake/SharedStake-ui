@@ -88,5 +88,9 @@ bun run test:e2e:wallet:debug
   `VITE_ONBOARD_CHAIN_LABEL`, `VITE_ONBOARD_CHAIN_TOKEN`.
 - Run drift checks before browser tests when deploying to local forks:
   `bun run contracts:drift:local`.
+- `test:e2e:fork:wallet` now seeds `PW_WALLET_TEST_ADDRESS` with deterministic ETH
+  using `anvil_setBalance` before wallet tests. Tune with `PW_WALLET_SEED_ETH`.
+- `test:e2e:fork:wallet` defaults to headless wallet browser runs
+  (`PW_WALLET_HEADLESS=true`) unless overridden.
 - For real wallet validation, use strict mode plus real connect enforcement
   (`PW_WALLET_REQUIRE_ENV=1`, `PW_WALLET_ENFORCE_REAL_CONNECT=true`).

@@ -64,7 +64,16 @@ bun run test:e2e:fork:wallet
 ```
 
 `test:e2e:fork:wallet` defaults to strict real wallet connection
-(`PW_WALLET_ENFORCE_REAL_CONNECT=true`) unless overridden.
+(`PW_WALLET_ENFORCE_REAL_CONNECT=true`) unless overridden, and now seeds
+`PW_WALLET_TEST_ADDRESS` to a deterministic ETH balance before wallet tests.
+Use `PW_WALLET_SEED_ETH` or `--seed-wallet-eth` to override (default: `5`).
+It also defaults wallet Playwright runs to headless mode
+(`PW_WALLET_HEADLESS=true`) to avoid X server requirements in CI/sandbox runs.
+
+Base fork E2E now includes an injected-wallet tx flow test (`stake + approve + unstake`)
+that uses an impersonated address on the local fork. Configure with:
+- `E2E_IMPERSONATOR_ADDRESS` or `--impersonator-address`
+- `E2E_IMPERSONATOR_SEED_ETH` or `--impersonator-seed-eth`
 
 ### Wallet E2E (Extension-Based)
 ```bash
