@@ -1,0 +1,19 @@
+[
+  {"inputs":[{"name":"stToken","type":"address"},{"name":"gov","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
+  {"anonymous":false,"inputs":[{"indexed":false,"name":"beaconValidators","type":"uint256"},{"indexed":false,"name":"beaconBalance","type":"uint256"},{"indexed":false,"name":"totalPooledEther","type":"uint256"}],"name":"BeaconReported","type":"event"},
+  {"anonymous":false,"inputs":[{"indexed":false,"name":"bufferedEther","type":"uint256"}],"name":"BufferedEtherUpdated","type":"event"},
+  {"anonymous":false,"inputs":[{"indexed":true,"name":"feeController","type":"address"}],"name":"FeeControllerSet","type":"event"},
+  {"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":false,"name":"ethAmount","type":"uint256"},{"indexed":false,"name":"referral","type":"address"},{"indexed":false,"name":"sharesAmount","type":"uint256"}],"name":"Submitted","type":"event"},
+  {"inputs":[],"name":"beaconBalance","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"beaconValidators","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"bufferedEther","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"feeController","outputs":[{"name":"","type":"address"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"fnId","type":"uint16"}],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"name":"beaconValidators","type":"uint256"},{"name":"beaconBalance","type":"uint256"}],"name":"reportBeacon","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"name":"fc","type":"address"}],"name":"setFeeController","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"name":"referral","type":"address"}],"name":"submit","outputs":[{"name":"sharesAmount","type":"uint256"}],"stateMutability":"payable","type":"function"},
+  {"inputs":[],"name":"ST_TOKEN","outputs":[{"name":"","type":"address"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"totalPooledEther","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"fnId","type":"uint16"}],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"stateMutability":"payable","type":"receive"}
+]

@@ -19,6 +19,8 @@ const Wrap = () => import("../components/Stake/Wrap.vue");
 const Unwrap = () => import("../components/Stake/Unwrap.vue");
 const Blog = () => import("../components/Blog/Blog.vue");
 const BlogPost = () => import("../components/Blog/BlogPost.vue");
+const ArchitectureHub = () => import("../components/Architecture/ArchitectureHub.vue");
+const LidoParityApp = () => import("../components/LidoParity/LidoParityApp.vue");
 
 // Vue.use(VueRouter); // No longer needed in Vue Router 4
 
@@ -90,6 +92,16 @@ let routes = [{
         path: "/blog/:slug",
         name: "BlogPost",
         component: BlogPost,
+    },
+    {
+        path: "/architecture",
+        name: "Architecture",
+        component: ArchitectureHub,
+    },
+    {
+        path: "/v2",
+        name: "V2 Staking",
+        component: LidoParityApp,
     },
     ]
 }

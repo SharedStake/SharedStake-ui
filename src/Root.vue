@@ -177,6 +177,13 @@
         >
           Blog
         </router-link>
+        <router-link
+          class="link"
+          to="/architecture"
+          @click.native="showSidebar = false"
+        >
+          Architecture
+        </router-link>
         <span class="link">
           <a
             href="https://docs.sharedstake.finance/"
@@ -344,6 +351,9 @@
                 rel="noopener noreferrer"
               >Documentation
               </a></span>
+            <span class="link footerLink">
+              <router-link to="/architecture">Architecture</router-link>
+            </span>
             <span class="link footerLink">
               <router-link to="/blog">Blog</router-link>
             </span>

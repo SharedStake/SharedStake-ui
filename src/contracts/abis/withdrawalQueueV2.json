@@ -1,0 +1,20 @@
+[
+  {"inputs":[{"name":"stToken","type":"address"},{"name":"gov","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
+  {"anonymous":false,"inputs":[{"indexed":false,"name":"fromRequestId","type":"uint256"},{"indexed":false,"name":"toRequestId","type":"uint256"},{"indexed":false,"name":"ethProvided","type":"uint256"}],"name":"BatchFinalized","type":"event"},
+  {"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"recipient","type":"address"},{"indexed":true,"name":"requestId","type":"uint256"},{"indexed":false,"name":"ethAmount","type":"uint256"}],"name":"WithdrawalClaimed","type":"event"},
+  {"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"requestId","type":"uint256"},{"indexed":false,"name":"stShares","type":"uint256"},{"indexed":false,"name":"stTokenAmount","type":"uint256"}],"name":"WithdrawalRequested","type":"event"},
+  {"inputs":[],"name":"availableEther","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"requestId","type":"uint256"},{"name":"recipient","type":"address"}],"name":"claimWithdrawal","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"name":"requestIds","type":"uint256[]"},{"name":"recipient","type":"address"}],"name":"claimWithdrawals","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"name":"lastRequestId","type":"uint256"}],"name":"finalize","outputs":[],"stateMutability":"payable","type":"function"},
+  {"inputs":[{"name":"requestId","type":"uint256"}],"name":"getRequest","outputs":[{"components":[{"name":"owner","type":"address"},{"name":"stShares","type":"uint256"},{"name":"ethAmount","type":"uint256"},{"name":"finalized","type":"bool"},{"name":"claimed","type":"bool"}],"name":"","type":"tuple"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"requestId","type":"uint256"}],"name":"getRequestStatus","outputs":[{"name":"finalized","type":"bool"},{"name":"claimed","type":"bool"},{"name":"ethAmount","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"lastFinalizedRequestId","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"lockedEther","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"MAX_WITHDRAWAL","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"MIN_WITHDRAWAL","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"nextRequestId","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"amounts","type":"uint256[]"},{"name":"owner","type":"address"}],"name":"requestWithdrawals","outputs":[{"name":"requestIds","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"ST_TOKEN","outputs":[{"name":"","type":"address"}],"stateMutability":"view","type":"function"},
+  {"stateMutability":"payable","type":"receive"}
+]

@@ -1,0 +1,364 @@
+/**
+ * Pinia store for the Lido-parity staking protocol (StakingCore / StToken / WstToken / WithdrawalQueueV2).
+ *
+ * Separating this from the legacy wallet store keeps the new protocol isolated
+ * while still sharing the wallet connection (provider/signer) from useWalletStore.
+ */
+import { defineStore } from 'pinia'
+import { ethers } from 'ethers'
+import { useWalletStore } from './wallet'
+
+import stTokenABI from '@/contracts/abis/stToken.json'
+import wstTokenABI from '@/contracts/abis/wstToken.json'
+import stakingCoreABI from '@/contracts/abis/stakingCore.json'
+import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
+
+// Placeholder zero address used when contracts are not deployed on the connected chain.
+const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+
+// Per-chain contract addresses. Update with real addresses after deployment.
+const CONTRACT_ADDRESSES = {
+  '0x1': {   // mainnet — populated after audit + deploy
+    stakingCore: ZERO_ADDR,
+    stToken: ZERO_ADDR,
+    wstToken: ZERO_ADDR,
+    withdrawalQueueV2: ZERO_ADDR,
+  },
+  '0xaa36a7': { // sepolia testnet
+    stakingCore: ZERO_ADDR,
+    stToken: ZERO_ADDR,
+    wstToken: ZERO_ADDR,
+    withdrawalQueueV2: ZERO_ADDR,
+  },
+  '0x7a69': { // localhost (hardhat)
+    stakingCore: ZERO_ADDR,
+    stToken: ZERO_ADDR,
+    wstToken: ZERO_ADDR,
+    withdrawalQueueV2: ZERO_ADDR,
+  },
+}
+
+function normalizeChainId(id) {
+  if (!id && id !== 0) return ''
+  if (typeof id === 'bigint') return '0x' + id.toString(16)
+  if (typeof id === 'number') return '0x' + id.toString(16)
+  if (typeof id === 'string' && !id.startsWith('0x')) return '0x' + parseInt(id).toString(16)
+  return id.toLowerCase()
+}
+
+function getAddresses(chainId) {
+  const cid = normalizeChainId(chainId)
+  return CONTRACT_ADDRESSES[cid] || null
+}
+
+export const useLidoParityStore = defineStore('lidoParity', {
+  state: () => ({
+    // Network / connection
+    chainId: null,
+    connected: false,
+    loading: false,
+    error: null,
+
+    // Protocol stats
+    totalPooledEther: '0',
+    totalShares: '0',
+    exchangeRate: '1.0',   // stTokens per 1 ETH
+
+    // User balances
+    ethBalance: '0',
+    stTokenBalance: '0',
+    stTokenShares: '0',
+    wstTokenBalance: '0',
+    wstExchangeRate: '1.0', // stTokens per 1 wstToken
+
+    // Withdrawal queue
+    userRequests: [],        // [{id, owner, stShares, ethAmount, finalized, claimed}]
+    nextRequestId: '1',
+    lastFinalizedRequestId: '0',
+
+    // Contract deployment status
+    contractsDeployed: false,
+  }),
+
+  getters: {
+    formattedTotalPooled: (state) => {
+      try {
+        return parseFloat(ethers.formatEther(state.totalPooledEther)).toFixed(4)
+      } catch { return '0.0000' }
+    },
+    formattedEthBalance: (state) => {
+      try {
+        return parseFloat(ethers.formatEther(state.ethBalance)).toFixed(4)
+      } catch { return '0.0000' }
+    },
+    formattedStTokenBalance: (state) => {
+      try {
+        return parseFloat(ethers.formatEther(state.stTokenBalance)).toFixed(4)
+      } catch { return '0.0000' }
+    },
+    formattedWstTokenBalance: (state) => {
+      try {
+        return parseFloat(ethers.formatEther(state.wstTokenBalance)).toFixed(4)
+      } catch { return '0.0000' }
+    },
+    pendingRequests: (state) => state.userRequests.filter(r => !r.finalized),
+    finalizedRequests: (state) => state.userRequests.filter(r => r.finalized && !r.claimed),
+    claimedRequests: (state) => state.userRequests.filter(r => r.claimed),
+  },
+
+  actions: {
+    // ── Internal helpers ──────────────────────────────────────────────────────
+
+    _getContracts(useSigner = false) {
+      const walletStore = useWalletStore()
+      const provider = walletStore.ethersProvider
+      if (!provider) return null
+
+      const chainId = this.chainId
+      const addresses = getAddresses(chainId)
+      if (!addresses) return null
+
+      // Check that contracts are actually deployed (non-zero address).
+      const allDeployed = Object.values(addresses).every(a => a !== ZERO_ADDR)
+      this.contractsDeployed = allDeployed
+      if (!allDeployed) return null
+
+      const make = (abi, addr) => {
+        if (!addr || addr === ZERO_ADDR) return null
+        return new ethers.Contract(addr, abi, provider)
+      }
+      const makeSigned = async (abi, addr) => {
+        if (!addr || addr === ZERO_ADDR) return null
+        const signer = await provider.getSigner()
+        return new ethers.Contract(addr, abi, signer)
+      }
+
+      return { addresses, make, makeSigned }
+    },
+
+    // ── Data fetching ──────────────────────────────────────────────────────────
+
+    async init(chainId, userAddress) {
+      this.chainId = chainId
+      this.connected = !!userAddress
+
+      const ctx = this._getContracts()
+      if (!ctx) return
+
+      const { addresses, make } = ctx
+
+      try {
+        const stToken = make(stTokenABI, addresses.stToken)
+        const wstToken = make(wstTokenABI, addresses.wstToken)
+        const queue = make(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
+        const walletStore = useWalletStore()
+        const provider = walletStore.ethersProvider
+
+        if (stToken) {
+          this.totalPooledEther = (await stToken.totalPooledEther()).toString()
+          this.totalShares = (await stToken.getTotalShares()).toString()
+
+          if (userAddress) {
+            this.stTokenBalance = (await stToken.balanceOf(userAddress)).toString()
+            this.stTokenShares = (await stToken.sharesOf(userAddress)).toString()
+          }
+        }
+
+        if (wstToken) {
+          this.wstExchangeRate = ethers.formatEther(await wstToken.stTokensPerToken())
+          if (userAddress) {
+            this.wstTokenBalance = (await wstToken.balanceOf(userAddress)).toString()
+          }
+        }
+
+        if (provider && userAddress) {
+          this.ethBalance = (await provider.getBalance(userAddress)).toString()
+        }
+
+        if (queue) {
+          this.nextRequestId = (await queue.nextRequestId()).toString()
+          this.lastFinalizedRequestId = (await queue.lastFinalizedRequestId()).toString()
+
+          if (userAddress) {
+            await this.fetchUserRequests(userAddress)
+          }
+        }
+
+        // Compute exchange rate: 1 ETH = how many stTokens
+        if (BigInt(this.totalShares) > 0n) {
+          const rate = (BigInt(this.totalPooledEther) * BigInt(1e18)) / BigInt(this.totalShares)
+          this.exchangeRate = ethers.formatEther(rate)
+        }
+      } catch (e) {
+        console.error('LidoParityStore.init error:', e)
+        this.error = e.message
+      }
+    },
+
+    async fetchUserRequests(userAddress) {
+      const ctx = this._getContracts()
+      if (!ctx) return
+
+      const { addresses, make } = ctx
+      const queue = make(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
+      if (!queue) return
+
+      const nextId = parseInt(this.nextRequestId)
+      const requests = []
+
+      for (let id = 1; id < nextId; id++) {
+        try {
+          const req = await queue.getRequest(id)
+          if (req.owner.toLowerCase() === userAddress.toLowerCase()) {
+            requests.push({
+              id,
+              owner: req.owner,
+              stShares: req.stShares.toString(),
+              ethAmount: req.ethAmount.toString(),
+              finalized: req.finalized,
+              claimed: req.claimed,
+            })
+          }
+        } catch (_e) { /* ignore missing/reverted requests */ }
+      }
+      this.userRequests = requests
+    },
+
+    // ── Transactions ──────────────────────────────────────────────────────────
+
+    async stake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
+      this.loading = true
+      this.error = null
+      try {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available on this network')
+
+        const { addresses, makeSigned } = ctx
+        const stakingCore = await makeSigned(stakingCoreABI, addresses.stakingCore)
+        if (!stakingCore) throw new Error('StakingCore not deployed')
+
+        const amount = ethers.parseEther(ethAmountStr)
+        const tx = await stakingCore.submit(referral, { value: amount })
+        await tx.wait()
+
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async wrap(stAmountStr) {
+      this.loading = true
+      this.error = null
+      try {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const wstToken = await makeSigned(wstTokenABI, addresses.wstToken)
+        const stToken = await makeSigned(stTokenABI, addresses.stToken)
+        if (!wstToken || !stToken) throw new Error('Contracts not deployed')
+
+        const amount = ethers.parseEther(stAmountStr)
+
+        // Approve wstToken to spend stToken.
+        const approveTx = await stToken.approve(addresses.wstToken, amount)
+        await approveTx.wait()
+
+        const wrapTx = await wstToken.wrap(amount)
+        await wrapTx.wait()
+
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
+        return wrapTx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async unwrap(wstAmountStr) {
+      this.loading = true
+      this.error = null
+      try {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const wstToken = await makeSigned(wstTokenABI, addresses.wstToken)
+        if (!wstToken) throw new Error('WstToken not deployed')
+
+        const amount = ethers.parseEther(wstAmountStr)
+        const tx = await wstToken.unwrap(amount)
+        await tx.wait()
+
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async requestWithdrawal(stAmountStr) {
+      this.loading = true
+      this.error = null
+      try {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const queue = await makeSigned(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
+        if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
+
+        const walletStore = useWalletStore()
+        const amount = ethers.parseEther(stAmountStr)
+        const tx = await queue.requestWithdrawals([amount], walletStore.address)
+        await tx.wait()
+
+        await this.init(this.chainId, walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async claimWithdrawal(requestId) {
+      this.loading = true
+      this.error = null
+      try {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const queue = await makeSigned(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
+        if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
+
+        const walletStore = useWalletStore()
+        const tx = await queue.claimWithdrawal(requestId, walletStore.address)
+        await tx.wait()
+
+        await this.init(this.chainId, walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+  },
+})
