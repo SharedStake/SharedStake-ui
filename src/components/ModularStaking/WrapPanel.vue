@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import { useLidoParityStore } from '@/stores/lidoParity'
+import { useModularStakingStore } from '@/stores/modularStaking'
 import { useWalletStore } from '@/stores/wallet'
 import { ethers } from 'ethers'
 
@@ -101,7 +101,7 @@ export default {
 
   setup() {
     return {
-      store: useLidoParityStore(),
+      store: useModularStakingStore(),
       walletStore: useWalletStore(),
     }
   },

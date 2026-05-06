@@ -51,7 +51,7 @@ function getAddresses(chainId) {
   return CONTRACT_ADDRESSES[cid] || null
 }
 
-export const useLidoParityStore = defineStore('lidoParity', {
+export const useModularStakingStore = defineStore('modularStaking', {
   state: () => ({
     // Network / connection
     chainId: null,
@@ -223,7 +223,7 @@ export const useLidoParityStore = defineStore('lidoParity', {
             }
           } catch (modeErr) {
             // Non-fatal: surface in console only. Defaults remain (TURBO).
-            console.warn('LidoParityStore: failed to read withdrawal-mode metadata', modeErr)
+            console.warn('ModularStakingStore: failed to read withdrawal-mode metadata', modeErr)
           }
 
           if (userAddress) {
@@ -237,7 +237,7 @@ export const useLidoParityStore = defineStore('lidoParity', {
           this.exchangeRate = ethers.formatEther(rate)
         }
       } catch (e) {
-        console.error('LidoParityStore.init error:', e)
+        console.error('ModularStakingStore.init error:', e)
         this.error = e.message
       }
     },

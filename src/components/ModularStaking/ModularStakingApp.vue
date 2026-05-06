@@ -6,7 +6,7 @@
         SharedStake V2
       </h1>
       <p class="mt-2 text-muted-foreground text-sm max-w-sm">
-        Lido-parity liquid staking: deposit ETH, receive rebasing stETH, wrap to non-rebasing wstETH, and withdraw with a queue.
+        Modular staking liquid staking: deposit ETH, receive rebasing stETH, wrap to non-rebasing wstETH, and withdraw with a queue.
       </p>
     </div>
 
@@ -73,26 +73,26 @@
 
     <!-- Security notice -->
     <div class="mt-4 w-full max-w-md rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3 text-xs text-muted-foreground">
-      <strong class="text-foreground">Security note:</strong> These contracts implement Lido-parity mechanics (share accounting, rebasing stETH, withdrawal queue). They are pre-audit — use only on testnet until the external audit is complete.
+      <strong class="text-foreground">Security note:</strong> These contracts implement Modular staking mechanics (share accounting, rebasing stETH, withdrawal queue). They are pre-audit — use only on testnet until the external audit is complete.
     </div>
   </div>
 </template>
 
 <script>
-import { useLidoParityStore } from '@/stores/lidoParity'
+import { useModularStakingStore } from '@/stores/modularStaking'
 import { useWalletStore } from '@/stores/wallet'
 import StakePanel from './StakePanel.vue'
 import WrapPanel from './WrapPanel.vue'
 import WithdrawPanel from './WithdrawPanel.vue'
 
 export default {
-  name: 'LidoParityApp',
+  name: 'ModularStakingApp',
 
   components: { StakePanel, WrapPanel, WithdrawPanel },
 
   setup() {
     return {
-      store: useLidoParityStore(),
+      store: useModularStakingStore(),
       walletStore: useWalletStore(),
     }
   },
