@@ -19,6 +19,24 @@
       </button>
     </div>
 
+    <!-- Withdrawal mode banner -->
+    <div
+      v-if="store.connected"
+      class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium"
+      :class="store.isBunkerMode
+        ? 'bg-yellow-500/10 border border-yellow-500/30 text-yellow-700 dark:text-yellow-400'
+        : 'bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400'"
+    >
+      <span>{{ store.isBunkerMode ? '⚠' : '✓' }}</span>
+      <span>{{ store.withdrawalModeLabel }} mode</span>
+      <span
+        v-if="store.isBunkerMode"
+        class="text-xs text-muted-foreground ml-auto"
+      >
+        Finalization slower — guardian operating carefully
+      </span>
+    </div>
+
     <!-- Request tab -->
     <div
       v-if="activeTab === 0"
@@ -116,6 +134,18 @@
                 class="text-yellow-500"
               >Pending finalization</span>
             </div>
+            <div
+              v-if="!req.finalized && store.isBunkerMode && req.requestedAt"
+              class="text-xs text-muted-foreground mt-1"
+            >
+              Age: {{ formatAge(req.requestedAt) }}
+              <span
+                v-if="!isOldEnough(req.requestedAt)"
+                class="text-yellow-500"
+              >
+                · Min {{ store.bunkerMinRequestAge / 3600 }}h required
+              </span>
+            </div>
           </div>
           <div class="text-right text-sm">
             <div
@@ -195,8 +225,19 @@ export default {
       } catch { return '0' }
     },
 
+    formatAge(requestedAtSecs) {
+      const ageSeconds = Math.floor(Date.now() / 1000) - Number(requestedAtSecs)
+      if (ageSeconds < 3600) return `${Math.floor(ageSeconds / 60)}m`
+      return `${(ageSeconds / 3600).toFixed(1)}h`
+    },
+
+    isOldEnough(requestedAtSecs) {
+      const ageSeconds = Math.floor(Date.now() / 1000) - Number(requestedAtSecs)
+      return ageSeconds >= this.store.bunkerMinRequestAge
+    },
+
     setMax() {
-      try { this.withdrawAmount = ethers.formatEther(this.store.stTokenBalance) } catch (_e) { /* ignore */ }
+      try { this.withdrawAmount = ethers.formatEther(this.store.stTokenBalance) } catch { /* ignore */ }
     },
 
     async handleRequest() {

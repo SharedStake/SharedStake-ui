@@ -72,9 +72,21 @@ export const useLidoParityStore = defineStore('lidoParity', {
     wstExchangeRate: '1.0', // stTokens per 1 wstToken
 
     // Withdrawal queue
-    userRequests: [],        // [{id, owner, stShares, ethAmount, finalized, claimed}]
+    userRequests: [],        // [{id, owner, stShares, ethAmount, requestedAt, finalized, claimed}]
     nextRequestId: '1',
     lastFinalizedRequestId: '0',
+
+    // Withdrawal mode (TURBO=0, BUNKER=1) and bunker-mode parameters
+    withdrawalMode: 0,        // 0 = TURBO, 1 = BUNKER
+    bunkerMinRequestAge: 0,   // seconds
+    bunkerMaxPerFinalize: 0,  // max requests per finalize call in BUNKER mode
+
+    // Module registry / inflow cap (StakingRouter)
+    defaultModuleId: null,
+    defaultModuleInfo: null,    // { addr, mintCapEth, active, paused, moduleType }
+    moduleInflowUsed: '0',      // ETH used in current window (wei)
+    moduleInflowLimit: '0',     // ETH limit per window (wei) — 0 = unlimited
+    moduleInflowWindowReset: 0, // unix timestamp when window resets
 
     // Contract deployment status
     contractsDeployed: false,
@@ -104,12 +116,27 @@ export const useLidoParityStore = defineStore('lidoParity', {
     pendingRequests: (state) => state.userRequests.filter(r => !r.finalized),
     finalizedRequests: (state) => state.userRequests.filter(r => r.finalized && !r.claimed),
     claimedRequests: (state) => state.userRequests.filter(r => r.claimed),
+    isBunkerMode: (state) => state.withdrawalMode !== 0,
+    withdrawalModeLabel: (state) => state.withdrawalMode === 0 ? 'TURBO' : 'BUNKER',
+
+    /// Inflow-cap utilisation as an integer percentage (0..>=100).
+    /// Returns null when the limit is unset (0 = unlimited).
+    moduleCapPercent: (state) => {
+      try {
+        const limit = BigInt(state.moduleInflowLimit || '0')
+        const used = BigInt(state.moduleInflowUsed || '0')
+        if (limit === 0n) return null
+        return Number((used * 100n) / limit)
+      } catch {
+        return null
+      }
+    },
   },
 
   actions: {
     // ── Internal helpers ──────────────────────────────────────────────────────
 
-    _getContracts(useSigner = false) {
+    _getContracts() {
       const walletStore = useWalletStore()
       const provider = walletStore.ethersProvider
       if (!provider) return null
@@ -179,6 +206,26 @@ export const useLidoParityStore = defineStore('lidoParity', {
           this.nextRequestId = (await queue.nextRequestId()).toString()
           this.lastFinalizedRequestId = (await queue.lastFinalizedRequestId()).toString()
 
+          // Read withdrawal-mode metadata. Wrapped in try/catch so older
+          // deployments without these getters don't break the entire init flow.
+          try {
+            if (typeof queue.withdrawalMode === 'function') {
+              const mode = await queue.withdrawalMode()
+              this.withdrawalMode = Number(mode)
+            }
+            if (typeof queue.bunkerMinRequestAge === 'function') {
+              const minAge = await queue.bunkerMinRequestAge()
+              this.bunkerMinRequestAge = Number(minAge)
+            }
+            if (typeof queue.bunkerMaxRequestsPerFinalize === 'function') {
+              const maxPer = await queue.bunkerMaxRequestsPerFinalize()
+              this.bunkerMaxPerFinalize = Number(maxPer)
+            }
+          } catch (modeErr) {
+            // Non-fatal: surface in console only. Defaults remain (TURBO).
+            console.warn('LidoParityStore: failed to read withdrawal-mode metadata', modeErr)
+          }
+
           if (userAddress) {
             await this.fetchUserRequests(userAddress)
           }
@@ -215,11 +262,13 @@ export const useLidoParityStore = defineStore('lidoParity', {
               owner: req.owner,
               stShares: req.stShares.toString(),
               ethAmount: req.ethAmount.toString(),
+              // requestedAt may be undefined on older ABI deployments; coerce safely.
+              requestedAt: req.requestedAt != null ? req.requestedAt.toString() : null,
               finalized: req.finalized,
               claimed: req.claimed,
             })
           }
-        } catch (_e) { /* ignore missing/reverted requests */ }
+        } catch { /* ignore missing/reverted requests */ }
       }
       this.userRequests = requests
     },

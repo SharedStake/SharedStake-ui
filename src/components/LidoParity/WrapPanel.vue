@@ -146,9 +146,9 @@ export default {
   methods: {
     setMax() {
       if (this.mode === 0) {
-        try { this.inputAmount = ethers.formatEther(this.store.stTokenBalance) } catch (_e) { /* ignore */ }
+        try { this.inputAmount = ethers.formatEther(this.store.stTokenBalance) } catch { /* ignore */ }
       } else {
-        try { this.inputAmount = ethers.formatEther(this.store.wstTokenBalance) } catch (_e) { /* ignore */ }
+        try { this.inputAmount = ethers.formatEther(this.store.wstTokenBalance) } catch { /* ignore */ }
       }
     },
 

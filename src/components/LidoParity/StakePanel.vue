@@ -154,7 +154,7 @@ export default {
         const balEth = parseFloat(ethers.formatEther(bal))
         this.inputAmount = Math.max(0, balEth - 0.01).toFixed(6)
         this.computeOutput()
-      } catch (_e) { /* ignore parse errors */ }
+      } catch { /* ignore parse errors */ }
     },
 
     computeOutput() {
