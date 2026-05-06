@@ -1,5 +1,28 @@
 # CLAUDE HANDOFF: Lido-Parity DeFi Core (Security-First)
 
+## Completion Status
+
+### Completed
+- Phase 0: Architecture doc and threat model delivered and evidenced.
+- Phase 1: Core contracts exist (`StakingCore`, share token, wrapper, withdrawal queue, fee controller).
+- Phase 2: Oracle/report adapter + pause/resume safety controls exist.
+- Phase 3: Role/access negative tests pass; fuzz/invariant suite passes; full Hardhat suite green.
+- Frontend: Lint, type-check, and build passing.
+- CI/PR checks: AWS Amplify preview passing.
+
+### Partially Complete
+- Phase 3: Hardening suite passes, but gas profiling / DoS loop-bound review and pre-audit remediation pass are not explicitly evidenced.
+- Phase 4: Timelock wiring is documented in architecture doc but deferred to Phase 4 (not yet implemented).
+
+### Remaining Work
+- Implement timelock + multisig governance wiring for privileged parameter updates.
+- Execute external security audit(s), triage findings, and add regression tests.
+- Produce staging deployment runbook and complete fork simulation operational checklist.
+- Obtain mainnet deploy approval (engineering + security owner sign-off).
+- 72h heightened monitoring window and rollback/containment rehearsal post-deploy.
+
+---
+
 ## Objective
 Deliver a Lido-parity DeFi core focused on secure staking derivative mechanics before feature breadth.
 
