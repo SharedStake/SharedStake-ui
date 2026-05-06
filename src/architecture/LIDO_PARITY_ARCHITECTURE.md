@@ -1,8 +1,8 @@
 # Lido-Parity DeFi Core — Architecture & Threat Model
 
-> Phase: MVP (Phase 0–1)  
+> Phase: Phase 2 hardening + telemetry  
 > Status: Pre-audit  
-> Last updated: 2026-05-03
+> Last updated: 2026-05-06
 
 ---
 
@@ -47,7 +47,7 @@ Protocol earns a fee on beacon rewards; fees accrue as shares minted to treasury
 | `ShareMath` | Pure library: `getSharesByPooledEth`, `getPooledEthByShares`, `sharePrice`. Deterministic rounding (floor). |
 | `StToken` | Rebasing ERC20. Stores shares (`_sharesOf`); `balanceOf` is computed. `totalSupply` = `totalPooledEther`. |
 | `WstToken` | Non-rebasing ERC4626-like wrapper. Holds stTokens; each wstToken = 1 share in stToken. |
-| `StakingCore` | Entry point for ETH. Mints shares on deposit. Receives oracle reports; triggers fee distribution. |
+| `StakingCore` | Entry point for ETH. Mints shares on deposit. Requires explicit beacon-baseline initialization (`notifyBeaconDeposit`) before positive oracle reports; triggers fee distribution on net rewards only. |
 | `WithdrawalQueueV2` | Three-step queue: request (burn shares) → finalize (guardian sends ETH) → claim (user receives ETH). |
 | `FeeController` | Stores fee bps and recipient addresses. Provides `computeFees(rewards)` view. |
 | `OracleAdapter` | Validates oracle reports (staleness, drift, slash bounds). Calls `StakingCore.reportBeacon`. |
@@ -84,6 +84,7 @@ All divisions floor. This means:
 | `GOV` (keccak "GOV") | DAO timelock / multisig | `setFeeController`, `unpause`, `setFee`, `setRecipients`, `setMaxStaleness/Drift/Slash`, `addSubmitter` |
 | `ORACLE` | OracleAdapter contract | `StakingCore.reportBeacon` |
 | `GUARDIAN` | Multisig (can act without timelock) | `pause`, `WithdrawalQueueV2.finalize` |
+| `NODE_OPERATOR` | Validator operations key (or governance during bootstrap) | `StakingCore.notifyBeaconDeposit` |
 | `MINTER` | StakingCore + WithdrawalQueueV2 | `StToken.mintShares`, `burnShares`, `setTotalPooledEther` |
 | `SUBMITTER` | Oracle infrastructure keys | `OracleAdapter.submitReport` |
 
@@ -153,6 +154,7 @@ Rationale:
 | T13 | Share price manipulation (first depositor) | First depositor donates ETH to StakingCore to inflate rate | Pool tracks `totalPooledEther` explicitly, not contract balance | ✅ Mitigated |
 | T14 | Pause bricking withdrawals | GUARDIAN pauses submit but not claim | `PAUSE_SUBMIT` only disables deposits; claims remain open | ✅ Design |
 | T15 | Integer overflow in ShareMath | Large values cause overflow | Solidity 0.8 checked arithmetic; fuzz tests | ✅ Mitigated |
+| T16 | First positive report counts principal as rewards | Oracle reports positive beacon balance before baseline transfer is tracked | `notifyBeaconDeposit` required before positive reports in core/router | ✅ Mitigated |
 
 ---
 
@@ -175,6 +177,7 @@ Rationale:
 4. `WithdrawalQueueV2.lockedEther <= address(withdrawalQueueV2).balance` always.
 5. Fee shares minted ≤ `rewards × feeBps / 10000` (at current exchange rate).
 6. Exchange rate is monotonically non-decreasing except on slash events.
+7. Positive beacon reports require baseline initialization (`notifyBeaconDeposit`) before reward deltas are accepted.
 
 ---
 
@@ -204,3 +207,22 @@ Rationale:
 - [ ] Monitoring active: queue backlog, share price delta, oracle freshness
 - [ ] 72h heightened monitoring window post-deploy
 - [ ] Rollback playbook rehearsed
+
+---
+
+## 11. Phase 2 Extensions (Implemented)
+
+- Quorum oracle path:
+  - `QuorumOracleAdapter` adds N-of-M submitter voting, duplicate-vote prevention, staleness bounds, drift/slash guards, and single-finalization semantics.
+- Queue risk-mode controls:
+  - `WithdrawalQueueV2` supports `TURBO` and `BUNKER` modes with bunker batch-size and minimum-age finalization constraints.
+- Router risk-budget controls:
+  - `StakingRouter` enforces per-module inflow windows, module pause flags, and global emergency submit pause.
+  - Positive beacon reports now require prior `notifyBeaconDeposit` baseline initialization to avoid principal being miscounted as rewards.
+- Core baseline guard:
+  - `StakingCore` now requires `notifyBeaconDeposit` before positive oracle reports and rejects oversize baseline moves above buffered ETH.
+- Institutional policy hooks:
+  - `InstitutionalPolicyRegistry` can be attached per module for permissionless/allowlist/blocklist/private modes.
+- Attribution + fee telemetry:
+  - Additive attribution entrypoints and events landed in `StakingCore`/`StakingRouter`.
+  - Fee-routing telemetry events now emitted on reward fee-minting paths.
