@@ -15,6 +15,9 @@ yarn-error.log*
 pnpm-debug.log*
 .yarnclean
 
+# Subagent smoke-test artifacts
+artifacts/pi-kimi-subagent-smoke/
+
 # Package manager lock files (we use Bun exclusively)
 package-lock.json
 yarn.lock

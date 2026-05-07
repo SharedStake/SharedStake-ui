@@ -48,3 +48,18 @@ bun run lint     # Code linting
 ## 🤖 AI Documentation
 
 **📁 For AI Agents**: See [`/llm/`](./llm/) folder for comprehensive project context, migration history, and optimization guides. See [`.cursorrules`](.cursorrules) for project-specific AI guidelines.
+
+## Pi Kimi Subagent Workflow (Recommended)
+
+- Keep Codex as orchestrator for critical-path implementation and final integration.
+- Delegate independent side tasks to `pi-kimi-subagent`.
+- Use the default Takopi settings: provider `kimi-coding`, model `k2p6`.
+- If Kimi is unavailable, fall back to built-in Codex `explorer`/`worker` agents.
+
+How-to and examples: [`llm/PI_KIMI_SUBAGENTS.md`](./llm/PI_KIMI_SUBAGENTS.md)
+
+End-to-end coding smoke test:
+
+```bash
+./scripts/pi-kimi-subagent-smoke.sh
+```

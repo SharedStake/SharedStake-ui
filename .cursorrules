@@ -246,3 +246,9 @@ bun run build
 5. **Multipass Review** - Perform minimum 3-pass review for any significant changes
 
 This comprehensive rule set ensures consistent, maintainable, and secure code across the SharedStake UI project.
+
+## Shared Attribution Rules (Propagated)
+
+- Commit author should be the active agent model identity.
+- Include `Co-authored-by: Chimera <chimera_defi@protonmail.com>` in commit trailers.
+- PR descriptions must include `**Agent:** <actual model name>` and `**Co-authored-by:** Chimera <chimera_defi@protonmail.com>`.

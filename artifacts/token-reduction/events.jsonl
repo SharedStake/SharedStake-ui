@@ -1,0 +1,2 @@
+{"event": "helper_invocation", "meta": {"chars": 914, "exit_code": 0, "latency_ms": 3211, "lines": 8}, "query": "token reduce", "source": "helper", "status": "ok", "timestamp": "2026-04-11T18:36:56.589896+00:00", "tool": "token_reduce_paths"}
+{"event": "helper_invocation", "meta": {"chars": 628, "context": "runtime", "exit_code": 0, "latency_ms": 4021, "lines": 6}, "query": "token reduce routing helper compliance", "source": "helper", "status": "ok", "timestamp": "2026-04-12T00:59:02.110478+00:00", "tool": "token_reduce_paths"}
