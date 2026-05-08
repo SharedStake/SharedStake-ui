@@ -111,6 +111,12 @@ const getAddressMapForChain = (chainId) => {
 };
 
 
+import stTokenABI from './abis/stToken.json'
+import wstTokenABI from './abis/wstToken.json'
+import stakingCoreABI from './abis/stakingCore.json'
+import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
+import stakingRouterABI from './abis/stakingRouter.json'
+
 let _ABIs = {
     validator: sharedStake,
     vEth2: vEth2Token,
@@ -124,7 +130,12 @@ let _ABIs = {
     withdrawals: withdrawalsABI,
     rollovers: rolloversABI,
     sgETH: sgETHABI,
-    wsgETH: wsgETHABI
+    wsgETH: wsgETHABI,
+    stToken: stTokenABI,
+    wstToken: wstTokenABI,
+    stakingCore: stakingCoreABI,
+    withdrawalQueueV2: withdrawalQueueV2ABI,
+    stakingRouter: stakingRouterABI,
 }
 
 let connErr = () => {
@@ -438,6 +449,12 @@ const createContractWithAddress = (address, abi, useSigner = false) => {
 export const createDeprecatedWithdrawalsContract = (address, useSigner = false) => {
     return createContractWithAddress(address, 'withdrawals', useSigner);
 };
+
+export const stToken = (useSigner = false) => createContractDefault('stToken', useSigner);
+export const wstToken = (useSigner = false) => createContractDefault('wstToken', useSigner);
+export const stakingCore = (useSigner = false) => createContractDefault('stakingCore', useSigner);
+export const withdrawalQueueV2 = (useSigner = false) => createContractDefault('withdrawalQueueV2', useSigner);
+export const stakingRouter = (useSigner = false) => createContractDefault('stakingRouter', useSigner);
 
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,

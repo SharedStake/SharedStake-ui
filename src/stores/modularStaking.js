@@ -13,6 +13,7 @@ import stTokenABI from '@/contracts/abis/stToken.json'
 import wstTokenABI from '@/contracts/abis/wstToken.json'
 import stakingCoreABI from '@/contracts/abis/stakingCore.json'
 import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
+import stakingRouterABI from '@/contracts/abis/stakingRouter.json'
 import mainnetAddresses from '@/contracts/addresses/mainnet.json'
 import goerliAddresses from '@/contracts/addresses/goerli.json'
 import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
@@ -46,6 +47,7 @@ function getAddresses(chainId) {
     stToken: source.stToken || ZERO_ADDR,
     wstToken: source.wstToken || ZERO_ADDR,
     withdrawalQueueV2: source.withdrawalQueueV2 || ZERO_ADDR,
+    stakingRouter: source.stakingRouter || ZERO_ADDR,
   }
 }
 
@@ -253,6 +255,49 @@ export const useModularStakingStore = defineStore('modularStaking', {
           const rate = (BigInt(this.totalPooledEther) * BigInt(1e18)) / BigInt(this.totalShares)
           this.exchangeRate = ethers.formatEther(rate)
         }
+
+        // Read StakingRouter module metadata (non-fatal if missing).
+        try {
+          const routerAddr = addresses.stakingRouter
+          if (routerAddr && routerAddr !== ZERO_ADDR) {
+            const router = make(stakingRouterABI, routerAddr)
+            if (router) {
+              const modId = await router.defaultModuleId()
+              this.defaultModuleId = modId
+
+              if (modId && modId !== '0x0000000000000000000000000000000000000000000000000000000000000000') {
+                const mod = await router.modules(modId)
+                this.defaultModuleInfo = {
+                  addr: mod.addr,
+                  moduleType: mod.moduleType,
+                  mintCapEth: mod.mintCapEth.toString(),
+                  active: mod.active,
+                  paused: mod.paused,
+                }
+
+                const winState = await router.moduleInflowWindowState(modId)
+                this.moduleInflowUsed = winState.inflowEth.toString()
+
+                const limitCfg = await router.moduleInflowLimitConfig(modId)
+                this.moduleInflowLimit = limitCfg.maxInflowEthPerWindow.toString()
+
+                // Compute window reset timestamp.
+                const now = Math.floor(Date.now() / 1000)
+                const windowStart = Number(winState.windowStart)
+                const windowSeconds = Number(limitCfg.windowSeconds)
+                if (windowSeconds > 0) {
+                  const elapsed = now - windowStart
+                  const remaining = Math.max(0, windowSeconds - (elapsed % windowSeconds))
+                  this.moduleInflowWindowReset = now + remaining
+                } else {
+                  this.moduleInflowWindowReset = 0
+                }
+              }
+            }
+          }
+        } catch (routerErr) {
+          console.warn('ModularStakingStore: failed to read StakingRouter metadata', routerErr)
+        }
       } catch (e) {
         console.error('ModularStakingStore.init error:', e)
         this.error = e.message
@@ -417,6 +462,31 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const tx = await queue.claimWithdrawal(requestId, walletStore.address)
         await tx.wait()
 
+        await this.init(this.chainId, walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async finalize(lastRequestId) {
+      this.loading = true
+      this.error = null
+      try {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const queue = await makeSigned(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
+        if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
+
+        const tx = await queue.finalize(lastRequestId)
+        await tx.wait()
+
+        const walletStore = useWalletStore()
         await this.init(this.chainId, walletStore.address)
         return tx
       } catch (e) {

@@ -77,6 +77,12 @@
         {{ store.error }}
       </div>
       <div
+        v-if="claimTxHash"
+        class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
+      >
+        Claimed! Tx: {{ claimTxHash.slice(0, 10) }}...
+      </div>
+      <div
         v-if="requestTxHash"
         class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
       >
@@ -203,6 +209,8 @@ export default {
       withdrawAmount: '',
       requestTxHash: null,
       claimingId: null,
+      claimTxHash: null,
+      claimSuccessId: null,
     }
   },
 
@@ -254,9 +262,11 @@ export default {
     },
 
     async handleClaim(requestId) {
+      this.claimTxHash = null
       this.claimingId = requestId
       try {
-        await this.store.claimWithdrawal(requestId)
+        const tx = await this.store.claimWithdrawal(requestId)
+        this.claimTxHash = tx.hash
       } catch (e) {
         console.error('Claim error:', e)
       } finally {
