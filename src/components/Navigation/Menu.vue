@@ -33,6 +33,9 @@
         <DropdownItemRouter to="/earn">
           Earn
         </DropdownItemRouter>
+        <DropdownItemRouter to="/v2">
+          V2 Staking (Beta)
+        </DropdownItemRouter>
       </DropdownGroup>
     </div>
 
@@ -47,6 +50,9 @@
       <DropdownGroup>
         <DropdownItemRouter to="/blog">
           Blog
+        </DropdownItemRouter>
+        <DropdownItemRouter to="/architecture">
+          Architecture
         </DropdownItemRouter>
         <DropdownItemAnchor href="https://docs.sharedstake.finance/">
           Docs

@@ -80,7 +80,11 @@ const parseAddressOverrides = (rawValue) => {
     return null;
 };
 
-const getAddressOverrides = () => {
+// Contract address overrides are intentionally restricted to local dev chains.
+// Allowing them on mainnet/testnet would let an attacker craft URLs that point
+// users at malicious contracts and steal deposited funds.
+const getAddressOverrides = (isLocalChain) => {
+    if (!isLocalChain) return null;
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
     const queryOverride = parseAddressOverrides(params.get(ADDRESS_OVERRIDES_QUERY_KEY));
@@ -102,7 +106,7 @@ const getAddressMapForChain = (chainId) => {
                     ? { ...sepoliaAddresses, ...localAddresses }
                     : {};
 
-    const overrides = getAddressOverrides();
+    const overrides = getAddressOverrides(isLocalChain);
     return overrides ? { ...baseAddresses, ...overrides } : baseAddresses;
 };
 

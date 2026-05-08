@@ -661,7 +661,7 @@ export default {
     },
     async fetchTvlFromEtherscan() {
       let response = await axios.get(
-        "https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=GKKIY3WXXG1EICPRKACRR75MA4UE7ANFY8"
+        `https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x898bad2774eb97cf6b94605677f43b41871410b1&apikey=${import.meta.env.VITE_ETHERSCAN_KEY || ""}`
       );
       return BN(response.data.result)
         .div(1e18)
