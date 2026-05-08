@@ -70,8 +70,10 @@ Use `PW_WALLET_SEED_ETH` or `--seed-wallet-eth` to override (default: `5`).
 It also defaults wallet Playwright runs to headless mode
 (`PW_WALLET_HEADLESS=true`) to avoid X server requirements in CI/sandbox runs.
 
-Base fork E2E now includes an injected-wallet tx flow test (`stake + approve + unstake`)
-that uses an impersonated address on the local fork. Configure with:
+Base fork E2E now includes injected-wallet tx flows for:
+- legacy stake path (`stake + approve + unstake`)
+- modular `/v2` path (`stake + wrap + withdrawal request`)
+Both use an impersonated address on the local fork. Configure with:
 - `E2E_IMPERSONATOR_ADDRESS` or `--impersonator-address`
 - `E2E_IMPERSONATOR_SEED_ETH` or `--impersonator-seed-eth`
 
@@ -111,3 +113,19 @@ Notes:
 ## 🤖 AI Documentation
 
 **📁 For AI Agents**: See [`/llm/`](./llm/) folder for comprehensive project context, migration history, and optimization guides. See [`.cursorrules`](.cursorrules) for project-specific AI guidelines.
+
+## 🧭 Modular Staking V2 Docs
+
+Docs-first planning and architecture artifacts for the clean V2 workstream live in:
+
+- [`docs/modular-staking/README.md`](./docs/modular-staking/README.md)
+- [`docs/modular-staking/architecture.md`](./docs/modular-staking/architecture.md)
+- [`docs/modular-staking/diagrams.md`](./docs/modular-staking/diagrams.md)
+- [`docs/modular-staking/threat-model.md`](./docs/modular-staking/threat-model.md)
+- [`docs/modular-staking/composite-profile-prd.md`](./docs/modular-staking/composite-profile-prd.md)
+- [`docs/modular-staking/master-pr-plan.md`](./docs/modular-staking/master-pr-plan.md)
+- [`docs/modular-staking/pr376-keep-drop-matrix.md`](./docs/modular-staking/pr376-keep-drop-matrix.md)
+- [`docs/modular-staking/code-port-checklist.md`](./docs/modular-staking/code-port-checklist.md)
+- [`docs/modular-staking/track-a-integration-runbook.md`](./docs/modular-staking/track-a-integration-runbook.md)
+- [`docs/modular-staking/execution-plan.md`](./docs/modular-staking/execution-plan.md)
+- [`docs/modular-staking/handoff.md`](./docs/modular-staking/handoff.md)

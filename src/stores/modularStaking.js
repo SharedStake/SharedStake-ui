@@ -1,5 +1,6 @@
 /**
- * Pinia store for the Lido-parity staking protocol (StakingCore / StToken / WstToken / WithdrawalQueueV2).
+ * Pinia store for the SharedStake V2 modular staking protocol
+ * (StakingCore / StToken / WstToken / WithdrawalQueueV2).
  *
  * Separating this from the legacy wallet store keeps the new protocol isolated
  * while still sharing the wallet connection (provider/signer) from useWalletStore.
@@ -12,30 +13,20 @@ import stTokenABI from '@/contracts/abis/stToken.json'
 import wstTokenABI from '@/contracts/abis/wstToken.json'
 import stakingCoreABI from '@/contracts/abis/stakingCore.json'
 import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
+import mainnetAddresses from '@/contracts/addresses/mainnet.json'
+import goerliAddresses from '@/contracts/addresses/goerli.json'
+import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
+import localAddresses from '@/contracts/addresses/local.json'
 
 // Placeholder zero address used when contracts are not deployed on the connected chain.
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
-// Per-chain contract addresses. Update with real addresses after deployment.
-const CONTRACT_ADDRESSES = {
-  '0x1': {   // mainnet — populated after audit + deploy
-    stakingCore: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-  },
-  '0xaa36a7': { // sepolia testnet
-    stakingCore: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-  },
-  '0x7a69': { // localhost (hardhat)
-    stakingCore: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-  },
+const ADDRESS_BOOK_BY_CHAIN = {
+  '0x1': mainnetAddresses,
+  '0x5': goerliAddresses,
+  '0xaa36a7': sepoliaAddresses,
+  '0x7a69': localAddresses,
+  '0x539': localAddresses, // Ganache-style local chain id
 }
 
 function normalizeChainId(id) {
@@ -48,7 +39,24 @@ function normalizeChainId(id) {
 
 function getAddresses(chainId) {
   const cid = normalizeChainId(chainId)
-  return CONTRACT_ADDRESSES[cid] || null
+  const source = ADDRESS_BOOK_BY_CHAIN[cid]
+  if (!source) return null
+  return {
+    stakingCore: source.stakingCore || ZERO_ADDR,
+    stToken: source.stToken || ZERO_ADDR,
+    wstToken: source.wstToken || ZERO_ADDR,
+    withdrawalQueueV2: source.withdrawalQueueV2 || ZERO_ADDR,
+  }
+}
+
+function normalizeAmountInput(value) {
+  if (typeof value === 'string') return value.trim()
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new Error('Invalid numeric amount')
+    return value.toString()
+  }
+  if (typeof value === 'bigint') return value.toString()
+  return String(value ?? '').trim()
 }
 
 export const useModularStakingStore = defineStore('modularStaking', {
@@ -138,10 +146,19 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
     _getContracts() {
       const walletStore = useWalletStore()
-      const provider = walletStore.ethersProvider
+      let provider = walletStore.ethersProvider
+      if (!provider && typeof window !== 'undefined' && window.ethereum) {
+        provider = new ethers.BrowserProvider(window.ethereum)
+        walletStore.setEthersProvider(provider)
+        if (!walletStore.network && window.ethereum.chainId) {
+          walletStore.setNetwork(String(window.ethereum.chainId).toLowerCase())
+        }
+      }
       if (!provider) return null
 
-      const chainId = this.chainId
+      const fallbackWindowChainId =
+        typeof window !== 'undefined' && window.ethereum ? window.ethereum.chainId : null
+      const chainId = this.chainId || walletStore.network || fallbackWindowChainId
       const addresses = getAddresses(chainId)
       if (!addresses) return null
 
@@ -286,7 +303,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const stakingCore = await makeSigned(stakingCoreABI, addresses.stakingCore)
         if (!stakingCore) throw new Error('StakingCore not deployed')
 
-        const amount = ethers.parseEther(ethAmountStr)
+        const amount = ethers.parseEther(normalizeAmountInput(ethAmountStr))
         const tx = await stakingCore.submit(referral, { value: amount })
         await tx.wait()
 
@@ -313,7 +330,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const stToken = await makeSigned(stTokenABI, addresses.stToken)
         if (!wstToken || !stToken) throw new Error('Contracts not deployed')
 
-        const amount = ethers.parseEther(stAmountStr)
+        const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
 
         // Approve wstToken to spend stToken.
         const approveTx = await stToken.approve(addresses.wstToken, amount)
@@ -344,7 +361,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const wstToken = await makeSigned(wstTokenABI, addresses.wstToken)
         if (!wstToken) throw new Error('WstToken not deployed')
 
-        const amount = ethers.parseEther(wstAmountStr)
+        const amount = ethers.parseEther(normalizeAmountInput(wstAmountStr))
         const tx = await wstToken.unwrap(amount)
         await tx.wait()
 
@@ -371,7 +388,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
 
         const walletStore = useWalletStore()
-        const amount = ethers.parseEther(stAmountStr)
+        const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
         const tx = await queue.requestWithdrawals([amount], walletStore.address)
         await tx.wait()
 

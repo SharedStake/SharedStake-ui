@@ -23,7 +23,7 @@ This folder is the frontend-facing architecture workspace for iterative planning
 3. Reflect contract changes in:
    - `SharedDeposit/contracts/v2/core/README.md`
    - `SharedDeposit/contracts/v2/modular-staking/`
-   - `src/architecture/LIDO_PARITY_ARCHITECTURE.md`
+   - `src/architecture/MODULAR_STAKING_ARCHITECTURE.md`
    - `llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md`
 4. Keep source links current when GitBook pages change.
 

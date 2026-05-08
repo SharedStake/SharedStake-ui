@@ -178,3 +178,16 @@ export const pollTxRecordAt = async (page, index, timeoutMs = 30_000) => {
 
   return page.evaluate((recordIndex) => window.__e2eTxLog[recordIndex], index);
 };
+
+export const pollTxRecordAtOrNull = async (page, index, timeoutMs = 30_000, intervalMs = 500) => {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const record = await page.evaluate(
+      (recordIndex) => window.__e2eTxLog?.[recordIndex] || null,
+      index
+    );
+    if (record) return record;
+    await page.waitForTimeout(intervalMs);
+  }
+  return null;
+};

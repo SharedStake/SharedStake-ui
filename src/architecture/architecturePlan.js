@@ -11,7 +11,7 @@ export const architectureMeta = {
   localDocs: [
     "llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md",
     "src/architecture/lido-competitor-parity-phase2-plan.md",
-    "src/architecture/LIDO_PARITY_ARCHITECTURE.md",
+    "src/architecture/MODULAR_STAKING_ARCHITECTURE.md",
     "src/architecture/contracts-v1-invariants.md",
     "src/architecture/contracts-v1-access-control-matrix.md",
     "src/architecture/contracts-v1-readiness-runthrough.md",
