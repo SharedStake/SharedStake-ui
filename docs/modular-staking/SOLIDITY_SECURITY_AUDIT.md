@@ -143,7 +143,7 @@ Between `burnShares` and `setTotalPooledEther`, a reentrant call could observe i
 | Staleness | `reportAge > maxStalenessSeconds` | ✅ |
 | Drift (gain) | `gainBps = ((newAvg - prevAvg) * 10000) / prevAvg` | ✅ |
 | Slash (loss) | `lossBps = ((lastBeaconBalance - beaconBalance) * 10000) / lastBeaconBalance` | ✅ |
-| Future timestamp | Not checked in OracleAdapter | ⚠️ |
+| Future timestamp | `reportTimestamp > block.timestamp` revert | ✅ FIXED |
 
 #### LOW-11: `OracleAdapter.submitReport()` does not reject future timestamps
 **File:** `OracleAdapter.sol`
