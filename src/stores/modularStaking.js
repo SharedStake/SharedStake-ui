@@ -345,11 +345,22 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!ctx) throw new Error('Contracts not available on this network')
 
         const { addresses, makeSigned } = ctx
-        const stakingCore = await makeSigned(stakingCoreABI, addresses.stakingCore)
-        if (!stakingCore) throw new Error('StakingCore not deployed')
+
+        // Prefer StakingRouter (modular V2 path) when available,
+        // falling back to StakingCore for legacy / non-modular deployments.
+        let contract = null
+        let contractName = 'StakingRouter'
+        if (addresses.stakingRouter && addresses.stakingRouter !== ZERO_ADDR) {
+          contract = await makeSigned(stakingRouterABI, addresses.stakingRouter)
+        }
+        if (!contract) {
+          contract = await makeSigned(stakingCoreABI, addresses.stakingCore)
+          contractName = 'StakingCore'
+        }
+        if (!contract) throw new Error(`${contractName} not deployed`)
 
         const amount = ethers.parseEther(normalizeAmountInput(ethAmountStr))
-        const tx = await stakingCore.submit(referral, { value: amount })
+        const tx = await contract.submit(referral, { value: amount })
         await tx.wait()
 
         const walletStore = useWalletStore()

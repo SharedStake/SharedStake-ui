@@ -77,6 +77,20 @@
       {{ store.error }}
     </div>
 
+    <!-- Referral indicator -->
+    <div
+      v-if="referralAddress"
+      class="flex items-center justify-between rounded-lg border border-purple-500/30 bg-purple-500/10 p-3 text-sm text-purple-700 dark:text-purple-400"
+    >
+      <span>Referrer: {{ referralAddress.slice(0, 6) }}...{{ referralAddress.slice(-4) }}</span>
+      <button
+        class="text-xs underline hover:text-purple-900 dark:hover:text-purple-200"
+        @click="clearReferral"
+      >
+        Clear
+      </button>
+    </div>
+
     <!-- Success -->
     <div
       v-if="txHash"
@@ -123,6 +137,7 @@ export default {
       inputAmount: '',
       outputAmount: '',
       txHash: null,
+      referralAddress: null,
     }
   },
 
@@ -143,6 +158,21 @@ export default {
         !this.store.loading
       )
     },
+  },
+
+  mounted() {
+    // Capture referral from URL ?ref=0x... and persist in localStorage
+    const urlParams = new URLSearchParams(window.location.search)
+    const ref = urlParams.get('ref')
+    if (ref && this.isValidAddress(ref)) {
+      localStorage.setItem('sharedstake_referral', ref)
+      this.referralAddress = ref
+    } else {
+      const stored = localStorage.getItem('sharedstake_referral')
+      if (stored && this.isValidAddress(stored)) {
+        this.referralAddress = stored
+      }
+    }
   },
 
   methods: {
@@ -179,11 +209,23 @@ export default {
       }
     },
 
+    isValidAddress(addr) {
+      try {
+        return ethers.isAddress(addr) && addr !== ethers.ZeroAddress
+      } catch { return false }
+    },
+
+    clearReferral() {
+      this.referralAddress = null
+      localStorage.removeItem('sharedstake_referral')
+    },
+
     async handleStake() {
       if (!this.canSubmit) return
       this.txHash = null
       try {
-        const tx = await this.store.stake(this.inputAmount)
+        const ref = this.referralAddress || ethers.ZeroAddress
+        const tx = await this.store.stake(this.inputAmount, ref)
         this.txHash = tx.hash
         this.inputAmount = ''
         this.outputAmount = ''
