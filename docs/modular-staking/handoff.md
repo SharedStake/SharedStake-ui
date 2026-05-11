@@ -195,6 +195,69 @@ Use this file for resumable execution across quotas and subagents.
   2. Execute `bun run test:e2e:wallet:strict` in wallet-enabled CI/env and attach output.
   3. Optionally add explicit role-wiring deploy tests for `FEE_CTL` grants to core/router against `ReferralRegistry`.
 
+### Session 2026-05-11 06:30 UTC (Codex GPT-5 → Claude Handoff)
+- What changed:
+  - **Audit Fixes (First Pass)** — All 15 findings addressed:
+    - LOW-01: `StToken.transferAdmin()` revokes MINTER from old admin
+    - LOW-02: Removed dead `FeeController.recordDistribution()`
+    - LOW-04: Added `nonReentrant` to `StToken.transfer()` / `transferFrom()`
+    - LOW-06: Tightened `maxPlausible` from 2× → 1.5× in `StakingCore` + `ValidatorModule`
+    - LOW-08: Atomic state update in `WithdrawalQueueV2` (setTotalPooledEther before burnShares)
+    - LOW-11: `OracleAdapter.submitReport()` now rejects future timestamps
+    - INFO-02: Removed unused `IERC20Metadata` import from `StToken.sol`
+  - **Governance Infrastructure (NEW contracts):**
+    - `VoteEscrowV2.sol` — Curve-style lock, ERC20Votes compatible, 7-day to 3-year locks
+    - `SharedStakeGovernor.sol` — OZ Governor (7200-block delay, 40320-block voting, 4% quorum, 1000 veSGT threshold)
+    - `GovernanceTimelock.sol` — 48-hour delay, PROPOSER/EXECUTOR/CANCELLER roles
+  - **Referral System (NEW contracts):**
+    - `ReferralRegistry.sol` — MasterChef-style `accRewardPerEth` fee distribution
+    - `IReferralRegistry.sol` — Router integration interface
+  - **ValidatorModule Hardening:** Added `expectedWithdrawalCredentials` validation on beacon deposits via assembly calldataload
+  - **Security Reports:**
+    - `docs/modular-staking/AUDIT_SECOND_PASS.md` — 8-agent comprehensive audit
+    - `SharedDeposit/x-ray/` — x-ray.md, entry-points.md, invariants.md, architecture.svg (verdict: ADEQUATE)
+  - **Documentation:** `docs/modular-staking/DEPLOYMENT_GUIDE.md` — step-by-step governance deployment order, emergency procedures, role matrix
+  - **PR #378** description updated via GitHub REST API with governance + referral details
+  - **Devin Delegate** used successfully to review x-ray report factual accuracy (found 3 errors, all fixed)
+- Tests run:
+  - `cd SharedDeposit && npx hardhat test test/v2/modular-staking/*.spec.ts` -> `236 passing`
+  - `cd SharedDeposit && npx hardhat test` -> `310 passing`
+  - `bun run lint` -> pass
+  - `bun run type-check` -> pass
+  - `bun run build` -> pass
+- Decisions made:
+  - OZ Governor chosen over Aragon (lighter weight, industry standard)
+  - MasterChef-style `accRewardPerEth` chosen for referral fee distribution (gas efficient)
+  - Socialized loss to 0 accepted by design (identical to Lido v2)
+  - `maxDeltaBps` default 1000 (10%) for testnet; must be lowered to 100 (1%) before mainnet
+  - Module trust assumption: Router assumes honest modules; code-hash verification recommended but not enforced
+- New risks:
+  - `maxDeltaBps` at 10% allows rapid compounding if oracle is compromised
+  - No global inflow limit across all modules (only per-module limits)
+  - No minimum deposit check on-chain (frontend should enforce)
+  - `wallet-extension strict` E2E still env-gated
+- Next actions:
+  1. **Claude should read `CLAUDE_HANDOFF_V2_HARDENING.md`** for full task list and delegation instructions
+  2. Re-run audit skills (x-ray + solidity-auditor) via kimi-delegate and devin-delegate to surface any new findings
+  3. Frontend referral integration (capture `?ref=0x...` from URL, pass to submit)
+  4. Lower `maxDeltaBps` from 1000 → 100 before mainnet
+  5. Add Foundry invariant tests for deposit/withdraw round-trips
+  6. Engage external human security audit
+
+---
+
+## Claude Handoff Document
+
+**Read this first:** `CLAUDE_HANDOFF_V2_HARDENING.md` (in repo root)
+
+This document contains:
+- Full audit fix summary
+- New contract inventory
+- Delegation instructions for kimi-delegate + devin-delegate
+- Test status: 236 passing
+- Pre-mainnet deployment checklist
+- Critical files to read
+
 ## Update Template (append each session)
 
 ```md
