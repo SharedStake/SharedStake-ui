@@ -84,11 +84,13 @@ import { useWalletStore } from '@/stores/wallet'
 import StakePanel from './StakePanel.vue'
 import WrapPanel from './WrapPanel.vue'
 import WithdrawPanel from './WithdrawPanel.vue'
+import LockPanel from './LockPanel.vue'
+import GovernancePanel from './GovernancePanel.vue'
 
 export default {
   name: 'ModularStakingApp',
 
-  components: { StakePanel, WrapPanel, WithdrawPanel },
+  components: { StakePanel, WrapPanel, WithdrawPanel, LockPanel, GovernancePanel },
 
   setup() {
     return {
@@ -104,6 +106,8 @@ export default {
         { label: 'Stake', component: 'StakePanel' },
         { label: 'Wrap', component: 'WrapPanel' },
         { label: 'Withdraw', component: 'WithdrawPanel' },
+        { label: 'Lock', component: 'LockPanel' },
+        { label: 'Gov', component: 'GovernancePanel' },
       ],
     }
   },

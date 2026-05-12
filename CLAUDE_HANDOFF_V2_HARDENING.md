@@ -21,6 +21,41 @@ Read these files IMMEDIATELY before doing anything:
 
 ## 1. What Was Done (Codex GPT-5 Session)
 
+### Session 2: Claude Continuation (2026-05-12)
+
+#### Security Hardening
+| Finding | File | Fix |
+|---|---|---|
+| **CRITICAL** | `ValidatorModule.sol` | `receive()` no longer increments `_bufferedEther` — prevents unbacked ETH from inflating `totalEth()` and breaking Router accounting invariant |
+| **MEDIUM** | `ReferralRegistry.sol` | Constructor now requires `feeToken` address — prevents `claimFees()` revert from `IERC20(address(0))` |
+| **LOW** | `ReferralRegistry.sol` | Added `recoverEth()` for GOV to rescue accidentally sent ETH |
+| **LOW** | `StakingRouter.sol` | `maxDeltaBps` default lowered from 1000 (10%) → 100 (1%); hard ceiling at 1000 enforced in setter |
+
+#### Frontend Integration
+| Feature | File | Description |
+|---|---|---|
+| Referral capture | `StakePanel.vue` | Captures `?ref=0x...` from URL, persists in localStorage, shows referral indicator with clear button |
+| Referral routing | `modularStaking.js` | `store.stake()` passes referrer to `submit(ref)`; prefers StakingRouter over StakingCore |
+
+#### Governance Infrastructure
+| Feature | File | Description |
+|---|---|---|
+| Deploy script | `scripts/v2/deploy_governance_v2.js` | Full deployment: SGTv2 → VoteEscrowV2 → GovernanceTimelock → SharedStakeGovernor with role wiring |
+| Frontend ABIs | `src/contracts/abis/*.json` | Added VoteEscrowV2, SharedStakeGovernor, GovernanceTimelock ABIs |
+| Factory functions | `src/contracts/index.js` | Added `voteEscrowV2()`, `sharedStakeGovernor()`, `governanceTimelock()` helpers |
+| Addresses | `src/contracts/addresses/local.json` | Placeholder governance addresses for local testing |
+
+#### Test Updates
+| Change | File | Description |
+|---|---|---|
+| maxDeltaBps | `stakingRouter.spec.ts` | Test `beforeEach` sets `maxDeltaBps(1000)` for realistic reward simulation |
+| maxDeltaBps | `e2e-router.spec.ts` | Same relaxation for E2E beacon report tests |
+| Constructor | `governanceReferral.spec.ts` | Updated `ReferralRegistry.deploy(gov, feeToken)` call |
+
+---
+
+## 1a. Previous Session (Codex GPT-5 — 2026-05-11)
+
 ### Audit Fixes (First Pass)
 | Finding | File | Fix |
 |---|---|---|
