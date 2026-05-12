@@ -116,6 +116,9 @@ import wstTokenABI from './abis/wstToken.json'
 import stakingCoreABI from './abis/stakingCore.json'
 import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
 import stakingRouterABI from './abis/stakingRouter.json'
+import voteEscrowV2ABI from './abis/voteEscrowV2.json'
+import sharedStakeGovernorABI from './abis/sharedStakeGovernor.json'
+import governanceTimelockABI from './abis/governanceTimelock.json'
 
 let _ABIs = {
     validator: sharedStake,
@@ -136,6 +139,9 @@ let _ABIs = {
     stakingCore: stakingCoreABI,
     withdrawalQueueV2: withdrawalQueueV2ABI,
     stakingRouter: stakingRouterABI,
+    voteEscrowV2: voteEscrowV2ABI,
+    sharedStakeGovernor: sharedStakeGovernorABI,
+    governanceTimelock: governanceTimelockABI,
 }
 
 let connErr = () => {
@@ -455,6 +461,9 @@ export const wstToken = (useSigner = false) => createContractDefault('wstToken',
 export const stakingCore = (useSigner = false) => createContractDefault('stakingCore', useSigner);
 export const withdrawalQueueV2 = (useSigner = false) => createContractDefault('withdrawalQueueV2', useSigner);
 export const stakingRouter = (useSigner = false) => createContractDefault('stakingRouter', useSigner);
+export const voteEscrowV2 = (useSigner = false) => createContractDefault('voteEscrowV2', useSigner);
+export const sharedStakeGovernor = (useSigner = false) => createContractDefault('sharedStakeGovernor', useSigner);
+export const governanceTimelock = (useSigner = false) => createContractDefault('governanceTimelock', useSigner);
 
 export const oldPools = {
     geyser_SGT: _geyser_SGT_old,
