@@ -1,10 +1,10 @@
 # Handoff: SharedStake V2 Hardening → Claude
 
-**Date:** 2026-05-11
+**Date:** 2026-05-12
 **Branch:** `feat/sharedstake-v2-modular-staking-master`
-**Status:** PR #378 active, 236 tests passing, pre-commit green
-**Previous Agent:** Codex GPT-5
-**Next Agent:** Claude (this session)
+**Status:** PR #378 active, 236 Hardhat tests + 7 Foundry invariants passing, pre-commit green
+**Previous Agent:** Codex GPT-5 → Claude continuation
+**Next Agent:** TBD
 
 ---
 
@@ -51,6 +51,51 @@ Read these files IMMEDIATELY before doing anything:
 | maxDeltaBps | `stakingRouter.spec.ts` | Test `beforeEach` sets `maxDeltaBps(1000)` for realistic reward simulation |
 | maxDeltaBps | `e2e-router.spec.ts` | Same relaxation for E2E beacon report tests |
 | Constructor | `governanceReferral.spec.ts` | Updated `ReferralRegistry.deploy(gov, feeToken)` call |
+
+### Session 3: Claude Continuation (2026-05-12) — Third Pass Audit + Foundry + Frontend
+
+#### Third Pass Security Audit (Claude)
+| Finding | Severity | File | Fix |
+|---|---|---|---|
+| Dust transfer rounds to 0 shares | LOW | `StToken.sol` | `_transfer()` rejects amounts that round to 0 shares |
+| Wrong error for allowance check | LOW | `StToken.sol` | `transferFrom()` uses `InsufficientAllowance()` |
+| `require()` in unreachable path | LOW | `VoteEscrowV2.sol` | Replaced with `CannotExtendBeyondMax()` custom error |
+| Stranded ETH in queue | INFO | `WithdrawalQueueV2.sol` | Added `recoverEth()` for GOV |
+
+Full report: `docs/modular-staking/AUDIT_THIRD_PASS.md`
+
+#### Foundry Invariant Tests
+| Invariant | Status |
+|---|---|
+| `totalSupply == totalPooledEther` | ✅ 256 runs |
+| `sum(user balances) <= totalPooledEther` | ✅ 256 runs |
+| Exchange rate monotonically non-decreasing | ✅ 256 runs |
+| Router + Queue are MINTERs | ✅ 256 runs |
+| `lockedEther <= queue.balance` | ✅ 256 runs |
+| `module.totalEth == buffered + beacon` | ✅ 256 runs |
+| No shares without ETH backing | ✅ 256 runs |
+
+File: `test/foundry/ModularStakingInvariants.t.sol`
+
+#### Fork Tests
+File: `test/v2/modular-staking/fork.spec.ts`
+- Validates `ValidatorModule` deposits to real mainnet beacon deposit contract
+- Tests withdrawal credentials validation
+- Skips gracefully when `MAINNET_RPC_URL` unavailable
+
+#### Keeper Scripts
+File: `scripts/v2/keeper.js`
+- `depositToBeacon()` — pushes buffered ETH to beacon when >= 32 ETH
+- `submitOracleReport()` — fetches beacon data, submits via OracleAdapter
+- `finalizeWithdrawals()` — finalizes pending withdrawal requests
+
+#### Governance Frontend
+| Component | File | Description |
+|---|---|---|
+| LockPanel | `src/components/ModularStaking/LockPanel.vue` | create_lock, withdraw, emergencyWithdraw |
+| GovernancePanel | `src/components/ModularStaking/GovernancePanel.vue` | Protocol params, proposal placeholders |
+| Governance Store | `src/stores/governance.js` | Pinia store for veSGT + Governor reads |
+| Tabs | `ModularStakingApp.vue` | Added Lock + Gov tabs |
 
 ---
 
@@ -99,9 +144,29 @@ Read these files IMMEDIATELY before doing anything:
 
 ## 2. Test Status
 
+### Hardhat
 ```
   236 passing (13s)
   0 failing
+```
+
+### Foundry
+```
+  7 invariant tests passed
+  256 runs × 32 depth each
+```
+
+### Frontend
+```
+  lint: 0 errors
+  type-check: pass
+  build: pass
+```
+
+### Fork Tests
+```
+  Available: test/v2/modular-staking/fork.spec.ts
+  Requires: MAINNET_RPC_URL env var
 ```
 
 All pre-commit checks pass: lint → type-check → build (no errors).
@@ -211,14 +276,16 @@ This is lower priority than referral integration.
 
 These are documented but NOT yet implemented. Prioritize which ones to tackle:
 
-- [ ] Lower `maxDeltaBps` from 1000 (10%) → 100 (1%)
+- [x] Lower `maxDeltaBps` from 1000 (10%) → 100 (1%)
 - [ ] Set `expectedWithdrawalCredentials` on all ValidatorModules
 - [ ] Transfer GOV + DEFAULT_ADMIN_ROLE to GovernanceTimelock on all contracts
 - [ ] Verify module code hashes at registration
-- [ ] Add Foundry invariant tests for deposit/withdraw round-trips
-- [ ] Add fork tests against mainnet beacon deposit contract
+- [x] Add Foundry invariant tests for deposit/withdraw round-trips
+- [x] Add fork tests against mainnet beacon deposit contract
 - [ ] Engage external human security audit
 - [ ] Add BUNKER mode for large slashes (future)
+- [ ] Wire governance proposal creation + voting UI
+- [ ] Deploy V2 governance contracts and update address books
 
 ---
 
