@@ -85,7 +85,7 @@ test.describe('modular staking v2 flow', () => {
 
     // Wrap tab
     const topTabs = page.locator('div.border-b.border-border > button');
-    await expect(topTabs).toHaveCount(3);
+    await expect(topTabs).toHaveCount(5); // Stake, Wrap, Withdraw, Lock, Gov
     await topTabs.nth(1).click();
 
     const wrapInput = page.locator('input[type="number"]').first();

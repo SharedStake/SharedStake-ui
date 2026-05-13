@@ -83,6 +83,10 @@ normalized_addresses_json() {
   local oracle_adapter
   local quorum_oracle_adapter
   local fee_controller
+  local sgt_v2
+  local vote_escrow_v2
+  local governance_timelock
+  local shared_stake_governor
 
   validator="$(resolve_validator_address "$network")"
   sg_eth="$(read_address_or_empty "$network" "SgETH")"
@@ -100,6 +104,10 @@ normalized_addresses_json() {
   oracle_adapter="$(read_address_or_empty "$network" "OracleAdapter")"
   quorum_oracle_adapter="$(read_address_or_empty "$network" "QuorumOracleAdapter")"
   fee_controller="$(read_address_or_empty "$network" "FeeController")"
+  sgt_v2="$(read_address_or_empty "$network" "SGTV2")"
+  vote_escrow_v2="$(read_address_or_empty "$network" "VoteEscrowV2")"
+  governance_timelock="$(read_address_or_empty "$network" "GovernanceTimelock")"
+  shared_stake_governor="$(read_address_or_empty "$network" "SharedStakeGovernor")"
 
   jq -n \
     --arg validator "$validator" \
@@ -118,6 +126,10 @@ normalized_addresses_json() {
     --arg oracle_adapter "$oracle_adapter" \
     --arg quorum_oracle_adapter "$quorum_oracle_adapter" \
     --arg fee_controller "$fee_controller" \
+    --arg sgt_v2 "$sgt_v2" \
+    --arg vote_escrow_v2 "$vote_escrow_v2" \
+    --arg governance_timelock "$governance_timelock" \
+    --arg shared_stake_governor "$shared_stake_governor" \
     '{
       validator: $validator,
       sgETH: $sg_eth,
@@ -134,6 +146,10 @@ normalized_addresses_json() {
       dvtModule: $dvt_module,
       oracleAdapter: $oracle_adapter,
       quorumOracleAdapter: $quorum_oracle_adapter,
-      feeController: $fee_controller
+      feeController: $fee_controller,
+      sgtV2: $sgt_v2,
+      voteEscrowV2: $vote_escrow_v2,
+      governanceTimelock: $governance_timelock,
+      sharedStakeGovernor: $shared_stake_governor
     } | with_entries(select(.value != ""))'
 }
