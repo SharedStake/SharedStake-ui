@@ -169,7 +169,7 @@ Direct ETH transfers increase contract balance without increasing `lockedEther`.
 2. **Add `recoverEth()` to WithdrawalQueueV2** — prevents stranded ETH
 3. **Document validator exit procedure** — coordinate with `maxSlashBps` adjustment
 4. **Consider fee share rounding fix** — compute referral shares as residual
-5. **Run Foundry invariant tests** — deposit/withdraw/wrap/unwrap round-trips
+5. ~~**Run Foundry invariant tests**~~ — ✅ **DONE 2026-05-12**: `forge test` → 7 passed, 0 failed (Node 24 / Foundry 1.7.1)
 6. **Fork test against mainnet beacon deposit contract** — validate deposit flow
 7. **External human audit** — engage professional firm for final review
 
@@ -192,5 +192,18 @@ Direct ETH transfers increase contract balance without increasing `lockedEther`.
 
 ---
 
-**Auditor:** Codex GPT-5
+---
+
+## Test Suite Results (2026-05-12 Rerun)
+
+| Suite | Command | Result |
+|---|---|---|
+| Hardhat (all specs) | `npx hardhat test test/v2/modular-staking/*.spec.ts` | **236 passing, 3 pending, 0 failing** |
+| Foundry invariants | `forge test --match-path test/foundry/ModularStakingInvariants.t.sol` | **7 passing, 0 failing** |
+
+**Environment:** Node v24.13.1, Hardhat 11.14.0, Forge 1.7.1
+
+---
+
+**Auditor:** Codex GPT-5 / Claude Sonnet 4.6
 **Co-authored-by:** Chimera <chimera_defi@protonmail.com>
