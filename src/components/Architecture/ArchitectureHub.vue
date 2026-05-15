@@ -144,6 +144,56 @@
 
       <section class="section">
         <h2 class="section-title">
+          Governance Model
+        </h2>
+        <div class="grid">
+          <article
+            v-for="item in governanceModel"
+            :key="item.title"
+            class="card"
+          >
+            <h3 class="card-title">
+              {{ item.title }}
+            </h3>
+            <ul class="bullet-list">
+              <li
+                v-for="point in item.points"
+                :key="point"
+              >
+                {{ point }}
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">
+          Upgrade &amp; Migration Path
+        </h2>
+        <div class="roadmap">
+          <article
+            v-for="item in upgradePath"
+            :key="item.title"
+            class="phase"
+          >
+            <h3 class="phase-title">
+              {{ item.title }}
+            </h3>
+            <ul class="bullet-list">
+              <li
+                v-for="point in item.points"
+                :key="point"
+              >
+                {{ point }}
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">
           Release Tracks
         </h2>
         <div class="grid">
@@ -176,6 +226,8 @@ import {
   coreArchitecture,
   phaseRoadmap,
   contractV1Readiness,
+  governanceModel,
+  upgradePath,
   releaseTracks,
 } from "@/architecture/architecturePlan";
 
@@ -187,6 +239,8 @@ export default {
       coreArchitecture,
       phaseRoadmap,
       contractV1Readiness,
+      governanceModel,
+      upgradePath,
       releaseTracks,
     };
   },
