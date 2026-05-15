@@ -8,6 +8,7 @@
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
 import { useWalletStore } from './wallet'
+import { normalizeChainId } from '@/utils/common'
 
 import stTokenABI from '@/contracts/abis/stToken.json'
 import wstTokenABI from '@/contracts/abis/wstToken.json'
@@ -28,14 +29,6 @@ const ADDRESS_BOOK_BY_CHAIN = {
   '0xaa36a7': sepoliaAddresses,
   '0x7a69': localAddresses,
   '0x539': localAddresses, // Ganache-style local chain id
-}
-
-function normalizeChainId(id) {
-  if (!id && id !== 0) return ''
-  if (typeof id === 'bigint') return '0x' + id.toString(16)
-  if (typeof id === 'number') return '0x' + id.toString(16)
-  if (typeof id === 'string' && !id.startsWith('0x')) return '0x' + parseInt(id).toString(16)
-  return id.toLowerCase()
 }
 
 function getAddresses(chainId) {
@@ -180,6 +173,22 @@ export const useModularStakingStore = defineStore('modularStaking', {
       }
 
       return { addresses, make, makeSigned }
+    },
+
+    async _withTx(fn) {
+      this.loading = true
+      this.error = null
+      try {
+        const result = await fn()
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
+        return result
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
 
     // ── Data fetching ──────────────────────────────────────────────────────────
@@ -338,9 +347,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
     // ── Transactions ──────────────────────────────────────────────────────────
 
     async stake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available on this network')
 
@@ -362,22 +369,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const amount = ethers.parseEther(normalizeAmountInput(ethAmountStr))
         const tx = await contract.submit(referral, { value: amount })
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async wrap(stAmountStr) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -394,22 +391,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
         const wrapTx = await wstToken.wrap(amount)
         await wrapTx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return wrapTx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async unwrap(wstAmountStr) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -420,22 +407,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const amount = ethers.parseEther(normalizeAmountInput(wstAmountStr))
         const tx = await wstToken.unwrap(amount)
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async requestWithdrawal(stAmountStr) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -447,21 +424,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
         const tx = await queue.requestWithdrawals([amount], walletStore.address)
         await tx.wait()
-
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async claimWithdrawal(requestId) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -472,21 +440,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const walletStore = useWalletStore()
         const tx = await queue.claimWithdrawal(requestId, walletStore.address)
         await tx.wait()
-
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async finalize(lastRequestId) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -496,16 +455,8 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
         const tx = await queue.finalize(lastRequestId)
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
   },
 })

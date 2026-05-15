@@ -82,7 +82,7 @@
       v-if="referralAddress"
       class="flex items-center justify-between rounded-lg border border-purple-500/30 bg-purple-500/10 p-3 text-sm text-purple-700 dark:text-purple-400"
     >
-      <span>Referrer: {{ referralAddress.slice(0, 6) }}...{{ referralAddress.slice(-4) }}</span>
+      <span>Referrer: {{ referralAddress }}</span>
       <button
         class="text-xs underline hover:text-purple-900 dark:hover:text-purple-200"
         @click="clearReferral"

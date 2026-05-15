@@ -5,6 +5,7 @@
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
 import { useWalletStore } from './wallet'
+import { normalizeChainId } from '@/utils/common'
 
 import voteEscrowV2ABI from '@/contracts/abis/voteEscrowV2.json'
 import sharedStakeGovernorABI from '@/contracts/abis/sharedStakeGovernor.json'
@@ -23,14 +24,6 @@ const ADDRESS_BOOK = {
   '0xaa36a7': sepoliaAddresses,
   '0x7a69': localAddresses,
   '0x539': localAddresses,
-}
-
-function normalizeChainId(id) {
-  if (!id && id !== 0) return ''
-  if (typeof id === 'bigint') return '0x' + id.toString(16)
-  if (typeof id === 'number') return '0x' + id.toString(16)
-  if (typeof id === 'string' && !id.startsWith('0x')) return '0x' + parseInt(id).toString(16)
-  return id.toLowerCase()
 }
 
 function getAddresses(chainId) {
@@ -121,6 +114,22 @@ export const useGovernanceStore = defineStore('governance', {
       return { addresses, make, makeSigned }
     },
 
+    async _withTx(fn) {
+      this.loading = true
+      this.error = null
+      try {
+        const result = await fn()
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
+        return result
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
     async init(chainId, userAddress) {
       this.chainId = chainId
       this.connected = !!userAddress
@@ -171,9 +180,7 @@ export const useGovernanceStore = defineStore('governance', {
     },
 
     async lockSGT(amountStr, days) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Governance contracts not available')
 
@@ -195,22 +202,12 @@ export const useGovernanceStore = defineStore('governance', {
 
         const tx = await ve.create_lock(amount, days)
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async withdrawVeSGT() {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Governance contracts not available')
 
@@ -219,22 +216,12 @@ export const useGovernanceStore = defineStore('governance', {
 
         const tx = await ve.withdraw()
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async emergencyWithdrawVeSGT() {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Governance contracts not available')
 
@@ -243,16 +230,8 @@ export const useGovernanceStore = defineStore('governance', {
 
         const tx = await ve.emergencyWithdraw()
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
   },
 })
