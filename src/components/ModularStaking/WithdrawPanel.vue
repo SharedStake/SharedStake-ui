@@ -77,6 +77,12 @@
         {{ store.error }}
       </div>
       <div
+        v-if="requestError || claimError"
+        class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
+      >
+        {{ requestError || claimError }}
+      </div>
+      <div
         v-if="requestTxHash"
         class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
       >
@@ -87,18 +93,6 @@
         class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
       >
         Claimed! Tx: {{ claimTxHash.slice(0, 10) }}...
-      </div>
-      <div
-        v-if="requestError || claimError"
-        class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
-      >
-        {{ requestError || claimError }}
-      </div>
-      <div
-        v-if="requestTxHash"
-        class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
-      >
-        Request submitted! Tx: {{ requestTxHash.slice(0, 10) }}...
       </div>
 
       <button

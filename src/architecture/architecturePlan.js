@@ -71,6 +71,15 @@ export const coreArchitecture = [
       "Activated state is terminal; cancelMigration() only works before activation.",
     ],
   },
+  {
+    title: "StTokenERC4626Wrapper",
+    points: [
+      "ERC-4626 compliant vault wrapping the rebasing stToken into a non-rebasing vault token.",
+      "Enables DeFi composability: Aave, Compound, Pendle, and other yield protocols.",
+      "asset = stToken shares; vault share appreciates as protocol accrues staking rewards.",
+      "Withdrawal returns stToken shares synchronously; convert to ETH via WithdrawalQueueV2.",
+    ],
+  },
 ];
 
 export const phaseRoadmap = [
