@@ -6,21 +6,15 @@
         <DropdownArrow />
       </div>
       <DropdownGroup>
-        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
-          <span>Stake</span>
-          <div class="coming-soon">
-            Coming Soon
-          </div>
-        </div>
+        <DropdownItemRouter to="/v2">
+          Stake (V2)
+        </DropdownItemRouter>
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
-        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
-          <span>Withdraw</span>
-          <div class="coming-soon">
-            Coming Soon
-          </div>
-        </div>
+        <DropdownItemRouter to="/v2">
+          Withdraw (V2)
+        </DropdownItemRouter>
         <DropdownItemRouter to="/withdraw-from-deprecated">
           Withdraw from Deprecated
         </DropdownItemRouter>
