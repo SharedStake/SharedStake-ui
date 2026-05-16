@@ -35,7 +35,7 @@
           Quorum
         </div>
         <div class="font-semibold">
-          4%
+          {{ formattedQuorum }}
         </div>
       </div>
     </div>
@@ -113,6 +113,13 @@ export default {
           this.store.proposalThreshold / 1e18
         ).toLocaleString()
       } catch { return '1,000' }
+    },
+    formattedQuorum() {
+      try {
+        const q = BigInt(this.store.quorum)
+        if (q === 0n) return '—'
+        return (Number(q) / 1e18).toLocaleString() + ' veSGT'
+      } catch { return '—' }
     },
   },
 }

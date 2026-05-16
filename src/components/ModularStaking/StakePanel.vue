@@ -98,6 +98,12 @@
     >
       Transaction submitted: {{ txHash.slice(0, 10) }}...
     </div>
+    <div
+      v-if="txError"
+      class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
+    >
+      {{ txError }}
+    </div>
 
     <!-- Submit button -->
     <button
@@ -137,6 +143,7 @@ export default {
       inputAmount: '',
       outputAmount: '',
       txHash: null,
+      txError: null,
       referralAddress: null,
     }
   },
@@ -223,6 +230,7 @@ export default {
     async handleStake() {
       if (!this.canSubmit) return
       this.txHash = null
+      this.txError = null
       try {
         const ref = this.referralAddress || ethers.ZeroAddress
         const tx = await this.store.stake(this.inputAmount, ref)
@@ -231,6 +239,7 @@ export default {
         this.outputAmount = ''
       } catch (e) {
         console.error('Stake error:', e)
+        this.txError = e?.reason || e?.message || 'Transaction failed'
       }
     },
   },

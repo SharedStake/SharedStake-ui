@@ -109,10 +109,10 @@
 
     <!-- Error -->
     <div
-      v-if="store.error"
+      v-if="store.error || txError"
       class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
     >
-      {{ store.error }}
+      {{ store.error || txError }}
     </div>
 
     <!-- Info -->
@@ -143,6 +143,7 @@ export default {
     return {
       lockAmount: '',
       lockDays: '365',
+      txError: null,
     }
   },
 
@@ -169,25 +170,31 @@ export default {
   methods: {
     async handleLock() {
       if (!this.canLock) return
+      this.txError = null
       try {
         await this.store.lockSGT(this.lockAmount, parseInt(this.lockDays))
         this.lockAmount = ''
       } catch (e) {
         console.error('Lock error:', e)
+        this.txError = e?.reason || e?.message || 'Lock failed'
       }
     },
     async handleWithdraw() {
+      this.txError = null
       try {
         await this.store.withdrawVeSGT()
       } catch (e) {
         console.error('Withdraw error:', e)
+        this.txError = e?.reason || e?.message || 'Withdraw failed'
       }
     },
     async handleEmergencyWithdraw() {
+      this.txError = null
       try {
         await this.store.emergencyWithdrawVeSGT()
       } catch (e) {
         console.error('Emergency withdraw error:', e)
+        this.txError = e?.reason || e?.message || 'Emergency withdraw failed'
       }
     },
   },
