@@ -73,7 +73,7 @@
 
     <!-- Security notice -->
     <div class="mt-4 w-full max-w-md rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3 text-xs text-muted-foreground">
-      <strong class="text-foreground">Security note:</strong> These contracts implement Modular staking mechanics (share accounting, rebasing stETH, withdrawal queue). They are pre-audit — use only on testnet until the external audit is complete.
+      <strong class="text-foreground">Security note:</strong> These contracts implement modular staking (share accounting, rebasing stETH, withdrawal queue). Internal audit complete — awaiting external audit before mainnet. Use with caution on testnet.
     </div>
   </div>
 </template>
