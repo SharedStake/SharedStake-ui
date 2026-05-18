@@ -22,3 +22,17 @@ All Kimi subagent calls MUST route through the skill wrapper. Direct `pi --provi
 - Keep delegation scoped and include acceptance criteria.
 - If Kimi fails, keep fallback enabled and inspect telemetry (`./skills/kimi-delegate/scripts/kimi_delegate_telemetry.py summary --days 14`).
 <!-- kimi-delegate:end -->
+
+<!-- devin-delegate:begin -->
+## Devin Delegate Routing — MANDATORY
+
+Use `devin-delegate` for bounded implementation tasks that need an isolated runner or longer autonomous execution.
+
+- **One-liner:** `devin-delegate --task "..."`
+- **Long path (fallback):** `./skills/devin-delegate/scripts/delegate.py --task "..."`
+
+Rules:
+- Keep tasks concrete, scoped, and acceptance-driven.
+- Prefer Kimi for cheap analysis/review, Devin for heavier execution.
+- If delegate execution fails, continue with local fallback and record the failure reason in handoff notes.
+<!-- devin-delegate:end -->
