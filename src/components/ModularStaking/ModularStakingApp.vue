@@ -112,21 +112,6 @@ export default {
     }
   },
 
-  mounted() {
-    if (window.ethereum) {
-      this._chainChangedHandler = (newChainId) => {
-        this.walletStore.setNetwork(newChainId);
-      };
-      window.ethereum.on('chainChanged', this._chainChangedHandler);
-    }
-  },
-
-  beforeUnmount() {
-    if (window.ethereum && this._chainChangedHandler) {
-      window.ethereum.removeListener('chainChanged', this._chainChangedHandler);
-    }
-  },
-
   watch: {
     'walletStore.address': {
       immediate: true,
@@ -140,6 +125,21 @@ export default {
         await this.store.init(networkId, this.walletStore.address)
       },
     },
+  },
+
+  mounted() {
+    if (window.ethereum) {
+      this._chainChangedHandler = (newChainId) => {
+        this.walletStore.setNetwork(newChainId)
+      }
+      window.ethereum.on('chainChanged', this._chainChangedHandler)
+    }
+  },
+
+  beforeUnmount() {
+    if (window.ethereum && this._chainChangedHandler) {
+      window.ethereum.removeListener('chainChanged', this._chainChangedHandler)
+    }
   },
 }
 </script>
