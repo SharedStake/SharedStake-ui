@@ -45,15 +45,15 @@ test.describe('WithdrawPanel — UI rendering', () => {
 
   // ── WithdrawPanel rendering ─────────────────────────────────────────────────
 
-  test('WithdrawPanel renders stake/claim sub-tabs and request input', async ({ page }) => {
+  test('WithdrawPanel renders Request/My Requests sub-tabs and amount input', async ({ page }) => {
     const tabs = page.locator('div.border-b.border-border > button');
     await tabs.nth(2).click();
 
     // Sub-tab navigation
-    await expect(page.getByRole('button', { name: 'Stake' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('button', { name: 'Request' })).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole('button', { name: 'My Requests' })).toBeVisible({ timeout: 10_000 });
 
-    // Request input
+    // Amount input
     await expect(page.locator('input[placeholder="0.0"]')).toBeVisible({ timeout: 10_000 });
   });
 
@@ -79,19 +79,15 @@ test.describe('WithdrawPanel — UI rendering', () => {
 
     await page.getByRole('button', { name: 'My Requests' }).click();
 
-    // The panel should show a no-requests message or a claim button that is disabled
-    // (either outcome is acceptable — the panel should not crash)
-    const claimSection = page.locator('[class*="rounded"]').filter({ hasText: /claim|request|no pending/i });
-    await expect(claimSection.first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText('No withdrawal requests yet.')).toBeVisible({ timeout: 10_000 });
   });
 
-  test('WithdrawPanel shows withdrawal queue info text', async ({ page }) => {
+  test('WithdrawPanel shows two-step queue info text on Request tab', async ({ page }) => {
     const tabs = page.locator('div.border-b.border-border > button');
     await tabs.nth(2).click();
 
-    // The panel should render info about the two-step withdrawal process
     await expect(
-      page.getByText(/withdraw|request|queue/i).first()
+      page.getByText('Burn stETH and join the withdrawal queue.')
     ).toBeVisible({ timeout: 10_000 });
   });
 });

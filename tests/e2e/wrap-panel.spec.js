@@ -101,14 +101,12 @@ test.describe('WrapPanel — UI rendering', () => {
     const tabs = page.locator('div.border-b.border-border > button');
     await tabs.nth(1).click();
 
-    // Default output is 0.0
-    await expect(page.getByText('0.0')).toBeVisible({ timeout: 10_000 });
-
-    // Type an amount — estimate should change from 0.0
+    // Wait for panel to load, then type amount
+    await expect(page.locator('input[placeholder="0.0"]')).toBeVisible({ timeout: 10_000 });
     await page.locator('input[placeholder="0.0"]').fill('10');
 
-    // Output area should no longer show 0.0 (rate × 10 != 0)
-    const outputSpan = page.locator('div:has-text("You receive (estimated)") ~ div span').first();
+    // Output span (text-2xl font-medium) should update from 0.0 to a non-zero value
+    const outputSpan = page.locator('.text-2xl.font-medium').last();
     await expect(outputSpan).not.toHaveText('0.0', { timeout: 5_000 });
   });
 });
