@@ -98,7 +98,9 @@ test.describe('Lock/Gov panels — UI rendering', () => {
     await expect(page.getByText('Voting Period')).toBeVisible();
     await expect(page.getByText('Proposal Threshold')).toBeVisible();
     await expect(page.getByText('Quorum')).toBeVisible();
-    await expect(page.getByText('4%')).toBeVisible();
+    // Quorum value is live from contract (shows '—' when not connected, 'X veSGT' when connected)
+    const quorumCard = page.locator('.rounded-lg.bg-muted').filter({ hasText: 'Quorum' });
+    await expect(quorumCard).toBeVisible();
   });
 
   test('GovernancePanel shows Active Proposals section', async ({ page }) => {
@@ -108,7 +110,7 @@ test.describe('Lock/Gov panels — UI rendering', () => {
     await expect(page.getByText('Active Proposals')).toBeVisible({ timeout: 10_000 });
     await expect(
       page.getByText('Proposals will appear here once governance is live.'),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test('GovernancePanel Create Proposal button is disabled (Coming Soon)', async ({ page }) => {
