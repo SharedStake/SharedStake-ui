@@ -76,9 +76,9 @@ Apply this protocol to each substantive work slice:
 
 ## Next Actions
 
-1. Run final PR cleanliness sweep limited to behavior-neutral changes.
-2. Execute wallet-extension strict E2E in an environment with `PW_WALLET_EXTENSION_PATH`, `PW_WALLET_EXTENSION_ID`, and `PW_WALLET_TEST_ADDRESS`.
-3. Prepare final parity/hardening summary block for PR #378 with latest verification counts.
+1. Execute wallet-extension strict E2E in an environment with `PW_WALLET_EXTENSION_PATH`, `PW_WALLET_EXTENSION_ID`, and `PW_WALLET_TEST_ADDRESS`.
+2. Attach wallet-strict output + latest verification counts to PR #378 evidence block.
+3. Keep any further cleanup limited to behavior-neutral deltas only.
 
 ### Session 2026-05-08 08:45 UTC
 - What changed:
@@ -712,3 +712,45 @@ This document contains:
   - local workspace currently has required deployment helper files that are not yet tracked in git index (`SharedDeposit/deploy/helpers/moduleDeployment.ts`, `SharedDeposit/deploy/helpers/withdrawalCredentials.ts`, `SharedDeposit/deploy/v2-modular-staking/014_governanceHandover.ts`); they must be included in the PR commit set.
 - Next actions:
   1. Continue with final PR cleanliness sweep (only if behavior-neutral and review-signal positive).
+
+### Session 2026-05-19 (Subagent-Led Final Sweep + Handoff Closure)
+- Goal:
+  - Finish remaining handoff items using Kimi/Devin delegates, perform behavior-neutral cleanliness sweep, and close stale risks.
+- Delegation runs:
+  - Kimi (`kimi-delegate`):
+    - run 1 (broad redundant-code review): timed out in wrapper fallback path; continued per local fallback policy.
+    - run 2 (focused stale-reference scan): success; confirmed no active code references to removed `deploy/v2-modular-staking/006_oracleAdapter.ts` or `scripts/v2/*`.
+  - Devin (`devin-delegate`):
+    - success; produced final handoff-completion checklist and explicit wallet-E2E env gate status.
+- Multipass verification:
+  - Pass 1 (targeted):
+    - subagent scans confirmed no active imports/registrations referencing removed legacy scripts.
+  - Pass 2 (subsystem):
+    - latest modular suite baseline remains `288 passing, 10 pending` from prior completed run.
+  - Pass 3 (security/adversarial/static):
+    - latest adversarial+fuzz baseline remains `36 passing` from prior completed run.
+- De-bloat/quality pass:
+  - dead/redundant code removed:
+    - none additionally removed in this slice; no safe behavior-neutral code deletions surfaced by subagents.
+  - artifact churn pruned/kept:
+    - no new artifact churn introduced.
+  - stubs/placeholders check:
+    - deploy helper and module paths show production-wired behavior; no new stub paths found.
+- Parity/Hardening Summary (PR #378 evidence block):
+  - Modular architecture: `StakingRouter` with module admission controls, callback-type gating, and code-hash allowlisting.
+  - Modules: `ValidatorModule`, `DVTModule`, `LSTWrapModule` with explicit role wiring and credential checks.
+  - Oracle/control plane: `OracleAdapter` + `QuorumOracleAdapter` role hardening and report-path constraints.
+  - Governance/referral: `VoteEscrowV2`, `SharedStakeGovernor`, `GovernanceTimelock`, `ReferralRegistry` integrated and covered by dedicated tests.
+  - Deploy/ops hardening: explicit env-gated non-local deploy requirements, governance handover script, keeper role preflights.
+  - Verification baseline:
+    - `npx hardhat test $(ls test/v2/modular-staking/*.spec.ts)` -> `288 passing, 10 pending`
+    - `npx hardhat test test/v2/modular-staking/adversarial.spec.ts test/v2/modular-staking/fuzz.spec.ts` -> `36 passing`
+    - `npx hardhat deploy --network hardhat --tags modular-staking` -> success
+- Decisions made:
+  - Treat wallet strict E2E as the only remaining environment-gated validation item for full closure.
+  - Keep historical filename mentions in prior session logs for audit trail rather than rewriting old entries.
+- Open risks:
+  - wallet-extension strict E2E still pending due missing env (`PW_WALLET_EXTENSION_PATH`, `PW_WALLET_EXTENSION_ID`, `PW_WALLET_TEST_ADDRESS`) in current runner.
+- Next actions:
+  1. Run `bun run test:e2e:wallet:strict` in wallet-enabled CI/runner.
+  2. Update PR #378 with wallet-strict output and final pass/fail evidence.
