@@ -3,6 +3,20 @@
 **Date:** 2026-05-11
 **Branch:** `feat/sharedstake-v2-modular-staking-master`
 
+## Required Non-Local Env Config
+
+Before running `deploy/v2-modular-staking/*` on non-local networks, set:
+
+- `V2_GOVERNANCE_ADDRESS`
+- `V2_OPERATOR_ADDRESS` for fee-operator split recipient
+- `V2_ORACLE_SUBMITTERS` (comma-separated)
+- `V2_NODE_OPERATOR_ADDRESS` if node-operator is not governance
+- `V2_SGT_ADDRESS` for governance deployment
+- `V2_VALIDATOR_MINT_CAP_ETH` and `V2_DVT_MINT_CAP_ETH`
+- Optional quorum override: `V2_QUORUM_ORACLE_QUORUM`
+
+Deployment scripts now fail closed on non-local networks when these are missing or inconsistent.
+
 ## Deployment Order
 
 ### Phase 1: Core Contracts (already deployed)
@@ -13,6 +27,28 @@
 5. `FeeController`
 6. `ValidatorModule` / `LSTWrapModule` / `DVTModule`
 7. `OracleAdapter` / `QuorumOracleAdapter`
+
+### Phase 1.5: Router Module Admission Hardening (required)
+
+Before each module registration, allowlist the module runtime code hash by module type:
+
+```solidity
+bytes32 moduleType = module.moduleType();
+bytes32 codeHash = extcodehash(address(module));
+stakingRouter.setModuleCodeHashAllowed(moduleType, codeHash, true);
+```
+
+Enable strict enforcement once at least one module code hash is allowlisted:
+
+```solidity
+stakingRouter.setEnforceModuleCodeHashAllowlist(true);
+```
+
+Notes:
+- `registerModule(...)` reverts when enforcement is enabled and the module code hash is not allowlisted.
+- Router callback surface is now module-type gated:
+  - validator-only: `reportModuleBeaconBalance`, `notifyBeaconDeposit`
+  - LST-only: `wrapFromModule`, `unwrapToModule`
 
 ### Phase 2: Governance Infrastructure
 

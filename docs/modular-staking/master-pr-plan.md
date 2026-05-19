@@ -133,6 +133,33 @@ Critical-path local orchestration:
 - Integration decisions across protocol/frontend/ops.
 - Final gate verification and PR narrative.
 
+## 6.5. Execution Discipline (Mandatory)
+
+Every substantive slice must follow this flow:
+
+1. Goal-first kickoff:
+- Write one explicit goal for the slice before edits.
+
+2. Subagent-first side-task delegation:
+- Use Kimi/Devin delegates for bounded side tasks (analysis, patch drafting, targeted review).
+- Keep critical-path blockers local.
+
+3. Multipass verification:
+- Pass 1: targeted tests for touched files/paths.
+- Pass 2: broader subsystem sweep.
+- Pass 3: security/adversarial pass (tooling + manual triage notes).
+
+4. De-bloat cleanup pass:
+- Remove dead/redundant code and low-signal churn.
+- Keep diff/file count lean where possible.
+
+5. Production-quality gate:
+- No stubs/placeholders/half-wired functionality in completion claims.
+- Any deferred item must be documented as explicit risk acceptance with owner + next action.
+
+6. Continuous resumability:
+- Append progress evidence in `handoff.md` during work, not only at the end.
+
 ## 7. Master PR Structure
 
 One PR, organized by commit groups:
