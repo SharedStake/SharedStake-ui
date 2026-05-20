@@ -10,8 +10,6 @@ export const architectureMeta = {
   ],
   localDocs: [
     "docs/modular-staking/UPGRADE_PATH.md",
-    "docs/modular-staking/AUDIT_DVT_PASS.md",
-    "docs/modular-staking/AUDIT_THIRD_PASS.md",
     "src/architecture/MODULAR_STAKING_ARCHITECTURE.md",
     "SharedDeposit/contracts/v2/modular-staking/",
     "SharedDeposit/test/v2/modular-staking/",
@@ -90,7 +88,7 @@ export const phaseRoadmap = [
       "StakingRouter + StToken + ValidatorModule deployed and tested.",
       "FeeController with treasury/operator/referral routing.",
       "WithdrawalQueueV2 with bunker mode.",
-      "4-pass security audit complete; all CRITICAL/HIGH fixed.",
+      "6-pass internal security audit complete; all CRITICAL/HIGH fixed.",
     ],
   },
   {
@@ -100,7 +98,7 @@ export const phaseRoadmap = [
       "DVTModule: on-chain cluster registry, depositToBeaconChainInCluster.",
       "VoteEscrowV2 + GovernanceTimelock + SharedStakeGovernor deployed.",
       "MigrationHelper: 14-day-notice migration coordination contract.",
-      "307 Hardhat + 7 Foundry invariant tests; 9 Playwright E2E tests.",
+      "307 Hardhat + 22 keeper unit + 13 ERC-4626 + 7 Foundry invariant tests; 20 Playwright E2E tests.",
     ],
   },
   {
@@ -138,7 +136,7 @@ export const contractV1Readiness = [
     title: "Core contracts + test suite",
     goal: "Production-ready non-upgradeable contracts with full test coverage.",
     currentState:
-      "307 Hardhat + 7 Foundry invariant tests green. Fork tests cover fee distribution, withdrawal queue, governance params, and DVT credential enforcement.",
+      "342 Hardhat/keeper/ERC-4626 + 7 Foundry invariant tests green. Fork tests cover fee distribution, withdrawal queue, governance params, and DVT credential enforcement.",
     nextStep: "External human audit before mainnet.",
     tasks: [
       "StakingRouter, ValidatorModule, DVTModule, FeeController, WithdrawalQueueV2.",
@@ -148,15 +146,17 @@ export const contractV1Readiness = [
   },
   {
     status: "done",
-    title: "Security audit (4 passes)",
+    title: "Security audit (6 passes)",
     goal: "No unaddressed CRITICAL/HIGH findings before mainnet.",
     currentState:
-      "4 audit passes complete. All CRITICAL/HIGH fixed. 4 MEDIUM findings accepted by design (documented with rationale). DVTM-04 accepted.",
+      "6 internal audit passes complete. All CRITICAL/HIGH fixed. 4 MEDIUM findings accepted by design (documented with rationale). DVTM-04 accepted.",
     nextStep: "External paid human audit.",
     tasks: [
       "Pass 1-2: 15 findings fixed.",
       "Pass 3: No CRITICAL/HIGH; 3 MEDIUM accepted, 4 LOW/INFO fixed.",
       "Pass 4 (DVT): DVTM-01/02/03 fixed; DVTM-04 accepted by design.",
+      "Pass 5: All candidates below threshold.",
+      "Pass 6: LSTWrapModule oracle order + missing unwrapLST guard fixed.",
     ],
   },
   {
@@ -285,10 +285,10 @@ export const releaseTracks = [
   {
     milestone: "Code Complete (NOW)",
     criteria: [
-      "307 Hardhat + 7 Foundry tests green.",
-      "4-pass audit complete; no unaddressed CRITICAL/HIGH.",
+      "342 Hardhat/keeper/ERC-4626 + 7 Foundry tests green.",
+      "6-pass internal audit complete; no unaddressed CRITICAL/HIGH.",
       "Fork tests: fee distribution, withdrawal queue, governance params, DVT credentials.",
-      "9 Playwright E2E tests passing.",
+      "20 Playwright E2E tests passing.",
     ],
   },
   {

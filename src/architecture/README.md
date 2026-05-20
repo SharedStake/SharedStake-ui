@@ -7,14 +7,8 @@ This folder is the frontend-facing architecture workspace for iterative planning
 - `architecturePlan.js`
   - Structured source-of-truth used by the `/architecture` page.
   - Contains roadmap phases, contract-readiness checklist, and release gates.
-- `contracts-v1-invariants.md`
-  - Formal invariant definitions for contract-v1 promotion.
-- `contracts-v1-access-control-matrix.md`
-  - Privileged-function matrix and required governance policy controls.
-- `contracts-v1-readiness-runthrough.md`
-  - Gate-by-gate readiness status and execution sequence.
-- `lido-competitor-parity-phase2-plan.md`
-  - Competitor parity matrix and Phase 2+ modular rollout plan.
+- `MODULAR_STAKING_ARCHITECTURE.md`
+  - V2 modular staking architecture reference (router, modules, governance).
 
 ## Update Process
 
