@@ -139,7 +139,8 @@ stToken.transferAdmin(address(timelock));
 #### Step 8: Deploy ReferralRegistry
 ```solidity
 ReferralRegistry registry = new ReferralRegistry(
-    address(timelock) // GOV = timelock
+    address(timelock), // GOV = timelock
+    address(stToken)   // fee token
 );
 ```
 
@@ -158,14 +159,55 @@ registry.grantRole(registry.ROUTER(), address(stakingRouter));
 registry.grantRole(registry.FEE_CTRL(), address(stakingRouter));
 ```
 
-#### Step 11: Set Fee Token
+#### Step 11: Optional Fee Token Rotation (governance only)
 ```solidity
 registry.setFeeToken(address(stToken));
 ```
 
+#### Step 12: Deploy Referral Backend API
+
+Run the referral backend service (`services/referral-service`) for code lifecycle management:
+- create/revoke/list/resolve short codes
+- normalize referrer addresses to checksum format
+- enforce API-key auth and rate limits
+
+Minimum local bootstrap:
+
+```bash
+cd services/referral-service
+cp .env.example .env
+npm install
+npx prisma generate
+npx prisma migrate deploy
+npm run seed
+npm run dev
+```
+
+#### Step 13: Configure Referral Backend Environment
+
+Required env for API:
+- `DATABASE_URL`
+- `API_KEYS` (comma-separated admin keys)
+
+Required env for read-only onchain sync worker:
+- `RPC_URL`
+- `ONCHAIN_REFERRAL_REGISTRY_ADDRESS`
+- `CHAIN_ID`
+
+#### Step 14: Run Onchain Sync Worker
+
+The worker is read-only and ingests `DepositRecorded` events for observability:
+
+```bash
+cd services/referral-service
+npm run worker:sync
+```
+
+It logs divergence when onchain referrers exist without active backend code mappings.
+
 ### Phase 4: ValidatorModule Hardening
 
-#### Step 12: Set Expected Withdrawal Credentials
+#### Step 15: Set Expected Withdrawal Credentials
 ```solidity
 // withdrawal_credentials = 32 bytes
 // Example: ETH1 address 0x1234... encoded as 0x010000...1234
@@ -173,7 +215,7 @@ bytes32 expectedCreds = bytes32(uint256(0x0100000000000000000000001234...));
 validatorModule.setExpectedWithdrawalCredentials(expectedCreds);
 ```
 
-#### Step 13: Lower maxDeltaBps Before Accepting TVL
+#### Step 16: Lower maxDeltaBps Before Accepting TVL
 ```solidity
 // Default is 1000 (10%). Lower to 100 (1%) before mainnet.
 stakingRouter.setMaxDeltaBps(100);
@@ -181,14 +223,14 @@ stakingRouter.setMaxDeltaBps(100);
 
 ### Phase 5: Operational Parameters
 
-#### Step 14: Configure OracleAdapter
+#### Step 17: Configure OracleAdapter
 ```solidity
 oracleAdapter.setMaxStaleness(3600);      // 1 hour
 oracleAdapter.setMaxDriftBps(100);        // 1% max gain
 oracleAdapter.setMaxSlashBps(500);        // 5% max slash
 ```
 
-#### Step 15: Configure Module Caps
+#### Step 18: Configure Module Caps
 ```solidity
 stakingRouter.setMintCap(moduleId, 1000 ether);        // 1K ETH cap per module
 stakingRouter.setModuleInflowLimit(moduleId, 86400, 100 ether); // 100 ETH/day

@@ -43,6 +43,10 @@ Deliver a production-oriented router-based staking system with:
 ### Exit layer
 - `WithdrawalQueueV2.sol`: request/finalize/claim lifecycle with TURBO/BUNKER modes.
 
+### Referral backend layer
+- `services/referral-service`: short-code referral API, SQLite persistence, API-key auth/rate limiting.
+- `services/referral-service/src/worker/onchainSync.ts`: read-only ingestion of `ReferralRegistry.DepositRecorded` events with divergence logging.
+
 ## 4. High-Level Responsibilities
 
 | Component | Responsibility |
@@ -58,6 +62,8 @@ Deliver a production-oriented router-based staking system with:
 | `QuorumOracleAdapter` | Consensus report validation and forwarding. |
 | `InstitutionalPolicyRegistry` | Optional per-module policy gate provider. |
 | `WithdrawalQueueV2` | Exit queue with request-time value lock and guarded finalization. |
+| `Referral Service` | Offchain code-to-address mapping and referral code lifecycle (create/revoke/list/resolve). |
+| `Referral Sync Worker` | Reads onchain referral events and reports backend/onchain mapping divergence. |
 
 ## 5. Router-Centric Accounting Model
 

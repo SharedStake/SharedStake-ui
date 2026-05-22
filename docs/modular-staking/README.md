@@ -14,3 +14,11 @@ Reference documentation for the SharedStake V2 Modular Staking protocol.
 
 6. `DEPLOYMENT_GUIDE.md` — Step-by-step deployment and role wiring
 7. `composite-profile-prd.md` — Product requirements and feature scope
+8. `referral-backend-service.md` — Referral code backend architecture and ops
+
+## Security Test Gates
+
+- Hardhat adversarial + fuzz:
+  - `cd SharedDeposit && npx hardhat test test/v2/modular-staking/adversarial.spec.ts test/v2/modular-staking/fuzz.spec.ts`
+- Foundry invariants:
+  - `cd SharedDeposit && npm run test:invariants`

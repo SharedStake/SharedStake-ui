@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum CodeStatus {
+  ACTIVE
+  REVOKED
+}
+
+model ReferralCode {
+  id              String     @id @default(cuid())
+  code            String     @unique
+  referrerAddress String
+  createdBy       String?
+  status          CodeStatus @default(ACTIVE)
+  revokedAt       DateTime?
+  revokedReason   String?
+  metadata        Json?
+  lastResolvedAt  DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([referrerAddress, status])
+}
+
+model OnchainReferralEvent {
+  id              String   @id @default(cuid())
+  txHash          String
+  logIndex        Int
+  blockNumber     BigInt
+  referrerAddress String
+  refereeAddress  String
+  ethAmount       String
+  shares          String
+  seenAt          DateTime @default(now())
+
+  @@unique([txHash, logIndex])
+  @@index([referrerAddress])
+}
+
+model SyncCursor {
+  id                 String   @id
+  lastProcessedBlock BigInt
+  updatedAt          DateTime @updatedAt
+}
