@@ -29,7 +29,7 @@
         while modules implement route-specific staking behavior.
       </p>
       <ul>
-        <li>User entry: <code>StakingRouter</code> where deployed, with compatibility fallbacks as configured.</li>
+        <li>Store logic contains router/core compatibility selection, but current UI requires full V2 deployment manifests and marks the app Not Deployed when required addresses are missing.</li>
         <li>Accounting: <code>StToken</code> share model for pooled ETH.</li>
         <li>Exit flow: <code>WithdrawalQueueV2</code> request/finalize/claim lifecycle.</li>
       </ul>
@@ -78,7 +78,8 @@
       <ul>
         <li>Module lifecycle can enable route upgrades without replacing the full system surface.</li>
         <li>Governance/timelock ownership must be verified as part of release readiness.</li>
-        <li>Migration paths should be rehearsed before production cutover.</li>
+        <li><code>MigrationHelper</code> announce/activate flow is the documented major-cutover mechanism and should be rehearsed before production migration.</li>
+        <li>Current website governance tab is informational only; proposal execution surface is not yet shipped in UI.</li>
       </ul>
       <details>
         <summary>Readiness checkpoints</summary>

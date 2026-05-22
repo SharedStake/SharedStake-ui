@@ -217,7 +217,7 @@ validatorModule.setExpectedWithdrawalCredentials(expectedCreds);
 
 #### Step 16: Lower maxDeltaBps Before Accepting TVL
 ```solidity
-// Default is 1000 (10%). Lower to 100 (1%) before mainnet.
+// Default is 100 (1%). Tighten further if governance policy requires.
 stakingRouter.setMaxDeltaBps(100);
 ```
 
@@ -296,8 +296,8 @@ For large slashes (>X%), consider pausing finalization and socializing loss over
 
 ### Oracle Compromise
 1. Attacker can inflate beacon balance by up to `maxDeltaBps` per report
-2. Default 10% per report, daily reports = rapid compounding possible
-3. **Mitigation:** Lower `maxDeltaBps` to 1% before mainnet
+2. Default is 1% per report in current router deployment defaults
+3. **Mitigation:** keep `maxDeltaBps` conservative and environment-specific
 4. **Mitigation:** Use QuorumOracleAdapter with multiple independent oracles
 
 ---

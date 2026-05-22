@@ -16,6 +16,7 @@
         <li>Exit path: <code>WithdrawalQueueV2</code> request/finalize/claim flow.</li>
         <li>Control plane: router/module policies, role-gated operations, and governance handover.</li>
         <li>Referral: address and code flows are live, with optional backend code resolution.</li>
+        <li>Governance tab status: currently read-only parameter preview in UI.</li>
       </ul>
       <details>
         <summary>Scope of this documentation</summary>
@@ -51,9 +52,10 @@
         <li>Referral: live <code>?ref</code> and <code>?r</code> flows, optional resolver, and fallbacks.</li>
         <li>Staking Routes: router default route, solo validator route, DVT route, optional module paths.</li>
         <li>Architecture: contract boundaries and trust model.</li>
-        <li>Security &amp; Risks: threat model and controls.</li>
-        <li>Ops &amp; Deploy: deployment order, keepers, monitoring, and runbooks.</li>
-        <li>FAQ: common user, operator, and integrator questions.</li>
+          <li>Security &amp; Risks: threat model and controls.</li>
+          <li>Migration &amp; Cutover: announce/activate workflow for major router transitions.</li>
+          <li>Ops &amp; Deploy: deployment order, keepers, monitoring, and runbooks.</li>
+          <li>FAQ: common user, operator, and integrator questions.</li>
       </ul>
     </section>
 

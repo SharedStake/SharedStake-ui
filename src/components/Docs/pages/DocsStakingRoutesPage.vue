@@ -31,7 +31,7 @@
       <ul>
         <li>UI stake action uses <code>submitWithReferralCode</code> when a code hash is active; otherwise it uses <code>submit(referral)</code>.</li>
         <li>The store reads <code>defaultModuleId</code> and module inflow metadata for status display and checks.</li>
-        <li>If router is unavailable, store falls back to core-compatible submit methods (code-aware when available, otherwise address-based submit).</li>
+        <li>Store contains transitional dual-path selection logic, but the current UI expects full V2 deployment manifests and blocks stake actions if required addresses are missing.</li>
       </ul>
       <details>
         <summary>Integrator note</summary>
@@ -93,6 +93,7 @@
       </p>
       <ul>
         <li>Treat non-default modules as optional until verified active in deployment manifests.</li>
+        <li><code>StTokenERC4626Wrapper</code> is deployed as an integrator route and is not exposed in default user tabs.</li>
         <li>Document enabled routes per network for support and incident response.</li>
       </ul>
     </section>

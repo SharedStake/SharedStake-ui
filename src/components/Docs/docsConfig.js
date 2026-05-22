@@ -36,6 +36,12 @@ export const docsPages = [
     description: "Risk model and safeguards",
   },
   {
+    name: "DocsMigration",
+    path: "/docs/migration-cutover",
+    label: "Migration & Cutover",
+    description: "Major-upgrade announce/activate flow",
+  },
+  {
     name: "DocsOpsDeploy",
     path: "/docs/ops-deploy",
     label: "Ops & Deploy",

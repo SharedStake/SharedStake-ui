@@ -19,7 +19,7 @@ All of the following require only a `GOV` role call on `StakingRouter`:
 |---|---|
 | Replace fee controller | `setFeeController(address)` |
 | Tighten/loosen stETH oracle tolerance | `setMaxDeltaBps(uint256)` |
-| Register a new module | `registerModule(bytes32, address, uint256, bool)` |
+| Register a new module | `registerModule(bytes32, address, uint256)` |
 | Pause / unpause a module | `pauseModule` / `unpauseModule` |
 | Pause / unpause global deposit path | `pause(PAUSE_SUBMIT)` / `unpause(PAUSE_SUBMIT)` |
 | Set per-module mint cap | `setMintCap(bytes32, uint256)` |
@@ -37,7 +37,7 @@ Use when a `ValidatorModule` or `DVTModule` needs to be replaced but the
 `StakingRouter` itself is sound.
 
 1. Deploy and verify the new module contract.
-2. GOV calls `registerModule(NEW_MODULE_ID, newAddr, mintCap, active=false)`.
+2. GOV calls `registerModule(NEW_MODULE_ID, newAddr, mintCap)`.
 3. GOV calls `pauseModule(OLD_MODULE_ID)` — halts new inflows to old module.
 4. Announce switchover date publicly (recommend ≥ 48 h for operators).
 5. Operators migrate validator keys / DVT cluster to new module infra.
@@ -75,7 +75,7 @@ must be replaced.  Uses `MigrationHelper` as the coordination / timelock signal.
 
 **Days 1–14: Exit Window**
 
-5. Users who wish to exit call `WithdrawalQueueV2.requestWithdrawal(...)` on the
+5. Users who wish to exit call `WithdrawalQueueV2.requestWithdrawals(uint256[] amounts, address owner)` on the
    old router (normal queue path).
 6. GOV may optionally pause deposits on the old router
    (`StakingRouter.pause(PAUSE_SUBMIT)`) to prevent new inflows while the
@@ -108,20 +108,20 @@ For critical vulnerabilities (re-entrancy, oracle manipulation, etc.) where the
 
 1. GUARDIAN calls `StakingRouter.pause(PAUSE_SUBMIT)` immediately — halts all
    new deposits with no timelock.
-2. GUARDIAN or GOV calls `StakingRouter.pauseAllModules()` if individual module
+2. GUARDIAN or GOV calls `StakingRouter.emergencyPauseAll(bytes32[] moduleIds)` if individual module
    risks are present.
 3. Governance convenes an emergency vote (off-chain Snapshot + multisig execution)
    to:
-   a. Call `MigrationHelper.cancelMigration()` (if a pending migration exists)
-      then `announceMigration(newRouter)` with a shortened notice (governed by
-      DAO quorum, not enforced on-chain).
+   a. Use `MigrationHelper.cancelMigration()` (if pending and not active),
+      then re-announce migration. `MigrationHelper` still enforces the
+      fixed 14-day notice before activation.
    b. Or bypass the helper entirely and hard-migrate directly — deploy new
       contracts, update front-ends, and provide admin-claim tooling for users.
 4. Publish a post-mortem and remediation plan within 72 hours.
 
-The notice period in `MigrationHelper` is a **social commitment**, not a hard
-lock on emergency action.  The helper can be cancelled and redeployed with
-different parameters at any time by GOV.
+`MigrationHelper` notice/activation rules are contract-enforced: activation
+cannot occur before `migrationActiveAt` and the delay is fixed at 14 days in
+the current implementation.
 
 ---
 
@@ -129,7 +129,7 @@ different parameters at any time by GOV.
 
 | Situation | What to do |
 |---|---|
-| Normal migration window is open | Optionally call `WithdrawalQueueV2.requestWithdrawal` on the old router to receive ETH back, or hold stETH and wait — it will be honoured by the queue |
+| Normal migration window is open | Optionally call `WithdrawalQueueV2.requestWithdrawals(uint256[] amounts, address owner)` on the old router to receive ETH back, or hold stETH and wait |
 | Migration is active, you still hold stETH | New router accepts wraps/unwraps of the same stETH token; rewards continue accruing; no action required unless you want to exit |
 | Queue is bypassed (emergency) | Watch official channels; admin-claim tooling will be published; do not interact with unofficial contracts |
 | Unsure which router is current | Query `MigrationHelper.migrationActive` and `MigrationHelper.newRouter` on-chain |

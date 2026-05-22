@@ -66,8 +66,8 @@
       <details>
         <summary>Which route does default UI staking use?</summary>
         <p>
-          It uses router default-route submit where router is deployed; otherwise it uses
-          core compatibility fallback.
+          It uses router default-route submit on configured V2 deployments.
+          Current UI requires complete V2 address manifests before staking is enabled.
         </p>
       </details>
       <details>
@@ -81,6 +81,28 @@
         <summary>Can users manually choose a module in default UI?</summary>
         <p>
           Not in the current default stake tab. Explicit module targeting is an integration-level path.
+        </p>
+      </details>
+      <details>
+        <summary>Can I create or vote on proposals from the current governance tab?</summary>
+        <p>
+          Not yet. The governance tab currently exposes read-only parameter context; proposal list/create/vote/execute flows are pending.
+        </p>
+      </details>
+    </section>
+
+    <section id="migration-faq">
+      <h2>Migration</h2>
+      <details>
+        <summary>How do I know when router migration is active?</summary>
+        <p>
+          Migration status is tracked by <code>MigrationHelper</code> announce/activate state and should be reflected in operator and frontend notices.
+        </p>
+      </details>
+      <details>
+        <summary>What should operators verify before migration cutover?</summary>
+        <p>
+          Verify announcement window timing, old-router deposit pause plan, withdrawal queue drain status, and final frontend switch criteria.
         </p>
       </details>
     </section>
@@ -109,6 +131,7 @@ export default {
         { id: "general", label: "General" },
         { id: "referral-faq", label: "Referral" },
         { id: "validator-faq", label: "Routes" },
+        { id: "migration-faq", label: "Migration" },
         { id: "docs-feedback", label: "Feedback" },
       ],
     };

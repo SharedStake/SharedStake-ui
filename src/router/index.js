@@ -27,6 +27,7 @@ const DocsReferralPage = () => import("../components/Docs/pages/DocsReferralPage
 const DocsStakingRoutesPage = () => import("../components/Docs/pages/DocsStakingRoutesPage.vue");
 const DocsArchitecturePage = () => import("../components/Docs/pages/DocsArchitecturePage.vue");
 const DocsSecurityRisksPage = () => import("../components/Docs/pages/DocsSecurityRisksPage.vue");
+const DocsMigrationPage = () => import("../components/Docs/pages/DocsMigrationPage.vue");
 const DocsOpsDeployPage = () => import("../components/Docs/pages/DocsOpsDeployPage.vue");
 const DocsFaqPage = () => import("../components/Docs/pages/DocsFaqPage.vue");
 
@@ -142,6 +143,11 @@ let routes = [{
                 path: "security-risks",
                 name: "DocsSecurityRisks",
                 component: DocsSecurityRisksPage,
+            },
+            {
+                path: "migration-cutover",
+                name: "DocsMigration",
+                component: DocsMigrationPage,
             },
             {
                 path: "ops-deploy",

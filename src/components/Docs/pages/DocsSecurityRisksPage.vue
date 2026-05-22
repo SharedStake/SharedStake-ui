@@ -69,6 +69,23 @@
       </details>
     </section>
 
+    <section id="referral-control-plane">
+      <h2>Referral Control-Plane Risks</h2>
+      <ul>
+        <li><code>CODE_ADMIN</code> can map/revoke referral codes and therefore controls referral-attribution economics.</li>
+        <li><code>GOV</code> can set/clear referral code resolver wiring on router/core.</li>
+        <li>Resolver misconfiguration can degrade attribution to zero-referral behavior.</li>
+      </ul>
+      <details>
+        <summary>Operational controls</summary>
+        <ul>
+          <li>Place <code>CODE_ADMIN</code> and <code>GOV</code> behind multisig/timelock policies.</li>
+          <li>Alert on <code>ReferralCodeUpdated</code>, <code>ReferralCodeRevoked</code>, and <code>ReferralCodeRegistrySet</code> events.</li>
+          <li>Run deployment post-checks confirming registry wiring on both router and core.</li>
+        </ul>
+      </details>
+    </section>
+
     <section id="user-risk-disclosure">
       <h2>User Risk Disclosure</h2>
       <p>
@@ -96,6 +113,7 @@ export default {
         { id: "risk-model", label: "Risk Model" },
         { id: "safeguards", label: "Built-In Safeguards" },
         { id: "operational-security", label: "Operational Security" },
+        { id: "referral-control-plane", label: "Referral Control Plane" },
         { id: "user-risk-disclosure", label: "User Disclosure" },
       ],
     };

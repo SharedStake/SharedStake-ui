@@ -44,7 +44,7 @@
         <li>Review estimated stETH output.</li>
         <li>Submit and confirm in wallet.</li>
         <li>Address referral path uses <code>submit(referral)</code>; code referral path uses <code>submitWithReferralCode(codeHash)</code> where available.</li>
-        <li>The store prefers router-first execution and falls back to core compatibility where needed.</li>
+        <li>The store includes router/core selection logic, but current UI requires a complete V2 deployment manifest before stake actions are enabled.</li>
       </ul>
       <details>
         <summary>Referral in the stake flow</summary>
@@ -61,6 +61,7 @@
       <ul>
         <li>Wrap converts rebasing stETH to non-rebasing wstETH.</li>
         <li>Unwrap converts wstETH back to stETH.</li>
+        <li>ERC-4626 wrapper support exists at contract/deployment layer and is currently integrator-focused, not exposed in the default user flow.</li>
         <li>These are token conversions, not direct ETH withdrawals.</li>
       </ul>
       <details>
@@ -90,6 +91,7 @@
       <h2>Lock And Governance Tabs</h2>
       <ul>
         <li>Locking and governance views are available in the UI.</li>
+        <li>Governance tab is currently a read-only preview of core parameters; proposal list/create/vote/execute flows are not yet exposed.</li>
         <li>Effective capabilities depend on deployment wiring and role ownership.</li>
         <li>Always verify target addresses and calldata before signing.</li>
       </ul>

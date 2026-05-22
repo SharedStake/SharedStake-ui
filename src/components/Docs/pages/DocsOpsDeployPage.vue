@@ -44,6 +44,24 @@
       </details>
     </section>
 
+    <section id="module-admission-hardening">
+      <h2>Module Admission Hardening (Required)</h2>
+      <ul>
+        <li>Before each module registration, allowlist runtime code hash by module type with <code>setModuleCodeHashAllowed(moduleType, codeHash, true)</code>.</li>
+        <li>Enable strict allowlist enforcement with <code>setEnforceModuleCodeHashAllowlist(true)</code> once expected hashes are seeded.</li>
+        <li>Release gate: refuse production rollout if router allows module registration without allowlisted code hashes.</li>
+      </ul>
+      <details>
+        <summary>Verification checklist</summary>
+        <ul>
+          <li>Check <code>moduleCodeHashAllowed(moduleType, codeHash) == true</code> for every production module.</li>
+          <li>Check <code>enforceModuleCodeHashAllowlist == true</code> before opening user traffic.</li>
+          <li>Validate registration order: allowlist first, then <code>registerModule</code>.</li>
+          <li>Test that unallowlisted module registration reverts in staging/fork runs.</li>
+        </ul>
+      </details>
+    </section>
+
     <section id="keeper-services">
       <h2>Keeper / Watcher Services</h2>
       <p>
@@ -84,6 +102,23 @@
       </details>
     </section>
 
+    <section id="migration-cutover">
+      <h2>Migration Helper Cutover</h2>
+      <ul>
+        <li>Major router replacement path uses <code>MigrationHelper</code> announce/activate sequencing.</li>
+        <li>Operational timeline: announce new router, run exit window, activate migration, then switch frontend target.</li>
+        <li>Frontends/integrators must read migration flags and route users to the active router state.</li>
+      </ul>
+      <details>
+        <summary>Cutover checklist</summary>
+        <ul>
+          <li>Publish <code>migrationActiveAt</code> timestamp in user-facing channels.</li>
+          <li>Pause old-router deposit path during transition where required.</li>
+          <li>Verify queue drain and rollback plan before activation.</li>
+        </ul>
+      </details>
+    </section>
+
     <section id="runbooks">
       <h2>Runbooks</h2>
       <ul>
@@ -114,8 +149,10 @@ export default {
       anchors: [
         { id: "audience", label: "Audience" },
         { id: "deployment-order", label: "Deployment Order" },
+        { id: "module-admission-hardening", label: "Module Hardening" },
         { id: "keeper-services", label: "Keeper Services" },
         { id: "monitoring-alerts", label: "Monitoring" },
+        { id: "migration-cutover", label: "Migration Cutover" },
         { id: "runbooks", label: "Runbooks" },
       ],
     };

@@ -40,7 +40,7 @@
         <ul>
           <li>Code path: <code>submitWithReferralCode(bytes32)</code> on router/core where available.</li>
           <li>Address path: <code>submit(address)</code> when code path is unavailable or no code hash is active.</li>
-          <li>Network compatibility fallback remains router-first, then core.</li>
+          <li>Store includes router/core compatibility logic, but current UI enables staking only when required V2 addresses are fully configured.</li>
         </ul>
       </details>
     </section>
@@ -52,7 +52,8 @@
         <li><code>?r=CODE</code> valid: code path becomes active and code hash is prepared for submit.</li>
         <li>Both <code>?ref</code> and <code>?r</code>: code path is preferred; address remains fallback/resolution context.</li>
         <li>If code resolution API is configured and returns an address, UI shows resolved address status.</li>
-        <li>If resolver is unavailable or fails, code flow still submits hash where supported; otherwise address/zero fallback is used.</li>
+        <li>If resolver is unavailable or fails, code-hash submit still proceeds where supported.</li>
+        <li>When code resolution is unavailable onchain (registry unset or code missing), contracts fall back to zero-address referral.</li>
       </ul>
       <details>
         <summary>Examples</summary>
@@ -73,6 +74,7 @@
       <ul>
         <li>Router/Core ABIs include code-aware submit methods.</li>
         <li>Referral code registry wiring is available via governance-controlled contract settings.</li>
+        <li>Frontend performs runtime ABI detection and falls back to <code>submit(address)</code> when code methods are unavailable.</li>
         <li>Backend resolver endpoint (<code>/v1/codes/:code/resolve</code>) can provide checksum address confirmation to the UI.</li>
       </ul>
       <details>
