@@ -179,19 +179,18 @@
         </router-link>
         <router-link
           class="link"
-          to="/architecture"
+          to="/docs/architecture"
           @click.native="showSidebar = false"
         >
           Architecture
         </router-link>
-        <span class="link">
-          <a
-            href="https://docs.sharedstake.finance/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Docs
-          </a>
-        </span>
+        <router-link
+          class="link"
+          to="/docs"
+          @click.native="showSidebar = false"
+        >
+          Docs
+        </router-link>
         <span class="link">
           <a
             href="https://snapshot.page/#/sharedstake.eth"
@@ -345,14 +344,10 @@
               >Github
               </a></span>
             <span class="link footerLink">
-              <a
-                href="https://docs.sharedstake.finance/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Documentation
-              </a></span>
+              <router-link to="/docs">Documentation</router-link>
+            </span>
             <span class="link footerLink">
-              <router-link to="/architecture">Architecture</router-link>
+              <router-link to="/docs/architecture">Architecture</router-link>
             </span>
             <span class="link footerLink">
               <router-link to="/blog">Blog</router-link>
@@ -381,12 +376,8 @@
               <router-link to="/FAQ">FAQ </router-link>
             </span>
             <span class="link footerLink">
-              <a
-                href="https://docs.sharedstake.org/risks"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Risks
-              </a></span>
+              <router-link to="/docs/security-risks">Risks</router-link>
+            </span>
             <span class="link footerLink">
               <router-link to="/privacy">Privacy Policy </router-link>
             </span>

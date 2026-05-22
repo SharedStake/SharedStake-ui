@@ -34,23 +34,23 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemAnchor
-        href="https://docs.sharedstake.finance/"
+      <DropdownItemRouter
+        to="/docs"
         class="px-6"
       >
         Learn
         <DropdownArrow />
-      </DropdownItemAnchor>
+      </DropdownItemRouter>
       <DropdownGroup>
         <DropdownItemRouter to="/blog">
           Blog
         </DropdownItemRouter>
-        <DropdownItemRouter to="/architecture">
+        <DropdownItemRouter to="/docs/architecture">
           Architecture
         </DropdownItemRouter>
-        <DropdownItemAnchor href="https://docs.sharedstake.finance/">
+        <DropdownItemRouter to="/docs">
           Docs
-        </DropdownItemAnchor>
+        </DropdownItemRouter>
         <DropdownItemAnchor href="https://snapshot.org/#/sharedstake.eth">
           DAO
         </DropdownItemAnchor>

@@ -19,8 +19,16 @@ const Wrap = () => import("../components/Stake/Wrap.vue");
 const Unwrap = () => import("../components/Stake/Unwrap.vue");
 const Blog = () => import("../components/Blog/Blog.vue");
 const BlogPost = () => import("../components/Blog/BlogPost.vue");
-const ArchitectureHub = () => import("../components/Architecture/ArchitectureHub.vue");
 const ModularStakingApp = () => import("../components/ModularStaking/ModularStakingApp.vue");
+const DocsCenter = () => import("../components/Docs/DocsCenter.vue");
+const DocsOverviewPage = () => import("../components/Docs/pages/DocsOverviewPage.vue");
+const DocsUserGuidePage = () => import("../components/Docs/pages/DocsUserGuidePage.vue");
+const DocsReferralPage = () => import("../components/Docs/pages/DocsReferralPage.vue");
+const DocsStakingRoutesPage = () => import("../components/Docs/pages/DocsStakingRoutesPage.vue");
+const DocsArchitecturePage = () => import("../components/Docs/pages/DocsArchitecturePage.vue");
+const DocsSecurityRisksPage = () => import("../components/Docs/pages/DocsSecurityRisksPage.vue");
+const DocsOpsDeployPage = () => import("../components/Docs/pages/DocsOpsDeployPage.vue");
+const DocsFaqPage = () => import("../components/Docs/pages/DocsFaqPage.vue");
 
 // Vue.use(VueRouter); // No longer needed in Vue Router 4
 
@@ -96,7 +104,56 @@ let routes = [{
     {
         path: "/architecture",
         name: "Architecture",
-        component: ArchitectureHub,
+        redirect: {
+            path: "/docs/architecture",
+            hash: "#protocol-architecture",
+        },
+    },
+    {
+        path: "/docs",
+        component: DocsCenter,
+        children: [
+            {
+                path: "",
+                name: "DocsOverview",
+                component: DocsOverviewPage,
+            },
+            {
+                path: "user-guide",
+                name: "DocsUserGuide",
+                component: DocsUserGuidePage,
+            },
+            {
+                path: "referral",
+                name: "DocsReferral",
+                component: DocsReferralPage,
+            },
+            {
+                path: "staking-routes",
+                name: "DocsStakingRoutes",
+                component: DocsStakingRoutesPage,
+            },
+            {
+                path: "architecture",
+                name: "DocsArchitecture",
+                component: DocsArchitecturePage,
+            },
+            {
+                path: "security-risks",
+                name: "DocsSecurityRisks",
+                component: DocsSecurityRisksPage,
+            },
+            {
+                path: "ops-deploy",
+                name: "DocsOpsDeploy",
+                component: DocsOpsDeployPage,
+            },
+            {
+                path: "faq",
+                name: "DocsFaq",
+                component: DocsFaqPage,
+            },
+        ]
     },
     {
         path: "/v2",
@@ -113,9 +170,19 @@ const router = createRouter({
     scrollBehavior (to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
-          } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           }
+        if (to.hash) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        el: to.hash,
+                        top: 96,
+                        behavior: "smooth",
+                    });
+                }, 150);
+            });
+        }
+        return { top: 0, behavior: "smooth" };
     }
 });
 
