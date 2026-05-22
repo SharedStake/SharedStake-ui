@@ -60,6 +60,22 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "attemptedWindowInflow",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxInflowEthPerWindow",
+        "type": "uint256"
+      }
+    ],
+    "name": "GlobalInflowLimitExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "moduleId",
         "type": "bytes32"
@@ -81,6 +97,22 @@
   {
     "inputs": [],
     "name": "InvalidAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalShares",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalPooledEth",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidBootstrapState",
     "type": "error"
   },
   {
@@ -133,12 +165,81 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "moduleAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "existingModuleId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "ModuleAddressAlreadyRegistered",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "moduleAddr",
+        "type": "address"
+      }
+    ],
+    "name": "ModuleAddressNotContract",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "moduleId",
         "type": "bytes32"
       }
     ],
     "name": "ModuleAlreadyRegistered",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "moduleId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "moduleAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "moduleType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "codeHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "ModuleCodeHashNotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expectedModuleId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "moduleReportedId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "ModuleIdMismatch",
     "type": "error"
   },
   {
@@ -183,6 +284,53 @@
       },
       {
         "internalType": "address",
+        "name": "moduleAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "expectedRouter",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "actualRouter",
+        "type": "address"
+      }
+    ],
+    "name": "ModuleRouterMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "moduleId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "moduleType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes4",
+        "name": "action",
+        "type": "bytes4"
+      }
+    ],
+    "name": "ModuleTypeActionMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "moduleId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
         "name": "caller",
         "type": "address"
       }
@@ -209,6 +357,28 @@
       }
     ],
     "name": "PolicyDenied",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "registry",
+        "type": "address"
+      }
+    ],
+    "name": "ReferralCodeRegistryInvalid",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "registry",
+        "type": "address"
+      }
+    ],
+    "name": "ReferralCodeRegistryNotContract",
     "type": "error"
   },
   {
@@ -437,6 +607,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "windowSeconds",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxInflowEthPerWindow",
+        "type": "uint256"
+      }
+    ],
+    "name": "GlobalInflowLimitSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "bytes32",
         "name": "moduleId",
@@ -544,6 +733,44 @@
       }
     ],
     "name": "ModuleBeaconReported",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "moduleType",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "codeHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "allowed",
+        "type": "bool"
+      }
+    ],
+    "name": "ModuleCodeHashAllowedSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "enabled",
+        "type": "bool"
+      }
+    ],
+    "name": "ModuleCodeHashAllowlistEnforcementSet",
     "type": "event"
   },
   {
@@ -714,6 +941,19 @@
       }
     ],
     "name": "PoolInsolvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "registry",
+        "type": "address"
+      }
+    ],
+    "name": "ReferralCodeRegistrySet",
     "type": "event"
   },
   {
@@ -903,6 +1143,19 @@
   },
   {
     "inputs": [],
+    "name": "enforceModuleCodeHashAllowlist",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "feeController",
     "outputs": [
       {
@@ -928,6 +1181,42 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "globalInflowLimitConfig",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "windowSeconds",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxInflowEthPerWindow",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "globalInflowWindowState",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "windowStart",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "inflowEth",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -1015,6 +1304,30 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "moduleCodeHashAllowed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -1203,6 +1516,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "referralCodeRegistry",
+    "outputs": [
+      {
+        "internalType": "contract IReferralCodeRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -1295,12 +1621,43 @@
   {
     "inputs": [
       {
+        "internalType": "bool",
+        "name": "enabled",
+        "type": "bool"
+      }
+    ],
+    "name": "setEnforceModuleCodeHashAllowlist",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "fc",
         "type": "address"
       }
     ],
     "name": "setFeeController",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "windowSeconds",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxInflowEthPerWindow",
+        "type": "uint256"
+      }
+    ],
+    "name": "setGlobalInflowLimit",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1345,6 +1702,29 @@
       }
     ],
     "name": "setMintCap",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "moduleType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "codeHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bool",
+        "name": "allowed",
+        "type": "bool"
+      }
+    ],
+    "name": "setModuleCodeHashAllowed",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1407,6 +1787,19 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "registry",
+        "type": "address"
+      }
+    ],
+    "name": "setReferralCodeRegistry",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "referral",
         "type": "address"
       }
@@ -1454,6 +1847,30 @@
         "type": "bytes32"
       },
       {
+        "internalType": "bytes32",
+        "name": "referralCode",
+        "type": "bytes32"
+      }
+    ],
+    "name": "submitToModuleWithReferralCode",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "moduleId",
+        "type": "bytes32"
+      },
+      {
         "internalType": "address",
         "name": "referral",
         "type": "address"
@@ -1478,6 +1895,54 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "moduleId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "referralCode",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sourceId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "submitToModuleWithSourceAndReferralCode",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "referralCode",
+        "type": "bytes32"
+      }
+    ],
+    "name": "submitWithReferralCode",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "referral",
         "type": "address"
@@ -1489,6 +1954,30 @@
       }
     ],
     "name": "submitWithSource",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "referralCode",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sourceId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "submitWithSourceAndReferralCode",
     "outputs": [
       {
         "internalType": "uint256",
