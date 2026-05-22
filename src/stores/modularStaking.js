@@ -346,7 +346,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
     // ── Transactions ──────────────────────────────────────────────────────────
 
-    async stake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
+    async stake(ethAmountStr, opts = {}) {
       return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available on this network')
@@ -367,7 +367,47 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!contract) throw new Error(`${contractName} not deployed`)
 
         const amount = ethers.parseEther(normalizeAmountInput(ethAmountStr))
-        const tx = await contract.submit(referral, { value: amount })
+        const referralAddressInput =
+          typeof opts === 'string'
+            ? opts
+            : typeof opts === 'object' && opts !== null
+              ? opts.referralAddress
+              : null
+        const referralCodeHashInput =
+          typeof opts === 'object' && opts !== null ? opts.referralCodeHash : null
+
+        let referralAddress = ZERO_ADDR
+        try {
+          if (referralAddressInput && ethers.isAddress(referralAddressInput)) {
+            const canonical = ethers.getAddress(referralAddressInput)
+            if (canonical !== ZERO_ADDR) {
+              referralAddress = canonical
+            }
+          }
+        } catch {
+          referralAddress = ZERO_ADDR
+        }
+
+        let referralCodeHash = null
+        if (typeof referralCodeHashInput === 'string' && ethers.isHexString(referralCodeHashInput, 32)) {
+          referralCodeHash = referralCodeHashInput
+        }
+
+        const hasSubmitWithReferralCode =
+          typeof contract.submitWithReferralCode === 'function' &&
+          contract.interface &&
+          typeof contract.interface.hasFunction === 'function' &&
+          contract.interface.hasFunction('submitWithReferralCode(bytes32)')
+
+        let tx
+        if (referralCodeHash && hasSubmitWithReferralCode) {
+          tx = await contract.submitWithReferralCode(referralCodeHash, { value: amount })
+        } else if (referralAddress !== ZERO_ADDR) {
+          tx = await contract.submit(referralAddress, { value: amount })
+        } else {
+          tx = await contract.submit(ZERO_ADDR, { value: amount })
+        }
+
         await tx.wait()
         return tx
       })

@@ -77,18 +77,87 @@
       {{ store.error }}
     </div>
 
-    <!-- Referral indicator -->
-    <div
-      v-if="referralAddress"
-      class="flex items-center justify-between rounded-lg border border-purple-500/30 bg-purple-500/10 p-3 text-sm text-purple-700 dark:text-purple-400"
-    >
-      <span>Referrer: {{ referralAddress }}</span>
-      <button
-        class="text-xs underline hover:text-purple-900 dark:hover:text-purple-200"
-        @click="clearReferral"
+    <!-- Referral -->
+    <div class="rounded-lg border border-purple-500/30 bg-purple-500/10 p-3 text-sm text-purple-700 dark:text-purple-400">
+      <div class="flex items-start justify-between gap-2">
+        <div class="space-y-1">
+          <div class="font-medium text-foreground">
+            Referral
+          </div>
+          <div
+            v-if="referralSource === 'code'"
+            class="text-purple-700 dark:text-purple-300"
+          >
+            Source: code <span class="font-semibold">{{ referralCode }}</span>
+          </div>
+          <div
+            v-else-if="referralSource === 'address'"
+            class="text-purple-700 dark:text-purple-300"
+          >
+            Source: address {{ referralAddress }}
+          </div>
+          <div
+            v-else
+            class="text-muted-foreground"
+          >
+            No active referral
+          </div>
+          <div
+            v-if="referralSource === 'code' && activeResolvedAddress"
+            class="text-muted-foreground"
+          >
+            Resolved address: {{ activeResolvedAddress }}
+          </div>
+          <div
+            v-if="referralSource === 'code' && !activeResolvedAddress && referralAddress"
+            class="text-muted-foreground"
+          >
+            Fallback address: {{ referralAddress }}
+          </div>
+          <div
+            v-if="referralLoading"
+            class="text-muted-foreground"
+          >
+            Resolving code...
+          </div>
+          <div
+            v-else-if="referralWarning"
+            class="text-yellow-700 dark:text-yellow-300"
+          >
+            {{ referralWarning }}
+          </div>
+        </div>
+        <button
+          v-if="referralSource"
+          class="text-xs underline hover:text-purple-900 dark:hover:text-purple-200"
+          @click="clearReferral"
+        >
+          Clear
+        </button>
+      </div>
+
+      <div class="mt-3 flex items-center gap-2">
+        <input
+          v-model="referralCodeInput"
+          type="text"
+          placeholder="Referral code"
+          class="w-full rounded-md border border-purple-500/30 bg-transparent px-2 py-1.5 text-sm text-foreground outline-none placeholder-muted-foreground"
+          @keyup.enter="applyReferralCodeInput"
+        >
+        <button
+          class="rounded-md border border-purple-500/40 px-2.5 py-1.5 text-xs font-medium text-purple-800 transition-colors hover:bg-purple-500/10 disabled:cursor-not-allowed disabled:opacity-50 dark:text-purple-200"
+          :disabled="referralLoading"
+          @click="applyReferralCodeInput"
+        >
+          Apply
+        </button>
+      </div>
+      <div
+        v-if="referralCodeError"
+        class="mt-1 text-xs text-red-700 dark:text-red-300"
       >
-        Clear
-      </button>
+        {{ referralCodeError }}
+      </div>
     </div>
 
     <!-- Success -->
@@ -126,7 +195,13 @@
 <script>
 import { useModularStakingStore } from '@/stores/modularStaking'
 import { useWalletStore } from '@/stores/wallet'
+import { isValidReferralCode, normalizeReferralCode } from '@/utils/referral'
 import { ethers } from 'ethers'
+
+const REFERRAL_ADDRESS_KEY = 'sharedstake_referral'
+const REFERRAL_CODE_KEY = 'sharedstake_referral_code'
+const REFERRAL_RESOLVED_ADDRESS_KEY = 'sharedstake_referral_code_resolved_address'
+const REFERRAL_RESOLVED_CODE_KEY = 'sharedstake_referral_code_resolved_code'
 
 export default {
   name: 'StakePanel',
@@ -144,7 +219,15 @@ export default {
       outputAmount: '',
       txHash: null,
       txError: null,
+      referralSource: null,
       referralAddress: null,
+      referralCode: '',
+      referralCodeInput: '',
+      resolvedReferralAddress: null,
+      resolvedReferralCode: '',
+      referralLoading: false,
+      referralWarning: null,
+      referralCodeError: null,
     }
   },
 
@@ -165,21 +248,34 @@ export default {
         !this.store.loading
       )
     },
+    activeResolvedAddress() {
+      if (this.referralSource !== 'code') return null
+      if (!this.resolvedReferralAddress) return null
+      if (this.resolvedReferralCode !== this.referralCode) return null
+      return this.resolvedReferralAddress
+    },
+    effectiveReferralAddress() {
+      if (this.referralSource === 'address') return this.referralAddress
+      if (this.referralSource === 'code') return this.activeResolvedAddress || this.referralAddress
+      return null
+    },
+    effectiveReferralCodeHash() {
+      if (this.referralSource !== 'code') return null
+      if (!isValidReferralCode(this.referralCode)) return null
+      try {
+        return ethers.keccak256(ethers.toUtf8Bytes(this.referralCode))
+      } catch {
+        return null
+      }
+    },
+    referralApiBaseUrl() {
+      const base = String(import.meta.env.VITE_REFERRAL_API_BASE_URL || '').trim()
+      return base.replace(/\/+$/, '')
+    },
   },
 
   mounted() {
-    // Capture referral from URL ?ref=0x... and persist in localStorage
-    const urlParams = new URLSearchParams(window.location.search)
-    const ref = urlParams.get('ref')
-    if (ref && this.isValidAddress(ref)) {
-      localStorage.setItem('sharedstake_referral', ref)
-      this.referralAddress = ref
-    } else {
-      const stored = localStorage.getItem('sharedstake_referral')
-      if (stored && this.isValidAddress(stored)) {
-        this.referralAddress = stored
-      }
-    }
+    this.initializeReferralState()
   },
 
   methods: {
@@ -216,15 +312,174 @@ export default {
       }
     },
 
-    isValidAddress(addr) {
+    toCanonicalAddress(address) {
+      if (!address) return null
       try {
-        return ethers.isAddress(addr) && addr !== ethers.ZeroAddress
-      } catch { return false }
+        const canonical = ethers.getAddress(String(address).trim())
+        if (canonical === ethers.ZeroAddress) return null
+        return canonical
+      } catch {
+        return null
+      }
+    },
+
+    setResolvedAddressForCode(code, address) {
+      const canonical = this.toCanonicalAddress(address)
+      if (!canonical || !isValidReferralCode(code)) return
+      this.resolvedReferralAddress = canonical
+      this.resolvedReferralCode = code
+      localStorage.setItem(REFERRAL_RESOLVED_ADDRESS_KEY, canonical)
+      localStorage.setItem(REFERRAL_RESOLVED_CODE_KEY, code)
+    },
+
+    clearResolvedAddressCache() {
+      this.resolvedReferralAddress = null
+      this.resolvedReferralCode = ''
+      localStorage.removeItem(REFERRAL_RESOLVED_ADDRESS_KEY)
+      localStorage.removeItem(REFERRAL_RESOLVED_CODE_KEY)
+    },
+
+    async initializeReferralState() {
+      const urlParams = new URLSearchParams(window.location.search)
+      const referralAddressFromUrl = this.toCanonicalAddress(urlParams.get('ref'))
+      const referralCodeFromUrl = normalizeReferralCode(urlParams.get('r'))
+
+      const storedAddress = this.toCanonicalAddress(localStorage.getItem(REFERRAL_ADDRESS_KEY))
+      const storedCode = normalizeReferralCode(localStorage.getItem(REFERRAL_CODE_KEY))
+      const storedResolvedAddress = this.toCanonicalAddress(localStorage.getItem(REFERRAL_RESOLVED_ADDRESS_KEY))
+      const storedResolvedCode = normalizeReferralCode(localStorage.getItem(REFERRAL_RESOLVED_CODE_KEY))
+
+      if (referralAddressFromUrl) {
+        this.referralAddress = referralAddressFromUrl
+        localStorage.setItem(REFERRAL_ADDRESS_KEY, referralAddressFromUrl)
+      } else if (storedAddress) {
+        this.referralAddress = storedAddress
+      } else {
+        localStorage.removeItem(REFERRAL_ADDRESS_KEY)
+      }
+
+      if (storedResolvedAddress && isValidReferralCode(storedResolvedCode)) {
+        this.resolvedReferralAddress = storedResolvedAddress
+        this.resolvedReferralCode = storedResolvedCode
+      }
+
+      const hasUrlCode = isValidReferralCode(referralCodeFromUrl)
+      const hasStoredCode = isValidReferralCode(storedCode)
+
+      if (hasUrlCode) {
+        await this.activateReferralCode(
+          referralCodeFromUrl,
+          referralAddressFromUrl || this.referralAddress,
+        )
+        return
+      }
+
+      if (hasStoredCode) {
+        await this.activateReferralCode(
+          storedCode,
+          this.resolvedReferralCode === storedCode ? this.resolvedReferralAddress : this.referralAddress,
+        )
+        return
+      }
+
+      if (this.referralAddress) {
+        this.referralSource = 'address'
+      }
+    },
+
+    extractResolvedAddress(payload) {
+      if (!payload || typeof payload !== 'object') return null
+      const candidates = [
+        payload.address,
+        payload.referralAddress,
+        payload.referrer,
+        payload?.data?.address,
+        payload?.data?.referralAddress,
+        payload?.result?.address,
+      ]
+      for (const candidate of candidates) {
+        const canonical = this.toCanonicalAddress(candidate)
+        if (canonical) return canonical
+      }
+      return null
+    },
+
+    async resolveReferralCode(code) {
+      if (!isValidReferralCode(code)) return
+      if (!this.referralApiBaseUrl) return
+
+      this.referralLoading = true
+      this.referralWarning = null
+
+      try {
+        const response = await fetch(
+          `${this.referralApiBaseUrl}/v1/codes/${encodeURIComponent(code)}/resolve`,
+          {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+            },
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error(`resolve API returned ${response.status}`)
+        }
+
+        const payload = await response.json()
+        const resolvedAddress = this.extractResolvedAddress(payload)
+        if (!resolvedAddress) {
+          throw new Error('resolve API returned no valid address')
+        }
+
+        this.setResolvedAddressForCode(code, resolvedAddress)
+      } catch (error) {
+        console.warn('Referral code resolution failed:', error)
+        this.referralWarning = 'Could not verify referral code from API. Staking will continue with fallback behavior.'
+      } finally {
+        this.referralLoading = false
+      }
+    },
+
+    async activateReferralCode(code, fallbackResolvedAddress = null) {
+      const normalizedCode = normalizeReferralCode(code)
+      if (!isValidReferralCode(normalizedCode)) {
+        this.referralCodeError = 'Enter a valid referral code (4-24 chars, A-Z/0-9/_/-).'
+        return
+      }
+
+      this.referralSource = 'code'
+      this.referralCode = normalizedCode
+      this.referralCodeInput = normalizedCode
+      this.referralCodeError = null
+      this.referralWarning = null
+      localStorage.setItem(REFERRAL_CODE_KEY, normalizedCode)
+
+      if (fallbackResolvedAddress) {
+        this.setResolvedAddressForCode(normalizedCode, fallbackResolvedAddress)
+      } else if (this.resolvedReferralCode !== normalizedCode) {
+        this.clearResolvedAddressCache()
+      }
+
+      await this.resolveReferralCode(normalizedCode)
+    },
+
+    async applyReferralCodeInput() {
+      const normalizedCode = normalizeReferralCode(this.referralCodeInput)
+      this.referralCodeInput = normalizedCode
+      await this.activateReferralCode(normalizedCode, this.referralAddress)
     },
 
     clearReferral() {
+      this.referralSource = null
+      this.referralCode = ''
+      this.referralCodeInput = ''
       this.referralAddress = null
-      localStorage.removeItem('sharedstake_referral')
+      this.referralWarning = null
+      this.referralCodeError = null
+      this.clearResolvedAddressCache()
+      localStorage.removeItem(REFERRAL_ADDRESS_KEY)
+      localStorage.removeItem(REFERRAL_CODE_KEY)
     },
 
     async handleStake() {
@@ -232,8 +487,10 @@ export default {
       this.txHash = null
       this.txError = null
       try {
-        const ref = this.referralAddress || ethers.ZeroAddress
-        const tx = await this.store.stake(this.inputAmount, ref)
+        const tx = await this.store.stake(this.inputAmount, {
+          referralAddress: this.effectiveReferralAddress,
+          referralCodeHash: this.effectiveReferralCodeHash,
+        })
         this.txHash = tx.hash
         this.inputAmount = ''
         this.outputAmount = ''
