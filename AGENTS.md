@@ -43,7 +43,6 @@ All Kimi subagent calls MUST route through the skill wrapper. Direct `pi --provi
 - Keep delegation scoped and include acceptance criteria.
 - If Kimi fails, keep fallback enabled and inspect telemetry (`./skills/kimi-delegate/scripts/kimi_delegate_telemetry.py summary --days 14`).
 <!-- kimi-delegate:end -->
-
 <!-- devin-delegate:begin -->
 ## Devin Delegate Routing — MANDATORY
 
