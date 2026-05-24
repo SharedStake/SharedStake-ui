@@ -15,11 +15,11 @@ Production-oriented backend skeleton for referral code management.
 ```bash
 cd services/referral-service
 cp .env.example .env
-npm install
-npx prisma generate
-npx prisma migrate deploy
-npm run seed
-npm run dev
+bun install
+bun run prisma:generate
+bun run prisma:migrate
+bun run seed
+bun run dev
 ```
 
 Server default: `http://127.0.0.1:8787`
@@ -69,7 +69,7 @@ Server default: `http://127.0.0.1:8787`
 ## Onchain Sync Worker (read-only)
 
 ```bash
-npm run worker:sync
+bun run worker:sync
 ```
 
 Required env vars:
@@ -87,7 +87,7 @@ Behavior:
 With server running:
 
 ```bash
-npm run smoke
+bun run smoke
 ```
 
 ## Notes

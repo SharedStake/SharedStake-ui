@@ -132,3 +132,32 @@
   2. Run delegated read-only review passes before final push; keep critical-path edits local.
   3. Prefer fail-closed deployment behavior on non-local networks for control-plane wiring.
   4. Keep docs explicit about “implemented now” vs “integration/roadmap” to avoid support ambiguity.
+
+## 2026-05-24 — PR 378 Continuation Sweep
+- Goal: Pull PR 378 locally, resolve current mergeability blocker, and close any concrete remaining implementation work found by local + delegated review.
+- Delegation:
+  - Devin wrapper completed a read-only execution validation pass and confirmed the active parent-repo blocker was the `AGENTS.md` merge resolution.
+  - Kimi wrapper completed a read-only blocker sweep and identified stale handoff next-action ambiguity plus the untracked referral-service `bun.lock`.
+- Parent-repo updates:
+  - Merged `main` agent instructions into `AGENTS.md` so PR 378 can absorb the latest token-reduce/shared attribution routing alongside Devin/Kimi routing.
+  - Added `services/referral-service/bun.lock` and changed referral-service README quick-start commands from npm/npx to Bun, matching repo package-manager policy.
+- Submodule updates (`SharedDeposit`):
+  - Synced `package-lock.json` with the Foundry bootstrap dependencies already declared in `package.json`.
+  - Bumped `hardhat-deploy` to the compatible `^0.12.4` line required by `hardhat-deploy-ethers@0.4.2`, fixing the zksync/ethers bootstrap failure under a fresh `npm ci`.
+  - Added `ReferralRegistry` fee-token guardrails: constructor and `setFeeToken` now reject zero addresses and EOAs; `setFeeToken` emits `FeeTokenSet`.
+  - Added focused tests for invalid constructor/setter fee-token configuration and successful GOV update.
+  - Updated `setup:foundry` to install the pinned `forge-std` v1.7.1 library into the ignored `lib/forge-std` path.
+  - Removed stale `view` modifiers from Foundry invariant entrypoints that call non-view forge-std assertion helpers.
+- Verification commands:
+  - `bun run build` (parent UI): pass.
+  - `bun run type-check` (parent UI): pass.
+  - `./node_modules/.bin/eslint src --ext .vue,.js,.ts` (check-only): pass.
+  - `cd services/referral-service && bun install && bun run prisma:generate && bun run build`: pass.
+  - `cd SharedDeposit && npm ci`: pass after lock/dependency sync.
+  - `cd SharedDeposit && npm run setup:foundry`: pass; installs Foundry v1.7.1 and `forge-std` v1.7.1.
+  - `cd SharedDeposit && npm run test:invariants`: pass, 7 passing.
+  - `cd SharedDeposit && npx hardhat test test/v2/modular-staking/governanceReferral.spec.ts`: pass, 21 passing.
+  - `cd SharedDeposit && npx hardhat test test/v2/modular-staking/stakingRouter.spec.ts test/v2/modular-staking/stakingCore.spec.ts test/v2/modular-staking/governanceReferral.spec.ts`: pass, 122 passing.
+- Remaining blockers:
+  - Code/test blockers found in this sweep: none.
+  - Remaining pre-mainnet items are ops/governance only: withdrawal credentials, role transfer to timelock, external audit, and keeper env/process setup.
