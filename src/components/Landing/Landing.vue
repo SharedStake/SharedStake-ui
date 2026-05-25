@@ -479,8 +479,12 @@ export default {
   async mounted() {
     this.setupTvl();
     if (!this.isMobile()) {
-      this.setupApy();
-      this.getValidatorInfo();
+      this.setupApy().catch(() => {
+        this.APY = BN(5).toString();
+      });
+      this.getValidatorInfo().catch(() => {
+        // Third-party validator stats are best-effort and may be blocked by CORS locally.
+      });
     }
   },
   methods: {
