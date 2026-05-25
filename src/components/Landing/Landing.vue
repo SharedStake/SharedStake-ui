@@ -478,7 +478,7 @@ export default {
   },
   async mounted() {
     this.setupTvl();
-    if (!this.isMobile()) {
+    if (!this.isMobile() && !import.meta.env.DEV) {
       this.setupApy().catch(() => {
         this.APY = BN(5).toString();
       });
