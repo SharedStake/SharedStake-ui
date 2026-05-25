@@ -1,6 +1,6 @@
-# PR #376 Composite Profile (Architecture + PRD)
+# SharedStake V2 Modular Staking Composite Profile
 
-Status: synthesized from PR #376 metadata, parent diff surface, and `SharedDeposit` submodule delta (`3769333 -> acc8801d`).
+Status: synthesized from the historical PR #376 design thread, current PR #378 parent diff surface, and `SharedDeposit` submodule continuation through `7b6af27`.
 
 ## 1. Naming History (What We Called It Before)
 
@@ -22,7 +22,7 @@ Interpretation:
 
 ## 2. Product Intent and User Jobs
 
-Core intent from the old PR trajectory:
+Core intent from the historical PR trajectory and current PR #378 delivery:
 
 1. Ship a full-stack V2 staking product, not just isolated contracts.
 2. Give users a complete stake/wrap/withdraw loop with clear onchain accounting.
@@ -161,25 +161,22 @@ Rationale:
 Legacy label retention guidance:
 - Keep `Lido-parity` only as historical context in migration notes/changelog.
 
-## 8. Open Product/Engineering Decisions Before Continuing
+## 8. Launch Readiness Decisions
 
 1. Canonical architecture cut:
-- Decide whether we still keep `StakingCore` as active runtime path or treat router+modules as the single path.
+- `StakingRouter` + modules is the primary V2 path; `StakingCore` remains as compatibility/fallback surface during rollout.
 
 2. Oracle launch mode:
-- Single adapter first, or quorum by default.
+- Single-adapter and quorum adapter support both exist; final mainnet default is an ops/governance deployment decision.
 
 3. Minimum launch package:
-- Contracts+frontend only vs include full keeper/runbook workflow in same delivery slice.
+- PR #378 ships contracts, frontend, referral-service skeleton, keeper code, runbooks, and validation docs together.
 
 4. Parameter baselines:
-- Fee split defaults, delta bounds, inflow caps, queue bunker settings.
+- Fee split defaults, delta bounds, inflow caps, queue bunker settings remain deployment-parameter checks before mainnet.
 
 5. Governance/ops readiness gates:
-- Required signoffs and rehearsals before public rollout.
-
-6. PR slicing strategy:
-- Whether to ship as one composite PR (full signal) or staged PRs (contracts, frontend, ops).
+- Remaining gates are operational: withdrawal credentials, role transfer to timelock, external audit, and keeper env/process setup.
 
 ## 9. Practical Conclusion
 
@@ -191,4 +188,4 @@ What we were building was not just a "Lido-parity MVP"; it evolved into a full
 - operational readiness,
 - and extensive testing.
 
-The right next move is to preserve that full-system intent, but re-package it into clean, reviewable slices with explicit naming and scope boundaries.
+PR #378 preserves that full-system intent in one reviewable delivery slice. The code/test blockers are closed; only the documented pre-mainnet ops and governance gates remain before production rollout.

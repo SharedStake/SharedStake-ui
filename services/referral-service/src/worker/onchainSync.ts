@@ -119,8 +119,9 @@ async function run() {
     const safeTo = latest - env.SYNC_CONFIRMATIONS;
 
     if (safeTo >= nextBlock) {
-      await processRange(contract, nextBlock, safeTo);
-      nextBlock = safeTo + 1;
+      const toBlock = Math.min(safeTo, nextBlock + env.SYNC_MAX_BLOCK_RANGE - 1);
+      await processRange(contract, nextBlock, toBlock);
+      nextBlock = toBlock + 1;
     }
 
     await new Promise(resolve => setTimeout(resolve, env.SYNC_POLL_INTERVAL_MS));

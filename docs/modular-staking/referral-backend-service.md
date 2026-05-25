@@ -31,7 +31,7 @@ Referral Sync Worker
 - List/refine code mappings per referrer
 - Revoke compromised or deprecated codes
 - Enforce API-key auth for admin actions
-- Apply rate limits
+- Apply rate limits and bounded onchain sync ranges
 
 ### Onchain `ReferralRegistry`
 - Canonical referral attribution
@@ -65,23 +65,23 @@ Admin routes require `x-api-key`.
 ```bash
 cd services/referral-service
 cp .env.example .env
-npm install
-npx prisma generate
-npx prisma migrate deploy
-npm run seed
-npm run dev
+bun install
+bun run prisma:generate
+bun run prisma:migrate
+bun run seed
+bun run dev
 ```
 
 Sync worker:
 
 ```bash
-npm run worker:sync
+bun run worker:sync
 ```
 
 Smoke test:
 
 ```bash
-npm run smoke
+bun run smoke
 ```
 
 ## Security Notes
@@ -90,3 +90,4 @@ npm run smoke
 - Run service behind TLS + reverse proxy in production.
 - Scope API keys by environment and rotate regularly.
 - Keep onchain sync worker read-only until contract-level code registry enforcement is finalized.
+- Set `SYNC_MAX_BLOCK_RANGE` for provider-specific log range limits.

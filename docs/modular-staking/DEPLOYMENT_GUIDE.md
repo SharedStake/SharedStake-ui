@@ -176,11 +176,11 @@ Minimum local bootstrap:
 ```bash
 cd services/referral-service
 cp .env.example .env
-npm install
-npx prisma generate
-npx prisma migrate deploy
-npm run seed
-npm run dev
+bun install
+bun run prisma:generate
+bun run prisma:migrate
+bun run seed
+bun run dev
 ```
 
 #### Step 13: Configure Referral Backend Environment
@@ -193,6 +193,7 @@ Required env for read-only onchain sync worker:
 - `RPC_URL`
 - `ONCHAIN_REFERRAL_REGISTRY_ADDRESS`
 - `CHAIN_ID`
+- `SYNC_MAX_BLOCK_RANGE` (provider-specific log range limit; default `2000`)
 
 #### Step 14: Run Onchain Sync Worker
 
@@ -200,7 +201,7 @@ The worker is read-only and ingests `DepositRecorded` events for observability:
 
 ```bash
 cd services/referral-service
-npm run worker:sync
+bun run worker:sync
 ```
 
 It logs divergence when onchain referrers exist without active backend code mappings.

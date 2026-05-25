@@ -17,6 +17,7 @@ const EnvSchema = z.object({
   ONCHAIN_REFERRAL_REGISTRY_ADDRESS: z.string().optional(),
   SYNC_POLL_INTERVAL_MS: z.coerce.number().int().positive().default(30_000),
   SYNC_CONFIRMATIONS: z.coerce.number().int().nonnegative().default(3),
+  SYNC_MAX_BLOCK_RANGE: z.coerce.number().int().positive().default(2_000),
   SYNC_START_BLOCK: z.coerce.bigint().nonnegative().optional()
 });
 
@@ -31,6 +32,11 @@ const apiKeys = new Set(
     .map(key => key.trim())
     .filter(Boolean)
 );
+
+if (parsed.data.NODE_ENV === "production" && apiKeys.size === 0) {
+  console.error("Invalid referral-service environment: API_KEYS is required in production.");
+  process.exit(1);
+}
 
 export const env = {
   ...parsed.data,

@@ -212,7 +212,14 @@ export function createApp() {
     }
 
     if (error instanceof Error && "status" in error && typeof (error as { status?: unknown }).status === "number") {
-      res.status((error as { status: number }).status).json({ error: "request_error", message: error.message });
+      const status = (error as { status: number }).status;
+      const errorCode =
+        "errorCode" in error && typeof (error as { errorCode?: unknown }).errorCode === "string"
+          ? (error as { errorCode: string }).errorCode
+          : status === 400
+            ? "validation_error"
+            : "request_error";
+      res.status(status).json({ error: errorCode, message: error.message });
       return;
     }
 

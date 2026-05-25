@@ -81,6 +81,7 @@ Behavior:
 - Stores observed events in SQLite
 - Logs divergence if an onchain referrer has no active backend code mapping
 - Tracks cursor in `SyncCursor`
+- Processes historical gaps in bounded ranges via `SYNC_MAX_BLOCK_RANGE`
 
 ## Smoke Test
 

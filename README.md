@@ -10,7 +10,7 @@ Vue.js implementation of SharedStake DeFi protocol with optimized Bun-based buil
 
 ### Prerequisites
 - **Bun**: >= 1.0.0 (recommended for fastest performance)
-- **Node.js**: 18+ (fallback option)
+- **Node.js**: 20+ (fallback option)
 
 ### Setup
 ```bash
@@ -98,10 +98,10 @@ Notes:
 
 ## 📊 Project Status
 
-**Tech Stack**: Vue 3.5.22 • Pinia 3.0.3 • Vite 7.1.12 • Bun 1.x • ethers.js v6.15.0 • Tailwind CSS 3.4.18
+**Tech Stack**: Vue 3.5.27 • Pinia 3.0.4 • Vite 7.3.1 • Bun 1.x • ethers.js v6.16.0 • Tailwind CSS 3.4.18
 
 **Recent Achievements**: 
-- ✅ Vue 2 → Vue 3 migration complete (Vue 3.5.22 + Pinia 3.0.3 + Vite 7.1.12)
+- ✅ Vue 2 → Vue 3 migration complete (Vue 3.5.27 + Pinia 3.0.4 + Vite 7.3.1)
 - ✅ Web3.js → ethers.js v6 migration complete (eliminated 46 critical vulnerabilities)
 - ✅ Bun migration (3-5x faster builds and package installation)
 - ✅ Security improvements (vulnerability reduction from 250+ to 1 moderate)
