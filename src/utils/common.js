@@ -58,12 +58,19 @@ export const getCurrentGasPrices = async () => {
 
 import Notify from "bnc-notify";
 
-export const notify = Notify({
-  dappId: "ba574938-2a97-44e8-812f-653f9a6a499b", // [String] The API key created by step one above
-  networkId: 5, // [Integer] The Ethereum network ID your Dapp uses.
-  darkMode: true,
-  desktopPosition: "topRight",
-});
+const noopNotify = {
+  hash: () => ({ emitter: { on: () => undefined } }),
+  notification: () => null,
+};
+
+export const notify = import.meta.env.DEV
+  ? noopNotify
+  : Notify({
+      dappId: "ba574938-2a97-44e8-812f-653f9a6a499b", // [String] The API key created by step one above
+      networkId: 5, // [Integer] The Ethereum network ID your Dapp uses.
+      darkMode: true,
+      desktopPosition: "topRight",
+    });
 
 export function notifyHandler(hash) {
   let { emitter } = notify.hash(hash);
