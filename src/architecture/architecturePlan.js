@@ -108,6 +108,7 @@ export const phaseRoadmap = [
       "Set expectedWithdrawalCredentials on all ValidatorModule instances.",
       "Transfer GOV + DEFAULT_ADMIN_ROLE to GovernanceTimelock.",
       "External human security audit of full V2 surface.",
+      "Configure .env.keeper and supervised keeper processes.",
     ],
   },
   {
@@ -177,12 +178,13 @@ export const contractV1Readiness = [
     title: "Mainnet pre-deployment checklist",
     goal: "Ops and governance tasks before mainnet launch.",
     currentState:
-      "Code complete. Three ops/governance tasks remain (not code changes).",
-    nextStep: "Complete all three pre-mainnet blockers.",
+      "Code complete. Four ops/governance tasks remain (not code changes).",
+    nextStep: "Complete all four pre-mainnet blockers.",
     tasks: [
       "Set expectedWithdrawalCredentials on all ValidatorModule instances.",
       "Transfer GOV + DEFAULT_ADMIN_ROLE to GovernanceTimelock.",
       "Complete external human security audit.",
+      "Configure keeper environment and supervised processes.",
     ],
   },
   {
@@ -297,6 +299,7 @@ export const releaseTracks = [
       "External human audit complete and findings resolved.",
       "expectedWithdrawalCredentials set on all ValidatorModule instances.",
       "GOV + DEFAULT_ADMIN_ROLE transferred to GovernanceTimelock.",
+      "Keeper environment configured and supervised keeper processes rehearsed.",
     ],
   },
   {

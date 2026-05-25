@@ -1,9 +1,6 @@
 /**
- * This file includes the contract informations 
- * such as abi's, addresses and constants imported from contracts folder.
- * Import any contract to use from here.
- * DELETE USELESS INFO 
-**/
+ * Contract ABIs, addresses, and factories used by legacy and V2 UI flows.
+ */
 
 import { ethers } from 'ethers';
 import { notifyNotification } from '@/utils/common';
@@ -31,12 +28,12 @@ import localAddresses from './addresses/local.json'
 
 let _addresses = {};
 
-let _geyser_vEth2_old;
-let _geyser_SGT_old;
-let _geyser_SGT_uniswap_old;
-let _geyser_vEth2_saddle_old;
-
-// V2 changes
+const setAddressMap = (nextAddresses = {}) => {
+    Object.keys(_addresses).forEach((key) => {
+        delete _addresses[key];
+    });
+    Object.assign(_addresses, nextAddresses);
+};
 const chainIdGoerli = "0x5";
 const chainIdMainnet = "0x1";
 
@@ -260,7 +257,7 @@ const initializeEthers = async () => {
             createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
 
             if (isValidChain(chainId)) {
-                _addresses = addressTemp; // ethers.js handles checksumming automatically
+                setAddressMap(addressTemp); // ethers.js handles checksumming automatically
                 console.info("Contracts initialized for chain:", chainId);
             } else {
                 const chainDecimal = parseInt(chainId, 16);
@@ -280,11 +277,11 @@ const initializeEthers = async () => {
                 if (chainDecimal > 1000) { 
                     console.info("Using Sepolia addresses as fallback for development network");
                     addressTemp = sepoliaAddresses;
-                    _addresses = addressTemp;
+                    setAddressMap(addressTemp);
                     console.warn("⚠️ Using fallback addresses - contracts may not function correctly on this network");
                 } else {
                     // Set empty addresses to prevent contract creation
-                    _addresses = {};
+                    setAddressMap({});
                 }
             }
 
@@ -466,8 +463,8 @@ export const sharedStakeGovernor = (useSigner = false) => createContractDefault(
 export const governanceTimelock = (useSigner = false) => createContractDefault('governanceTimelock', useSigner);
 
 export const oldPools = {
-    geyser_SGT: _geyser_SGT_old,
-    geyser_SGT_uniswap: _geyser_SGT_uniswap_old,
-    geyser_vEth2: _geyser_vEth2_old,
-    geyser_vEth2_saddle: _geyser_vEth2_saddle_old
+    geyser_SGT: geyser_SGT_old,
+    geyser_SGT_uniswap: geyser_SGT_uniswap_old,
+    geyser_vEth2: geyser_vEth2_old,
+    geyser_vEth2_saddle: geyser_vEth2_saddle_old
 }
