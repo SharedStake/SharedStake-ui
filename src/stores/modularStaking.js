@@ -321,7 +321,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
       const queue = make(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
       if (!queue) return
 
-      const nextId = parseInt(this.nextRequestId)
+      const nextId = parseInt(this.nextRequestId) || 0
       const requests = []
 
       for (let id = 1; id < nextId; id++) {

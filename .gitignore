@@ -46,3 +46,4 @@ skills/x-ray
 skills/solidity-auditor
 artifacts/
 tools/
+.gstack/
