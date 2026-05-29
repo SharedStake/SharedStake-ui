@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 export const getCurrentGasPrices = async () => {
   try {
     // Use ethers.js native gas estimation instead of @web3-onboard/gas
-    const provider = window.ethersProvider || new ethers.JsonRpcProvider(process.env.VUE_APP_RPC_URL || "https://eth-mainnet.g.alchemy.com/v2/Wck5Sff8d5x1yOLZtQq_qE2X--_ETOMd");
+    const provider = window.ethersProvider || new ethers.JsonRpcProvider(import.meta.env.VITE_RPC_URL);
     const feeData = await provider.getFeeData();
     
     if (!feeData.maxFeePerGas || !feeData.maxPriorityFeePerGas) {
@@ -58,12 +58,19 @@ export const getCurrentGasPrices = async () => {
 
 import Notify from "bnc-notify";
 
-export const notify = Notify({
-  dappId: "ba574938-2a97-44e8-812f-653f9a6a499b", // [String] The API key created by step one above
-  networkId: 5, // [Integer] The Ethereum network ID your Dapp uses.
-  darkMode: true,
-  desktopPosition: "topRight",
-});
+const noopNotify = {
+  hash: () => ({ emitter: { on: () => undefined } }),
+  notification: () => null,
+};
+
+export const notify = import.meta.env.DEV
+  ? noopNotify
+  : Notify({
+      dappId: "ba574938-2a97-44e8-812f-653f9a6a499b", // [String] The API key created by step one above
+      networkId: 5, // [Integer] The Ethereum network ID your Dapp uses.
+      darkMode: true,
+      desktopPosition: "topRight",
+    });
 
 export function notifyHandler(hash) {
   let { emitter } = notify.hash(hash);
@@ -100,4 +107,12 @@ export function toChecksumAddress(address) {
     console.error("Invalid address:", address, error);
     return address;
   }
+}
+
+export function normalizeChainId(id) {
+  if (!id && id !== 0) return ''
+  if (typeof id === 'bigint') return '0x' + id.toString(16)
+  if (typeof id === 'number') return '0x' + id.toString(16)
+  if (typeof id === 'string' && !id.startsWith('0x')) return '0x' + parseInt(id).toString(16)
+  return id.toLowerCase()
 }

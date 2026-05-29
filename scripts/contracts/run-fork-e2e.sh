@@ -222,7 +222,10 @@ E2E_IMPERSONATOR_RPC_URL="$ONBOARD_CHAIN_RPC_URL" \
 E2E_IMPERSONATOR_CHAIN_ID="$ONBOARD_CHAIN_ID" \
 E2E_IMPERSONATOR_ADDRESS="$IMPERSONATOR_ADDRESS" \
 E2E_IMPERSONATOR_SEED_ETH="$IMPERSONATOR_SEED_ETH" \
-bun run test:e2e -- tests/e2e/airdrop.spec.js tests/e2e/stake-approve-flow.spec.js
+bun run test:e2e -- \
+  tests/e2e/airdrop.spec.js \
+  tests/e2e/stake-approve-flow.spec.js \
+  tests/e2e/modular-staking-v2.spec.js
 
 if [[ "$RUN_WALLET" -eq 1 ]]; then
   if [[ -z "${PW_WALLET_EXTENSION_PATH:-}" || -z "${PW_WALLET_EXTENSION_ID:-}" || -z "${PW_WALLET_TEST_ADDRESS:-}" ]]; then

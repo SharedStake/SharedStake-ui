@@ -1,0 +1,145 @@
+<template>
+  <div class="flex flex-col items-center min-h-screen py-12 px-4">
+    <!-- Header -->
+    <div class="mb-8 text-center">
+      <h1 class="text-3xl font-bold text-foreground">
+        SharedStake V2
+      </h1>
+      <p class="mt-2 text-muted-foreground text-sm max-w-sm">
+        Modular staking liquid staking: deposit ETH, receive rebasing stETH, wrap to non-rebasing wstETH, and withdraw with a queue.
+      </p>
+    </div>
+
+    <!-- Main card -->
+    <div class="w-full max-w-md rounded-2xl border border-border bg-card shadow-lg">
+      <!-- Tab bar -->
+      <div class="flex border-b border-border">
+        <button
+          v-for="(tab, i) in tabs"
+          :key="tab.label"
+          class="flex-1 py-4 text-sm font-semibold transition-colors"
+          :class="activeTab === i
+            ? 'text-foreground border-b-2 border-pink-600'
+            : 'text-muted-foreground hover:text-foreground'"
+          @click="activeTab = i"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <!-- Panel -->
+      <div class="p-5">
+        <component :is="tabs[activeTab].component" />
+      </div>
+    </div>
+
+    <!-- Protocol info footer -->
+    <div class="mt-6 w-full max-w-md rounded-xl border border-border bg-card p-4">
+      <div class="grid grid-cols-3 gap-4 text-center text-sm">
+        <div>
+          <div class="text-muted-foreground text-xs mb-1">
+            Total Staked
+          </div>
+          <div class="font-semibold">
+            {{ store.formattedTotalPooled }} ETH
+          </div>
+        </div>
+        <div>
+          <div class="text-muted-foreground text-xs mb-1">
+            Your stETH
+          </div>
+          <div class="font-semibold">
+            {{ store.formattedStTokenBalance }}
+          </div>
+        </div>
+        <div>
+          <div class="text-muted-foreground text-xs mb-1">
+            Your wstETH
+          </div>
+          <div class="font-semibold">
+            {{ store.formattedWstTokenBalance }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallet not connected notice -->
+      <div
+        v-if="!walletStore.isAuth"
+        class="mt-3 text-center text-xs text-muted-foreground"
+      >
+        Connect your wallet to see your balances and interact with the protocol.
+      </div>
+    </div>
+
+    <!-- Security notice -->
+    <div class="mt-4 w-full max-w-md rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3 text-xs text-muted-foreground">
+      <strong class="text-foreground">Security note:</strong> These contracts implement modular staking (share accounting, rebasing stETH, withdrawal queue). Internal audit complete — awaiting external audit before mainnet. Use with caution on testnet.
+    </div>
+  </div>
+</template>
+
+<script>
+import { useModularStakingStore } from '@/stores/modularStaking'
+import { useWalletStore } from '@/stores/wallet'
+import StakePanel from './StakePanel.vue'
+import WrapPanel from './WrapPanel.vue'
+import WithdrawPanel from './WithdrawPanel.vue'
+import LockPanel from './LockPanel.vue'
+import GovernancePanel from './GovernancePanel.vue'
+
+export default {
+  name: 'ModularStakingApp',
+
+  components: { StakePanel, WrapPanel, WithdrawPanel, LockPanel, GovernancePanel },
+
+  setup() {
+    return {
+      store: useModularStakingStore(),
+      walletStore: useWalletStore(),
+    }
+  },
+
+  data() {
+    return {
+      activeTab: 0,
+      tabs: [
+        { label: 'Stake', component: 'StakePanel' },
+        { label: 'Wrap', component: 'WrapPanel' },
+        { label: 'Withdraw', component: 'WithdrawPanel' },
+        { label: 'Lock', component: 'LockPanel' },
+        { label: 'Gov', component: 'GovernancePanel' },
+      ],
+    }
+  },
+
+  watch: {
+    'walletStore.address': {
+      immediate: true,
+      async handler(address) {
+        const chainId = this.walletStore.getNetworkId
+        await this.store.init(chainId, address)
+      },
+    },
+    'walletStore.network': {
+      async handler(networkId) {
+        await this.store.init(networkId, this.walletStore.address)
+      },
+    },
+  },
+
+  mounted() {
+    if (window.ethereum) {
+      this._chainChangedHandler = (newChainId) => {
+        this.walletStore.setNetwork(newChainId)
+      }
+      window.ethereum.on('chainChanged', this._chainChangedHandler)
+    }
+  },
+
+  beforeUnmount() {
+    if (window.ethereum && this._chainChangedHandler) {
+      window.ethereum.removeListener('chainChanged', this._chainChangedHandler)
+    }
+  },
+}
+</script>

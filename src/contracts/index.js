@@ -1,9 +1,6 @@
 /**
- * This file includes the contract informations 
- * such as abi's, addresses and constants imported from contracts folder.
- * Import any contract to use from here.
- * DELETE USELESS INFO 
-**/
+ * Contract ABIs, addresses, and factories used by legacy and V2 UI flows.
+ */
 
 import { ethers } from 'ethers';
 import { notifyNotification } from '@/utils/common';
@@ -31,12 +28,12 @@ import localAddresses from './addresses/local.json'
 
 let _addresses = {};
 
-let _geyser_vEth2_old;
-let _geyser_SGT_old;
-let _geyser_SGT_uniswap_old;
-let _geyser_vEth2_saddle_old;
-
-// V2 changes
+const setAddressMap = (nextAddresses = {}) => {
+    Object.keys(_addresses).forEach((key) => {
+        delete _addresses[key];
+    });
+    Object.assign(_addresses, nextAddresses);
+};
 const chainIdGoerli = "0x5";
 const chainIdMainnet = "0x1";
 
@@ -80,7 +77,11 @@ const parseAddressOverrides = (rawValue) => {
     return null;
 };
 
-const getAddressOverrides = () => {
+// Contract address overrides are intentionally restricted to local dev chains.
+// Allowing them on mainnet/testnet would let an attacker craft URLs that point
+// users at malicious contracts and steal deposited funds.
+const getAddressOverrides = (isLocalChain) => {
+    if (!isLocalChain) return null;
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
     const queryOverride = parseAddressOverrides(params.get(ADDRESS_OVERRIDES_QUERY_KEY));
@@ -102,10 +103,19 @@ const getAddressMapForChain = (chainId) => {
                     ? { ...sepoliaAddresses, ...localAddresses }
                     : {};
 
-    const overrides = getAddressOverrides();
+    const overrides = getAddressOverrides(isLocalChain);
     return overrides ? { ...baseAddresses, ...overrides } : baseAddresses;
 };
 
+
+import stTokenABI from './abis/stToken.json'
+import wstTokenABI from './abis/wstToken.json'
+import stakingCoreABI from './abis/stakingCore.json'
+import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
+import stakingRouterABI from './abis/stakingRouter.json'
+import voteEscrowV2ABI from './abis/voteEscrowV2.json'
+import sharedStakeGovernorABI from './abis/sharedStakeGovernor.json'
+import governanceTimelockABI from './abis/governanceTimelock.json'
 
 let _ABIs = {
     validator: sharedStake,
@@ -120,7 +130,15 @@ let _ABIs = {
     withdrawals: withdrawalsABI,
     rollovers: rolloversABI,
     sgETH: sgETHABI,
-    wsgETH: wsgETHABI
+    wsgETH: wsgETHABI,
+    stToken: stTokenABI,
+    wstToken: wstTokenABI,
+    stakingCore: stakingCoreABI,
+    withdrawalQueueV2: withdrawalQueueV2ABI,
+    stakingRouter: stakingRouterABI,
+    voteEscrowV2: voteEscrowV2ABI,
+    sharedStakeGovernor: sharedStakeGovernorABI,
+    governanceTimelock: governanceTimelockABI,
 }
 
 let connErr = () => {
@@ -239,7 +257,7 @@ const initializeEthers = async () => {
             createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
 
             if (isValidChain(chainId)) {
-                _addresses = addressTemp; // ethers.js handles checksumming automatically
+                setAddressMap(addressTemp); // ethers.js handles checksumming automatically
                 console.info("Contracts initialized for chain:", chainId);
             } else {
                 const chainDecimal = parseInt(chainId, 16);
@@ -259,11 +277,11 @@ const initializeEthers = async () => {
                 if (chainDecimal > 1000) { 
                     console.info("Using Sepolia addresses as fallback for development network");
                     addressTemp = sepoliaAddresses;
-                    _addresses = addressTemp;
+                    setAddressMap(addressTemp);
                     console.warn("⚠️ Using fallback addresses - contracts may not function correctly on this network");
                 } else {
                     // Set empty addresses to prevent contract creation
-                    _addresses = {};
+                    setAddressMap({});
                 }
             }
 
@@ -435,9 +453,18 @@ export const createDeprecatedWithdrawalsContract = (address, useSigner = false) 
     return createContractWithAddress(address, 'withdrawals', useSigner);
 };
 
+export const stToken = (useSigner = false) => createContractDefault('stToken', useSigner);
+export const wstToken = (useSigner = false) => createContractDefault('wstToken', useSigner);
+export const stakingCore = (useSigner = false) => createContractDefault('stakingCore', useSigner);
+export const withdrawalQueueV2 = (useSigner = false) => createContractDefault('withdrawalQueueV2', useSigner);
+export const stakingRouter = (useSigner = false) => createContractDefault('stakingRouter', useSigner);
+export const voteEscrowV2 = (useSigner = false) => createContractDefault('voteEscrowV2', useSigner);
+export const sharedStakeGovernor = (useSigner = false) => createContractDefault('sharedStakeGovernor', useSigner);
+export const governanceTimelock = (useSigner = false) => createContractDefault('governanceTimelock', useSigner);
+
 export const oldPools = {
-    geyser_SGT: _geyser_SGT_old,
-    geyser_SGT_uniswap: _geyser_SGT_uniswap_old,
-    geyser_vEth2: _geyser_vEth2_old,
-    geyser_vEth2_saddle: _geyser_vEth2_saddle_old
+    geyser_SGT: geyser_SGT_old,
+    geyser_SGT_uniswap: geyser_SGT_uniswap_old,
+    geyser_vEth2: geyser_vEth2_old,
+    geyser_vEth2_saddle: geyser_vEth2_saddle_old
 }

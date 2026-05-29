@@ -73,6 +73,20 @@ normalized_addresses_json() {
   local withdrawals
   local payment_splitter
   local rewards_receiver
+  local staking_core
+  local st_token
+  local wst_token
+  local withdrawal_queue_v2
+  local staking_router
+  local validator_module
+  local dvt_module
+  local oracle_adapter
+  local quorum_oracle_adapter
+  local fee_controller
+  local sgt_v2
+  local vote_escrow_v2
+  local governance_timelock
+  local shared_stake_governor
 
   validator="$(resolve_validator_address "$network")"
   sg_eth="$(read_address_or_empty "$network" "SgETH")"
@@ -80,6 +94,20 @@ normalized_addresses_json() {
   withdrawals="$(read_address_or_empty "$network" "WithdrawalQueue")"
   payment_splitter="$(read_address_or_empty "$network" "PaymentSplitter")"
   rewards_receiver="$(read_address_or_empty "$network" "RewardsReceiver")"
+  staking_core="$(read_address_or_empty "$network" "StakingCore")"
+  st_token="$(read_address_or_empty "$network" "StToken")"
+  wst_token="$(read_address_or_empty "$network" "WstToken")"
+  withdrawal_queue_v2="$(read_address_or_empty "$network" "WithdrawalQueueV2")"
+  staking_router="$(read_address_or_empty "$network" "StakingRouter")"
+  validator_module="$(read_address_or_empty "$network" "ValidatorModule")"
+  dvt_module="$(read_address_or_empty "$network" "DVTModule")"
+  oracle_adapter="$(read_address_or_empty "$network" "OracleAdapter")"
+  quorum_oracle_adapter="$(read_address_or_empty "$network" "QuorumOracleAdapter")"
+  fee_controller="$(read_address_or_empty "$network" "FeeController")"
+  sgt_v2="$(read_address_or_empty "$network" "SGTV2")"
+  vote_escrow_v2="$(read_address_or_empty "$network" "VoteEscrowV2")"
+  governance_timelock="$(read_address_or_empty "$network" "GovernanceTimelock")"
+  shared_stake_governor="$(read_address_or_empty "$network" "SharedStakeGovernor")"
 
   jq -n \
     --arg validator "$validator" \
@@ -88,12 +116,40 @@ normalized_addresses_json() {
     --arg withdrawals "$withdrawals" \
     --arg payment_splitter "$payment_splitter" \
     --arg rewards_receiver "$rewards_receiver" \
+    --arg staking_core "$staking_core" \
+    --arg st_token "$st_token" \
+    --arg wst_token "$wst_token" \
+    --arg withdrawal_queue_v2 "$withdrawal_queue_v2" \
+    --arg staking_router "$staking_router" \
+    --arg validator_module "$validator_module" \
+    --arg dvt_module "$dvt_module" \
+    --arg oracle_adapter "$oracle_adapter" \
+    --arg quorum_oracle_adapter "$quorum_oracle_adapter" \
+    --arg fee_controller "$fee_controller" \
+    --arg sgt_v2 "$sgt_v2" \
+    --arg vote_escrow_v2 "$vote_escrow_v2" \
+    --arg governance_timelock "$governance_timelock" \
+    --arg shared_stake_governor "$shared_stake_governor" \
     '{
       validator: $validator,
       sgETH: $sg_eth,
       wsgETH: $wsg_eth,
       withdrawals: $withdrawals,
       PaymentSplitter: $payment_splitter,
-      RewardsReceiver: $rewards_receiver
+      RewardsReceiver: $rewards_receiver,
+      stakingCore: $staking_core,
+      stToken: $st_token,
+      wstToken: $wst_token,
+      withdrawalQueueV2: $withdrawal_queue_v2,
+      stakingRouter: $staking_router,
+      validatorModule: $validator_module,
+      dvtModule: $dvt_module,
+      oracleAdapter: $oracle_adapter,
+      quorumOracleAdapter: $quorum_oracle_adapter,
+      feeController: $fee_controller,
+      sgtV2: $sgt_v2,
+      voteEscrowV2: $vote_escrow_v2,
+      governanceTimelock: $governance_timelock,
+      sharedStakeGovernor: $shared_stake_governor
     } | with_entries(select(.value != ""))'
 }

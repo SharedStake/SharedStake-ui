@@ -19,7 +19,10 @@ export default defineConfig({
   },
   server: {
     port: 8080,
-    host: true
+    host: true,
+    watch: {
+      ignored: ['**/skills/**', '**/SharedDeposit/**', '**/.git/**']
+    }
   },
   build: {
     outDir: 'dist',

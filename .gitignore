@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /dist
-
+playwright-report
 
 # local env files
 .env.local
@@ -42,3 +42,11 @@ scripts/contracts/.tmp
 scripts/contracts/generated
 
 # devNotes.md // create a new repo when everyting is done we don't want people to know this shit
+skills/x-ray
+skills/solidity-auditor
+artifacts/
+tools/
+.gstack/
+
+# Git worktree management
+.worktrees/
