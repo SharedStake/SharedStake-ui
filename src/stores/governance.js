@@ -107,8 +107,12 @@ export const useGovernanceStore = defineStore('governance', {
 
       const make = (abi, addr) => new ethers.Contract(addr, abi, provider)
       const makeSigned = async (abi, addr) => {
-        const signer = await provider.getSigner()
-        return new ethers.Contract(addr, abi, signer)
+        try {
+          const signer = await provider.getSigner()
+          return new ethers.Contract(addr, abi, signer)
+        } catch {
+          throw new Error('Wallet not connected')
+        }
       }
 
       return { addresses, make, makeSigned }
