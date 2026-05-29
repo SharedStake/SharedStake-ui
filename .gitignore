@@ -47,3 +47,6 @@ skills/solidity-auditor
 artifacts/
 tools/
 .gstack/
+
+# Git worktree management
+.worktrees/
