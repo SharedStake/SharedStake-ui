@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: sharedstake_referral
+      POSTGRES_USER: sharedstake
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  referral-service:
+    build: ./services/referral-service
+    environment:
+      DATABASE_URL: postgresql://sharedstake:${POSTGRES_PASSWORD:-changeme}@postgres:5432/sharedstake_referral
+      PORT: 3001
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -56,6 +56,7 @@ export function createApp() {
   app.use(express.json({ limit: "100kb" }));
   app.use(globalLimiter);
 
+  // Simple health check (for backwards compatibility)
   app.get("/health", async (_req: Request, res: Response) => {
     try {
       await prisma.$queryRaw`SELECT 1`;
