@@ -425,9 +425,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
         const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
 
-        // Approve wstToken to spend stToken.
-        const approveTx = await stToken.approve(addresses.wstToken, amount)
-        await approveTx.wait()
+        // Approve wstToken to spend stToken only if allowance is insufficient.
+        const allowance = await stToken.allowance(await stToken.runner.getAddress(), addresses.wstToken)
+        if (allowance < amount) {
+          const approveTx = await stToken.approve(addresses.wstToken, amount)
+          await approveTx.wait()
+        }
 
         const wrapTx = await wstToken.wrap(amount)
         await wrapTx.wait()
