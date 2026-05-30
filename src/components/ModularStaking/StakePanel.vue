@@ -128,11 +128,13 @@ export default {
 
   computed: {
     exchangeRateDisplay() {
-      return parseFloat(this.store.exchangeRate).toFixed(6)
+      const value = parseFloat(this.store.exchangeRate)
+      return isNaN(value) ? '0.000000' : value.toFixed(6)
     },
     outputDisplay() {
       if (!this.outputAmount) return '0.0'
-      return parseFloat(ethers.formatEther(this.outputAmount)).toFixed(6)
+      const value = parseFloat(ethers.formatEther(this.outputAmount))
+      return isNaN(value) ? '0.000000' : value.toFixed(6)
     },
     canSubmit() {
       return (

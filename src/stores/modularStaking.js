@@ -250,7 +250,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
       const queue = make(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
       if (!queue) return
 
-      const nextId = parseInt(this.nextRequestId)
+      const nextId = parseInt(this.nextRequestId) || 0
       const requests = []
 
       for (let id = 1; id < nextId; id++) {
@@ -315,9 +315,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
         const amount = ethers.parseEther(stAmountStr)
 
-        // Approve wstToken to spend stToken.
-        const approveTx = await stToken.approve(addresses.wstToken, amount)
-        await approveTx.wait()
+        // Approve wstToken to spend stToken only if allowance is insufficient.
+        const allowance = await stToken.allowance(await stToken.runner.getAddress(), addresses.wstToken)
+        if (allowance < amount) {
+          const approveTx = await stToken.approve(addresses.wstToken, amount)
+          await approveTx.wait()
+        }
 
         const wrapTx = await wstToken.wrap(amount)
         await wrapTx.wait()
