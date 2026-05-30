@@ -282,10 +282,10 @@ From the prior security review, 2 medium findings remain:
 
 ### Immediate (fix before audit)
 
-1. **LOW-01:** Add `revokeRole(MINTER, msg.sender)` in `StToken.transferAdmin()`
-2. **LOW-11:** Add future-timestamp rejection in `OracleAdapter.submitReport()`
-3. **INFO-01:** Remove or repurpose `FeeController.recordDistribution()`
-4. **INFO-02:** Remove unused `IERC20Metadata` import from `StToken.sol`
+1. **LOW-01:** ~~Add `revokeRole(MINTER, msg.sender)` in `StToken.transferAdmin()`~~ **FIXED** — MINTER role is now revoked in `transferAdmin()`.
+2. **LOW-11:** ~~Add future-timestamp rejection in `OracleAdapter.submitReport()`~~ **FIXED** — future timestamps now rejected at line 86.
+3. **INFO-01:** ~~Remove or repurpose `FeeController.recordDistribution()`~~ **FIXED** — function removed.
+4. **INFO-02:** ~~Remove unused `IERC20Metadata` import from `StToken.sol`~~ **FIXED** — import removed.
 
 ### Short-term (pre-mainnet)
 
