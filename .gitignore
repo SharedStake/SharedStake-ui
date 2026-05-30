@@ -7,6 +7,8 @@ playwright-report
 .env.local
 .env.*.local
 .env.e2e.wallet
+# .env is tracked intentionally (only contains public DAPP_ID - no secrets)
+# Add truly sensitive env files here if needed
 secret.json
 
 # Log files

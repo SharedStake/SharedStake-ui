@@ -12,5 +12,10 @@ RUN bun install --frozen-lockfile --production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/prisma ./prisma
+
+# Run as non-root user
+RUN addgroup -S app && adduser -S app -G app
+USER app
+
 EXPOSE 3001
 CMD ["bun", "run", "start"]

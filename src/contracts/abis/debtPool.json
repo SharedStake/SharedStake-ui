@@ -354,6 +354,19 @@
   },
   {
     "inputs": [],
+    "name": "MIN_CLAIM_PERIOD",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "ST_TOKEN",
     "outputs": [
       {
@@ -613,22 +626,17 @@
       },
       {
         "internalType": "uint256",
-        "name": "_totalAccumulated",
+        "name": "_totalStETHSharesReceived",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_totalClaimed",
+        "name": "_totalWSTETHClaimed",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "_currentDistributionId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "unclaimedAmount",
         "type": "uint256"
       },
       {
@@ -701,19 +709,6 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "merkleRoot",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -809,7 +804,7 @@
   },
   {
     "inputs": [],
-    "name": "totalAccumulated",
+    "name": "totalStETHSharesReceived",
     "outputs": [
       {
         "internalType": "uint256",
@@ -822,7 +817,7 @@
   },
   {
     "inputs": [],
-    "name": "totalClaimed",
+    "name": "totalWSTETHClaimed",
     "outputs": [
       {
         "internalType": "uint256",

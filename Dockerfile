@@ -28,6 +28,10 @@ WORKDIR /app
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
+# Run as non-root user
+RUN addgroup -S app && adduser -S app -G app
+USER app
+
 # Expose port
 EXPOSE 8080
 

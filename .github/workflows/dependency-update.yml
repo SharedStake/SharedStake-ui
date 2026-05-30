@@ -14,19 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@f4d14e03ff726c06358e5557344e1da148b56cf7 # v1
         with:
           bun-version: ${{ env.BUN_VERSION }}
-          
+
       - name: Update dependencies
         run: |
           bun update
-          
+
       - name: Check for changes
         id: changes
         run: |
@@ -35,20 +35,20 @@ jobs:
           else
             echo "changes=true" >> $GITHUB_OUTPUT
           fi
-          
+
       - name: Create Pull Request
         if: steps.changes.outputs.changes == 'true'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@4e1beaa7521e8b457b572c090b25bd3db56bf1c5 # v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore: update dependencies'
           title: 'chore: update dependencies'
           body: |
             This PR updates project dependencies to their latest versions.
-            
+
             **Changes:**
             - Updated dependencies in `bun.lockb`
-            
+
             **Testing:**
             - [ ] CI passes
             - [ ] Build succeeds
