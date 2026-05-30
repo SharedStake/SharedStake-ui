@@ -225,11 +225,12 @@ export function createApp() {
     }
 
     if (error instanceof Error) {
-      res.status(500).json({ error: "internal_error", message: error.message });
+      if (env.NODE_ENV !== "production") console.error(error);
+      res.status(500).json({ error: "internal_error", message: "Internal server error" });
       return;
     }
 
-    res.status(500).json({ error: "internal_error", message: "Unknown failure" });
+    res.status(500).json({ error: "internal_error", message: "Internal server error" });
   });
 
   return app;
