@@ -15,6 +15,8 @@ import wstTokenABI from '@/contracts/abis/wstToken.json'
 import stakingCoreABI from '@/contracts/abis/stakingCore.json'
 import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
 import stakingRouterABI from '@/contracts/abis/stakingRouter.json'
+import feeControllerABI from '@/contracts/abis/feeController.json'
+import debtPoolABI from '@/contracts/abis/debtPool.json'
 import mainnetAddresses from '@/contracts/addresses/mainnet.json'
 import goerliAddresses from '@/contracts/addresses/goerli.json'
 import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
@@ -41,6 +43,8 @@ function getAddresses(chainId) {
     wstToken: source.wstToken || ZERO_ADDR,
     withdrawalQueueV2: source.withdrawalQueueV2 || ZERO_ADDR,
     stakingRouter: source.stakingRouter || ZERO_ADDR,
+    feeController: source.feeController || ZERO_ADDR,
+    debtPool: source.debtPool || ZERO_ADDR,
   }
 }
 
@@ -90,6 +94,17 @@ export const useModularStakingStore = defineStore('modularStaking', {
     moduleInflowUsed: '0',      // ETH used in current window (wei)
     moduleInflowLimit: '0',     // ETH limit per window (wei) — 0 = unlimited
     moduleInflowWindowReset: 0, // unix timestamp when window resets
+
+    // FeeController config (read-only, display only)
+    feeConfig: {
+      treasury: 0,
+      operator: 0,
+      referral: 0,
+      debtPool: 0,
+    },
+
+    // DebtPool info (gated, display only)
+    debtPoolInfo: null, // null = not deployed, object = { distributionId, totalAccumulated, totalClaimed }
 
     // Contract deployment status
     contractsDeployed: false,
@@ -306,6 +321,43 @@ export const useModularStakingStore = defineStore('modularStaking', {
           }
         } catch (routerErr) {
           console.warn('ModularStakingStore: failed to read StakingRouter metadata', routerErr)
+        }
+
+        // Read FeeController config (read-only, display only)
+        try {
+          const feeControllerAddr = addresses.feeController
+          if (feeControllerAddr && feeControllerAddr !== ZERO_ADDR) {
+            const feeController = make(feeControllerABI, feeControllerAddr)
+            if (feeController && typeof feeController.getFeeConfig === 'function') {
+              const config = await feeController.getFeeConfig()
+              this.feeConfig = {
+                treasury: Number(config.treasurySplitBps),
+                operator: Number(config.operatorSplitBps),
+                referral: Number(config.referralSplitBps),
+                debtPool: Number(config.debtPoolSplitBps),
+              }
+            }
+          }
+        } catch (feeErr) {
+          console.warn('ModularStakingStore: failed to read FeeController config', feeErr)
+        }
+
+        // Read DebtPool info (gated, display only)
+        try {
+          const debtPoolAddr = addresses.debtPool
+          if (debtPoolAddr && debtPoolAddr !== ZERO_ADDR) {
+            const debtPool = make(debtPoolABI, debtPoolAddr)
+            if (debtPool && typeof debtPool.getStats === 'function') {
+              const stats = await debtPool.getStats()
+              this.debtPoolInfo = {
+                distributionId: stats._currentDistributionId.toString(),
+                totalAccumulated: stats._totalAccumulated.toString(),
+                totalClaimed: stats._totalClaimed.toString(),
+              }
+            }
+          }
+        } catch (debtErr) {
+          console.warn('ModularStakingStore: failed to read DebtPool info', debtErr)
         }
       } catch (e) {
         console.error('ModularStakingStore.init error:', e)

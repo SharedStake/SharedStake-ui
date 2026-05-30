@@ -53,7 +53,6 @@ export const useGovernanceStore = defineStore('governance', {
     earlyWithdrawPenaltyRate: '0',
 
     // Governor
-    proposalCount: '0',
     quorum: '0',
     votingDelay: '0',
     votingPeriod: '0',
