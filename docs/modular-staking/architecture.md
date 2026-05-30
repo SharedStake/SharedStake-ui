@@ -34,11 +34,14 @@ Deliver a production-oriented router-based staking system with:
 - `modules/LSTWrapModule.sol`: LST wrapping path into router-minted `StToken`.
 
 ### Oracle, fee, and policy layer
-- `FeeController.sol`: fee bps and treasury/operator split.
+- `FeeController.sol`: fee bps and treasury/operator/referral/DebtPool split.
 - `OracleAdapter.sol`: single-submitter sanity-gated reporting.
 - `QuorumOracleAdapter.sol`: M-of-N submitter quorum reporting.
-- `StEthPriceOracle`: stETH pricing adapter used by `LSTWrapModule`.
+- `StEthPriceOracle`: stETH pricing adapter used by `LSTWrapModule` (now reads Chainlink updatedAt for staleness checks).
 - `InstitutionalPolicyRegistry.sol`: policy hooks for allowlist/blocklist/private modes.
+
+### Debt distribution layer
+- `DebtPool.sol`: Merkle tree-based debt distribution for protocol liabilities and fee claims.
 
 ### Exit layer
 - `WithdrawalQueueV2.sol`: request/finalize/claim lifecycle with TURBO/BUNKER modes.
@@ -57,10 +60,12 @@ Deliver a production-oriented router-based staking system with:
 | `LSTWrapModule` | LST in/out module using external price oracle. |
 | `StToken` | Global share ledger and rebasing supply source of truth. |
 | `WstToken` | Non-rebasing wrapper over `StToken` shares. |
-| `FeeController` | Protocol fee config and split policy. |
+| `FeeController` | Protocol fee config and split policy (treasury/operator/referral/DebtPool). |
 | `OracleAdapter` | Single-submitter report validation and forwarding. |
 | `QuorumOracleAdapter` | Consensus report validation and forwarding. |
+| `StEthPriceOracle` | Chainlink-backed stETH price oracle for LST module with staleness checks. |
 | `InstitutionalPolicyRegistry` | Optional per-module policy gate provider. |
+| `DebtPool` | Merkle tree-based debt distribution for protocol liabilities and fee claims. |
 | `WithdrawalQueueV2` | Exit queue with request-time value lock and guarded finalization. |
 | `Referral Service` | Offchain code-to-address mapping and referral code lifecycle (create/revoke/list/resolve). |
 | `Referral Sync Worker` | Reads onchain referral events and reports backend/onchain mapping divergence. |

@@ -226,3 +226,46 @@ Rationale:
 - Attribution + fee telemetry:
   - Additive attribution entrypoints and events landed in `StakingCore`/`StakingRouter`.
   - Fee-routing telemetry events now emitted on reward fee-minting paths.
+
+---
+
+## Security Hardening History
+
+### Internal Audit Passes (6+ iterations)
+
+**Audit Pass 1-2 (Devin-led):** General contract audit
+- Fixed ReferralRegistry.setFeeToken zero-address guard
+- Fixed VoteEscrowV2.setPenaltyCollector non-zero validation
+- Fixed wrap() allowance pre-check (skip redundant approve)
+
+**Audit Pass 3 (Opus-guided focus: DebtPool):**
+- CRITICAL: DebtPool claims mapping changed to distributionId+leafIndex keying (prevents double-claim)
+- CRITICAL: updateMerkleRoot blocked on finalized distributions
+- HIGH: FeeController enforces debtPoolSplitBps==0 when debtPool==address(0)
+- MEDIUM: StakingCore.reportBeacon now has nonReentrant modifier
+
+**Audit Pass 4 (merkle tooling verification):**
+- CRITICAL: canClaim leaf encoding synced to double-hash (was always returning false)
+- HIGH: withdrawUnclaimedFees now enforces 30-day MIN_CLAIM_PERIOD
+
+**Merkle tree:** Upgraded to OZ standard double-hash encoding. Off-chain builder at SharedDeposit/scripts/merkle/buildDebtPoolTree.js.
+
+**X-Ray Full Enumeration (x-ray pass 2):**
+- CRITICAL: DebtPool.receiveStETHAndUnwrap broken transferFrom removed (fees were silently lost)
+- CRITICAL: FeeController deploy script missing debtPool constructor args (fixed)
+- CRITICAL: StakingCore ORACLE role never granted in deploy script (fixed - now grants to OracleAdapter)
+- HIGH: QuorumOracleAdapter + OracleAdapter both held ORACLE (quorum bypassed — fixed: OracleAdapter ORACLE revoked when Quorum deployed)
+- HIGH: StEthPriceOracle staleness always passed (fixed — now reads Chainlink updatedAt)
+- HIGH: ReferralRegistry FEE_CTRL/ROUTER roles never granted (new deploy script 016 added)
+- HIGH: DebtPool has no deploy script (new deploy script 017 added)
+
+**CSO Audit:**
+- GitHub Actions SHA-pinned (actions/checkout, oven-sh/setup-bun, peter-evans/create-pull-request)
+- Dockerfiles: added non-root USER directive to frontend and referral-service containers
+- DebtPool dead merkleRoot storage variable removed
+- DebtPool unit naming clarified (totalStETHSharesReceived vs totalWSTETHClaimed)
+- WithdrawalQueueV2.requestWithdrawals owner==msg.sender enforced
+- FeeController.setReferralRegistry() added for post-deploy governance
+- WithdrawalQueueV2 unused WithdrawalCancelled event removed
+
+**Current test state:** 412+ Hardhat tests passing, 0 failing; 18 referral service tests; 10 mainnet fork tests; 7 Foundry invariants.

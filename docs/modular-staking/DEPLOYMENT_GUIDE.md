@@ -14,6 +14,8 @@ Before running `deploy/v2-modular-staking/*` on non-local networks, set:
 - `V2_SGT_ADDRESS` for governance deployment
 - `V2_VALIDATOR_MINT_CAP_ETH` and `V2_DVT_MINT_CAP_ETH`
 - Optional quorum override: `V2_QUORUM_ORACLE_QUORUM`
+- `V2_STETH_ADDRESS` for StEthPriceOracle Chainlink integration
+- `V2_CHAINLINK_STETH_ETH_FEED` for Chainlink stETH/ETH price feed address
 
 Deployment scripts now fail closed on non-local networks when these are missing or inconsistent.
 
@@ -136,7 +138,18 @@ stToken.transferAdmin(address(timelock));
 
 ### Phase 3: Referral System
 
-#### Step 8: Deploy ReferralRegistry
+#### Step 8: Deploy ReferralRegistry (via deploy script 016_referralRegistry.ts)
+
+Required environment variables:
+- `V2_GOVERNANCE_ADDRESS` (for ReferralRegistry GOV role)
+- StToken address (resolved from deployment)
+
+The deploy script:
+1. Deploys ReferralRegistry with governance and stToken addresses
+2. Grants ROUTER role to StakingCore and StakingRouter
+3. Grants FEE_CTRL role to FeeController
+4. Wires ReferralRegistry into StakingCore and StakingRouter via setReferralCodeRegistry
+
 ```solidity
 ReferralRegistry registry = new ReferralRegistry(
     address(timelock), // GOV = timelock
@@ -145,26 +158,14 @@ ReferralRegistry registry = new ReferralRegistry(
 ```
 
 #### Step 9: Wire ReferralRegistry to FeeController
-```solidity
-feeController.setRecipients(
-    treasuryAddress,
-    operatorAddress,
-    address(registry)
-);
-```
+Note: This is now handled automatically by deploy script 016_referralRegistry.ts
 
-#### Step 10: Grant Router Role to StakingRouter
-```solidity
-registry.grantRole(registry.ROUTER(), address(stakingRouter));
-registry.grantRole(registry.FEE_CTRL(), address(stakingRouter));
-```
-
-#### Step 11: Optional Fee Token Rotation (governance only)
+#### Step 10: Optional Fee Token Rotation (governance only)
 ```solidity
 registry.setFeeToken(address(stToken));
 ```
 
-#### Step 12: Deploy Referral Backend API
+#### Step 11: Deploy Referral Backend API
 
 Run the referral backend service (`services/referral-service`) for code lifecycle management:
 - create/revoke/list/resolve short codes
@@ -183,7 +184,7 @@ bun run seed
 bun run dev
 ```
 
-#### Step 13: Configure Referral Backend Environment
+#### Step 12: Configure Referral Backend Environment
 
 Required env for API:
 - `DATABASE_URL`
@@ -195,7 +196,7 @@ Required env for read-only onchain sync worker:
 - `CHAIN_ID`
 - `SYNC_MAX_BLOCK_RANGE` (provider-specific log range limit; default `2000`)
 
-#### Step 14: Run Onchain Sync Worker
+#### Step 13: Run Onchain Sync Worker
 
 The worker is read-only and ingests `DepositRecorded` events for observability:
 
@@ -206,9 +207,45 @@ bun run worker:sync
 
 It logs divergence when onchain referrers exist without active backend code mappings.
 
+### Phase 3.5: DebtPool Deployment
+
+#### Step 14: Deploy DebtPool (via deploy script 017_debtPool.ts)
+
+Required environment variables:
+- `V2_GOVERNANCE_ADDRESS` (for DebtPool GOV and admin roles)
+- StToken address (resolved from deployment)
+- WstToken address (resolved from deployment)
+- FeeController address (resolved from deployment)
+
+The deploy script:
+1. Deploys DebtPool with stToken, wstToken, governance, admin, and feeController addresses
+2. Updates FeeController.setRecipients() to include DebtPool address
+
+```solidity
+DebtPool debtPool = new DebtPool(
+    address(stToken),     // stToken for share transfers
+    address(wstToken),    // wstToken for WSTETH claims
+    address(timelock),    // GOV role (gates createDistribution)
+    address(timelock),    // admin role
+    address(feeController) // fee controller for split updates
+);
+```
+
+#### Step 15: Configure FeeController DebtPool Split
+
+After deployment, ensure FeeController has the debtPool recipient configured with appropriate split BPS:
+```solidity
+feeController.setRecipients(
+    treasuryAddress,
+    operatorAddress,
+    address(referralRegistry),
+    address(debtPool)
+);
+```
+
 ### Phase 4: ValidatorModule Hardening
 
-#### Step 15: Set Expected Withdrawal Credentials
+#### Step 16: Set Expected Withdrawal Credentials
 ```solidity
 // withdrawal_credentials = 32 bytes
 // Example: ETH1 address 0x1234... encoded as 0x010000...1234
@@ -216,7 +253,7 @@ bytes32 expectedCreds = bytes32(uint256(0x0100000000000000000000001234...));
 validatorModule.setExpectedWithdrawalCredentials(expectedCreds);
 ```
 
-#### Step 16: Lower maxDeltaBps Before Accepting TVL
+#### Step 17: Lower maxDeltaBps Before Accepting TVL
 ```solidity
 // Default is 100 (1%). Tighten further if governance policy requires.
 stakingRouter.setMaxDeltaBps(100);
@@ -224,14 +261,14 @@ stakingRouter.setMaxDeltaBps(100);
 
 ### Phase 5: Operational Parameters
 
-#### Step 17: Configure OracleAdapter
+#### Step 18: Configure OracleAdapter
 ```solidity
 oracleAdapter.setMaxStaleness(3600);      // 1 hour
 oracleAdapter.setMaxDriftBps(100);        // 1% max gain
 oracleAdapter.setMaxSlashBps(500);        // 5% max slash
 ```
 
-#### Step 18: Configure Module Caps
+#### Step 19: Configure Module Caps
 ```solidity
 stakingRouter.setMintCap(moduleId, 1000 ether);        // 1K ETH cap per module
 stakingRouter.setModuleInflowLimit(moduleId, 86400, 100 ether); // 100 ETH/day
