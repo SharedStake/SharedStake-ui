@@ -272,6 +272,68 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         return IWithdrawalQueue(withdrawalQueue).lockedEther();
     }
 
+    function _computeFeeShares(
+        uint256 treasuryAmount,
+        uint256 operatorAmount,
+        uint256 referralAmount,
+        uint256 debtPoolAmount,
+        uint256 newTotalShares,
+        uint256 newTotalPooled
+    ) private view returns (uint256, uint256, uint256, uint256) {
+        uint256 treasuryShares = ShareMath.getSharesByPooledEth(treasuryAmount, newTotalShares, newTotalPooled);
+        uint256 operatorShares = ShareMath.getSharesByPooledEth(operatorAmount, newTotalShares, newTotalPooled);
+        uint256 referralShares = ShareMath.getSharesByPooledEth(referralAmount, newTotalShares, newTotalPooled);
+        uint256 debtPoolShares = ShareMath.getSharesByPooledEth(debtPoolAmount, newTotalShares, newTotalPooled);
+        return (treasuryShares, operatorShares, referralShares, debtPoolShares);
+    }
+
+    function _adjustReferralForZeroReferredEth(
+        address referralRegistry,
+        uint256 referralShares
+    ) private view returns (uint256 adjustedTreasuryShares, uint256 adjustedReferralShares) {
+        if (referralRegistry == address(0) || referralShares == 0) {
+            return (0, 0);
+        }
+        
+        uint256 referredEth = IReferralRegistry(referralRegistry).totalReferredEth();
+        if (referredEth == 0) {
+            return (referralShares, 0);
+        }
+        
+        return (0, referralShares);
+    }
+
+    function _mintFeeShares(
+        address treasury,
+        uint256 treasuryShares,
+        address operator,
+        uint256 operatorShares,
+        address referralRegistry,
+        uint256 referralShares
+    ) private {
+        if (treasuryShares > 0) ST_TOKEN.mintShares(treasury, treasuryShares);
+        if (operatorShares > 0) ST_TOKEN.mintShares(operator, operatorShares);
+        if (referralRegistry != address(0) && referralShares > 0) {
+            ST_TOKEN.mintShares(referralRegistry, referralShares);
+            IReferralRegistry(referralRegistry).depositReferralFeeShares(referralShares);
+        }
+    }
+
+    function _distributeToDebtPool(address debtPool, uint256 debtPoolShares) private {
+        if (debtPool != address(0) && debtPoolShares > 0) {
+            ST_TOKEN.mintShares(debtPool, debtPoolShares);
+            
+            // Trigger unwrapping to wstETH by calling debt pool
+            // DebtPool.receiveStETHAndUnwrap(debtPoolShares)
+            // Note: This requires DebtPool to have FEE_CONTROLLER role
+            try IDebtPool(debtPool).receiveStETHAndUnwrap(debtPoolShares) {
+                // Success - stETH unwrapped to wstETH
+            } catch {
+                // Failure - stETH remains in debt pool, can be unwrapped later
+            }
+        }
+    }
+
     function _distributeFees(uint256 rewards, uint256 newTotalPooled) internal {
         (, , , , address treasury, address operator, address referralRegistry, address debtPool) = feeController.getFeeConfig();
 
@@ -289,43 +351,19 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
 
         // Mint fee shares at the post-rebase exchange rate so fee recipients are
         // compensated exactly for their portion of the rewards.
-        uint256 treasuryShares = ShareMath.getSharesByPooledEth(treasuryAmount, newTotalShares, newTotalPooled);
-        uint256 operatorShares = ShareMath.getSharesByPooledEth(operatorAmount, newTotalShares, newTotalPooled);
-        uint256 referralShares = ShareMath.getSharesByPooledEth(referralAmount, newTotalShares, newTotalPooled);
-        uint256 debtPoolShares = ShareMath.getSharesByPooledEth(debtPoolAmount, newTotalShares, newTotalPooled);
+        (uint256 treasuryShares, uint256 operatorShares, uint256 referralShares, uint256 debtPoolShares) = 
+            _computeFeeShares(treasuryAmount, operatorAmount, referralAmount, debtPoolAmount, newTotalShares, newTotalPooled);
 
         // Keep reward reporting live even before any referee exists.
-        if (referralRegistry != address(0) && referralShares > 0) {
-            uint256 referredEth = IReferralRegistry(referralRegistry).totalReferredEth();
-            if (referredEth == 0) {
-                treasuryShares += referralShares;
-                referralShares = 0;
-            }
-        }
+        (uint256 adjustedTreasuryShares, uint256 adjustedReferralShares) = 
+            _adjustReferralForZeroReferredEth(referralRegistry, referralShares);
+        treasuryShares += adjustedTreasuryShares;
+        referralShares = adjustedReferralShares;
 
         // Keep pool accounting strictly tied to real backing (buffer + beacon).
         // Fee recipients are paid via share dilution from existing rewards.
-
-        if (treasuryShares > 0) ST_TOKEN.mintShares(treasury, treasuryShares);
-        if (operatorShares > 0) ST_TOKEN.mintShares(operator, operatorShares);
-        if (referralRegistry != address(0) && referralShares > 0) {
-            ST_TOKEN.mintShares(referralRegistry, referralShares);
-            IReferralRegistry(referralRegistry).depositReferralFeeShares(referralShares);
-        }
-        
-        // For debt pool, mint stETH shares and trigger unwrapping
-        if (debtPool != address(0) && debtPoolShares > 0) {
-            ST_TOKEN.mintShares(debtPool, debtPoolShares);
-            
-            // Trigger unwrapping to wstETH by calling debt pool
-            // DebtPool.receiveStETHAndUnwrap(debtPoolShares)
-            // Note: This requires DebtPool to have FEE_CONTROLLER role
-            try IDebtPool(debtPool).receiveStETHAndUnwrap(debtPoolShares) {
-                // Success - stETH unwrapped to wstETH
-            } catch {
-                // Failure - stETH remains in debt pool, can be unwrapped later
-            }
-        }
+        _mintFeeShares(treasury, treasuryShares, operator, operatorShares, referralRegistry, referralShares);
+        _distributeToDebtPool(debtPool, debtPoolShares);
 
         emit FeeSharesMinted(treasury, treasuryShares, operator, operatorShares);
         emit FeeRoutingTelemetry(

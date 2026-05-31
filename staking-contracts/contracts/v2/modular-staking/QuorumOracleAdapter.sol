@@ -129,35 +129,38 @@ contract QuorumOracleAdapter is AccessControl {
         emit ReportFinalized(reportHash, beaconValidators, beaconBalance, reportTimestamp, votes);
     }
 
-    function _enforceSanityChecks(
-        uint256 beaconValidators,
-        uint256 beaconBalance,
-        uint256 reportTimestamp
-    ) internal view {
+    function _validateBeaconTuple(uint256 beaconValidators, uint256 beaconBalance) private pure {
         if (beaconValidators == 0 && beaconBalance != 0) {
             revert InvalidBeaconReportTuple(beaconValidators, beaconBalance);
         }
+    }
 
+    function _validateTimestamp(uint256 reportTimestamp) private view {
         if (reportTimestamp > block.timestamp) {
             revert FutureReportTimestamp(reportTimestamp, block.timestamp);
         }
-
         if (lastReportTimestamp != 0 && reportTimestamp <= lastReportTimestamp) {
             revert NonMonotonicReportTimestamp(reportTimestamp, lastReportTimestamp);
         }
+    }
 
+    function _validateReportInterval() private view {
         if (lastReportTime != 0 && minReportIntervalSeconds != 0) {
             uint256 earliest = lastReportTime + minReportIntervalSeconds;
             if (block.timestamp < earliest) {
                 revert ReportTooFrequent(earliest, block.timestamp);
             }
         }
+    }
 
+    function _validateStaleness(uint256 reportTimestamp) private view {
         uint256 reportAge = block.timestamp - reportTimestamp;
         if (reportAge > maxStalenessSeconds) {
             revert StaleReport(reportAge, maxStalenessSeconds);
         }
+    }
 
+    function _validateDrift(uint256 beaconValidators, uint256 beaconBalance) private view {
         if (lastBeaconValidators > 0 && beaconValidators > 0) {
             uint256 prevAvg = lastBeaconBalance / lastBeaconValidators;
             uint256 newAvg = beaconBalance / beaconValidators;
@@ -167,11 +170,26 @@ contract QuorumOracleAdapter is AccessControl {
                 if (gainBps > maxDriftBps) revert BalanceDriftTooHigh(gainBps, maxDriftBps);
             }
         }
+    }
 
+    function _validateSlashGuard(uint256 beaconBalance) private view {
         if (lastBeaconBalance > 0 && beaconBalance < lastBeaconBalance) {
             uint256 lossBps = ((lastBeaconBalance - beaconBalance) * 10000) / lastBeaconBalance;
             if (lossBps > maxSlashBps) revert SlashTooLarge(lossBps, maxSlashBps);
         }
+    }
+
+    function _enforceSanityChecks(
+        uint256 beaconValidators,
+        uint256 beaconBalance,
+        uint256 reportTimestamp
+    ) internal view {
+        _validateBeaconTuple(beaconValidators, beaconBalance);
+        _validateTimestamp(reportTimestamp);
+        _validateReportInterval();
+        _validateStaleness(reportTimestamp);
+        _validateDrift(beaconValidators, beaconBalance);
+        _validateSlashGuard(beaconBalance);
     }
 
     // ── Config (GOV only) ─────────────────────────────────────────────────────

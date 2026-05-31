@@ -70,6 +70,62 @@ contract OracleAdapter is AccessControl {
 
     // ── Report submission ─────────────────────────────────────────────────────
 
+    /// @notice Validate beacon report tuple integrity
+    function _validateBeaconTuple(uint256 beaconValidators, uint256 beaconBalance) private pure {
+        if (beaconValidators == 0 && beaconBalance != 0) {
+            revert InvalidBeaconReportTuple(beaconValidators, beaconBalance);
+        }
+    }
+
+    /// @notice Validate report timestamp is not in future and is monotonic
+    function _validateTimestamp(uint256 reportTimestamp) private view {
+        if (reportTimestamp > block.timestamp) {
+            revert FutureReportTimestamp(reportTimestamp, block.timestamp);
+        }
+        if (lastReportTimestamp != 0 && reportTimestamp <= lastReportTimestamp) {
+            revert NonMonotonicReportTimestamp(reportTimestamp, lastReportTimestamp);
+        }
+    }
+
+    /// @notice Validate minimum report interval
+    function _validateReportInterval() private view {
+        if (lastReportTime != 0 && minReportIntervalSeconds != 0) {
+            uint256 earliest = lastReportTime + minReportIntervalSeconds;
+            if (block.timestamp < earliest) {
+                revert ReportTooFrequent(earliest, block.timestamp);
+            }
+        }
+    }
+
+    /// @notice Validate report staleness
+    function _validateStaleness(uint256 reportTimestamp) private view {
+        uint256 reportAge = block.timestamp > reportTimestamp ? block.timestamp - reportTimestamp : 0;
+        if (reportAge > maxStalenessSeconds) {
+            revert StaleReport(reportAge, maxStalenessSeconds);
+        }
+    }
+
+    /// @notice Validate balance drift per validator
+    function _validateDrift(uint256 beaconValidators, uint256 beaconBalance) private view {
+        if (lastBeaconValidators > 0 && beaconValidators > 0) {
+            uint256 prevAvg = lastBeaconBalance / lastBeaconValidators;
+            uint256 newAvg = beaconBalance / beaconValidators;
+
+            if (prevAvg > 0 && newAvg > prevAvg) {
+                uint256 gainBps = ((newAvg - prevAvg) * 10000) / prevAvg;
+                if (gainBps > maxDriftBps) revert BalanceDriftTooHigh(gainBps, maxDriftBps);
+            }
+        }
+    }
+
+    /// @notice Validate slash guard
+    function _validateSlashGuard(uint256 beaconBalance) private view {
+        if (lastBeaconBalance > 0 && beaconBalance < lastBeaconBalance) {
+            uint256 lossBps = ((lastBeaconBalance - beaconBalance) * 10000) / lastBeaconBalance;
+            if (lossBps > maxSlashBps) revert SlashTooLarge(lossBps, maxSlashBps);
+        }
+    }
+
     /// @notice Submit a beacon chain report.
     ///         Reverts if any sanity check fails.
     /// @param beaconValidators  Number of active validators being reported.
@@ -80,52 +136,12 @@ contract OracleAdapter is AccessControl {
         uint256 beaconBalance,
         uint256 reportTimestamp
     ) external onlyRole(SUBMITTER) {
-        // Impossible tuple: no validators cannot hold non-zero beacon balance.
-        if (beaconValidators == 0 && beaconBalance != 0) {
-            revert InvalidBeaconReportTuple(beaconValidators, beaconBalance);
-        }
-
-        // Reject reports from the future.
-        if (reportTimestamp > block.timestamp) {
-            revert FutureReportTimestamp(reportTimestamp, block.timestamp);
-        }
-
-        // Require strictly increasing report timestamp to block replay/ratcheting
-        // on the same oracle frame.
-        if (lastReportTimestamp != 0 && reportTimestamp <= lastReportTimestamp) {
-            revert NonMonotonicReportTimestamp(reportTimestamp, lastReportTimestamp);
-        }
-
-        // Optional cadence guard to prevent rapid repeated reports.
-        if (lastReportTime != 0 && minReportIntervalSeconds != 0) {
-            uint256 earliest = lastReportTime + minReportIntervalSeconds;
-            if (block.timestamp < earliest) {
-                revert ReportTooFrequent(earliest, block.timestamp);
-            }
-        }
-
-        // 1. Staleness check.
-        uint256 reportAge = block.timestamp > reportTimestamp ? block.timestamp - reportTimestamp : 0;
-        if (reportAge > maxStalenessSeconds) {
-            revert StaleReport(reportAge, maxStalenessSeconds);
-        }
-
-        // 2. Drift check: per-validator balance change must be within bounds.
-        if (lastBeaconValidators > 0 && beaconValidators > 0) {
-            uint256 prevAvg = lastBeaconBalance / lastBeaconValidators;
-            uint256 newAvg = beaconBalance / beaconValidators;
-
-            if (prevAvg > 0 && newAvg > prevAvg) {
-                uint256 gainBps = ((newAvg - prevAvg) * 10000) / prevAvg;
-                if (gainBps > maxDriftBps) revert BalanceDriftTooHigh(gainBps, maxDriftBps);
-            }
-        }
-
-        // 3. Slash guard: total balance cannot fall by more than maxSlashBps.
-        if (lastBeaconBalance > 0 && beaconBalance < lastBeaconBalance) {
-            uint256 lossBps = ((lastBeaconBalance - beaconBalance) * 10000) / lastBeaconBalance;
-            if (lossBps > maxSlashBps) revert SlashTooLarge(lossBps, maxSlashBps);
-        }
+        _validateBeaconTuple(beaconValidators, beaconBalance);
+        _validateTimestamp(reportTimestamp);
+        _validateReportInterval();
+        _validateStaleness(reportTimestamp);
+        _validateDrift(beaconValidators, beaconBalance);
+        _validateSlashGuard(beaconBalance);
 
         // All checks pass — update state and forward to report target.
         lastBeaconBalance = beaconBalance;
