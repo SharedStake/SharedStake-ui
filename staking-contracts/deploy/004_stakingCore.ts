@@ -35,20 +35,19 @@ const func: DeployFunction = async hre => {
   const feeControllerAddress = await address(FeeController__factory);
   if (feeControllerAddress) {
     console.log("  Setting FeeController on StakingCore...");
-    const ORACLE = await stakingCore.ORACLE();
-    // setFeeController requires GOV role; constructor grants GOV to `gov`.
     await stakingCore.connect(govSigner).setFeeController(feeControllerAddress);
   }
 
-  // Grant ORACLE role to OracleAdapter if it exists, otherwise to gov as placeholder
+  // Grant ORACLE role to OracleAdapter if it exists, otherwise to gov as placeholder.
+  // Use govSigner (holds DEFAULT_ADMIN_ROLE) for all role grants.
   const ORACLE = await stakingCore.ORACLE();
-  const oracleAdapterDeployment = await ship.get(OracleAdapter__factory).catch(() => null);
-  if (oracleAdapterDeployment) {
+  const oracleAdapterAddress = await address(OracleAdapter__factory);
+  if (oracleAdapterAddress) {
     console.log("  Granting ORACLE role to OracleAdapter on StakingCore...");
-    await stakingCore.connect(accounts.deployer).grantRole(ORACLE, oracleAdapterDeployment.address);
+    await stakingCore.connect(govSigner).grantRole(ORACLE, oracleAdapterAddress);
   } else {
     console.log("  Granting ORACLE role to gov (placeholder) on StakingCore...");
-    await stakingCore.connect(accounts.deployer).grantRole(ORACLE, gov);
+    await stakingCore.connect(govSigner).grantRole(ORACLE, gov);
   }
 
   const referralCodeRegistryDeployment = await hre.deployments.getOrNull("ReferralCodeRegistry");

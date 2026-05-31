@@ -236,7 +236,7 @@ describe("DebtPool Merkle Tree Integration", () => {
       expect(distribution.claimedAmount).to.equal(TOTAL_AMOUNT);
 
       // Verify contract total claimed
-      expect(await debtPool.totalClaimed()).to.equal(totalClaimed);
+      expect(await debtPool.totalWSTETHClaimed()).to.equal(totalClaimed);
     });
 
     it("claim before distribution finalization should revert", async () => {

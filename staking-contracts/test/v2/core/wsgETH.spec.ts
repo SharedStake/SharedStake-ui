@@ -94,7 +94,8 @@ describe("WsgETH.sol", () => {
   it("depositWithSignature", async () => {
     await sgEth.transfer(alice.address, parseEther("1"));
     const nonce = await sgEth.nonces(alice.address);
-    const deadline = Math.floor(Date.now() / 1000) + 1000000;
+    const latestBlock = await ethers.provider.getBlock("latest");
+    const deadline = (latestBlock?.timestamp ?? Math.floor(Date.now() / 1000)) + 1000000;
     const approveData = {
       owner: alice.address,
       spender: wsgEth.target,
