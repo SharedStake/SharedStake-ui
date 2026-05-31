@@ -158,7 +158,12 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     event ModuleBeaconReported(bytes32 indexed moduleId, uint256 newBeaconBalance, int256 delta);
     event BeaconDepositNotified(bytes32 indexed moduleId, uint256 amount);
     event FeeControllerSet(address indexed feeController);
-    event FeeSharesMinted(address indexed treasury, uint256 treasuryShares, address indexed operator, uint256 operatorShares);
+    event FeeSharesMinted(
+        address indexed treasury,
+        uint256 treasuryShares,
+        address indexed operator,
+        uint256 operatorShares
+    );
     event FeeRoutingTelemetry(
         bytes32 indexed moduleId,
         uint256 rewards,
@@ -219,38 +224,28 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     // ── External: deposit entry points ────────────────────────────────────────
 
     /// @notice Deposit ETH and receive stToken shares from the default module.
-    function submit(address referral)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submit(
+        address referral
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         if (defaultModuleId == bytes32(0)) revert DefaultModuleNotSet();
         sharesAmount = _deposit(defaultModuleId, msg.sender, msg.value, referral, false, bytes32(0));
     }
 
     /// @notice Deposit ETH into a specific module by id.
-    function submitToModule(bytes32 moduleId, address referral)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitToModule(
+        bytes32 moduleId,
+        address referral
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         sharesAmount = _deposit(moduleId, msg.sender, msg.value, referral, false, bytes32(0));
     }
 
     /// @notice Deposit ETH and include source attribution metadata for indexers.
-    function submitWithSource(address referral, bytes32 sourceId)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitWithSource(
+        address referral,
+        bytes32 sourceId
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         if (defaultModuleId == bytes32(0)) revert DefaultModuleNotSet();
         sharesAmount = _deposit(defaultModuleId, msg.sender, msg.value, referral, true, sourceId);
@@ -258,13 +253,9 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     /// @notice Deposit ETH and resolve referral from a short-code hash.
     /// @dev Falls back to no referral when the resolver is unset or code is missing.
-    function submitWithReferralCode(bytes32 referralCode)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitWithReferralCode(
+        bytes32 referralCode
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         if (defaultModuleId == bytes32(0)) revert DefaultModuleNotSet();
         address referral = _resolveReferralCode(referralCode);
@@ -273,13 +264,10 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     /// @notice Deposit ETH into a specific module and resolve referral from a short-code hash.
     /// @dev Falls back to no referral when the resolver is unset or code is missing.
-    function submitToModuleWithReferralCode(bytes32 moduleId, bytes32 referralCode)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitToModuleWithReferralCode(
+        bytes32 moduleId,
+        bytes32 referralCode
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         address referral = _resolveReferralCode(referralCode);
         sharesAmount = _deposit(moduleId, msg.sender, msg.value, referral, false, bytes32(0));
@@ -287,13 +275,10 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     /// @notice Deposit ETH with source attribution and referral short-code hash.
     /// @dev Falls back to no referral when the resolver is unset or code is missing.
-    function submitWithSourceAndReferralCode(bytes32 referralCode, bytes32 sourceId)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitWithSourceAndReferralCode(
+        bytes32 referralCode,
+        bytes32 sourceId
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         if (defaultModuleId == bytes32(0)) revert DefaultModuleNotSet();
         address referral = _resolveReferralCode(referralCode);
@@ -302,26 +287,22 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     /// @notice Deposit ETH into a specific module with source attribution and a referral short-code hash.
     /// @dev Falls back to no referral when the resolver is unset or code is missing.
-    function submitToModuleWithSourceAndReferralCode(bytes32 moduleId, bytes32 referralCode, bytes32 sourceId)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitToModuleWithSourceAndReferralCode(
+        bytes32 moduleId,
+        bytes32 referralCode,
+        bytes32 sourceId
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         address referral = _resolveReferralCode(referralCode);
         sharesAmount = _deposit(moduleId, msg.sender, msg.value, referral, true, sourceId);
     }
 
     /// @notice Deposit ETH into a specific module and include source attribution metadata for indexers.
-    function submitToModuleWithSource(bytes32 moduleId, address referral, bytes32 sourceId)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitToModuleWithSource(
+        bytes32 moduleId,
+        address referral,
+        bytes32 sourceId
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (msg.value == 0) revert Errors.InvalidAmount();
         sharesAmount = _deposit(moduleId, msg.sender, msg.value, referral, true, sourceId);
     }
@@ -335,10 +316,14 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     // ── Internal: deposit pipeline ────────────────────────────────────────────
 
-    function _deposit(bytes32 moduleId, address user, uint256 amount, address referral, bool emitAttribution, bytes32 sourceId)
-        internal
-        returns (uint256 sharesAmount)
-    {
+    function _deposit(
+        bytes32 moduleId,
+        address user,
+        uint256 amount,
+        address referral,
+        bool emitAttribution,
+        bytes32 sourceId
+    ) internal returns (uint256 sharesAmount) {
         ModuleInfo storage m = _modules[moduleId];
         if (m.addr == address(0)) revert ModuleNotRegistered(moduleId);
         if (!m.active) revert ModuleInactive(moduleId);
@@ -379,11 +364,7 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     // ── Module-callback path: beacon-balance reports ─────────────────────────
 
     /// @inheritdoc IStakingRouter
-    function reportModuleBeaconBalance(bytes32 moduleId, uint256 newBeaconBalance)
-        external
-        override
-        nonReentrant
-    {
+    function reportModuleBeaconBalance(bytes32 moduleId, uint256 newBeaconBalance) external override nonReentrant {
         ModuleInfo storage m = _requireModuleCaller(moduleId);
         _requireValidatorModuleType(moduleId, m.moduleType, this.reportModuleBeaconBalance.selector);
         if (m.paused) revert ModulePaused(moduleId);
@@ -404,12 +385,11 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     }
 
     /// @inheritdoc IStakingRouter
-    function wrapFromModule(bytes32 moduleId, address recipient, uint256 ethEquiv)
-        external
-        override
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-    {
+    function wrapFromModule(
+        bytes32 moduleId,
+        address recipient,
+        uint256 ethEquiv
+    ) external override nonReentrant whenNotPaused(PAUSE_SUBMIT) {
         ModuleInfo storage m = _requireModuleCaller(moduleId);
         _requireLSTWrapModuleType(moduleId, m.moduleType, this.wrapFromModule.selector);
         if (!m.active) revert ModuleInactive(moduleId);
@@ -440,12 +420,11 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     }
 
     /// @inheritdoc IStakingRouter
-    function unwrapToModule(bytes32 moduleId, address caller, uint256 stTokenAmount)
-        external
-        override
-        nonReentrant
-        returns (uint256 ethValue)
-    {
+    function unwrapToModule(
+        bytes32 moduleId,
+        address caller,
+        uint256 stTokenAmount
+    ) external override nonReentrant returns (uint256 ethValue) {
         ModuleInfo storage m = _requireModuleCaller(moduleId);
         _requireLSTWrapModuleType(moduleId, m.moduleType, this.unwrapToModule.selector);
         if (caller == address(0)) revert Errors.ZeroAddress();
@@ -470,10 +449,74 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     // ── Fee distribution (mirrors StakingCore behaviour for parity) ──────────
 
-    function _distributeFees(bytes32 moduleId, uint256 rewards, uint256 newTotalPooled) internal {
-        (, , , , address treasury, address operator, address referralRegistry, address debtPool) = feeController.getFeeConfig();
+    function _computeFeeShares(
+        uint256 treasuryAmount,
+        uint256 operatorAmount,
+        uint256 referralAmount,
+        uint256 debtPoolAmount,
+        uint256 newTotalShares,
+        uint256 newTotalPooled
+    ) private view returns (uint256, uint256, uint256, uint256) {
+        uint256 treasuryShares = ShareMath.getSharesByPooledEth(treasuryAmount, newTotalShares, newTotalPooled);
+        uint256 operatorShares = ShareMath.getSharesByPooledEth(operatorAmount, newTotalShares, newTotalPooled);
+        uint256 referralShares = ShareMath.getSharesByPooledEth(referralAmount, newTotalShares, newTotalPooled);
+        uint256 debtPoolShares = ShareMath.getSharesByPooledEth(debtPoolAmount, newTotalShares, newTotalPooled);
+        return (treasuryShares, operatorShares, referralShares, debtPoolShares);
+    }
 
-        (uint256 treasuryAmount, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount) = feeController.computeFees(rewards);
+    function _adjustReferralForZeroReferredEth(
+        address referralRegistry,
+        uint256 referralShares
+    ) private view returns (uint256 adjustedTreasuryShares, uint256 adjustedReferralShares) {
+        if (referralRegistry == address(0) || referralShares == 0) {
+            return (0, 0);
+        }
+
+        uint256 referredEth = IReferralRegistry(referralRegistry).totalReferredEth();
+        if (referredEth == 0) {
+            return (referralShares, 0);
+        }
+
+        return (0, referralShares);
+    }
+
+    function _mintFeeShares(
+        address treasury,
+        uint256 treasuryShares,
+        address operator,
+        uint256 operatorShares,
+        address referralRegistry,
+        uint256 referralShares
+    ) private {
+        if (treasuryShares > 0) ST_TOKEN.mintShares(treasury, treasuryShares);
+        if (operatorShares > 0) ST_TOKEN.mintShares(operator, operatorShares);
+        if (referralRegistry != address(0) && referralShares > 0) {
+            ST_TOKEN.mintShares(referralRegistry, referralShares);
+            IReferralRegistry(referralRegistry).depositReferralFeeShares(referralShares);
+        }
+    }
+
+    function _distributeToDebtPool(address debtPool, uint256 debtPoolShares) private {
+        if (debtPool != address(0) && debtPoolShares > 0) {
+            ST_TOKEN.mintShares(debtPool, debtPoolShares);
+
+            // Trigger unwrapping to wstETH by calling debt pool
+            // DebtPool.receiveStETHAndUnwrap(debtPoolShares)
+            // Note: This requires DebtPool to have FEE_CONTROLLER role
+            try IDebtPool(debtPool).receiveStETHAndUnwrap(debtPoolShares) {
+                // Success: stETH unwrapped to wstETH, no action needed
+            } catch {
+                // Failure: stETH remains in debt pool, can be unwrapped later
+            }
+        }
+    }
+
+    function _distributeFees(bytes32 moduleId, uint256 rewards, uint256 newTotalPooled) internal {
+        (, , , , address treasury, address operator, address referralRegistry, address debtPool) = feeController
+            .getFeeConfig();
+
+        (uint256 treasuryAmount, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount) = feeController
+            .computeFees(rewards);
         if (referralRegistry == address(0)) {
             referralAmount = 0;
         }
@@ -489,43 +532,33 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         // Fee recipients are paid via share dilution from existing rewards.
 
         // Mint fee shares at post-rebase rate so recipients capture exactly their cut.
-        uint256 treasuryShares = ShareMath.getSharesByPooledEth(treasuryAmount, newTotalShares, newTotalPooled);
-        uint256 operatorShares = ShareMath.getSharesByPooledEth(operatorAmount, newTotalShares, newTotalPooled);
-        uint256 referralShares = ShareMath.getSharesByPooledEth(referralAmount, newTotalShares, newTotalPooled);
-        uint256 debtPoolShares = ShareMath.getSharesByPooledEth(debtPoolAmount, newTotalShares, newTotalPooled);
+        (
+            uint256 treasuryShares,
+            uint256 operatorShares,
+            uint256 referralShares,
+            uint256 debtPoolShares
+        ) = _computeFeeShares(
+                treasuryAmount,
+                operatorAmount,
+                referralAmount,
+                debtPoolAmount,
+                newTotalShares,
+                newTotalPooled
+            );
 
         // If no referred volume exists yet, route referral-share allocation to treasury
         // instead of reverting the whole beacon report path.
-        if (referralRegistry != address(0) && referralShares > 0) {
-            uint256 referredEth = IReferralRegistry(referralRegistry).totalReferredEth();
-            if (referredEth == 0) {
-                treasuryShares += referralShares;
-                referralShares = 0;
-            }
-        }
+        (uint256 adjustedTreasuryShares, uint256 adjustedReferralShares) = _adjustReferralForZeroReferredEth(
+            referralRegistry,
+            referralShares
+        );
+        treasuryShares += adjustedTreasuryShares;
+        referralShares = adjustedReferralShares;
 
-        if (treasuryShares > 0) ST_TOKEN.mintShares(treasury, treasuryShares);
-        if (operatorShares > 0) ST_TOKEN.mintShares(operator, operatorShares);
-        if (referralRegistry != address(0) && referralShares > 0) {
-            ST_TOKEN.mintShares(referralRegistry, referralShares);
-            IReferralRegistry(referralRegistry).depositReferralFeeShares(referralShares);
-        }
-        
-        // For debt pool, mint stETH shares and trigger unwrapping
-        // This requires the debt pool to have a receiveWstETH function
-        if (debtPool != address(0) && debtPoolShares > 0) {
-            // Mint stETH shares to debt pool first
-            ST_TOKEN.mintShares(debtPool, debtPoolShares);
-            
-            // Trigger unwrapping to wstETH by calling debt pool
-            // DebtPool.receiveStETHAndUnwrap(debtPoolShares)
-            // Note: This requires DebtPool to have FEE_CONTROLLER role
-            try IDebtPool(debtPool).receiveStETHAndUnwrap(debtPoolShares) {
-                // Success - stETH unwrapped to wstETH
-            } catch {
-                // Failure - stETH remains in debt pool, can be unwrapped later
-            }
-        }
+        // Keep pool accounting strictly tied to real backing (buffer + beacon).
+        // Fee recipients are paid via share dilution from existing rewards.
+        _mintFeeShares(treasury, treasuryShares, operator, operatorShares, referralRegistry, referralShares);
+        _distributeToDebtPool(debtPool, debtPoolShares);
 
         emit FeeSharesMinted(treasury, treasuryShares, operator, operatorShares);
         FeeRoutingData memory routing = FeeRoutingData({
@@ -659,10 +692,12 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         return newPooled;
     }
 
-    function _applyBeaconDelta(bytes32 moduleId, uint256 prior, uint256 newBeaconBalance, uint256 currentPooled)
-        internal
-        returns (int256 delta)
-    {
+    function _applyBeaconDelta(
+        bytes32 moduleId,
+        uint256 prior,
+        uint256 newBeaconBalance,
+        uint256 currentPooled
+    ) internal returns (int256 delta) {
         if (newBeaconBalance >= prior) {
             uint256 gain = newBeaconBalance - prior;
             if (gain == 0) return 0;
@@ -687,10 +722,12 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         return -int256(loss);
     }
 
-    function _enforceBeaconGainSanity(bytes32 moduleId, uint256 prior, uint256 gain, uint256 newBeaconBalance)
-        internal
-        view
-    {
+    function _enforceBeaconGainSanity(
+        bytes32 moduleId,
+        uint256 prior,
+        uint256 gain,
+        uint256 newBeaconBalance
+    ) internal view {
         // Require module baseline initialization via notifyBeaconDeposit before
         // any positive report to prevent counting principal as rewards.
         if (prior == 0) revert BeaconBaselineNotInitialized(moduleId, newBeaconBalance);
@@ -730,19 +767,24 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     // ── GOV: module registry ──────────────────────────────────────────────────
 
-    function registerModule(bytes32 moduleId, address moduleAddr, uint256 mintCapEth)
-        external
-        onlyRole(GOV)
-    {
+    function _validateModuleId(bytes32 moduleId) private pure {
         if (moduleId == bytes32(0)) revert Errors.InvalidAmount();
+    }
+
+    function _validateModuleAddress(address moduleAddr) private view {
         if (moduleAddr == address(0)) revert Errors.ZeroAddress();
-        if (_modules[moduleId].addr != address(0)) revert ModuleAlreadyRegistered(moduleId);
         if (moduleAddr.code.length == 0) revert ModuleAddressNotContract(moduleAddr);
+    }
+
+    function _validateModuleNotRegistered(bytes32 moduleId, address moduleAddr) private view {
+        if (_modules[moduleId].addr != address(0)) revert ModuleAlreadyRegistered(moduleId);
         bytes32 existingModuleId = _moduleIdByAddress[moduleAddr];
         if (existingModuleId != bytes32(0)) {
             revert ModuleAddressAlreadyRegistered(moduleAddr, existingModuleId);
         }
+    }
 
+    function _validateModuleWiring(bytes32 moduleId, address moduleAddr) private view {
         address wiredRouter = address(IStakingModule(moduleAddr).ROUTER());
         if (wiredRouter != address(this)) {
             revert ModuleRouterMismatch(moduleId, moduleAddr, address(this), wiredRouter);
@@ -751,14 +793,26 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         if (moduleReportedId != moduleId) {
             revert ModuleIdMismatch(moduleId, moduleReportedId);
         }
+    }
 
-        bytes32 mType = IStakingModule(moduleAddr).moduleType();
+    function _validateModuleCodeHash(address moduleAddr, bytes32 mType) private view {
         if (enforceModuleCodeHashAllowlist) {
             bytes32 codeHash = moduleAddr.codehash;
             if (!moduleCodeHashAllowed[mType][codeHash]) {
-                revert ModuleCodeHashNotAllowed(moduleId, moduleAddr, mType, codeHash);
+                revert ModuleCodeHashNotAllowed(bytes32(0), moduleAddr, mType, codeHash);
             }
         }
+    }
+
+    function registerModule(bytes32 moduleId, address moduleAddr, uint256 mintCapEth) external onlyRole(GOV) {
+        _validateModuleId(moduleId);
+        _validateModuleAddress(moduleAddr);
+        _validateModuleNotRegistered(moduleId, moduleAddr);
+        _validateModuleWiring(moduleId, moduleAddr);
+
+        bytes32 mType = IStakingModule(moduleAddr).moduleType();
+        _validateModuleCodeHash(moduleAddr, mType);
+
         _modules[moduleId] = ModuleInfo({
             addr: moduleAddr,
             moduleType: mType,
@@ -778,10 +832,11 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     /// @notice Configure optional per-module inflow limiter.
     /// @dev Disabled whenever `windowSeconds == 0` or `maxInflowEthPerWindow == 0`.
-    function setModuleInflowLimit(bytes32 moduleId, uint256 windowSeconds, uint256 maxInflowEthPerWindow)
-        external
-        onlyRole(GOV)
-    {
+    function setModuleInflowLimit(
+        bytes32 moduleId,
+        uint256 windowSeconds,
+        uint256 maxInflowEthPerWindow
+    ) external onlyRole(GOV) {
         _requireModuleRegistered(moduleId);
         moduleInflowLimitConfig[moduleId] = InflowLimitConfig({
             windowSeconds: windowSeconds,
@@ -793,10 +848,7 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     /// @notice Configure optional global inflow limiter across all module routes.
     /// @dev Disabled whenever `windowSeconds == 0` or `maxInflowEthPerWindow == 0`.
-    function setGlobalInflowLimit(uint256 windowSeconds, uint256 maxInflowEthPerWindow)
-        external
-        onlyRole(GOV)
-    {
+    function setGlobalInflowLimit(uint256 windowSeconds, uint256 maxInflowEthPerWindow) external onlyRole(GOV) {
         globalInflowLimitConfig = InflowLimitConfig({
             windowSeconds: windowSeconds,
             maxInflowEthPerWindow: maxInflowEthPerWindow
@@ -918,12 +970,9 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     // ── Views ────────────────────────────────────────────────────────────────
 
     /// @inheritdoc IStakingRouter
-    function modules(bytes32 moduleId)
-        external
-        view
-        override
-        returns (address addr, bytes32 moduleType, uint256 mintCapEth, bool active, bool paused)
-    {
+    function modules(
+        bytes32 moduleId
+    ) external view override returns (address addr, bytes32 moduleType, uint256 mintCapEth, bool active, bool paused) {
         ModuleInfo storage m = _modules[moduleId];
         return (m.addr, m.moduleType, m.mintCapEth, m.active, m.paused);
     }

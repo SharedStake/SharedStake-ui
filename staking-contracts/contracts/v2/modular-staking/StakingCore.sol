@@ -54,11 +54,11 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     // ── State ─────────────────────────────────────────────────────────────────
     FeeController public feeController;
     IReferralCodeRegistry public referralCodeRegistry;
-    address public withdrawalQueue;  // WithdrawalQueueV2 address (zero if none)
-    bool public routerMode;          // If true, StakingCore is disabled (StakingRouter active)
+    address public withdrawalQueue; // WithdrawalQueueV2 address (zero if none)
+    bool public routerMode; // If true, StakingCore is disabled (StakingRouter active)
 
-    uint256 private _bufferedEther;   // ETH held in this contract (pending validator assignment)
-    uint256 private _beaconBalance;   // last reported sum of all validator balances
+    uint256 private _bufferedEther; // ETH held in this contract (pending validator assignment)
+    uint256 private _beaconBalance; // last reported sum of all validator balances
     uint256 private _beaconValidators; // last reported validator count
 
     // ── Events ────────────────────────────────────────────────────────────────
@@ -71,7 +71,12 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         uint256 sharesAmount
     );
     event BeaconReported(uint256 beaconValidators, uint256 beaconBalance, uint256 totalPooledEther);
-    event FeeSharesMinted(address indexed treasury, uint256 treasuryShares, address indexed operator, uint256 operatorShares);
+    event FeeSharesMinted(
+        address indexed treasury,
+        uint256 treasuryShares,
+        address indexed operator,
+        uint256 operatorShares
+    );
     event FeeRoutingTelemetry(
         uint256 rewardsAmount,
         uint256 totalFeeAmount,
@@ -114,13 +119,9 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     /// @notice Deposit ETH and receive stToken shares.
     /// @param referral Optional referral address for front-end attribution.
     /// @return sharesAmount Shares minted to msg.sender.
-    function submit(address referral)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submit(
+        address referral
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (routerMode) revert RouterModeDisabled();
         if (msg.value == 0) revert Errors.InvalidAmount();
         sharesAmount = _submit(msg.sender, msg.value, referral);
@@ -130,13 +131,10 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     /// @param referral Optional referral address for front-end attribution.
     /// @param sourceId Optional source identifier for indexer and analytics attribution.
     /// @return sharesAmount Shares minted to msg.sender.
-    function submitWithAttribution(address referral, bytes32 sourceId)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitWithAttribution(
+        address referral,
+        bytes32 sourceId
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (routerMode) revert RouterModeDisabled();
         if (msg.value == 0) revert Errors.InvalidAmount();
         sharesAmount = _submit(msg.sender, msg.value, referral);
@@ -145,13 +143,9 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
 
     /// @notice Deposit ETH and resolve referral from a short-code hash.
     /// @dev Falls back to no referral when the resolver is unset or code is missing.
-    function submitWithReferralCode(bytes32 referralCode)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitWithReferralCode(
+        bytes32 referralCode
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (routerMode) revert RouterModeDisabled();
         if (msg.value == 0) revert Errors.InvalidAmount();
         address referral = _resolveReferralCode(referralCode);
@@ -160,13 +154,10 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
 
     /// @notice Deposit ETH with source attribution and referral short-code hash.
     /// @dev Falls back to no referral when the resolver is unset or code is missing.
-    function submitWithCodeAttribution(bytes32 referralCode, bytes32 sourceId)
-        external
-        payable
-        nonReentrant
-        whenNotPaused(PAUSE_SUBMIT)
-        returns (uint256 sharesAmount)
-    {
+    function submitWithCodeAttribution(
+        bytes32 referralCode,
+        bytes32 sourceId
+    ) external payable nonReentrant whenNotPaused(PAUSE_SUBMIT) returns (uint256 sharesAmount) {
         if (routerMode) revert RouterModeDisabled();
         if (msg.value == 0) revert Errors.InvalidAmount();
         address referral = _resolveReferralCode(referralCode);
@@ -203,11 +194,10 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     ///         Updates totalPooledEther and distributes fee shares on positive rewards.
     /// @param newBeaconValidators Number of validators being reported.
     /// @param newBeaconBalance    Sum of all validator balances (in wei).
-    function reportBeacon(uint256 newBeaconValidators, uint256 newBeaconBalance)
-        external
-        nonReentrant
-        onlyRole(ORACLE)
-    {
+    function reportBeacon(
+        uint256 newBeaconValidators,
+        uint256 newBeaconBalance
+    ) external nonReentrant onlyRole(ORACLE) {
         if (routerMode) revert RouterModeDisabled();
         if (newBeaconValidators == 0 && newBeaconBalance != 0) {
             revert InvalidBeaconReportTuple(newBeaconValidators, newBeaconBalance);
@@ -215,7 +205,7 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
 
         // Sanity: beacon balance cannot be more than 1.5× the maximum honest value.
         if (newBeaconValidators > 0) {
-            uint256 maxPlausible = newBeaconValidators * 32 ether * 3 / 2;
+            uint256 maxPlausible = (newBeaconValidators * 32 ether * 3) / 2;
             if (newBeaconBalance > maxPlausible) {
                 revert BeaconBalanceSanityFailed(newBeaconBalance, maxPlausible);
             }
@@ -294,12 +284,12 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         if (referralRegistry == address(0) || referralShares == 0) {
             return (0, 0);
         }
-        
+
         uint256 referredEth = IReferralRegistry(referralRegistry).totalReferredEth();
         if (referredEth == 0) {
             return (referralShares, 0);
         }
-        
+
         return (0, referralShares);
     }
 
@@ -322,22 +312,24 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     function _distributeToDebtPool(address debtPool, uint256 debtPoolShares) private {
         if (debtPool != address(0) && debtPoolShares > 0) {
             ST_TOKEN.mintShares(debtPool, debtPoolShares);
-            
+
             // Trigger unwrapping to wstETH by calling debt pool
             // DebtPool.receiveStETHAndUnwrap(debtPoolShares)
             // Note: This requires DebtPool to have FEE_CONTROLLER role
             try IDebtPool(debtPool).receiveStETHAndUnwrap(debtPoolShares) {
-                // Success - stETH unwrapped to wstETH
+                // Success: stETH unwrapped to wstETH, no action needed
             } catch {
-                // Failure - stETH remains in debt pool, can be unwrapped later
+                // Failure: stETH remains in debt pool, can be unwrapped later
             }
         }
     }
 
     function _distributeFees(uint256 rewards, uint256 newTotalPooled) internal {
-        (, , , , address treasury, address operator, address referralRegistry, address debtPool) = feeController.getFeeConfig();
+        (, , , , address treasury, address operator, address referralRegistry, address debtPool) = feeController
+            .getFeeConfig();
 
-        (uint256 treasuryAmount, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount) = feeController.computeFees(rewards);
+        (uint256 treasuryAmount, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount) = feeController
+            .computeFees(rewards);
         if (referralRegistry == address(0)) {
             referralAmount = 0;
         }
@@ -351,12 +343,25 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
 
         // Mint fee shares at the post-rebase exchange rate so fee recipients are
         // compensated exactly for their portion of the rewards.
-        (uint256 treasuryShares, uint256 operatorShares, uint256 referralShares, uint256 debtPoolShares) = 
-            _computeFeeShares(treasuryAmount, operatorAmount, referralAmount, debtPoolAmount, newTotalShares, newTotalPooled);
+        (
+            uint256 treasuryShares,
+            uint256 operatorShares,
+            uint256 referralShares,
+            uint256 debtPoolShares
+        ) = _computeFeeShares(
+                treasuryAmount,
+                operatorAmount,
+                referralAmount,
+                debtPoolAmount,
+                newTotalShares,
+                newTotalPooled
+            );
 
         // Keep reward reporting live even before any referee exists.
-        (uint256 adjustedTreasuryShares, uint256 adjustedReferralShares) = 
-            _adjustReferralForZeroReferredEth(referralRegistry, referralShares);
+        (uint256 adjustedTreasuryShares, uint256 adjustedReferralShares) = _adjustReferralForZeroReferredEth(
+            referralRegistry,
+            referralShares
+        );
         treasuryShares += adjustedTreasuryShares;
         referralShares = adjustedReferralShares;
 
