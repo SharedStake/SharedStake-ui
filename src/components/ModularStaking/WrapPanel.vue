@@ -85,6 +85,7 @@
     >
       <span v-if="store.loading">{{ mode === 0 ? 'Wrapping...' : 'Unwrapping...' }}</span>
       <span v-else-if="!walletStore.isAuth">Connect Wallet</span>
+      <span v-else-if="!store.contractsDeployed">Not Deployed</span>
       <span v-else-if="!inputAmount || parseFloat(inputAmount) <= 0">Enter Amount</span>
       <span v-else>{{ mode === 0 ? 'Wrap stETH' : 'Unwrap wstETH' }}</span>
     </button>

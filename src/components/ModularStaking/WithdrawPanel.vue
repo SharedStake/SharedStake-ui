@@ -93,6 +93,7 @@
       >
         <span v-if="store.loading">Requesting...</span>
         <span v-else-if="!walletStore.isAuth">Connect Wallet</span>
+        <span v-else-if="!store.contractsDeployed">Not Deployed</span>
         <span v-else-if="!withdrawAmount || parseFloat(withdrawAmount) < 0.01">Min 0.01 stETH</span>
         <span v-else>Request Withdrawal</span>
       </button>
@@ -103,6 +104,13 @@
       v-if="activeTab === 1"
       class="flex flex-col gap-3"
     >
+      <div
+        v-if="store.error"
+        class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
+      >
+        {{ store.error }}
+      </div>
+
       <div
         v-if="store.userRequests.length === 0"
         class="rounded-lg bg-muted p-4 text-center text-sm text-muted-foreground"

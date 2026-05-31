@@ -314,15 +314,17 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!wstToken || !stToken) throw new Error('Contracts not deployed')
 
         const amount = ethers.parseEther(stAmountStr)
+        const walletStore = useWalletStore()
 
-        // Approve wstToken to spend stToken.
-        const approveTx = await stToken.approve(addresses.wstToken, amount)
-        await approveTx.wait()
+        // Skip approve when existing allowance already covers the amount.
+        const allowance = await stToken.allowance(walletStore.address, addresses.wstToken)
+        if (allowance < amount) {
+          const approveTx = await stToken.approve(addresses.wstToken, amount)
+          await approveTx.wait()
+        }
 
         const wrapTx = await wstToken.wrap(amount)
         await wrapTx.wait()
-
-        const walletStore = useWalletStore()
         await this.init(this.chainId, walletStore.address)
         return wrapTx
       } catch (e) {
