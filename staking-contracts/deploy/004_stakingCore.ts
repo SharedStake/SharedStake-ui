@@ -62,4 +62,7 @@ const func: DeployFunction = async hre => {
 
 export default func;
 func.tags = ["modular-staking", "stakingCore"];
-func.dependencies = ["stToken", "feeController", "oracleAdapter"];
+// "oracleAdapter" removed — it creates a cycle (stakingCore→oracleAdapter→validatorModule→stakingRouter→stakingCore).
+// The ORACLE role on StakingCore is wired here opportunistically if oracleAdapter is already deployed,
+// and separately enforced by 009_oracleAdapter.ts for the canonical modular deploy path.
+func.dependencies = ["stToken", "feeController"];
