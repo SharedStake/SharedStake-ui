@@ -125,16 +125,6 @@ contract DebtPool is AccessControl, Pausable {
         emit MerkleRootUpdated(distributionId, _merkleRoot);
     }
 
-    /// @notice Update merkle root for an unfinalized distribution only.
-    /// @dev Only GOV can call. For emergency correction of finalized distributions, use emergencyOverrideMerkleRoot.
-    function updateMerkleRoot(uint256 _distributionId, bytes32 _newRoot) external onlyRole(GOV) {
-        if (distributions[_distributionId].finalized) revert DistributionAlreadyFinalized();
-
-        distributions[_distributionId].merkleRoot = _newRoot;
-
-        emit MerkleRootUpdated(_distributionId, _newRoot);
-    }
-
     /// @notice Emergency: override merkle root on a finalized distribution before any claims.
     /// @dev Only GOV can call. Can only be called if no claims have been made yet (claimedAmount == 0).
     ///      This is the escape hatch when createDistribution() was called with an incorrect root.
