@@ -1,6 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
-import {StTokenERC4626Wrapper__factory, StToken__factory} from "../../types";
+import Ship from "../utils/ship";
+import {StTokenERC4626Wrapper__factory, StToken__factory} from "../types";
 
 /**
  * Deploys the StTokenERC4626Wrapper — a permissionless ERC-4626 vault that wraps

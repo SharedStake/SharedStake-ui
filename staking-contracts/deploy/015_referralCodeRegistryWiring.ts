@@ -1,6 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
-import {StakingCore__factory, StakingRouter__factory} from "../../types";
+import Ship from "../utils/ship";
+import {StakingCore__factory, StakingRouter__factory} from "../types";
 
 const func: DeployFunction = async hre => {
   const {connect, accounts} = await Ship.init(hre);

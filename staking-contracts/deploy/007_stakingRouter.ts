@@ -1,6 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
-import {StakingRouter__factory, StToken__factory, FeeController__factory, StakingCore__factory} from "../../types";
+import Ship from "../utils/ship";
+import {StakingRouter__factory, StToken__factory, FeeController__factory, StakingCore__factory} from "../types";
 
 /**
  * Deploys the StakingRouter, the modular front-door for ETH staking.

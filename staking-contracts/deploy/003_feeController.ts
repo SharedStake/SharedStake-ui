@@ -1,6 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
-import {FeeController__factory} from "../../types";
+import Ship from "../utils/ship";
+import {FeeController__factory} from "../types";
 import {resolveGovernanceAddress, resolveOperatorAddress} from "../helpers/governance";
 
 const func: DeployFunction = async hre => {

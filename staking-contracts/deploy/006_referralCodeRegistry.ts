@@ -1,5 +1,5 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
+import Ship from "../utils/ship";
 import {resolveGovernanceAddress} from "../helpers/governance";
 
 const func: DeployFunction = async hre => {

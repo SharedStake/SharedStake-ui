@@ -1,6 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
-import {ReferralRegistry__factory, StakingCore__factory, StakingRouter__factory, FeeController__factory, StToken__factory} from "../../types";
+import Ship from "../utils/ship";
+import {ReferralRegistry__factory, StakingCore__factory, StakingRouter__factory, FeeController__factory, StToken__factory} from "../types";
 import {resolveGovernanceAddress} from "../helpers/governance";
 
 /**

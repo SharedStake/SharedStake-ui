@@ -1,6 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
-import {StToken__factory} from "../../types";
+import Ship from "../utils/ship";
+import {StToken__factory} from "../types";
 
 const ACCESS_CONTROL_ABI = [
   "function DEFAULT_ADMIN_ROLE() view returns (bytes32)",

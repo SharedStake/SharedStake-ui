@@ -1,11 +1,11 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
+import Ship from "../utils/ship";
 import {
   GovernanceTimelock__factory,
   SharedStakeGovernor__factory,
   VoteEscrowV2__factory,
   MockERC20__factory,
-} from "../../types";
+} from "../types";
 import {resolveGovernanceAddress} from "../helpers/governance";
 import {isAddress, ZeroAddress} from "ethers";
 

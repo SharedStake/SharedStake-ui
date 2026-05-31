@@ -1,10 +1,10 @@
 import {DeployFunction} from "hardhat-deploy/types";
-import Ship from "../../utils/ship";
+import Ship from "../utils/ship";
 import {
   StakingRouter__factory,
   ValidatorModule__factory,
   WithdrawalQueueV2__factory,
-} from "../../types";
+} from "../types";
 import {
   allowlistModuleCodeHash,
   assertGovernanceSigner,
