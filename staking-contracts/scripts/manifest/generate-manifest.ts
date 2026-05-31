@@ -205,7 +205,9 @@ async function main(): Promise<void> {
 
   console.log(`\nManifest written: ${outFile}`);
   console.log(`  compiler:    ${manifest.compiler.version}`);
-  console.log(`  optimizer:   enabled=${manifest.compiler.settings.optimizer.enabled} runs=${manifest.compiler.settings.optimizer.runs}`);
+  console.log(
+    `  optimizer:   enabled=${manifest.compiler.settings.optimizer.enabled} runs=${manifest.compiler.settings.optimizer.runs}`,
+  );
   console.log(`  gitCommit:   ${manifest.gitCommit}`);
   console.log(`  generatedAt: ${manifest.generatedAt}`);
   console.log(`\nContracts (${manifest.contracts.length}):`);

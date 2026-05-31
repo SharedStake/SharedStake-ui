@@ -43,16 +43,16 @@ contract ReferralRegistry is AccessControl, ReentrancyGuard {
 
     // ── State ───────────────────────────────────────────────────────────────────
     struct ReferralRecord {
-        uint256 totalReferredEth;      // cumulative ETH deposited by referee
-        uint256 totalReferredShares;   // cumulative shares minted to referee
-        uint256 firstReferralTime;     // timestamp of first referral
+        uint256 totalReferredEth; // cumulative ETH deposited by referee
+        uint256 totalReferredShares; // cumulative shares minted to referee
+        uint256 firstReferralTime; // timestamp of first referral
     }
 
     struct ReferrerStats {
-        uint256 totalReferredEth;      // cumulative across all referees
-        uint256 totalReferredShares;   // cumulative across all referees
-        uint256 refereeCount;          // number of unique referees
-        int256 rewardDebt;             // MasterChef-style reward debt
+        uint256 totalReferredEth; // cumulative across all referees
+        uint256 totalReferredShares; // cumulative across all referees
+        uint256 refereeCount; // number of unique referees
+        int256 rewardDebt; // MasterChef-style reward debt
     }
 
     /// @notice referralFeeBps: percentage of protocol fees directed to referrals
@@ -212,19 +212,11 @@ contract ReferralRegistry is AccessControl, ReentrancyGuard {
 
     // ── Views ─────────────────────────────────────────────────────────────────
 
-    function getReferrerStats(address referrer)
-        external
-        view
-        returns (ReferrerStats memory)
-    {
+    function getReferrerStats(address referrer) external view returns (ReferrerStats memory) {
         return stats[referrer];
     }
 
-    function getRecord(address referrer, address referee)
-        external
-        view
-        returns (ReferralRecord memory)
-    {
+    function getRecord(address referrer, address referee) external view returns (ReferralRecord memory) {
         return records[referrer][referee];
     }
 

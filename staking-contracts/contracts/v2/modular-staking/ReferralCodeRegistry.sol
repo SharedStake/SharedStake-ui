@@ -47,27 +47,25 @@ contract ReferralCodeRegistry is AccessControl, IReferralCodeRegistry {
 
     /// @notice Registers a new referral code hash -> referrer mapping.
     /// @dev `codeHash` must be produced from pre-normalized input off-chain.
-    function registerReferralCode(bytes32 codeHash, address referrer, bytes32 metadataHash)
-        external
-        onlyRole(CODE_ADMIN)
-    {
+    function registerReferralCode(
+        bytes32 codeHash,
+        address referrer,
+        bytes32 metadataHash
+    ) external onlyRole(CODE_ADMIN) {
         _validateCodeInput(codeHash, referrer);
         if (_records[codeHash].exists) revert ReferralCodeAlreadyExists(codeHash);
 
-        _records[codeHash] = ReferralCodeRecord({
-            referrer: referrer,
-            metadataHash: metadataHash,
-            exists: true
-        });
+        _records[codeHash] = ReferralCodeRecord({referrer: referrer, metadataHash: metadataHash, exists: true});
 
         emit ReferralCodeRegistered(codeHash, referrer, metadataHash);
     }
 
     /// @notice Updates an existing referral code mapping.
-    function updateReferralCode(bytes32 codeHash, address referrer, bytes32 metadataHash)
-        external
-        onlyRole(CODE_ADMIN)
-    {
+    function updateReferralCode(
+        bytes32 codeHash,
+        address referrer,
+        bytes32 metadataHash
+    ) external onlyRole(CODE_ADMIN) {
         _validateCodeInput(codeHash, referrer);
         ReferralCodeRecord storage rec = _records[codeHash];
         if (!rec.exists) revert ReferralCodeNotFound(codeHash);
@@ -80,18 +78,15 @@ contract ReferralCodeRegistry is AccessControl, IReferralCodeRegistry {
     }
 
     /// @notice Registers or updates a referral code in a single call.
-    function upsertReferralCode(bytes32 codeHash, address referrer, bytes32 metadataHash)
-        external
-        onlyRole(CODE_ADMIN)
-    {
+    function upsertReferralCode(
+        bytes32 codeHash,
+        address referrer,
+        bytes32 metadataHash
+    ) external onlyRole(CODE_ADMIN) {
         _validateCodeInput(codeHash, referrer);
         ReferralCodeRecord storage rec = _records[codeHash];
         if (!rec.exists) {
-            _records[codeHash] = ReferralCodeRecord({
-                referrer: referrer,
-                metadataHash: metadataHash,
-                exists: true
-            });
+            _records[codeHash] = ReferralCodeRecord({referrer: referrer, metadataHash: metadataHash, exists: true});
             emit ReferralCodeRegistered(codeHash, referrer, metadataHash);
             return;
         }
@@ -120,11 +115,9 @@ contract ReferralCodeRegistry is AccessControl, IReferralCodeRegistry {
         return rec.referrer;
     }
 
-    function getReferralCode(bytes32 codeHash)
-        external
-        view
-        returns (address referrer, bytes32 metadataHash, bool exists)
-    {
+    function getReferralCode(
+        bytes32 codeHash
+    ) external view returns (address referrer, bytes32 metadataHash, bool exists) {
         ReferralCodeRecord storage rec = _records[codeHash];
         return (rec.referrer, rec.metadataHash, rec.exists);
     }

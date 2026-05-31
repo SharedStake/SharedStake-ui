@@ -42,7 +42,7 @@ const func: DeployFunction = async hre => {
   if (govSigner.address.toLowerCase() !== gov.toLowerCase()) {
     throw new Error(
       `Governance signer mismatch: signer=${govSigner.address} resolvedGov=${gov}. ` +
-      "Set governance env/config so the signer that executes transferGov is the current gov."
+        "Set governance env/config so the signer that executes transferGov is the current gov.",
     );
   }
 
@@ -85,9 +85,9 @@ const func: DeployFunction = async hre => {
   // minDelay: 1 second on local (fast tests), 7 days on mainnet for conservative safety
   // Set to 7 days for mainnet — covers both ops and high-blast-radius actions conservatively
   const timelockDelay = isLocal ? 1n : 7n * 24n * 3600n;
-  const proposers: string[] = [];  // set after Governor deployment
-  const executors: string[] = [];  // set after Governor deployment
-  const admin = accounts.deployer.address;   // renounced after wiring
+  const proposers: string[] = []; // set after Governor deployment
+  const executors: string[] = []; // set after Governor deployment
+  const admin = accounts.deployer.address; // renounced after wiring
 
   const {contract: timelock} = await deploy(GovernanceTimelock__factory, {
     from: accounts.deployer,

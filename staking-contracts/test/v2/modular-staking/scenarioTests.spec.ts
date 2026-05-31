@@ -64,10 +64,7 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
     carol: SignerWithAddress,
     dave: SignerWithAddress;
 
-  let stToken: any,
-    stakingCore: any,
-    queue: any,
-    feeController: any;
+  let stToken: any, stakingCore: any, queue: any, feeController: any;
 
   const ORACLE_ROLE = ethers.keccak256(ethers.toUtf8Bytes("ORACLE"));
   const GUARDIAN_ROLE = ethers.keccak256(ethers.toUtf8Bytes("GUARDIAN"));
@@ -79,8 +76,7 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
    * withdrawalQueueV2.spec.ts.
    */
   async function deployFresh() {
-    [deployer, gov, oracle, treasury, operator, alice, bob, carol, dave] =
-      await ethers.getSigners();
+    [deployer, gov, oracle, treasury, operator, alice, bob, carol, dave] = await ethers.getSigners();
 
     const StToken = await ethers.getContractFactory("StToken");
     stToken = await StToken.deploy();
@@ -131,10 +127,7 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
   async function assertQueueSolvent() {
     const locked = await queue.lockedEther();
     const balance = await ethers.provider.getBalance(queue.target);
-    expect(balance).to.be.gte(
-      locked,
-      `Invariant violated: queue balance (${balance}) < lockedEther (${locked})`,
-    );
+    expect(balance).to.be.gte(locked, `Invariant violated: queue balance (${balance}) < lockedEther (${locked})`);
   }
 
   /** Queue head/tail bookkeeping must remain monotone and consistent. */
@@ -152,7 +145,7 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
 
   describe("1. Mint/burn invariant fuzz", () => {
     it("preserves totalSupply == totalPooledEther across 30 randomized deposit/withdraw rounds", async () => {
-      const SEED = 0xC0FFEE;
+      const SEED = 0xc0ffee;
       const ITERATIONS = 30;
       const rand = makePrng(SEED);
       const users = [alice, bob, carol, dave];
@@ -192,7 +185,7 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
     });
 
     it("preserves accounting under randomized deposit-then-burn sequences with no rewards", async () => {
-      const SEED = 0xBADCAFE;
+      const SEED = 0xbadcafe;
       const ITERATIONS = 25;
       const rand = makePrng(SEED);
 
@@ -227,7 +220,7 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
 
   describe("2. Queue accounting invariant fuzz", () => {
     it("preserves queue head/tail monotonicity across interleaved request/finalize/claim", async () => {
-      const SEED = 0xDEADBEEF;
+      const SEED = 0xdeadbeef;
       const ITERATIONS = 25;
       const rand = makePrng(SEED);
       const users = [alice, bob, carol, dave];
@@ -355,18 +348,12 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
       await stakingCore.connect(gov).pause(PAUSE_SUBMIT);
 
       // t3a: deposits must revert while paused, including the receive() fallback.
+      await expect(stakingCore.connect(carol).submit(ZeroAddress, {value: parseEther("1")})).to.be.reverted;
+      await expect(carol.sendTransaction({to: stakingCore.target, value: parseEther("1")})).to.be.reverted;
       await expect(
-        stakingCore.connect(carol).submit(ZeroAddress, {value: parseEther("1")}),
-      ).to.be.reverted;
-      await expect(
-        carol.sendTransaction({to: stakingCore.target, value: parseEther("1")}),
-      ).to.be.reverted;
-      await expect(
-        stakingCore.connect(alice).submitWithAttribution(
-          ZeroAddress,
-          ethers.encodeBytes32String("paused-deposit"),
-          {value: parseEther("1")},
-        ),
+        stakingCore
+          .connect(alice)
+          .submitWithAttribution(ZeroAddress, ethers.encodeBytes32String("paused-deposit"), {value: parseEther("1")}),
       ).to.be.reverted;
 
       // t3b: queue surface is unaffected — gov can still finalize and users can claim.
@@ -390,9 +377,7 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
       await assertQueueSolvent();
 
       // t3c: deposits remain blocked while still paused.
-      await expect(
-        stakingCore.connect(carol).submit(ZeroAddress, {value: parseEther("1")}),
-      ).to.be.reverted;
+      await expect(stakingCore.connect(carol).submit(ZeroAddress, {value: parseEther("1")})).to.be.reverted;
 
       // t4: unpause and verify deposits resume.
       await stakingCore.connect(gov).unpause(PAUSE_SUBMIT);
@@ -739,9 +724,10 @@ describe("SharedStake V2 Mandatory Scenario Tests", () => {
       const poolBefore = await stToken.totalPooledEther();
       const aliceBefore = await stToken.balanceOf(alice.address);
 
-      await expect(
-        feeController.connect(gov).setFee(2001, 5000, 5000, 0),
-      ).to.be.revertedWithCustomError(feeController, "FeeTooHigh");
+      await expect(feeController.connect(gov).setFee(2001, 5000, 5000, 0)).to.be.revertedWithCustomError(
+        feeController,
+        "FeeTooHigh",
+      );
 
       // No state change.
       expect(await stToken.totalPooledEther()).to.equal(poolBefore);

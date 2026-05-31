@@ -1,6 +1,11 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
-import {DVTModule__factory, QuorumOracleAdapter__factory, ValidatorModule__factory, OracleAdapter__factory} from "../types";
+import {
+  DVTModule__factory,
+  QuorumOracleAdapter__factory,
+  ValidatorModule__factory,
+  OracleAdapter__factory,
+} from "../types";
 import {resolveGovernanceAddress, resolveOracleSubmitterAddresses} from "../helpers/governance";
 
 /**
@@ -24,7 +29,7 @@ const func: DeployFunction = async hre => {
   if (govSigner.address.toLowerCase() !== gov.toLowerCase()) {
     throw new Error(
       `Governance signer mismatch: signer=${govSigner.address} resolvedGov=${gov}. ` +
-      "Set governance env/config so the current GOV signer executes oracle wiring.",
+        "Set governance env/config so the current GOV signer executes oracle wiring.",
     );
   }
 
@@ -40,7 +45,7 @@ const func: DeployFunction = async hre => {
     if (!isLocal) {
       throw new Error(
         `Quorum ${configuredQuorum} exceeds configured submitters (${submitters.length}). ` +
-        "Provide enough V2_ORACLE_SUBMITTERS before non-local deployment.",
+          "Provide enough V2_ORACLE_SUBMITTERS before non-local deployment.",
       );
     }
     console.warn(
@@ -64,7 +69,7 @@ const func: DeployFunction = async hre => {
       console.log(`  Granting ORACLE role to QuorumOracleAdapter on ${moduleName}...`);
       await moduleContract.connect(govSigner).grantRole(ORACLE, adapter.target as string);
     }
-    if (gov.toLowerCase() !== (adapter.target as string).toLowerCase() && await moduleContract.hasRole(ORACLE, gov)) {
+    if (gov.toLowerCase() !== (adapter.target as string).toLowerCase() && (await moduleContract.hasRole(ORACLE, gov))) {
       console.log(`  Revoking direct ORACLE role from gov on ${moduleName}...`);
       await moduleContract.connect(govSigner).revokeRole(ORACLE, gov);
     }
@@ -118,7 +123,7 @@ const func: DeployFunction = async hre => {
   if (submitterCount < quorum) {
     throw new Error(
       `QuorumOracleAdapter is not live-safe: submitters=${submitterCount}, quorum=${quorum}. ` +
-      "Configure enough submitters before use.",
+        "Configure enough submitters before use.",
     );
   }
 };

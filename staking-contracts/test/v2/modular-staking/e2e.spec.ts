@@ -22,12 +22,7 @@ describe("SharedStake V2 E2E", () => {
     bob: SignerWithAddress,
     oracleSigner: SignerWithAddress;
 
-  let stToken: any,
-    wstToken: any,
-    feeController: any,
-    stakingCore: any,
-    withdrawalQueue: any,
-    oracleAdapter: any;
+  let stToken: any, wstToken: any, feeController: any, stakingCore: any, withdrawalQueue: any, oracleAdapter: any;
 
   const ORACLE_ROLE = ethers.keccak256(ethers.toUtf8Bytes("ORACLE"));
   const SUBMITTER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("SUBMITTER"));
@@ -44,15 +39,15 @@ describe("SharedStake V2 E2E", () => {
 
     const FeeController = await ethers.getContractFactory("FeeController");
     feeController = await FeeController.deploy(
-      gov.address,     // gov
-      gov.address,     // treasury
+      gov.address, // gov
+      gov.address, // treasury
       deployer.address, // operator
-      ZeroAddress,      // referral registry (unused in this suite)
-      ZeroAddress,      // debt pool (disabled)
-      1000,            // 10% fee
-      5000,            // 50/50 split
-      5000,            // operator split
-      0,               // debt pool split (disabled)
+      ZeroAddress, // referral registry (unused in this suite)
+      ZeroAddress, // debt pool (disabled)
+      1000, // 10% fee
+      5000, // 50/50 split
+      5000, // operator split
+      0, // debt pool split (disabled)
     );
 
     const StakingCore = await ethers.getContractFactory("StakingCore");
@@ -94,9 +89,9 @@ describe("SharedStake V2 E2E", () => {
     await stakingCore.connect(gov).notifyBeaconDeposit(parseEther("10"));
 
     await oracleAdapter.connect(oracleSigner).submitReport(
-      1,                 // 1 validator
+      1, // 1 validator
       parseEther("10.5"), // beacon balance
-      now,               // fresh timestamp
+      now, // fresh timestamp
     );
 
     // Pool = 10.5 ETH before fees (10 ETH principal + 0.5 ETH rewards).
@@ -168,8 +163,7 @@ describe("SharedStake V2 E2E", () => {
   it("Step 7: Alice requests 1 stETH withdrawal", async () => {
     const aliceSharesBefore = await stToken.sharesOf(alice.address);
 
-    const tx = await withdrawalQueue.connect(alice)
-      .requestWithdrawals([parseEther("1")], alice.address);
+    const tx = await withdrawalQueue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
 
     const aliceSharesAfter = await stToken.sharesOf(alice.address);
     expect(aliceSharesAfter).to.be.lt(aliceSharesBefore);
@@ -183,8 +177,7 @@ describe("SharedStake V2 E2E", () => {
   // ── Step 8: Guardian finalizes ──────────────────────────────────────────────
 
   it("Step 8: Gov finalizes withdrawal batch with ETH", async () => {
-    await withdrawalQueue.connect(gov)
-      .finalize(1, {value: parseEther("1")});
+    await withdrawalQueue.connect(gov).finalize(1, {value: parseEther("1")});
 
     const req = await withdrawalQueue.getRequest(1);
     expect(req.finalized).to.be.true;
@@ -230,7 +223,7 @@ describe("SharedStake V2 E2E", () => {
     const blk = await ethers.provider.getBlock("latest");
     const staleTimestamp = BigInt(blk!.timestamp) - BigInt(7 * 3600); // 7 hours old
     await expect(
-      oracleAdapter.connect(oracleSigner).submitReport(1, parseEther("10"), staleTimestamp)
+      oracleAdapter.connect(oracleSigner).submitReport(1, parseEther("10"), staleTimestamp),
     ).to.be.revertedWithCustomError(oracleAdapter, "StaleReport");
   });
 });

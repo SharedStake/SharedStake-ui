@@ -163,12 +163,11 @@ describe("WsgETH.sol", () => {
     await minter.waitForDeployment();
 
     const RewardsReceiver = await ethers.getContractFactory("RewardsReceiver");
-    const rewardsReceiver = await RewardsReceiver.deploy(withdrawals.target, [
-      sgEth.target,
-      wsgEth.target,
-      paymentSplitter.target,
-      minter.target,
-    ], multiSig.address);
+    const rewardsReceiver = await RewardsReceiver.deploy(
+      withdrawals.target,
+      [sgEth.target, wsgEth.target, paymentSplitter.target, minter.target],
+      multiSig.address,
+    );
     await rewardsReceiver.waitForDeployment();
 
     await sgEth.addMinter(minter.target);

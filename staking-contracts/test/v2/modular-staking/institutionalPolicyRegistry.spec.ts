@@ -82,4 +82,3 @@ describe("InstitutionalPolicyRegistry", () => {
     expect((await registry.getPolicy(POLICY)).manager).to.equal(userB.address);
   });
 });
-

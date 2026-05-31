@@ -4,7 +4,11 @@ import {parseEther, ZeroAddress} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
 
 describe("DVTModule", () => {
-  let deployer: SignerWithAddress, gov: SignerWithAddress, oracle: SignerWithAddress, nodeOp: SignerWithAddress, outsider: SignerWithAddress;
+  let deployer: SignerWithAddress,
+    gov: SignerWithAddress,
+    oracle: SignerWithAddress,
+    nodeOp: SignerWithAddress,
+    outsider: SignerWithAddress;
   let router: any, dvtModule: any, mockDeposit: any, stToken: any;
 
   const DVT_ID = ethers.keccak256(ethers.toUtf8Bytes("DVT_CLUSTER_1"));
@@ -53,7 +57,12 @@ describe("DVTModule", () => {
 
   it("differs from ValidatorModule type", async () => {
     const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-    const solo = await ValidatorModule.deploy(router.target, ethers.keccak256(ethers.toUtf8Bytes("SOLO_1")), gov.address, mockDeposit.target);
+    const solo = await ValidatorModule.deploy(
+      router.target,
+      ethers.keccak256(ethers.toUtf8Bytes("SOLO_1")),
+      gov.address,
+      mockDeposit.target,
+    );
     expect(await dvtModule.moduleType()).to.not.equal(await solo.moduleType());
   });
 
@@ -68,30 +77,33 @@ describe("DVTModule", () => {
     await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);
 
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
-    await dvtModule.connect(nodeOp).depositToBeaconChainInCluster(
-      CLUSTER_ID,
-      "0x" + "00".repeat(48), EXPECTED_CREDS, "0x" + "00".repeat(96), "0x" + "00".repeat(32)
-    );
+    await dvtModule
+      .connect(nodeOp)
+      .depositToBeaconChainInCluster(
+        CLUSTER_ID,
+        "0x" + "00".repeat(48),
+        EXPECTED_CREDS,
+        "0x" + "00".repeat(96),
+        "0x" + "00".repeat(32),
+      );
     await dvtModule.connect(oracle).reportBeacon(1, parseEther("32"));
     expect(await dvtModule.beaconBalance()).to.equal(parseEther("32"));
     expect(await dvtModule.beaconValidators()).to.equal(1);
   });
 
   it("rejects impossible report tuple (0 validators with non-zero balance)", async () => {
-    await expect(
-      dvtModule.connect(oracle).reportBeacon(0, parseEther("1")),
-    ).to.be.revertedWithCustomError(dvtModule, "InvalidBeaconReportTuple");
+    await expect(dvtModule.connect(oracle).reportBeacon(0, parseEther("1"))).to.be.revertedWithCustomError(
+      dvtModule,
+      "InvalidBeaconReportTuple",
+    );
   });
 
   it("depositToBeaconChain reverts with UseClusteredDeposit (DVTM-01)", async () => {
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
     await expect(
-      dvtModule.connect(nodeOp).depositToBeaconChain(
-        "0x" + "00".repeat(48),
-        EXPECTED_CREDS,
-        "0x" + "00".repeat(96),
-        "0x" + "00".repeat(32)
-      )
+      dvtModule
+        .connect(nodeOp)
+        .depositToBeaconChain("0x" + "00".repeat(48), EXPECTED_CREDS, "0x" + "00".repeat(96), "0x" + "00".repeat(32)),
     ).to.be.revertedWithCustomError(dvtModule, "UseClusteredDeposit");
   });
 
@@ -104,13 +116,15 @@ describe("DVTModule", () => {
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
 
     await expect(
-      dvtModule.connect(outsider).depositToBeaconChainInCluster(
-        CLUSTER_ID,
-        "0x" + "00".repeat(48),
-        EXPECTED_CREDS,
-        "0x" + "00".repeat(96),
-        "0x" + "00".repeat(32),
-      ),
+      dvtModule
+        .connect(outsider)
+        .depositToBeaconChainInCluster(
+          CLUSTER_ID,
+          "0x" + "00".repeat(48),
+          EXPECTED_CREDS,
+          "0x" + "00".repeat(96),
+          "0x" + "00".repeat(32),
+        ),
     ).to.be.revertedWithCustomError(dvtModule, "OperatorNotInCluster");
   });
 
@@ -126,15 +140,14 @@ describe("DVTModule", () => {
     await dvtModule.connect(gov).pause(PAUSE_RECEIVE);
     // DVTModule.pause sets its internal GranularPause state; router still calls
     // receiveDeposit which reverts with IsPaused from the module's own guard.
-    await expect(
-      router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("1")})
-    ).to.be.reverted;
+    await expect(router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("1")})).to.be.reverted;
   });
 
   it("reverts on non-router receiveDeposit", async () => {
-    await expect(
-      dvtModule.receiveDeposit({value: parseEther("1")})
-    ).to.be.revertedWithCustomError(dvtModule, "NotRouter");
+    await expect(dvtModule.receiveDeposit({value: parseEther("1")})).to.be.revertedWithCustomError(
+      dvtModule,
+      "NotRouter",
+    );
   });
 
   it("rejects zero expected withdrawal credentials", async () => {
@@ -153,13 +166,15 @@ describe("DVTModule", () => {
     await router.submitToModule(UNCONFIGURED_ID, ZeroAddress, {value: parseEther("32")});
 
     await expect(
-      unconfigured.connect(nodeOp).depositToBeaconChainInCluster(
-        UNCONFIGURED_ID,
-        "0x" + "00".repeat(48),
-        EXPECTED_CREDS,
-        "0x" + "00".repeat(96),
-        "0x" + "00".repeat(32),
-      ),
+      unconfigured
+        .connect(nodeOp)
+        .depositToBeaconChainInCluster(
+          UNCONFIGURED_ID,
+          "0x" + "00".repeat(48),
+          EXPECTED_CREDS,
+          "0x" + "00".repeat(96),
+          "0x" + "00".repeat(32),
+        ),
     ).to.be.revertedWithCustomError(unconfigured, "WithdrawalCredentialsNotConfigured");
   });
 
@@ -173,12 +188,9 @@ describe("DVTModule", () => {
     await router.submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("32")});
 
     await expect(
-      solo.connect(gov).depositToBeaconChain(
-        "0x" + "00".repeat(48),
-        EXPECTED_CREDS,
-        "0x" + "00".repeat(96),
-        "0x" + "00".repeat(32),
-      ),
+      solo
+        .connect(gov)
+        .depositToBeaconChain("0x" + "00".repeat(48), EXPECTED_CREDS, "0x" + "00".repeat(96), "0x" + "00".repeat(32)),
     ).to.be.revertedWithCustomError(solo, "BeaconDepositContractUnavailable");
   });
 });

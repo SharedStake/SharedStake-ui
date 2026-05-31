@@ -75,9 +75,7 @@ describe("AccessControl negative matrix", () => {
 
     it("rejects slash from non-GOV caller", async () => {
       const GOV_ROLE = await minter.GOV();
-      await expect(minter.connect(stranger).slash(0)).to.be.revertedWith(
-        missingRoleError(stranger.address, GOV_ROLE),
-      );
+      await expect(minter.connect(stranger).slash(0)).to.be.revertedWith(missingRoleError(stranger.address, GOV_ROLE));
     });
 
     it("rejects setFeeCalc from non-GOV caller", async () => {
@@ -211,15 +209,11 @@ describe("AccessControl negative matrix", () => {
     });
 
     it("rejects setExitFee from non-owner caller", async () => {
-      await expect(feeCalc.connect(stranger).setExitFee(1)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
+      await expect(feeCalc.connect(stranger).setExitFee(1)).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it("rejects setAdminFee from non-owner caller", async () => {
-      await expect(feeCalc.connect(stranger).setAdminFee(1)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
+      await expect(feeCalc.connect(stranger).setAdminFee(1)).to.be.revertedWith("Ownable: caller is not the owner");
     });
   });
 });

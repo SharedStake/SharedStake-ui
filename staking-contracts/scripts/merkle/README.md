@@ -11,6 +11,7 @@ leaf = keccak256(bytes.concat(keccak256(abi.encode(distributionId, leafIndex, re
 ```
 
 **Leaf structure:**
+
 - `uint256 distributionId` - The distribution identifier
 - `uint256 leafIndex` - Unique index for each claim in the distribution
 - `address recipient` - The address eligible to claim
@@ -46,6 +47,7 @@ Create a JSON file with your distribution claims:
 ```
 
 **Important notes:**
+
 - `leafIndex` must be unique per distribution (0, 1, 2, ...)
 - `amount` should be a string to preserve precision for large numbers
 - `distributionId` should match the on-chain distribution ID
@@ -59,6 +61,7 @@ node scripts/merkle/buildDebtPoolTree.js claims.json proofs.json
 ```
 
 This will:
+
 1. Read claims from `claims.json`
 2. Build a merkle tree using OpenZeppelin's StandardMerkleTree
 3. Generate proofs for each recipient
@@ -66,6 +69,7 @@ This will:
 5. Print the merkle root to stdout
 
 **Output format:**
+
 ```json
 {
   "root": "0x...",
@@ -89,6 +93,7 @@ node scripts/merkle/verifyProof.js proofs.json 0x1234567890123456789012345678901
 ```
 
 This will output:
+
 - `VALID: 0x... can claim X amount` if the proof is valid
 - `INVALID: No proof found for recipient` or `INVALID: Proof verification failed` if invalid
 
@@ -99,16 +104,16 @@ Once you've generated the merkle tree, submit the root to the DebtPool contract:
 ```javascript
 // Using createDistribution (for new distributions)
 await debtPool.createDistribution(
-    distributionId,
-    merkleRoot,  // The root from buildDebtPoolTree.js output
-    totalAmount,
-    deadline
+  distributionId,
+  merkleRoot, // The root from buildDebtPoolTree.js output
+  totalAmount,
+  deadline,
 );
 
 // Or using updateMerkleRoot (for existing distributions)
 await debtPool.updateMerkleRoot(
-    distributionId,
-    merkleRoot  // The root from buildDebtPoolTree.js output
+  distributionId,
+  merkleRoot, // The root from buildDebtPoolTree.js output
 );
 ```
 
@@ -126,11 +131,11 @@ Users can claim their allocation using the proof from the generated file:
 const proofData = proofs["0xRecipientAddress"];
 
 await debtPool.claim(
-    proofData.distributionId,
-    proofData.leafIndex,
-    proofData.recipient,
-    proofData.amount,
-    proofData.proof
+  proofData.distributionId,
+  proofData.leafIndex,
+  proofData.recipient,
+  proofData.amount,
+  proofData.proof,
 );
 ```
 
@@ -148,6 +153,7 @@ await debtPool.claim(
 Integration tests are available in `test/v2/modular-staking/debtPoolMerkle.spec.ts` to verify the end-to-end flow works correctly.
 
 Run the tests:
+
 ```bash
 npx hardhat test test/v2/modular-staking/debtPoolMerkle.spec.ts
 ```
@@ -155,12 +161,14 @@ npx hardhat test test/v2/modular-staking/debtPoolMerkle.spec.ts
 ## Troubleshooting
 
 **Common issues:**
+
 - Ensure `leafIndex` values are unique and sequential starting from 0
 - Verify `amount` values are strings to preserve precision
 - Check that recipient addresses are properly checksummed
 - Make sure the distribution ID matches between off-chain and on-chain
 
 **Error messages:**
+
 - `AlreadyClaimed`: The recipient has already claimed this distribution
 - `InvalidMerkleProof`: The proof doesn't match the submitted root
 - `InvalidAmount`: Amount is zero or invalid

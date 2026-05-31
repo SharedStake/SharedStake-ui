@@ -10,4 +10,3 @@ interface IStakingModuleLite {
 
     function markDeposited(uint64 depositsCount) external;
 }
-

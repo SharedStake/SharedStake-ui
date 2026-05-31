@@ -185,7 +185,7 @@ export async function finalizeOnce(cfg: Config) {
     const balance: bigint = await provider.getBalance(wallet.address);
     if (balance < totalEth) {
       throw new Error(
-        `[finalize] guardian balance ${ethers.formatEther(balance)} ETH < required ${ethers.formatEther(totalEth)} ETH`
+        `[finalize] guardian balance ${ethers.formatEther(balance)} ETH < required ${ethers.formatEther(totalEth)} ETH`,
       );
     }
 
@@ -196,7 +196,7 @@ export async function finalizeOnce(cfg: Config) {
 
     if (cfg.dryRun) {
       console.log(
-        `[finalize] --dry-run: would finalize(${batchEnd}) with ${ethers.formatEther(totalEth)} ETH (gasLimit=${gasLimit})`
+        `[finalize] --dry-run: would finalize(${batchEnd}) with ${ethers.formatEther(totalEth)} ETH (gasLimit=${gasLimit})`,
       );
       return;
     }
@@ -227,9 +227,7 @@ export async function verifyGuardianRole(queue: ethers.Contract, guardian: strin
   const GUARDIAN_ROLE: string = await queue.GUARDIAN();
   const has: boolean = await queue.hasRole(GUARDIAN_ROLE, guardian);
   if (!has) {
-    throw new Error(
-      `Address ${guardian} does not hold the GUARDIAN role on queue ${await queue.getAddress()}`
-    );
+    throw new Error(`Address ${guardian} does not hold the GUARDIAN role on queue ${await queue.getAddress()}`);
   }
 }
 

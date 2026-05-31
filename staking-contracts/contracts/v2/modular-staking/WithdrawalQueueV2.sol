@@ -35,9 +35,9 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
 
     struct WithdrawalRequest {
         address owner;
-        uint256 stShares;          // shares burned at request time
-        uint256 ethAmount;         // ETH owed — set during finalize
-        uint256 requestedAt;       // request creation timestamp
+        uint256 stShares; // shares burned at request time
+        uint256 ethAmount; // ETH owed — set during finalize
+        uint256 requestedAt; // request creation timestamp
         bool finalized;
         bool claimed;
     }
@@ -73,7 +73,12 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         uint256 stTokenAmount
     );
     event BatchFinalized(uint256 indexed fromRequestId, uint256 indexed toRequestId, uint256 ethProvided);
-    event WithdrawalClaimed(address indexed owner, address indexed recipient, uint256 indexed requestId, uint256 ethAmount);
+    event WithdrawalClaimed(
+        address indexed owner,
+        address indexed recipient,
+        uint256 indexed requestId,
+        uint256 ethAmount
+    );
     event WithdrawalModeUpdated(WithdrawalMode mode, uint256 reportTimestamp);
     event BunkerParamsUpdated(uint256 bunkerMaxRequestsPerFinalize, uint256 bunkerMinRequestAge);
 
@@ -107,11 +112,10 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     ///                 from msg.sender — the caller burns their own shares and assigns
     ///                 the ETH claim to owner. Useful for vault/proxy integrations.
     /// @return requestIds Assigned request IDs.
-    function requestWithdrawals(uint256[] calldata amounts, address owner)
-        external
-        nonReentrant
-        returns (uint256[] memory requestIds)
-    {
+    function requestWithdrawals(
+        uint256[] calldata amounts,
+        address owner
+    ) external nonReentrant returns (uint256[] memory requestIds) {
         if (owner == address(0)) revert Errors.ZeroAddress();
 
         requestIds = new uint256[](amounts.length);
@@ -144,7 +148,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         requests[requestId] = WithdrawalRequest({
             owner: owner,
             stShares: shares,
-            ethAmount: ethValue,  // locked at request-time exchange rate
+            ethAmount: ethValue, // locked at request-time exchange rate
             requestedAt: block.timestamp,
             finalized: false,
             claimed: false
@@ -159,12 +163,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     ///         Caller must send at least enough ETH to cover the sum of request ethAmounts.
     ///         ETH amounts were locked at request time; no share rate recalculation here.
     /// @param lastRequestId Last request ID to finalize (inclusive).
-    function finalize(uint256 lastRequestId)
-        external
-        payable
-        onlyRole(GUARDIAN)
-        nonReentrant
-    {
+    function finalize(uint256 lastRequestId) external payable onlyRole(GUARDIAN) nonReentrant {
         uint256 fromId = lastFinalizedRequestId + 1;
         if (lastRequestId < fromId || lastRequestId >= nextRequestId) {
             revert InvalidRequestRange(fromId, lastRequestId);
@@ -208,10 +207,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     /// @notice Update queue mode from oracle report context.
     /// @param isBunkerMode Whether bunker mode should be active.
     /// @param reportTimestamp Oracle report timestamp used for age-based finalization checks.
-    function updateModeFromOracle(bool isBunkerMode, uint256 reportTimestamp)
-        external
-        onlyRole(ORACLE)
-    {
+    function updateModeFromOracle(bool isBunkerMode, uint256 reportTimestamp) external onlyRole(ORACLE) {
         if (reportTimestamp > block.timestamp) {
             revert InvalidReportTimestamp(reportTimestamp, block.timestamp);
         }
@@ -248,10 +244,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     /// @notice Claim ETH for a finalized withdrawal request.
     /// @param requestId  The request to claim.
     /// @param recipient  Address to send ETH to.
-    function claimWithdrawal(uint256 requestId, address payable recipient)
-        external
-        nonReentrant
-    {
+    function claimWithdrawal(uint256 requestId, address payable recipient) external nonReentrant {
         WithdrawalRequest storage req = requests[requestId];
 
         if (!req.finalized) revert RequestNotFinalized(requestId);
@@ -268,10 +261,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     }
 
     /// @notice Batch claim multiple finalized requests in one transaction.
-    function claimWithdrawals(uint256[] calldata requestIds, address payable recipient)
-        external
-        nonReentrant
-    {
+    function claimWithdrawals(uint256[] calldata requestIds, address payable recipient) external nonReentrant {
         if (recipient == address(0)) revert Errors.ZeroAddress();
         uint256 totalEth = 0;
         for (uint256 i; i < requestIds.length; ++i) {
@@ -296,11 +286,9 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         return requests[requestId];
     }
 
-    function getRequestStatus(uint256 requestId)
-        external
-        view
-        returns (bool finalized, bool claimed, uint256 ethAmount)
-    {
+    function getRequestStatus(
+        uint256 requestId
+    ) external view returns (bool finalized, bool claimed, uint256 ethAmount) {
         WithdrawalRequest storage req = requests[requestId];
         return (req.finalized, req.claimed, req.ethAmount);
     }

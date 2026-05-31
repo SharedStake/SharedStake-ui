@@ -96,9 +96,10 @@ describe("LSTWrapModule (standalone)", () => {
     // Fresh deployment with a tight 0.5 ETH cap.
     await deployFresh(parseEther("0.5"));
 
-    await expect(
-      lstModule.connect(alice).wrapLST(parseEther("1"), alice.address)
-    ).to.be.revertedWithCustomError(router, "MintCapExceeded");
+    await expect(lstModule.connect(alice).wrapLST(parseEther("1"), alice.address)).to.be.revertedWithCustomError(
+      router,
+      "MintCapExceeded",
+    );
   });
 
   it("stale oracle: lastUpdated() = block.timestamp - 7200 makes wrapLST revert with StaleOracle", async () => {
@@ -110,8 +111,9 @@ describe("LSTWrapModule (standalone)", () => {
     const stalePoint = BigInt(block.timestamp) - 7200n;
     await oracle.setLastUpdated(stalePoint);
 
-    await expect(
-      lstModule.connect(alice).wrapLST(parseEther("1"), alice.address)
-    ).to.be.revertedWithCustomError(lstModule, "StaleOracle");
+    await expect(lstModule.connect(alice).wrapLST(parseEther("1"), alice.address)).to.be.revertedWithCustomError(
+      lstModule,
+      "StaleOracle",
+    );
   });
 });

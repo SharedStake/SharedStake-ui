@@ -119,7 +119,9 @@ export async function sweepOnce(cfg: Config) {
     );
   }
 
-  console.log(`[sweep] bufferedEther=${ethers.formatEther(buffered)} ETH (threshold=${ethers.formatEther(depositAmount)} ETH)`);
+  console.log(
+    `[sweep] bufferedEther=${ethers.formatEther(buffered)} ETH (threshold=${ethers.formatEther(depositAmount)} ETH)`,
+  );
 
   if (buffered < depositAmount) {
     console.log("[sweep] insufficient buffer, nothing to do");
@@ -135,13 +137,9 @@ export async function sweepOnce(cfg: Config) {
   let backoff = cfg.initialBackoffMs;
   while (attempt < cfg.maxRetries) {
     try {
-      const tx = await module.depositToBeaconChain(
-        cfg.pubkey,
-        cfg.creds,
-        cfg.signature,
-        cfg.depositDataRoot,
-        {gasLimit: GAS_BEACON_DEPOSIT}
-      );
+      const tx = await module.depositToBeaconChain(cfg.pubkey, cfg.creds, cfg.signature, cfg.depositDataRoot, {
+        gasLimit: GAS_BEACON_DEPOSIT,
+      });
       console.log(`[sweep] tx submitted: ${tx.hash} (gasLimit=${GAS_BEACON_DEPOSIT})`);
       const rcpt = await tx.wait();
       console.log(`[sweep] confirmed in block ${rcpt?.blockNumber} (gas=${rcpt?.gasUsed?.toString()})`);
@@ -160,9 +158,7 @@ export async function verifyNodeOperatorRole(module: ethers.Contract, operator: 
   const NODE_OPERATOR_ROLE: string = await module.NODE_OPERATOR();
   const has: boolean = await module.hasRole(NODE_OPERATOR_ROLE, operator);
   if (!has) {
-    throw new Error(
-      `Address ${operator} does not hold the NODE_OPERATOR role on module ${await module.getAddress()}`
-    );
+    throw new Error(`Address ${operator} does not hold the NODE_OPERATOR role on module ${await module.getAddress()}`);
   }
 }
 

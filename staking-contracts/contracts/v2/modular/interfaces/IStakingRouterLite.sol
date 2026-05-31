@@ -20,4 +20,3 @@ interface IStakingRouterLite {
         uint64 exitedValidatorCount;
     }
 }
-

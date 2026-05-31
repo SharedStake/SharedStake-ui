@@ -45,9 +45,12 @@ contract DVTModule is ValidatorModule {
     error UseClusteredDeposit();
     error IndexOutOfBounds(uint256 index, uint256 length);
 
-    constructor(address router, bytes32 moduleId, address gov, address beaconDepositContract)
-        ValidatorModule(router, moduleId, gov, beaconDepositContract)
-    {}
+    constructor(
+        address router,
+        bytes32 moduleId,
+        address gov,
+        address beaconDepositContract
+    ) ValidatorModule(router, moduleId, gov, beaconDepositContract) {}
 
     // ── IStakingModule overrides ─────────────────────────────────────────────
 
@@ -71,10 +74,7 @@ contract DVTModule is ValidatorModule {
     /// @notice Register a new DVT cluster. `threshold` must be ≥ 1 and ≤ operators.length.
     /// @dev Current implementation supports single-operator execution only.
     ///      Multi-operator threshold approvals must be implemented before allowing threshold > 1.
-    function registerCluster(bytes32 clusterId, address[] calldata operators, uint8 threshold)
-        external
-        onlyRole(GOV)
-    {
+    function registerCluster(bytes32 clusterId, address[] calldata operators, uint8 threshold) external onlyRole(GOV) {
         if (operators.length == 0) revert EmptyOperators();
         if (threshold == 0 || threshold > operators.length) revert InvalidThreshold(threshold, operators.length);
         if (threshold != 1) revert UnsupportedThreshold(threshold);
@@ -147,11 +147,9 @@ contract DVTModule is ValidatorModule {
         return _clusterIds[index];
     }
 
-    function getCluster(bytes32 clusterId)
-        external
-        view
-        returns (address[] memory operators, uint8 threshold, bool active)
-    {
+    function getCluster(
+        bytes32 clusterId
+    ) external view returns (address[] memory operators, uint8 threshold, bool active) {
         Cluster storage c = clusters[clusterId];
         return (c.operators, c.threshold, c.active);
     }

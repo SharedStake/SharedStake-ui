@@ -48,9 +48,9 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     address public immutable BEACON_DEPOSIT_CONTRACT;
 
     // ── State ─────────────────────────────────────────────────────────────────
-    uint256 internal _bufferedEther;     // ETH held here, pending validator assignment
-    uint256 internal _beaconBalance;     // last reported sum of validator balances
-    uint256 internal _beaconValidators;  // last reported validator count
+    uint256 internal _bufferedEther; // ETH held here, pending validator assignment
+    uint256 internal _beaconBalance; // last reported sum of validator balances
+    uint256 internal _beaconValidators; // last reported validator count
     uint256 internal _depositedValidatorCount; // number of validator deposits ever pushed on beacon
     bytes32 public expectedWithdrawalCredentials; // validated withdrawal creds prefix
     mapping(bytes32 => bool) internal _depositedPubkeys; // keccak256(pubkey) → already deposited
@@ -113,11 +113,10 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
 
     /// @notice ORACLE forwards a (already sanity-checked at adapter) report. We add
     ///         a defensive cap here too in case the adapter is misconfigured.
-    function reportBeacon(uint256 newBeaconValidators, uint256 newBeaconBalance)
-        external
-        onlyRole(ORACLE)
-        whenNotPaused(PAUSE_RECEIVE)
-    {
+    function reportBeacon(
+        uint256 newBeaconValidators,
+        uint256 newBeaconBalance
+    ) external onlyRole(ORACLE) whenNotPaused(PAUSE_RECEIVE) {
         if (newBeaconValidators == 0 && newBeaconBalance != 0) {
             revert InvalidBeaconReportTuple(newBeaconValidators, newBeaconBalance);
         }
@@ -136,9 +135,8 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
             if (newBeaconValidators > maxValidators)
                 revert BeaconValidatorCountSanityFailed(newBeaconValidators, maxValidators);
             // Balance cap scales with the new validator count
-            uint256 maxPlausible = newBeaconValidators * 32 ether * 3 / 2;
-            if (newBeaconBalance > maxPlausible)
-                revert BeaconBalanceSanityFailed(newBeaconBalance, maxPlausible);
+            uint256 maxPlausible = (newBeaconValidators * 32 ether * 3) / 2;
+            if (newBeaconBalance > maxPlausible) revert BeaconBalanceSanityFailed(newBeaconBalance, maxPlausible);
         }
 
         _beaconValidators = newBeaconValidators;

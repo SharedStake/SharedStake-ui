@@ -12,14 +12,24 @@ const func: DeployFunction = async hre => {
   const operator = resolveOperatorAddress(hre, gov);
   const referralRegistry = hre.ethers.ZeroAddress; // no referral registry on local
   const debtPool = hre.ethers.ZeroAddress; // placeholder; set after DebtPool deployment
-  const feeBps = 1000;         // 10% total protocol fee
+  const feeBps = 1000; // 10% total protocol fee
   const treasurySplitBps = 5000; // 50% to treasury
   const operatorSplitBps = 5000; // 50% to operator
-  const debtPoolSplitBps = 0;   // 0% to debtPool (to be configured after DebtPool deployment)
+  const debtPoolSplitBps = 0; // 0% to debtPool (to be configured after DebtPool deployment)
 
   await deploy(FeeController__factory, {
     from: accounts.deployer,
-    args: [gov, treasury, operator, referralRegistry, debtPool, feeBps, treasurySplitBps, operatorSplitBps, debtPoolSplitBps],
+    args: [
+      gov,
+      treasury,
+      operator,
+      referralRegistry,
+      debtPool,
+      feeBps,
+      treasurySplitBps,
+      operatorSplitBps,
+      debtPoolSplitBps,
+    ],
     log: true,
   });
 };

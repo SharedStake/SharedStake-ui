@@ -5,19 +5,24 @@
 ## Sources Reviewed
 
 ### 1. Local Worktrees
+
 - **feat/protocol-v3-fresh**: Current working branch (8410914)
 - **No other worktrees found**
 
 ### 2. Open PRs
+
 - **PR #376** (feat/e2e-impersonator-stake-flow): No smart contracts, only frontend/ABIs
-- **PR #378** (feat/sharedstake-v2-modular-staking-master): No smart contracts, only frontend/ABIs  
+- **PR #378** (feat/sharedstake-v2-modular-staking-master): No smart contracts, only frontend/ABIs
 - **PR #379** (feat/protocol-v3-fresh): Current PR with migrated contracts
 
 ### 3. SharedDeposit Submodule History
+
 The SharedDeposit submodule was synced through multiple commits:
+
 - **1bc855e** → **65174a1** → **b330071** → **862dc3a** → **05ad80d** (final)
 
 **Final sync commit**: `05ad80d` from commit 05dd1f6
+
 - Message: "Advance SharedDeposit submodule to include DebtPool and StakingCore contract fixes"
 - Date: 2026-05-31 01:17:13
 - Includes: DebtPool functionality, StakingCore fixes
@@ -25,6 +30,7 @@ The SharedDeposit submodule was synced through multiple commits:
 ## Current staking-contracts Status
 
 ### ✅ Contracts Propagated
+
 - **Complete contracts/ directory** (legacy + v2 + modular-staking)
 - **DebtPool.sol** with full functionality
 - **FeeController.sol** with debt pool integration (debtPoolSplitBps, debtPool address)
@@ -35,6 +41,7 @@ The SharedDeposit submodule was synced through multiple commits:
 - **Referral contracts** (ReferralRegistry, ReferralCodeRegistry)
 
 ### ✅ Infrastructure Propagated
+
 - **Complete build system** (hardhat.config.ts, foundry.toml, tsconfig.json)
 - **All dependencies** (package.json, package-contracts.json)
 - **Test suites** (Hardhat + Foundry tests)
@@ -43,6 +50,7 @@ The SharedDeposit submodule was synced through multiple commits:
 - **CI/CD configuration** (removed non-functional nested workflows)
 
 ### ✅ Build Verification
+
 - **Hardhat compilation**: ✅ 196 Solidity files compiled successfully
 - **Foundry build**: ✅ Build succeeds with expected warnings
 - **Solhint linting**: ✅ Runs successfully (warnings are pre-existing code quality)
@@ -51,22 +59,26 @@ The SharedDeposit submodule was synced through multiple commits:
 ## Comparison with Sources
 
 ### vs SharedDeposit Submodule (commit 05ad80d)
+
 - ✅ **Has DebtPool functionality** (confirmed in FeeController.sol)
 - ✅ **Has complete modular staking system**
 - ✅ **Build system functional**
 - ⚠️ **Cannot verify exact commit match** - SharedDeposit repo structure differs
 
 ### vs PR #378 (feat/sharedstake-v2-modular-staking-master)
+
 - ✅ **More complete** - PR #378 only has frontend/ABIs, no contract source
 - ✅ **Has actual Solidity contracts** - PR #378 lacks contract source files
 
-### vs PR #376 (feat/e2e-impersonator-stake-flow)  
+### vs PR #376 (feat/e2e-impersonator-stake-flow)
+
 - ✅ **More complete** - PR #376 only has frontend/ABIs, no contract source
 - ✅ **Has actual Solidity contracts** - PR #376 lacks contract source files
 
 ## Missing or Outdated Items
 
 ### None Identified
+
 - All critical smart contracts are present and functional
 - Build system works correctly
 - Test infrastructure is complete
@@ -75,6 +87,7 @@ The SharedDeposit submodule was synced through multiple commits:
 ## Submodule Status
 
 ### ✅ Properly Removed
+
 - SharedDeposit submodule completely removed from parent repository
 - .gitmodules updated (only infra submodule remains)
 - No dangling submodule references

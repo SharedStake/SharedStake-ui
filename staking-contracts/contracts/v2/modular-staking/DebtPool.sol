@@ -32,7 +32,7 @@ contract DebtPool is AccessControl, Pausable {
     uint256 public distributionId; // Incremented on each new distribution
     uint256 public totalStETHSharesReceived; // stETH shares from FeeController (pre-wrap)
     uint256 public totalWSTETHClaimed; // wstETH transferred to claimants
-    
+
     // Per-distribution tracking
     struct Distribution {
         bytes32 merkleRoot;
@@ -42,10 +42,10 @@ contract DebtPool is AccessControl, Pausable {
         bool finalized;
     }
     mapping(uint256 => Distribution) public distributions;
-    
+
     // Per-leaf tracking to prevent double-claim
     mapping(uint256 => mapping(uint256 => bool)) public claimed; // distributionId => leafIndex => claimed
-    
+
     // Events
     event DistributionCreated(uint256 indexed distributionId, bytes32 merkleRoot, uint256 totalAmount);
     event Claimed(uint256 indexed distributionId, address indexed recipient, uint256 amount);
@@ -76,18 +76,18 @@ contract DebtPool is AccessControl, Pausable {
         _;
     }
 
-    constructor(
-        address _stToken,
-        address _wstETH,
-        address _gov,
-        address _admin,
-        address _feeController
-    ) {
-        if (_stToken == address(0) || _wstETH == address(0) || _gov == address(0) || _admin == address(0) || _feeController == address(0)) revert Errors.ZeroAddress();
-        
+    constructor(address _stToken, address _wstETH, address _gov, address _admin, address _feeController) {
+        if (
+            _stToken == address(0) ||
+            _wstETH == address(0) ||
+            _gov == address(0) ||
+            _admin == address(0) ||
+            _feeController == address(0)
+        ) revert Errors.ZeroAddress();
+
         ST_TOKEN = IERC20(_stToken);
         WSTETH = IERC20(_wstETH);
-        
+
         _grantRole(DEFAULT_ADMIN_ROLE, _gov);
         _grantRole(GOV, _gov);
         _grantRole(ADMIN, _admin);
@@ -108,14 +108,10 @@ contract DebtPool is AccessControl, Pausable {
 
     /// @notice Create a new distribution with a merkle root
     /// @dev Only ADMIN can call. Increments distributionId and stores merkle root.
-    function createDistribution(bytes32 _merkleRoot, uint256 _totalAmount) 
-        external 
-        onlyRole(ADMIN) 
-        whenNotPaused
-    {
+    function createDistribution(bytes32 _merkleRoot, uint256 _totalAmount) external onlyRole(ADMIN) whenNotPaused {
         if (_totalAmount == 0) revert InvalidAmount();
         if (WSTETH.balanceOf(address(this)) < _totalAmount) revert InsufficientBalance();
-        
+
         distributionId++;
         distributions[distributionId] = Distribution({
             merkleRoot: _merkleRoot,
@@ -131,10 +127,7 @@ contract DebtPool is AccessControl, Pausable {
 
     /// @notice Update merkle root for an unfinalized distribution only.
     /// @dev Only GOV can call. For emergency correction of finalized distributions, use emergencyOverrideMerkleRoot.
-    function updateMerkleRoot(uint256 _distributionId, bytes32 _newRoot)
-        external
-        onlyRole(GOV)
-    {
+    function updateMerkleRoot(uint256 _distributionId, bytes32 _newRoot) external onlyRole(GOV) {
         if (distributions[_distributionId].finalized) revert DistributionAlreadyFinalized();
 
         distributions[_distributionId].merkleRoot = _newRoot;
@@ -145,10 +138,7 @@ contract DebtPool is AccessControl, Pausable {
     /// @notice Emergency: override merkle root on a finalized distribution before any claims.
     /// @dev Only GOV can call. Can only be called if no claims have been made yet (claimedAmount == 0).
     ///      This is the escape hatch when createDistribution() was called with an incorrect root.
-    function emergencyOverrideMerkleRoot(uint256 _distributionId, bytes32 _newRoot)
-        external
-        onlyRole(GOV)
-    {
+    function emergencyOverrideMerkleRoot(uint256 _distributionId, bytes32 _newRoot) external onlyRole(GOV) {
         Distribution storage dist = distributions[_distributionId];
         if (!dist.finalized) revert DistributionNotFinalized();
         if (dist.claimedAmount > 0) revert DistributionAlreadyFinalized();
@@ -160,10 +150,7 @@ contract DebtPool is AccessControl, Pausable {
 
     /// @notice Withdraw unclaimed fees from old distributions
     /// @dev Only GOV can call. Allows recovery of unclaimed funds after MIN_CLAIM_PERIOD.
-    function withdrawUnclaimedFees(uint256 _distributionId, address _recipient)
-        external
-        onlyRole(GOV)
-    {
+    function withdrawUnclaimedFees(uint256 _distributionId, address _recipient) external onlyRole(GOV) {
         Distribution storage dist = distributions[_distributionId];
         if (!dist.finalized) revert DistributionNotFinalized();
 
@@ -191,11 +178,7 @@ contract DebtPool is AccessControl, Pausable {
         address _recipient,
         uint256 _amount,
         bytes32[] calldata _proof
-    )
-        external
-        onlyDistributionFinalized(_distributionId)
-        whenNotPaused
-    {
+    ) external onlyDistributionFinalized(_distributionId) whenNotPaused {
         if (claimed[_distributionId][_leafIndex]) revert AlreadyClaimed();
         if (_amount == 0) revert InvalidAmount();
 
@@ -229,11 +212,7 @@ contract DebtPool is AccessControl, Pausable {
         address _recipient,
         uint256 _amount,
         bytes32[] calldata _proof
-    )
-        external
-        view
-        returns (bool)
-    {
+    ) external view returns (bool) {
         if (claimed[_distributionId][_leafIndex]) return false;
         if (!distributions[_distributionId].finalized) return false;
         if (paused()) return false;
@@ -244,34 +223,20 @@ contract DebtPool is AccessControl, Pausable {
     }
 
     /// @notice Check if a specific leaf has been claimed
-    function isClaimed(uint256 _distributionId, uint256 _leafIndex)
-        external
-        view
-        returns (bool)
-    {
+    function isClaimed(uint256 _distributionId, uint256 _leafIndex) external view returns (bool) {
         return claimed[_distributionId][_leafIndex];
     }
 
     /// @notice Get distribution details
-    function getDistribution(uint256 _distributionId) 
-        external 
-        view 
-        returns (
-            bytes32 root,
-            uint256 totalAmount,
-            uint256 claimedAmount,
-            uint256 timestamp,
-            bool finalized
-        ) 
+    function getDistribution(
+        uint256 _distributionId
+    )
+        external
+        view
+        returns (bytes32 root, uint256 totalAmount, uint256 claimedAmount, uint256 timestamp, bool finalized)
     {
         Distribution storage dist = distributions[_distributionId];
-        return (
-            dist.merkleRoot,
-            dist.totalAmount,
-            dist.claimedAmount,
-            dist.timestamp,
-            dist.finalized
-        );
+        return (dist.merkleRoot, dist.totalAmount, dist.claimedAmount, dist.timestamp, dist.finalized);
     }
 
     /// @notice Get pool statistics
@@ -297,11 +262,7 @@ contract DebtPool is AccessControl, Pausable {
 
     // ── Internal Functions ─────────────────────────────────────────────────
 
-    function _getClaimedAmount(uint256 _distributionId) 
-        internal 
-        view 
-        returns (uint256) 
-    {
+    function _getClaimedAmount(uint256 _distributionId) internal view returns (uint256) {
         return distributions[_distributionId].claimedAmount;
     }
 
@@ -310,11 +271,7 @@ contract DebtPool is AccessControl, Pausable {
     /// @notice Receive stETH from FeeController and unwrap to wstETH
     /// @dev Only FEE_CONTROLLER can call this function. Shares are minted directly to DebtPool by StakingCore/StakingRouter,
     ///      so no transferFrom is needed. The DebtPool already holds the shares when this function is called.
-    function receiveStETHAndUnwrap(uint256 _amount)
-        external
-        onlyFeeController
-        whenNotPaused
-    {
+    function receiveStETHAndUnwrap(uint256 _amount) external onlyFeeController whenNotPaused {
         if (_amount == 0) revert InvalidAmount();
 
         // DebtPool already holds the minted shares - no transferFrom needed.
@@ -332,9 +289,7 @@ contract DebtPool is AccessControl, Pausable {
 
         uint256 wstETHAmountBefore = WSTETH.balanceOf(address(this));
 
-        (bool wrapSuccess, ) = address(WSTETH).call(
-            abi.encodeWithSignature("wrap(uint256)", stEthAmount)
-        );
+        (bool wrapSuccess, ) = address(WSTETH).call(abi.encodeWithSignature("wrap(uint256)", stEthAmount));
 
         // If wrap fails, shares remain in DebtPool — approve zero to clean up
         if (!wrapSuccess) {

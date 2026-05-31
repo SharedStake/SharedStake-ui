@@ -21,9 +21,7 @@ describe("QuorumOracleAdapter", () => {
   const BASELINE = parseEther("32");
 
   function reportHash(validators: bigint, balance: bigint, reportTimestamp: bigint): string {
-    return ethers.keccak256(
-      abi.encode(["uint256", "uint256", "uint256"], [validators, balance, reportTimestamp])
-    );
+    return ethers.keccak256(abi.encode(["uint256", "uint256", "uint256"], [validators, balance, reportTimestamp]));
   }
 
   async function latestTimestamp(): Promise<bigint> {
@@ -78,8 +76,10 @@ describe("QuorumOracleAdapter", () => {
     const beaconReports = await stakingCore.queryFilter(stakingCore.filters.BeaconReported());
     expect(beaconReports.length).to.equal(1);
 
-    await expect(quorumAdapter.connect(submitter3).submitReport(validators, balance, ts))
-      .to.be.revertedWithCustomError(quorumAdapter, "ReportAlreadyFinalized");
+    await expect(quorumAdapter.connect(submitter3).submitReport(validators, balance, ts)).to.be.revertedWithCustomError(
+      quorumAdapter,
+      "ReportAlreadyFinalized",
+    );
   });
 
   it("rejects duplicate vote from the same submitter for the same payload", async () => {
@@ -89,8 +89,10 @@ describe("QuorumOracleAdapter", () => {
 
     await quorumAdapter.connect(submitter1).submitReport(validators, balance, ts);
 
-    await expect(quorumAdapter.connect(submitter1).submitReport(validators, balance, ts))
-      .to.be.revertedWithCustomError(quorumAdapter, "DuplicateVote");
+    await expect(quorumAdapter.connect(submitter1).submitReport(validators, balance, ts)).to.be.revertedWithCustomError(
+      quorumAdapter,
+      "DuplicateVote",
+    );
   });
 
   it("does not finalize before quorum", async () => {
@@ -116,8 +118,9 @@ describe("QuorumOracleAdapter", () => {
     const nowTs = await latestTimestamp();
     const staleTimestamp = nowTs - BigInt(7 * 60 * 60);
 
-    await expect(quorumAdapter.connect(submitter1).submitReport(1, parseEther("32"), staleTimestamp))
-      .to.be.revertedWithCustomError(quorumAdapter, "StaleReport");
+    await expect(
+      quorumAdapter.connect(submitter1).submitReport(1, parseEther("32"), staleTimestamp),
+    ).to.be.revertedWithCustomError(quorumAdapter, "StaleReport");
   });
 
   it("does not record votes for stale payloads", async () => {
@@ -126,8 +129,9 @@ describe("QuorumOracleAdapter", () => {
     const balance = parseEther("32");
     const hash = reportHash(1n, balance, staleTimestamp);
 
-    await expect(quorumAdapter.connect(submitter1).submitReport(1, balance, staleTimestamp))
-      .to.be.revertedWithCustomError(quorumAdapter, "StaleReport");
+    await expect(
+      quorumAdapter.connect(submitter1).submitReport(1, balance, staleTimestamp),
+    ).to.be.revertedWithCustomError(quorumAdapter, "StaleReport");
     expect(await quorumAdapter.reportVotes(hash)).to.equal(0n);
   });
 
@@ -137,8 +141,9 @@ describe("QuorumOracleAdapter", () => {
     const nowTs = await latestTimestamp();
     const futureTimestamp = nowTs + BigInt(60 * 60);
 
-    await expect(quorumAdapter.connect(submitter1).submitReport(1, parseEther("32"), futureTimestamp))
-      .to.be.revertedWithCustomError(quorumAdapter, "FutureReportTimestamp");
+    await expect(
+      quorumAdapter.connect(submitter1).submitReport(1, parseEther("32"), futureTimestamp),
+    ).to.be.revertedWithCustomError(quorumAdapter, "FutureReportTimestamp");
 
     expect(await stakingCore.beaconBalance()).to.equal(BASELINE);
     expect(await stakingCore.beaconValidators()).to.equal(0n);
@@ -147,7 +152,7 @@ describe("QuorumOracleAdapter", () => {
   it("rejects impossible report tuple (0 validators with non-zero balance)", async () => {
     await quorumAdapter.connect(gov).setQuorum(1);
     await expect(
-      quorumAdapter.connect(submitter1).submitReport(0, parseEther("1"), await latestTimestamp())
+      quorumAdapter.connect(submitter1).submitReport(0, parseEther("1"), await latestTimestamp()),
     ).to.be.revertedWithCustomError(quorumAdapter, "InvalidBeaconReportTuple");
   });
 
@@ -157,7 +162,7 @@ describe("QuorumOracleAdapter", () => {
     await quorumAdapter.connect(submitter1).submitReport(1, parseEther("32"), await latestTimestamp());
 
     await expect(
-      quorumAdapter.connect(submitter2).submitReport(1, parseEther("36"), await latestTimestamp())
+      quorumAdapter.connect(submitter2).submitReport(1, parseEther("36"), await latestTimestamp()),
     ).to.be.revertedWithCustomError(quorumAdapter, "BalanceDriftTooHigh");
 
     expect(await stakingCore.beaconBalance()).to.equal(parseEther("32"));
@@ -169,7 +174,7 @@ describe("QuorumOracleAdapter", () => {
     await quorumAdapter.connect(submitter1).submitReport(1, parseEther("32"), await latestTimestamp());
 
     await expect(
-      quorumAdapter.connect(submitter2).submitReport(1, parseEther("30"), await latestTimestamp())
+      quorumAdapter.connect(submitter2).submitReport(1, parseEther("30"), await latestTimestamp()),
     ).to.be.revertedWithCustomError(quorumAdapter, "SlashTooLarge");
 
     expect(await stakingCore.beaconBalance()).to.equal(parseEther("32"));
@@ -179,9 +184,8 @@ describe("QuorumOracleAdapter", () => {
     await expect(quorumAdapter.connect(outsider).addSubmitter(outsider.address)).to.be.reverted;
     await expect(quorumAdapter.connect(outsider).removeSubmitter(submitter1.address)).to.be.reverted;
     await expect(quorumAdapter.connect(outsider).setQuorum(1)).to.be.reverted;
-    await expect(
-      quorumAdapter.connect(outsider).submitReport(1, parseEther("32"), await latestTimestamp())
-    ).to.be.reverted;
+    await expect(quorumAdapter.connect(outsider).submitReport(1, parseEther("32"), await latestTimestamp())).to.be
+      .reverted;
   });
 
   it("rejects non-monotonic report timestamps once a report is finalized", async () => {
@@ -190,7 +194,7 @@ describe("QuorumOracleAdapter", () => {
 
     await quorumAdapter.connect(submitter1).submitReport(1, parseEther("32"), ts);
     await expect(
-      quorumAdapter.connect(submitter2).submitReport(1, parseEther("32.1"), ts)
+      quorumAdapter.connect(submitter2).submitReport(1, parseEther("32.1"), ts),
     ).to.be.revertedWithCustomError(quorumAdapter, "NonMonotonicReportTimestamp");
   });
 
@@ -203,7 +207,7 @@ describe("QuorumOracleAdapter", () => {
 
     const secondTs = firstTs + 1n;
     await expect(
-      quorumAdapter.connect(submitter2).submitReport(1, parseEther("32"), secondTs)
+      quorumAdapter.connect(submitter2).submitReport(1, parseEther("32"), secondTs),
     ).to.be.revertedWithCustomError(quorumAdapter, "ReportTooFrequent");
   });
 });

@@ -43,7 +43,7 @@ describe("StakingRouter Inflow Limiter", () => {
 
     await router.connect(alice).submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("6")});
     await expect(
-      router.connect(bob).submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("6")})
+      router.connect(bob).submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("6")}),
     ).to.be.revertedWithCustomError(router, "InflowLimitExceeded");
   });
 
@@ -52,7 +52,7 @@ describe("StakingRouter Inflow Limiter", () => {
 
     await router.connect(alice).submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("1")});
     await expect(
-      router.connect(alice).submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("1")})
+      router.connect(alice).submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("1")}),
     ).to.be.revertedWithCustomError(router, "InflowLimitExceeded");
 
     // Advance time past window
@@ -75,7 +75,7 @@ describe("StakingRouter Inflow Limiter", () => {
   it("reverts for unregistered module", async () => {
     const fakeId = ethers.keccak256(ethers.toUtf8Bytes("FAKE"));
     await expect(
-      router.connect(gov).setModuleInflowLimit(fakeId, 3600, parseEther("10"))
+      router.connect(gov).setModuleInflowLimit(fakeId, 3600, parseEther("10")),
     ).to.be.revertedWithCustomError(router, "ModuleNotRegistered");
   });
 
@@ -103,8 +103,9 @@ describe("StakingRouter Inflow Limiter", () => {
     await lstModule.connect(alice).wrapLST(parseEther("1"), alice.address);
 
     // Second wrap pushes cumulative inflow above 5 ETH and should revert at router level
-    await expect(
-      lstModule.connect(alice).wrapLST(parseEther("6"), alice.address)
-    ).to.be.revertedWithCustomError(router, "InflowLimitExceeded");
+    await expect(lstModule.connect(alice).wrapLST(parseEther("6"), alice.address)).to.be.revertedWithCustomError(
+      router,
+      "InflowLimitExceeded",
+    );
   });
 });

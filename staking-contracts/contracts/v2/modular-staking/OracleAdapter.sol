@@ -24,12 +24,12 @@ contract OracleAdapter is AccessControl {
     // ── Config ────────────────────────────────────────────────────────────────
     IReportable public immutable REPORT_TARGET;
 
-    uint256 public constant MIN_DRIFT_BPS = 100;  // 1% minimum drift cap (cannot be disabled)
-    uint256 public constant MIN_SLASH_BPS = 50;   // 0.5% minimum slash cap (cannot be disabled)
+    uint256 public constant MIN_DRIFT_BPS = 100; // 1% minimum drift cap (cannot be disabled)
+    uint256 public constant MIN_SLASH_BPS = 50; // 0.5% minimum slash cap (cannot be disabled)
 
     uint256 public maxStalenessSeconds = 6 hours;
-    uint256 public maxDriftBps = 1000;  // 10% per-validator balance change cap
-    uint256 public maxSlashBps = 500;   // 5% total-balance slash cap per report
+    uint256 public maxDriftBps = 1000; // 10% per-validator balance change cap
+    uint256 public maxSlashBps = 500; // 5% total-balance slash cap per report
     uint256 public minReportIntervalSeconds = 1 hours;
 
     // ── State ─────────────────────────────────────────────────────────────────

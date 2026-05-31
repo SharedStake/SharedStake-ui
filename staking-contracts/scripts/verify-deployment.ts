@@ -40,13 +40,10 @@ async function main() {
     contractName: string,
     contractAddress: string,
     roleIdentifier: string | string[],
-    roleName: string
+    roleName: string,
   ) => {
     try {
-      const contract = await ethers.getContractAt(
-        "AccessControl",
-        contractAddress
-      );
+      const contract = await ethers.getContractAt("AccessControl", contractAddress);
 
       let roleBytes: string;
       if (typeof roleIdentifier === "string") {
@@ -88,13 +85,10 @@ async function main() {
     contractName: string,
     contractAddress: string,
     roleName: string,
-    getterName: string
+    getterName: string,
   ) => {
     try {
-      const contract = await ethers.getContractAt(
-        "VoteEscrowV2",
-        contractAddress
-      );
+      const contract = await ethers.getContractAt("VoteEscrowV2", contractAddress);
       const holder = await contract[getterName]();
       const holderIsEOA = await isEOA(holder);
 
@@ -216,9 +210,7 @@ async function main() {
   if (failures.length > 0) {
     console.error("❌ FAIL: Privileged roles held by EOAs detected!\n");
     for (const failure of failures) {
-      console.error(
-        `  ${failure.contractName}.${failure.role}: ${failure.roleHolder} (EOA)`
-      );
+      console.error(`  ${failure.contractName}.${failure.role}: ${failure.roleHolder} (EOA)`);
     }
     console.error("\nThese roles must be transferred to contracts (multisigs, timelock) before mainnet use.\n");
     process.exit(1);
@@ -230,7 +222,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });

@@ -83,7 +83,12 @@ contract SharedDepositMinterV2 is AccessControl, Pausable, ReentrancyGuard, ETH2
         uint256 _numValidators,
         uint256 _adminFee,
         address[] memory addresses
-    ) AccessControl() Pausable() ReentrancyGuard() ETH2DepositWithdrawalCredentials(_depositContractFromConfig(addresses)) {
+    )
+        AccessControl()
+        Pausable()
+        ReentrancyGuard()
+        ETH2DepositWithdrawalCredentials(_depositContractFromConfig(addresses))
+    {
         if (addresses.length < 5) {
             revert InvalidAddressConfig();
         }

@@ -22,18 +22,25 @@ contract FeeController is AccessControl {
 
     uint16 public constant MAX_FEE_BPS = 2000; // 20% ceiling
 
-    uint16 public feeBps;           // total protocol fee in basis points
+    uint16 public feeBps; // total protocol fee in basis points
     uint16 public treasurySplitBps; // fraction of feeBps going to treasury
     uint16 public operatorSplitBps; // fraction of feeBps going to operator
-    uint16 public debtPoolSplitBps;  // fraction of feeBps going to debt pool
+    uint16 public debtPoolSplitBps; // fraction of feeBps going to debt pool
     address public treasury;
     address public operator;
     address public referralRegistry; // ReferralRegistry contract for fee sharing
-    address public debtPool;         // DebtPool contract for debt repayment
+    address public debtPool; // DebtPool contract for debt repayment
 
     event FeeSet(uint16 feeBps, uint16 treasurySplitBps, uint16 operatorSplitBps, uint16 debtPoolSplitBps);
     event RecipientsSet(address treasury, address operator, address referralRegistry, address debtPool);
-    event FeesDistributed(address indexed treasury, uint256 treasuryAmount, address indexed operator, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount);
+    event FeesDistributed(
+        address indexed treasury,
+        uint256 treasuryAmount,
+        address indexed operator,
+        uint256 operatorAmount,
+        uint256 debtPoolAmount,
+        uint256 referralAmount
+    );
 
     error FeeTooHigh();
     error SplitTooHigh();
@@ -54,7 +61,7 @@ contract FeeController is AccessControl {
         if (gov == address(0) || _treasury == address(0) || _operator == address(0)) revert Errors.ZeroAddress();
         if (_feeBps > MAX_FEE_BPS) revert FeeTooHigh();
         if (_treasurySplitBps + _operatorSplitBps + _debtPoolSplitBps > 10000) revert SplitTooHigh();
-        
+
         // Validate debt pool is a contract if address is set
         if (_debtPool != address(0) && _debtPool.code.length == 0) revert NotAContract();
 
@@ -76,7 +83,12 @@ contract FeeController is AccessControl {
 
     // ── Config ────────────────────────────────────────────────────────────────
 
-    function setFee(uint16 _feeBps, uint16 _treasurySplitBps, uint16 _operatorSplitBps, uint16 _debtPoolSplitBps) external onlyRole(GOV) {
+    function setFee(
+        uint16 _feeBps,
+        uint16 _treasurySplitBps,
+        uint16 _operatorSplitBps,
+        uint16 _debtPoolSplitBps
+    ) external onlyRole(GOV) {
         if (_feeBps > MAX_FEE_BPS) revert FeeTooHigh();
         if (_treasurySplitBps + _operatorSplitBps + _debtPoolSplitBps > 10000) revert SplitTooHigh();
         if (_debtPoolSplitBps > 0 && debtPool == address(0)) revert DebtPoolSplitWithoutAddress();
@@ -87,7 +99,12 @@ contract FeeController is AccessControl {
         emit FeeSet(_feeBps, _treasurySplitBps, _operatorSplitBps, _debtPoolSplitBps);
     }
 
-    function setRecipients(address _treasury, address _operator, address _referralRegistry, address _debtPool) external onlyRole(GOV) {
+    function setRecipients(
+        address _treasury,
+        address _operator,
+        address _referralRegistry,
+        address _debtPool
+    ) external onlyRole(GOV) {
         // treasury and operator must be set; referralRegistry can be zero (disables referral fee split)
         if (_treasury == address(0) || _operator == address(0)) revert Errors.ZeroAddress();
 
@@ -118,7 +135,9 @@ contract FeeController is AccessControl {
     ///         Caller (StakingCore) then mints corresponding shares to treasury/operator/debtPool.
     ///         Referral amount is sent to ReferralRegistry as shares.
     ///         If debtPool is address(0), debtPoolAmount will be 0.
-    function computeFees(uint256 rewards)
+    function computeFees(
+        uint256 rewards
+    )
         external
         view
         returns (uint256 treasuryAmount, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount)
@@ -126,14 +145,14 @@ contract FeeController is AccessControl {
         uint256 totalFee = (rewards * feeBps) / 10000;
         treasuryAmount = (totalFee * treasurySplitBps) / 10000;
         operatorAmount = (totalFee * operatorSplitBps) / 10000;
-        
+
         // Only allocate to debt pool if address is set
         if (debtPool != address(0)) {
             debtPoolAmount = (totalFee * debtPoolSplitBps) / 10000;
         } else {
             debtPoolAmount = 0;
         }
-        
+
         referralAmount = totalFee - treasuryAmount - operatorAmount - debtPoolAmount;
     }
 
@@ -141,9 +160,27 @@ contract FeeController is AccessControl {
     function getFeeConfig()
         external
         view
-        returns (uint16 _feeBps, uint16 _treasurySplitBps, uint16 _operatorSplitBps, uint16 _debtPoolSplitBps, address _treasury, address _operator, address _referralRegistry, address _debtPool)
+        returns (
+            uint16 _feeBps,
+            uint16 _treasurySplitBps,
+            uint16 _operatorSplitBps,
+            uint16 _debtPoolSplitBps,
+            address _treasury,
+            address _operator,
+            address _referralRegistry,
+            address _debtPool
+        )
     {
-        return (feeBps, treasurySplitBps, operatorSplitBps, debtPoolSplitBps, treasury, operator, referralRegistry, debtPool);
+        return (
+            feeBps,
+            treasurySplitBps,
+            operatorSplitBps,
+            debtPoolSplitBps,
+            treasury,
+            operator,
+            referralRegistry,
+            debtPool
+        );
     }
 
     /// @notice Convenience getter for fee recipients only.

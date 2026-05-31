@@ -75,7 +75,12 @@ contract CuratedNorModuleLite is AccessControl, IStakingModuleLite {
 
     function getDepositData(
         uint256 depositsCount
-    ) external view override returns (bytes[] memory pubkeys, bytes[] memory signatures, bytes32[] memory depositDataRoots) {
+    )
+        external
+        view
+        override
+        returns (bytes[] memory pubkeys, bytes[] memory signatures, bytes32[] memory depositDataRoots)
+    {
         if (depositsCount == 0) {
             revert InvalidCount();
         }
@@ -104,4 +109,3 @@ contract CuratedNorModuleLite is AccessControl, IStakingModuleLite {
         emit DepositedMarked(depositsCount);
     }
 }
-

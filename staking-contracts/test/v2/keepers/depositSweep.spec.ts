@@ -15,19 +15,8 @@
  */
 import {expect} from "chai";
 import {ethers} from "ethers";
-import {
-  verifyNodeOperatorRole,
-  sweepOnce,
-  Config,
-} from "../../../scripts/keepers/depositSweep";
-import {
-  makeFakeContract,
-  makeFakeProvider,
-  makeFakeWallet,
-  makeFakeTx,
-  patchEthers,
-  RestoreFn,
-} from "./helpers";
+import {verifyNodeOperatorRole, sweepOnce, Config} from "../../../scripts/keepers/depositSweep";
+import {makeFakeContract, makeFakeProvider, makeFakeWallet, makeFakeTx, patchEthers, RestoreFn} from "./helpers";
 
 const NODE_OPERATOR_ROLE = ethers.keccak256(ethers.toUtf8Bytes("NODE_OPERATOR"));
 const OPERATOR_ADDR = "0x00000000000000000000000000000000000000B2";

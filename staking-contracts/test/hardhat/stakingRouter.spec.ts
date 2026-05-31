@@ -66,10 +66,10 @@ describe("StakingRouter", () => {
     const FeeController = await ethers.getContractFactory("FeeController");
     feeController = await FeeController.deploy(
       gov.address,
-      gov.address,        // treasury
-      deployer.address,   // operator
-      ZeroAddress,        // referral registry (unused in this suite)
-      ZeroAddress,        // debt pool (disabled)
+      gov.address, // treasury
+      deployer.address, // operator
+      ZeroAddress, // referral registry (unused in this suite)
+      ZeroAddress, // debt pool (disabled)
       1000,
       5000,
       5000,
@@ -125,32 +125,29 @@ describe("StakingRouter", () => {
 
     it("reverts on duplicate registration", async () => {
       await expect(
-        router.connect(gov).registerModule(SOLO, mod1.target, parseEther("50"))
+        router.connect(gov).registerModule(SOLO, mod1.target, parseEther("50")),
       ).to.be.revertedWithCustomError(router, "ModuleAlreadyRegistered");
     });
 
     it("rejects re-registering the same module address under a different id", async () => {
       await expect(
-        router.connect(gov).registerModule(SECONDARY, mod1.target, parseEther("50"))
+        router.connect(gov).registerModule(SECONDARY, mod1.target, parseEther("50")),
       ).to.be.revertedWithCustomError(router, "ModuleAddressAlreadyRegistered");
     });
 
     it("non-GOV cannot register a module", async () => {
-      await expect(
-        router.connect(alice).registerModule(SECONDARY, mod2.target, 0)
-      ).to.be.reverted;
+      await expect(router.connect(alice).registerModule(SECONDARY, mod2.target, 0)).to.be.reverted;
     });
 
     it("rejects zero address module", async () => {
-      await expect(
-        router.connect(gov).registerModule(SECONDARY, ZeroAddress, 0)
-      ).to.be.reverted;
+      await expect(router.connect(gov).registerModule(SECONDARY, ZeroAddress, 0)).to.be.reverted;
     });
 
     it("rejects non-contract module addresses", async () => {
-      await expect(
-        router.connect(gov).registerModule(SECONDARY, alice.address, 0)
-      ).to.be.revertedWithCustomError(router, "ModuleAddressNotContract");
+      await expect(router.connect(gov).registerModule(SECONDARY, alice.address, 0)).to.be.revertedWithCustomError(
+        router,
+        "ModuleAddressNotContract",
+      );
     });
 
     it("rejects registration when module is wired to a different router", async () => {
@@ -179,9 +176,10 @@ describe("StakingRouter", () => {
         mockBeaconDeposit.target,
       );
 
-      await expect(
-        router.connect(gov).registerModule(WRONG_ID, wrongIdModule.target, 0),
-      ).to.be.revertedWithCustomError(router, "ModuleIdMismatch");
+      await expect(router.connect(gov).registerModule(WRONG_ID, wrongIdModule.target, 0)).to.be.revertedWithCustomError(
+        router,
+        "ModuleIdMismatch",
+      );
     });
 
     it("enforced code-hash allowlist blocks unallowlisted module registration", async () => {
@@ -189,25 +187,19 @@ describe("StakingRouter", () => {
       const router2 = await StakingRouter.deploy(stToken.target, gov.address);
 
       const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-      const mod = await ValidatorModule.deploy(
-        router2.target,
-        SECONDARY,
-        gov.address,
-        mockBeaconDeposit.target,
-      );
+      const mod = await ValidatorModule.deploy(router2.target, SECONDARY, gov.address, mockBeaconDeposit.target);
 
       await router2.connect(gov).enableCodeHashEnforcement();
-      await expect(
-        router2.connect(gov).registerModule(SECONDARY, mod.target, 0),
-      ).to.be.revertedWithCustomError(router2, "ModuleCodeHashNotAllowed");
+      await expect(router2.connect(gov).registerModule(SECONDARY, mod.target, 0)).to.be.revertedWithCustomError(
+        router2,
+        "ModuleCodeHashNotAllowed",
+      );
 
       const moduleType = await mod.moduleType();
       const codeHash = await runtimeCodeHash(mod.target as string);
       await router2.connect(gov).setModuleCodeHashAllowed(moduleType, codeHash, true);
 
-      await expect(
-        router2.connect(gov).registerModule(SECONDARY, mod.target, 0),
-      ).to.not.be.reverted;
+      await expect(router2.connect(gov).registerModule(SECONDARY, mod.target, 0)).to.not.be.reverted;
     });
   });
 
@@ -218,15 +210,19 @@ describe("StakingRouter", () => {
       const ReferralRegistry = await ethers.getContractFactory("ReferralRegistry");
       const referralRegistry = await ReferralRegistry.deploy(gov.address, stToken.target);
       await referralRegistry.connect(gov).grantRole(await referralRegistry.ROUTER(), router.target);
-      await feeController.connect(gov).setRecipients(gov.address, deployer.address, referralRegistry.target, ZeroAddress);
+      await feeController
+        .connect(gov)
+        .setRecipients(gov.address, deployer.address, referralRegistry.target, ZeroAddress);
 
       const ReferralCodeRegistry = await ethers.getContractFactory("ReferralCodeRegistry");
       const referralCodeRegistry = await ReferralCodeRegistry.deploy(gov.address);
-      await referralCodeRegistry.connect(gov).registerReferralCode(
-        REFERRAL_CODE_A,
-        referrerAddress,
-        ethers.keccak256(ethers.toUtf8Bytes("campaign:router-test")),
-      );
+      await referralCodeRegistry
+        .connect(gov)
+        .registerReferralCode(
+          REFERRAL_CODE_A,
+          referrerAddress,
+          ethers.keccak256(ethers.toUtf8Bytes("campaign:router-test")),
+        );
       await router.connect(gov).setReferralCodeRegistry(referralCodeRegistry.target);
 
       return {referralRegistry, referralCodeRegistry};
@@ -324,24 +320,21 @@ describe("StakingRouter", () => {
     });
 
     it("reverts when msg.value == 0", async () => {
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: 0})
-      ).to.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: 0})).to.be.reverted;
     });
 
     it("plain ETH transfer reverts when msg.value == 0", async () => {
-      await expect(
-        alice.sendTransaction({to: router.target, value: 0})
-      ).to.be.reverted;
+      await expect(alice.sendTransaction({to: router.target, value: 0})).to.be.reverted;
     });
 
     it("reverts if defaultModuleId not set", async () => {
       // Deploy a fresh router with no default set.
       const StakingRouter = await ethers.getContractFactory("StakingRouter");
       const router2 = await StakingRouter.deploy(stToken.target, gov.address);
-      await expect(
-        router2.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.be.revertedWithCustomError(router2, "DefaultModuleNotSet");
+      await expect(router2.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.be.revertedWithCustomError(
+        router2,
+        "DefaultModuleNotSet",
+      );
     });
 
     it("reverts tiny deposits when the current exchange rate would mint zero shares", async () => {
@@ -355,17 +348,13 @@ describe("StakingRouter", () => {
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
       await mod1.connect(oracle).reportBeacon(1, parseEther("33"));
 
-      await expect(
-        router.connect(bob).submit(ZeroAddress, {value: 1n})
-      ).to.be.reverted;
+      await expect(router.connect(bob).submit(ZeroAddress, {value: 1n})).to.be.reverted;
     });
 
     it("setReferralCodeRegistry is GOV-only", async () => {
       const ReferralCodeRegistry = await ethers.getContractFactory("ReferralCodeRegistry");
       const referralCodeRegistry = await ReferralCodeRegistry.deploy(gov.address);
-      await expect(
-        router.connect(alice).setReferralCodeRegistry(referralCodeRegistry.target),
-      ).to.be.reverted;
+      await expect(router.connect(alice).setReferralCodeRegistry(referralCodeRegistry.target)).to.be.reverted;
     });
   });
 
@@ -396,7 +385,7 @@ describe("StakingRouter", () => {
     it("reverts on unregistered module id", async () => {
       const fake = ethers.keccak256(ethers.toUtf8Bytes("DOES_NOT_EXIST"));
       await expect(
-        router.connect(alice).submitToModule(fake, ZeroAddress, {value: parseEther("1")})
+        router.connect(alice).submitToModule(fake, ZeroAddress, {value: parseEther("1")}),
       ).to.be.revertedWithCustomError(router, "ModuleNotRegistered");
     });
   });
@@ -407,9 +396,10 @@ describe("StakingRouter", () => {
     it("rejects deposit that would exceed cap", async () => {
       // Cap is 100 ETH on SOLO. Fill with 99, then try 2 more.
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("99")});
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})
-      ).to.be.revertedWithCustomError(router, "MintCapExceeded");
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})).to.be.revertedWithCustomError(
+        router,
+        "MintCapExceeded",
+      );
     });
 
     it("accepts deposit exactly at cap", async () => {
@@ -438,15 +428,14 @@ describe("StakingRouter", () => {
       expect(await mod1.totalEth()).to.equal(parseEther("32"));
       expect(await router.moduleBeaconBalance(SOLO)).to.equal(parseEther("32"));
 
-      await expect(
-        router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.be.revertedWithCustomError(router, "MintCapExceeded");
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.be.revertedWithCustomError(
+        router,
+        "MintCapExceeded",
+      );
     });
 
     it("setMintCap is GOV-only", async () => {
-      await expect(
-        router.connect(alice).setMintCap(SOLO, parseEther("1"))
-      ).to.be.reverted;
+      await expect(router.connect(alice).setMintCap(SOLO, parseEther("1"))).to.be.reverted;
     });
   });
 
@@ -457,9 +446,7 @@ describe("StakingRouter", () => {
       await router.connect(gov).setModuleInflowLimit(SOLO, 3600, parseEther("5"));
 
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("4")});
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})
-      )
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("2")}))
         .to.be.revertedWithCustomError(router, "InflowLimitExceeded")
         .withArgs(SOLO, parseEther("6"), parseEther("5"));
     });
@@ -468,16 +455,15 @@ describe("StakingRouter", () => {
       await router.connect(gov).setModuleInflowLimit(SOLO, 60, parseEther("5"));
 
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("4")});
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})
-      ).to.be.revertedWithCustomError(router, "InflowLimitExceeded");
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})).to.be.revertedWithCustomError(
+        router,
+        "InflowLimitExceeded",
+      );
 
       await ethers.provider.send("evm_increaseTime", [61]);
       await ethers.provider.send("evm_mine", []);
 
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})).to.not.be.reverted;
       expect(await mod1.bufferedEther()).to.equal(parseEther("6"));
     });
 
@@ -485,9 +471,7 @@ describe("StakingRouter", () => {
       await router.connect(gov).setModuleInflowLimit(SOLO, 3600, parseEther("5"));
 
       await router.connect(alice).submitWithSource(ZeroAddress, SOURCE_A, {value: parseEther("4")});
-      await expect(
-        router.connect(alice).submitWithSource(ZeroAddress, SOURCE_A, {value: parseEther("2")})
-      )
+      await expect(router.connect(alice).submitWithSource(ZeroAddress, SOURCE_A, {value: parseEther("2")}))
         .to.be.revertedWithCustomError(router, "InflowLimitExceeded")
         .withArgs(SOLO, parseEther("6"), parseEther("5"));
     });
@@ -496,18 +480,12 @@ describe("StakingRouter", () => {
       await router.connect(gov).setModuleInflowLimit(SOLO, 3600, parseEther("1"));
       await router.connect(gov).setModuleInflowLimit(SOLO, 0, 0);
 
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})
-      ).to.not.be.reverted;
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})).to.not.be.reverted;
     });
 
     it("setModuleInflowLimit is GOV-only", async () => {
-      await expect(
-        router.connect(alice).setModuleInflowLimit(SOLO, 3600, parseEther("1"))
-      ).to.be.reverted;
+      await expect(router.connect(alice).setModuleInflowLimit(SOLO, 3600, parseEther("1"))).to.be.reverted;
     });
   });
 
@@ -519,9 +497,7 @@ describe("StakingRouter", () => {
       await router.connect(gov).setGlobalInflowLimit(3600, parseEther("5"));
 
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("4")});
-      await expect(
-        router.connect(alice).submitToModule(SECONDARY, ZeroAddress, {value: parseEther("2")})
-      )
+      await expect(router.connect(alice).submitToModule(SECONDARY, ZeroAddress, {value: parseEther("2")}))
         .to.be.revertedWithCustomError(router, "GlobalInflowLimitExceeded")
         .withArgs(parseEther("6"), parseEther("5"));
     });
@@ -530,34 +506,27 @@ describe("StakingRouter", () => {
       await router.connect(gov).setGlobalInflowLimit(60, parseEther("5"));
 
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("4")});
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})
-      ).to.be.revertedWithCustomError(router, "GlobalInflowLimitExceeded");
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})).to.be.revertedWithCustomError(
+        router,
+        "GlobalInflowLimitExceeded",
+      );
 
       await ethers.provider.send("evm_increaseTime", [61]);
       await ethers.provider.send("evm_mine", []);
 
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})).to.not.be.reverted;
     });
 
     it("disabled config (zeroed) allows flows", async () => {
       await router.connect(gov).setGlobalInflowLimit(3600, parseEther("1"));
       await router.connect(gov).setGlobalInflowLimit(0, 0);
 
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})
-      ).to.not.be.reverted;
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("3")})).to.not.be.reverted;
     });
 
     it("setGlobalInflowLimit is GOV-only", async () => {
-      await expect(
-        router.connect(alice).setGlobalInflowLimit(3600, parseEther("1"))
-      ).to.be.reverted;
+      await expect(router.connect(alice).setGlobalInflowLimit(3600, parseEther("1"))).to.be.reverted;
     });
   });
 
@@ -577,12 +546,7 @@ describe("StakingRouter", () => {
       const oracleContract = await MockLSTPriceOracle.deploy(parseEther("1"));
 
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      const lstModule = await LSTWrapModule.deploy(
-        router.target,
-        moduleId,
-        lstToken.target,
-        gov.address,
-      );
+      const lstModule = await LSTWrapModule.deploy(router.target, moduleId, lstToken.target, gov.address);
 
       await router.connect(gov).registerModule(moduleId, lstModule.target, parseEther("10"));
       await lstModule.connect(gov).setPriceOracle(oracleContract.target);
@@ -598,16 +562,12 @@ describe("StakingRouter", () => {
 
       await router.connect(gov).setModulePolicy(SOLO, POLICY);
       // Registry unset => checks disabled even with policy id configured.
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
 
       await router.connect(gov).setPolicyRegistry(registry.target);
       await router.connect(gov).setModulePolicy(SOLO, ethers.ZeroHash);
       // Module policy unset => checks disabled even with registry configured.
-      await expect(
-        router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.not.be.reverted;
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
     });
 
     it("allowlist mode denies non-allowlisted and allows allowlisted", async () => {
@@ -616,16 +576,12 @@ describe("StakingRouter", () => {
       await router.connect(gov).setPolicyRegistry(registry.target);
       await router.connect(gov).setModulePolicy(SOLO, POLICY);
 
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      )
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")}))
         .to.be.revertedWithCustomError(router, "PolicyDenied")
         .withArgs(SOLO, POLICY, alice.address);
 
       await registry.connect(gov).setAllowlisted(POLICY, alice.address, true);
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
 
       // Wrap path should enforce policy on recipient too.
       const LST_POLICY_MOD = ethers.keccak256(ethers.toUtf8Bytes("LST_POLICY_MOD_A"));
@@ -633,16 +589,12 @@ describe("StakingRouter", () => {
       await router.connect(gov).setModulePolicy(LST_POLICY_MOD, POLICY);
 
       await registry.connect(gov).setAllowlisted(POLICY, alice.address, false);
-      await expect(
-        lstModule.connect(alice).wrapLST(parseEther("1"), alice.address)
-      )
+      await expect(lstModule.connect(alice).wrapLST(parseEther("1"), alice.address))
         .to.be.revertedWithCustomError(router, "PolicyDenied")
         .withArgs(LST_POLICY_MOD, POLICY, alice.address);
 
       await registry.connect(gov).setAllowlisted(POLICY, alice.address, true);
-      await expect(
-        lstModule.connect(alice).wrapLST(parseEther("1"), alice.address)
-      ).to.not.be.reverted;
+      await expect(lstModule.connect(alice).wrapLST(parseEther("1"), alice.address)).to.not.be.reverted;
     });
 
     it("policy enforcement applies to submitWithSource path", async () => {
@@ -651,16 +603,13 @@ describe("StakingRouter", () => {
       await router.connect(gov).setPolicyRegistry(registry.target);
       await router.connect(gov).setModulePolicy(SOLO, POLICY);
 
-      await expect(
-        router.connect(alice).submitWithSource(ZeroAddress, SOURCE_A, {value: parseEther("1")})
-      )
+      await expect(router.connect(alice).submitWithSource(ZeroAddress, SOURCE_A, {value: parseEther("1")}))
         .to.be.revertedWithCustomError(router, "PolicyDenied")
         .withArgs(SOLO, POLICY, alice.address);
 
       await registry.connect(gov).setAllowlisted(POLICY, alice.address, true);
-      await expect(
-        router.connect(alice).submitWithSource(ZeroAddress, SOURCE_A, {value: parseEther("1")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submitWithSource(ZeroAddress, SOURCE_A, {value: parseEther("1")})).to.not.be
+        .reverted;
     });
 
     it("blocklist mode denies blocked user", async () => {
@@ -670,26 +619,18 @@ describe("StakingRouter", () => {
       await router.connect(gov).setModulePolicy(SOLO, POLICY);
 
       await registry.connect(gov).setBlocklisted(POLICY, alice.address, true);
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      )
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")}))
         .to.be.revertedWithCustomError(router, "PolicyDenied")
         .withArgs(SOLO, POLICY, alice.address);
 
-      await expect(
-        router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.not.be.reverted;
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
     });
 
     it("setting policy registry and module policy is GOV-only", async () => {
       const registry = await deployPolicyRegistry();
-      await expect(
-        router.connect(alice).setPolicyRegistry(registry.target)
-      ).to.be.reverted;
+      await expect(router.connect(alice).setPolicyRegistry(registry.target)).to.be.reverted;
 
-      await expect(
-        router.connect(alice).setModulePolicy(SOLO, POLICY)
-      ).to.be.reverted;
+      await expect(router.connect(alice).setModulePolicy(SOLO, POLICY)).to.be.reverted;
     });
   });
 
@@ -698,24 +639,18 @@ describe("StakingRouter", () => {
   describe("Pause", () => {
     it("GUARDIAN can pause submit; deposit reverts", async () => {
       await router.connect(guardian).pause(0); // PAUSE_SUBMIT = 0
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.be.reverted;
     });
 
     it("paused submit also blocks plain ETH transfers", async () => {
       await router.connect(guardian).pause(0);
-      await expect(
-        alice.sendTransaction({to: router.target, value: parseEther("1")})
-      ).to.be.reverted;
+      await expect(alice.sendTransaction({to: router.target, value: parseEther("1")})).to.be.reverted;
     });
 
     it("GOV can unpause", async () => {
       await router.connect(guardian).pause(0);
       await router.connect(gov).unpause(0);
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.not.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
     });
 
     it("non-GUARDIAN cannot pause", async () => {
@@ -726,9 +661,10 @@ describe("StakingRouter", () => {
       await router.connect(gov).registerModule(SECONDARY, mod2.target, 0);
       await router.connect(guardian).pauseModule(SOLO);
 
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.be.revertedWithCustomError(router, "ModulePaused");
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.be.revertedWithCustomError(
+        router,
+        "ModulePaused",
+      );
 
       // SECONDARY still accepts.
       await router.connect(alice).submitToModule(SECONDARY, ZeroAddress, {value: parseEther("1")});
@@ -742,9 +678,7 @@ describe("StakingRouter", () => {
       const info2 = await router.modules(SECONDARY);
       expect(info1.paused).to.be.true;
       expect(info2.paused).to.be.true;
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.be.reverted;
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.be.reverted;
     });
   });
 
@@ -761,7 +695,7 @@ describe("StakingRouter", () => {
 
     it("only registered module addr can call reportModuleBeaconBalance", async () => {
       await expect(
-        router.connect(impostor).reportModuleBeaconBalance(SOLO, parseEther("32"))
+        router.connect(impostor).reportModuleBeaconBalance(SOLO, parseEther("32")),
       ).to.be.revertedWithCustomError(router, "NotModule");
     });
 
@@ -880,7 +814,7 @@ describe("StakingRouter", () => {
 
       // Malicious caller (non-module) cannot drive notifyBeaconDeposit directly.
       await expect(
-        router.connect(impostor).notifyBeaconDeposit(SOLO, parseEther("1000"))
+        router.connect(impostor).notifyBeaconDeposit(SOLO, parseEther("1000")),
       ).to.be.revertedWithCustomError(router, "NotModule");
 
       // Second legitimate push: another 32 ETH → baseline accumulates to 64.
@@ -957,15 +891,14 @@ describe("StakingRouter", () => {
 
     it("setDefaultModule reverts for unregistered module id", async () => {
       const fake = ethers.keccak256(ethers.toUtf8Bytes("FAKE"));
-      await expect(
-        router.connect(gov).setDefaultModule(fake)
-      ).to.be.revertedWithCustomError(router, "ModuleNotRegistered");
+      await expect(router.connect(gov).setDefaultModule(fake)).to.be.revertedWithCustomError(
+        router,
+        "ModuleNotRegistered",
+      );
     });
 
     it("non-GOV cannot setDefaultModule", async () => {
-      await expect(
-        router.connect(alice).setDefaultModule(SOLO)
-      ).to.be.reverted;
+      await expect(router.connect(alice).setDefaultModule(SOLO)).to.be.reverted;
     });
   });
 
@@ -973,9 +906,7 @@ describe("StakingRouter", () => {
 
   describe("Access control", () => {
     it("non-GOV cannot setFeeController", async () => {
-      await expect(
-        router.connect(alice).setFeeController(feeController.target)
-      ).to.be.reverted;
+      await expect(router.connect(alice).setFeeController(feeController.target)).to.be.reverted;
     });
 
     it("totalEthOf sums across given modules", async () => {
@@ -989,9 +920,8 @@ describe("StakingRouter", () => {
       const validatorType = await mod1.moduleType();
       const validatorCodeHash = await runtimeCodeHash(mod1.target as string);
 
-      await expect(
-        router.connect(alice).setModuleCodeHashAllowed(validatorType, validatorCodeHash, true),
-      ).to.be.reverted;
+      await expect(router.connect(alice).setModuleCodeHashAllowed(validatorType, validatorCodeHash, true)).to.be
+        .reverted;
     });
   });
 
@@ -1009,12 +939,7 @@ describe("StakingRouter", () => {
       oracleContract = await MockLSTPriceOracle.deploy(parseEther("1"));
 
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      lstModule = await LSTWrapModule.deploy(
-        router.target,
-        LST_GATED,
-        lstToken.target,
-        gov.address,
-      );
+      lstModule = await LSTWrapModule.deploy(router.target, LST_GATED, lstToken.target, gov.address);
       await lstModule.connect(gov).setPriceOracle(oracleContract.target);
       await router.connect(gov).registerModule(LST_GATED, lstModule.target, parseEther("10"));
     });
@@ -1022,9 +947,7 @@ describe("StakingRouter", () => {
     it("validator modules cannot call LST-only wrap path", async () => {
       const validatorSigner = await impersonateAccount(mod1.target as string);
       const action = router.interface.getFunction("wrapFromModule")!.selector;
-      await expect(
-        router.connect(validatorSigner).wrapFromModule(SOLO, alice.address, parseEther("1")),
-      )
+      await expect(router.connect(validatorSigner).wrapFromModule(SOLO, alice.address, parseEther("1")))
         .to.be.revertedWithCustomError(router, "ModuleTypeActionMismatch")
         .withArgs(SOLO, await mod1.moduleType(), action);
       await stopImpersonatingAccount(mod1.target as string);
@@ -1033,9 +956,7 @@ describe("StakingRouter", () => {
     it("LST modules cannot call validator-only report path", async () => {
       const lstSigner = await impersonateAccount(lstModule.target as string);
       const action = router.interface.getFunction("reportModuleBeaconBalance")!.selector;
-      await expect(
-        router.connect(lstSigner).reportModuleBeaconBalance(LST_GATED, parseEther("1")),
-      )
+      await expect(router.connect(lstSigner).reportModuleBeaconBalance(LST_GATED, parseEther("1")))
         .to.be.revertedWithCustomError(router, "ModuleTypeActionMismatch")
         .withArgs(LST_GATED, await lstModule.moduleType(), action);
       await stopImpersonatingAccount(lstModule.target as string);
@@ -1059,12 +980,7 @@ describe("StakingRouter", () => {
 
       // Deploy LST module wired to router with a 10 ETH cap.
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      lstModule = await LSTWrapModule.deploy(
-        router.target,
-        LST_MOD,
-        lstToken.target,
-        gov.address,
-      );
+      lstModule = await LSTWrapModule.deploy(router.target, LST_MOD, lstToken.target, gov.address);
 
       await router.connect(gov).registerModule(LST_MOD, lstModule.target, parseEther("10"));
       await lstModule.connect(gov).setPriceOracle(oracleContract.target);
@@ -1109,9 +1025,7 @@ describe("StakingRouter", () => {
       expect(await lstModule.lstHeld()).to.equal(0n);
       expect(await lstToken.balanceOf(lstModule.target)).to.equal(0n);
       // Alice gets her LST back.
-      expect(await lstToken.balanceOf(alice.address)).to.equal(
-        lstBalanceBefore + parseEther("1"),
-      );
+      expect(await lstToken.balanceOf(alice.address)).to.equal(lstBalanceBefore + parseEther("1"));
     });
 
     it("mint cap exceeded reverts with MintCapExceeded", async () => {
@@ -1119,30 +1033,24 @@ describe("StakingRouter", () => {
       // moduleId since LST_MOD is already taken by beforeEach.
       const TIGHT = ethers.keccak256(ethers.toUtf8Bytes("LST_WRAP_TIGHT"));
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      const tightModule = await LSTWrapModule.deploy(
-        router.target,
-        TIGHT,
-        lstToken.target,
-        gov.address,
-      );
+      const tightModule = await LSTWrapModule.deploy(router.target, TIGHT, lstToken.target, gov.address);
       await router.connect(gov).registerModule(TIGHT, tightModule.target, parseEther("0.5"));
       await tightModule.connect(gov).setPriceOracle(oracleContract.target);
 
       await lstToken.connect(alice).approve(tightModule.target, parseEther("100"));
 
       // Attempt to wrap 1 LST (= 1 ETH equiv) into a 0.5 ETH cap → revert.
-      await expect(
-        tightModule.connect(alice).wrapLST(parseEther("1"), alice.address)
-      ).to.be.revertedWithCustomError(router, "MintCapExceeded");
+      await expect(tightModule.connect(alice).wrapLST(parseEther("1"), alice.address)).to.be.revertedWithCustomError(
+        router,
+        "MintCapExceeded",
+      );
     });
 
     it("enforces inflow limiter on LST wrap mint path", async () => {
       await router.connect(gov).setModuleInflowLimit(LST_MOD, 3600, parseEther("1"));
 
       await lstModule.connect(alice).wrapLST(parseEther("1"), alice.address);
-      await expect(
-        lstModule.connect(alice).wrapLST(parseEther("0.1"), alice.address)
-      )
+      await expect(lstModule.connect(alice).wrapLST(parseEther("0.1"), alice.address))
         .to.be.revertedWithCustomError(router, "InflowLimitExceeded")
         .withArgs(LST_MOD, parseEther("1.1"), parseEther("1"));
     });
@@ -1151,9 +1059,7 @@ describe("StakingRouter", () => {
       await router.connect(gov).setGlobalInflowLimit(3600, parseEther("1"));
 
       await lstModule.connect(alice).wrapLST(parseEther("1"), alice.address);
-      await expect(
-        lstModule.connect(alice).wrapLST(parseEther("0.1"), alice.address)
-      )
+      await expect(lstModule.connect(alice).wrapLST(parseEther("0.1"), alice.address))
         .to.be.revertedWithCustomError(router, "GlobalInflowLimitExceeded")
         .withArgs(parseEther("1.1"), parseEther("1"));
     });
@@ -1169,9 +1075,7 @@ describe("StakingRouter", () => {
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
       await mod1.connect(oracle).reportBeacon(1, parseEther("33"));
 
-      await expect(
-        lstModule.connect(alice).wrapLST(1n, alice.address)
-      ).to.be.reverted;
+      await expect(lstModule.connect(alice).wrapLST(1n, alice.address)).to.be.reverted;
     });
   });
 });

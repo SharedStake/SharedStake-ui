@@ -20,7 +20,17 @@ describe("ModularStaking Fuzz / Invariants", () => {
     stToken = await StToken.deploy();
 
     const FeeController = await ethers.getContractFactory("FeeController");
-    feeController = await FeeController.deploy(gov.address, gov.address, deployer.address, ZeroAddress, ZeroAddress, 1000, 5000, 5000, 0);
+    feeController = await FeeController.deploy(
+      gov.address,
+      gov.address,
+      deployer.address,
+      ZeroAddress,
+      ZeroAddress,
+      1000,
+      5000,
+      5000,
+      0,
+    );
 
     const StakingCore = await ethers.getContractFactory("StakingCore");
     stakingCore = await StakingCore.deploy(stToken.target, gov.address);
@@ -67,10 +77,7 @@ describe("ModularStaking Fuzz / Invariants", () => {
   // ── FeeController Invariants ─────────────────────────────────────────────
 
   it("FeeController: fees never exceed rewards for many values", async () => {
-    const testValues = [
-      0n, 1n, 100n, parseEther("1"), parseEther("100"),
-      parseEther("1000"), parseEther("100000")
-    ];
+    const testValues = [0n, 1n, 100n, parseEther("1"), parseEther("100"), parseEther("1000"), parseEther("100000")];
     for (const rewards of testValues) {
       const [treasury, operator, debtPool, referral] = await feeController.computeFees(rewards);
       const totalFee = (rewards * 1000n) / 10000n;
@@ -124,15 +131,16 @@ describe("ModularStaking Fuzz / Invariants", () => {
 
   it("WithdrawalQueueV2: request below MIN reverts", async () => {
     await stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("1")});
-    await expect(
-      queue.connect(alice).requestWithdrawals([100n], alice.address)
-    ).to.be.revertedWithCustomError(queue, "AmountOutOfBounds");
+    await expect(queue.connect(alice).requestWithdrawals([100n], alice.address)).to.be.revertedWithCustomError(
+      queue,
+      "AmountOutOfBounds",
+    );
   });
 
   it("WithdrawalQueueV2: request above MAX reverts", async () => {
     await stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("2000")});
     await expect(
-      queue.connect(alice).requestWithdrawals([parseEther("1001")], alice.address)
+      queue.connect(alice).requestWithdrawals([parseEther("1001")], alice.address),
     ).to.be.revertedWithCustomError(queue, "AmountOutOfBounds");
   });
 
@@ -167,9 +175,7 @@ describe("ModularStaking Fuzz / Invariants", () => {
   // ── Reentrancy / Edge Case Invariants ────────────────────────────────────
 
   it("StakingCore: direct ETH transfer without submit reverts if 0 value", async () => {
-    await expect(
-      alice.sendTransaction({to: stakingCore.target, value: 0n})
-    ).to.be.reverted;
+    await expect(alice.sendTransaction({to: stakingCore.target, value: 0n})).to.be.reverted;
   });
 
   it("StakingCore: multiple deposits from same user accumulate shares correctly", async () => {

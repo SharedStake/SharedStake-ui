@@ -3,9 +3,10 @@ pragma solidity 0.8.20;
 
 interface IClaimableQueue {
     function claimWithdrawal(uint256 requestId, address payable recipient) external;
-    function requestWithdrawals(uint256[] calldata amounts, address owner)
-        external
-        returns (uint256[] memory requestIds);
+    function requestWithdrawals(
+        uint256[] calldata amounts,
+        address owner
+    ) external returns (uint256[] memory requestIds);
 }
 
 interface IStTokenLite {

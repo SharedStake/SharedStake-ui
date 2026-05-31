@@ -1,10 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
-import {
-  LSTWrapModule__factory,
-  StEthPriceOracle__factory,
-  StakingRouter__factory,
-} from "../types";
+import {LSTWrapModule__factory, StEthPriceOracle__factory, StakingRouter__factory} from "../types";
 import {parseEther} from "ethers";
 
 /**

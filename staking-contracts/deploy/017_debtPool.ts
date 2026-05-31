@@ -40,12 +40,9 @@ const func: DeployFunction = async hre => {
 
     console.log("  Updating FeeController recipients to include DebtPool...");
     const govSigner = accounts.multiSig ?? accounts.deployer;
-    await feeController.connect(govSigner).setRecipients(
-      treasury,
-      operator,
-      referralRegistry,
-      debtPool.target as string
-    );
+    await feeController
+      .connect(govSigner)
+      .setRecipients(treasury, operator, referralRegistry, debtPool.target as string);
     console.log(`  FeeController debtPool recipient set to ${debtPool.target}`);
   } catch (e) {
     console.log("  FeeController.setRecipients() failed or not available; manual configuration required.");

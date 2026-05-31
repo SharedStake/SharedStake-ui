@@ -70,7 +70,10 @@ function loadConfig(): Config {
 
   const rawModuleIds = process.env.MODULE_IDS;
   const moduleIds = rawModuleIds
-    ? rawModuleIds.split(",").map(s => s.trim()).filter(Boolean)
+    ? rawModuleIds
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean)
     : [DEFAULT_MODULE_ID];
 
   return {
@@ -97,17 +100,24 @@ async function postWebhook(url: string, payload: object) {
     const {default: https} = await import("https");
     const body = JSON.stringify(payload);
     const u = new URL(url);
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(resolve => {
       const req = https.request(
-        {hostname: u.hostname, port: u.port || 443, path: u.pathname + u.search, method: "POST",
-         headers: {"Content-Type": "application/json", "Content-Length": Buffer.byteLength(body)}},
-        () => resolve()
+        {
+          hostname: u.hostname,
+          port: u.port || 443,
+          path: u.pathname + u.search,
+          method: "POST",
+          headers: {"Content-Type": "application/json", "Content-Length": Buffer.byteLength(body)},
+        },
+        () => resolve(),
       );
       req.on("error", () => resolve());
       req.write(body);
       req.end();
     });
-  } catch { /* non-fatal */ }
+  } catch {
+    /* non-fatal */
+  }
 }
 
 export async function verifyGuardianRole(router: ethers.Contract, guardian: string) {
@@ -174,11 +184,7 @@ export async function checkOnce(
     if (lastReportTime > 0n) {
       const ageSec = nowSec - Number(lastReportTime);
       if (ageSec > cfg.maxOracleAgeSec) {
-        await triggerPause(
-          router,
-          cfg,
-          `oracle report stale by ${ageSec}s (threshold=${cfg.maxOracleAgeSec}s)`,
-        );
+        await triggerPause(router, cfg, `oracle report stale by ${ageSec}s (threshold=${cfg.maxOracleAgeSec}s)`);
         state.paused = true;
         return;
       }
@@ -188,7 +194,9 @@ export async function checkOnce(
   }
 
   const prev = state.lastPooledEther;
-  console.log(`[monitor] ${ts} totalPooled=${ethers.formatEther(totalPooled)} ETH (prev=${ethers.formatEther(prev)} ETH)`);
+  console.log(
+    `[monitor] ${ts} totalPooled=${ethers.formatEther(totalPooled)} ETH (prev=${ethers.formatEther(prev)} ETH)`,
+  );
 
   if (totalPooled < prev) {
     const dropWei = prev - totalPooled;
@@ -216,9 +224,7 @@ async function main() {
   const provider = new ethers.JsonRpcProvider(cfg.rpcUrl);
   const wallet = new ethers.Wallet(cfg.guardianKey, provider);
   const router = new ethers.Contract(cfg.routerAddress, ROUTER_ABI, wallet);
-  const oracle = cfg.oracleAddress
-    ? new ethers.Contract(cfg.oracleAddress, ORACLE_ADAPTER_ABI, wallet)
-    : null;
+  const oracle = cfg.oracleAddress ? new ethers.Contract(cfg.oracleAddress, ORACLE_ADAPTER_ABI, wallet) : null;
 
   console.log(`[monitor] Starting balance monitor`);
   console.log(`[monitor] Router: ${cfg.routerAddress}`);

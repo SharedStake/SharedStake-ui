@@ -103,9 +103,7 @@ contract InstitutionalPolicyRegistry is AccessControl {
         return account == cfg.manager || _allowlisted[policyId][account];
     }
 
-    function getPolicy(
-        bytes32 policyId
-    ) external view returns (PolicyMode mode, address manager, bool exists) {
+    function getPolicy(bytes32 policyId) external view returns (PolicyMode mode, address manager, bool exists) {
         PolicyConfig storage cfg = _policies[policyId];
         return (cfg.mode, cfg.manager, cfg.exists);
     }
@@ -123,4 +121,3 @@ contract InstitutionalPolicyRegistry is AccessControl {
         if (!cfg.exists) revert PolicyNotFound(policyId);
     }
 }
-

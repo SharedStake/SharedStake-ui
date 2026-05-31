@@ -24,10 +24,9 @@ contract WstToken is ERC20Permit, ReentrancyGuard {
     event Wrap(address indexed account, uint256 stTokenAmount, uint256 wstTokenAmount);
     event Unwrap(address indexed account, uint256 wstTokenAmount, uint256 stTokenAmount);
 
-    constructor(address stToken)
-        ERC20("Wrapped SharedStake Staked Ether", "wstETH")
-        ERC20Permit("Wrapped SharedStake Staked Ether")
-    {
+    constructor(
+        address stToken
+    ) ERC20("Wrapped SharedStake Staked Ether", "wstETH") ERC20Permit("Wrapped SharedStake Staked Ether") {
         if (stToken == address(0)) revert Errors.ZeroAddress();
         ST_TOKEN = StToken(stToken);
     }

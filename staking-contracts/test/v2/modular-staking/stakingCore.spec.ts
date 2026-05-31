@@ -24,9 +24,9 @@ describe("StakingCore", () => {
   const GOV_ROLE = ethers.keccak256(ethers.toUtf8Bytes("GOV"));
   const ORACLE_ROLE = ethers.keccak256(ethers.toUtf8Bytes("ORACLE"));
   const GUARDIAN_ROLE = ethers.keccak256(ethers.toUtf8Bytes("GUARDIAN"));
-const MINTER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("MINTER"));
-const REFERRAL_CODE_A = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL_CODE_A"));
-const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL_CODE_MISSING"));
+  const MINTER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("MINTER"));
+  const REFERRAL_CODE_A = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL_CODE_A"));
+  const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL_CODE_MISSING"));
 
   async function deployFresh() {
     [deployer, gov, alice, bob, oracle] = await ethers.getSigners();
@@ -36,15 +36,15 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
 
     const FeeController = await ethers.getContractFactory("FeeController");
     feeController = await FeeController.deploy(
-      gov.address,          // gov
-      gov.address,          // treasury
-      deployer.address,     // operator
-      ZeroAddress,          // referral registry (unused in this suite)
-      ZeroAddress,          // debt pool (disabled)
-      1000,                 // feeBps: 10%
-      5000,                 // treasurySplitBps: 50%
-      5000,                 // operatorSplitBps: 50%
-      0                     // debtPoolSplitBps: 0% (disabled)
+      gov.address, // gov
+      gov.address, // treasury
+      deployer.address, // operator
+      ZeroAddress, // referral registry (unused in this suite)
+      ZeroAddress, // debt pool (disabled)
+      1000, // feeBps: 10%
+      5000, // treasurySplitBps: 50%
+      5000, // operatorSplitBps: 50%
+      0, // debtPoolSplitBps: 0% (disabled)
     );
 
     const StakingCore = await ethers.getContractFactory("StakingCore");
@@ -69,15 +69,19 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
       const ReferralRegistry = await ethers.getContractFactory("ReferralRegistry");
       const referralRegistry = await ReferralRegistry.deploy(gov.address, stToken.target);
       await referralRegistry.connect(gov).grantRole(await referralRegistry.ROUTER(), stakingCore.target);
-      await feeController.connect(gov).setRecipients(gov.address, deployer.address, referralRegistry.target, ZeroAddress);
+      await feeController
+        .connect(gov)
+        .setRecipients(gov.address, deployer.address, referralRegistry.target, ZeroAddress);
 
       const ReferralCodeRegistry = await ethers.getContractFactory("ReferralCodeRegistry");
       const referralCodeRegistry = await ReferralCodeRegistry.deploy(gov.address);
-      await referralCodeRegistry.connect(gov).registerReferralCode(
-        REFERRAL_CODE_A,
-        referrerAddress,
-        ethers.keccak256(ethers.toUtf8Bytes("campaign:core-test")),
-      );
+      await referralCodeRegistry
+        .connect(gov)
+        .registerReferralCode(
+          REFERRAL_CODE_A,
+          referrerAddress,
+          ethers.keccak256(ethers.toUtf8Bytes("campaign:core-test")),
+        );
       await stakingCore.connect(gov).setReferralCodeRegistry(referralCodeRegistry.target);
 
       return {referralRegistry, referralCodeRegistry};
@@ -87,9 +91,7 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
       const amount = parseEther("1");
       const sourceId = ethers.encodeBytes32String("homepage-banner-v2");
 
-      await expect(
-        stakingCore.connect(alice).submitWithAttribution(bob.address, sourceId, {value: amount})
-      )
+      await expect(stakingCore.connect(alice).submitWithAttribution(bob.address, sourceId, {value: amount}))
         .to.emit(stakingCore, "SubmittedWithAttribution")
         .withArgs(alice.address, bob.address, sourceId, amount, amount);
 
@@ -155,24 +157,21 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
 
     it("emits Submitted event with correct args", async () => {
       const amount = parseEther("2");
-      await expect(
-        stakingCore.connect(alice).submit(bob.address, {value: amount})
-      )
+      await expect(stakingCore.connect(alice).submit(bob.address, {value: amount}))
         .to.emit(stakingCore, "Submitted")
         .withArgs(alice.address, amount, bob.address, amount); // 1:1 on bootstrap
     });
 
     it("submit() remains unchanged and does not emit attribution telemetry", async () => {
       const amount = parseEther("1");
-      await expect(
-        stakingCore.connect(alice).submit(bob.address, {value: amount})
-      )
+      await expect(stakingCore.connect(alice).submit(bob.address, {value: amount}))
         .to.emit(stakingCore, "Submitted")
         .withArgs(alice.address, amount, bob.address, amount);
 
-      await expect(
-        stakingCore.connect(alice).submit(bob.address, {value: amount})
-      ).to.not.emit(stakingCore, "SubmittedWithAttribution");
+      await expect(stakingCore.connect(alice).submit(bob.address, {value: amount})).to.not.emit(
+        stakingCore,
+        "SubmittedWithAttribution",
+      );
     });
 
     it("subsequent deposits get proportional shares", async () => {
@@ -197,15 +196,11 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
     });
 
     it("reverts when msg.value == 0", async () => {
-      await expect(
-        stakingCore.connect(alice).submit(ZeroAddress, {value: 0})
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).submit(ZeroAddress, {value: 0})).to.be.reverted;
     });
 
     it("plain ETH transfer reverts when msg.value == 0", async () => {
-      await expect(
-        alice.sendTransaction({to: stakingCore.target, value: 0})
-      ).to.be.reverted;
+      await expect(alice.sendTransaction({to: stakingCore.target, value: 0})).to.be.reverted;
     });
   });
 
@@ -214,31 +209,23 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
   describe("pause/unpause", () => {
     it("GUARDIAN can pause submit", async () => {
       await stakingCore.connect(gov).pause(0); // PAUSE_SUBMIT = 0
-      await expect(
-        stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.be.reverted;
     });
 
     it("paused submit also blocks plain ETH transfers", async () => {
       await stakingCore.connect(gov).pause(0);
-      await expect(
-        alice.sendTransaction({to: stakingCore.target, value: parseEther("1")})
-      ).to.be.reverted;
+      await expect(alice.sendTransaction({to: stakingCore.target, value: parseEther("1")})).to.be.reverted;
     });
 
     it("GOV can unpause", async () => {
       await stakingCore.connect(gov).pause(0);
       await stakingCore.connect(gov).unpause(0);
       // Should succeed now.
-      await expect(
-        stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
-      ).to.not.be.reverted;
+      await expect(stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
     });
 
     it("non-GUARDIAN cannot pause", async () => {
-      await expect(
-        stakingCore.connect(alice).pause(0)
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).pause(0)).to.be.reverted;
     });
   });
 
@@ -251,9 +238,7 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
     });
 
     it("only ORACLE role can call reportBeacon", async () => {
-      await expect(
-        stakingCore.connect(alice).reportBeacon(0, 0)
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).reportBeacon(0, 0)).to.be.reverted;
     });
 
     it("reward rebase: beacon balance increases totalPooledEther", async () => {
@@ -286,9 +271,7 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
 
     it("emits fee-routing telemetry on positive rewards", async () => {
       await stakingCore.connect(gov).notifyBeaconDeposit(parseEther("10"));
-      await expect(
-        stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"))
-      )
+      await expect(stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5")))
         .to.emit(stakingCore, "FeeRoutingTelemetry")
         .withArgs(
           parseEther("0.5"),
@@ -320,27 +303,31 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
       // First establish validators.
       await stakingCore.connect(oracle).reportBeacon(1, parseEther("10"));
       // Now report 100× the max plausible.
-      await expect(
-        stakingCore.connect(oracle).reportBeacon(1, parseEther("6500"))
-      ).to.be.revertedWithCustomError(stakingCore, "BeaconBalanceSanityFailed");
+      await expect(stakingCore.connect(oracle).reportBeacon(1, parseEther("6500"))).to.be.revertedWithCustomError(
+        stakingCore,
+        "BeaconBalanceSanityFailed",
+      );
     });
 
     it("reverts when positive report arrives before beacon baseline initialization", async () => {
-      await expect(
-        stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"))
-      ).to.be.revertedWithCustomError(stakingCore, "BeaconBaselineNotInitialized");
+      await expect(stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"))).to.be.revertedWithCustomError(
+        stakingCore,
+        "BeaconBaselineNotInitialized",
+      );
     });
 
     it("rejects impossible report tuple (0 validators with non-zero balance)", async () => {
-      await expect(
-        stakingCore.connect(oracle).reportBeacon(0, parseEther("1"))
-      ).to.be.revertedWithCustomError(stakingCore, "InvalidBeaconReportTuple");
+      await expect(stakingCore.connect(oracle).reportBeacon(0, parseEther("1"))).to.be.revertedWithCustomError(
+        stakingCore,
+        "InvalidBeaconReportTuple",
+      );
     });
 
     it("reverts when baseline notification exceeds buffered ETH", async () => {
-      await expect(
-        stakingCore.connect(gov).notifyBeaconDeposit(parseEther("10.1"))
-      ).to.be.revertedWithCustomError(stakingCore, "BeaconDepositExceedsBuffered");
+      await expect(stakingCore.connect(gov).notifyBeaconDeposit(parseEther("10.1"))).to.be.revertedWithCustomError(
+        stakingCore,
+        "BeaconDepositExceedsBuffered",
+      );
     });
 
     it("routes referral fee shares to treasury when referral registry has no referees", async () => {
@@ -357,9 +344,7 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
       const operatorBefore = await stToken.sharesOf(deployer.address);
       const registryBefore = await stToken.sharesOf(registry.target);
 
-      await expect(
-        stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"))
-      ).to.not.be.reverted;
+      await expect(stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"))).to.not.be.reverted;
 
       const treasuryAfter = await stToken.sharesOf(gov.address);
       const operatorAfter = await stToken.sharesOf(deployer.address);
@@ -402,35 +387,25 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
 
   describe("Access control", () => {
     it("random address cannot call setFeeController", async () => {
-      await expect(
-        stakingCore.connect(alice).setFeeController(ZeroAddress)
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).setFeeController(ZeroAddress)).to.be.reverted;
     });
 
     it("random address cannot call grantRole", async () => {
-      await expect(
-        stakingCore.connect(alice).grantRole(ORACLE_ROLE, alice.address)
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).grantRole(ORACLE_ROLE, alice.address)).to.be.reverted;
     });
 
     it("random address cannot call setReferralCodeRegistry", async () => {
       const ReferralCodeRegistry = await ethers.getContractFactory("ReferralCodeRegistry");
       const referralCodeRegistry = await ReferralCodeRegistry.deploy(gov.address);
-      await expect(
-        stakingCore.connect(alice).setReferralCodeRegistry(referralCodeRegistry.target),
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).setReferralCodeRegistry(referralCodeRegistry.target)).to.be.reverted;
     });
 
     it("random address cannot call setWithdrawalQueue", async () => {
-      await expect(
-        stakingCore.connect(alice).setWithdrawalQueue(alice.address)
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).setWithdrawalQueue(alice.address)).to.be.reverted;
     });
 
     it("random address cannot call enableRouterMode", async () => {
-      await expect(
-        stakingCore.connect(alice).enableRouterMode(stakingCore.target)
-      ).to.be.reverted;
+      await expect(stakingCore.connect(alice).enableRouterMode(stakingCore.target)).to.be.reverted;
     });
   });
 
@@ -449,33 +424,36 @@ const REFERRAL_CODE_MISSING = ethers.keccak256(ethers.toUtf8Bytes("CORE_REFERRAL
     it("router mode cannot be enabled twice", async () => {
       await stakingCore.connect(gov).enableRouterMode(stakingCore.target);
 
-      await expect(
-        stakingCore.connect(gov).enableRouterMode(stakingCore.target)
-      ).to.be.revertedWithCustomError(stakingCore, "RouterModeAlreadyEnabled");
+      await expect(stakingCore.connect(gov).enableRouterMode(stakingCore.target)).to.be.revertedWithCustomError(
+        stakingCore,
+        "RouterModeAlreadyEnabled",
+      );
     });
 
     it("submit reverts when router mode is enabled", async () => {
       await stakingCore.connect(gov).enableRouterMode(stakingCore.target);
 
       await expect(
-        stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("1")})
+        stakingCore.connect(alice).submit(ZeroAddress, {value: parseEther("1")}),
       ).to.be.revertedWithCustomError(stakingCore, "RouterModeDisabled");
     });
 
     it("reportBeacon reverts when router mode is enabled", async () => {
       await stakingCore.connect(gov).enableRouterMode(stakingCore.target);
 
-      await expect(
-        stakingCore.connect(oracle).reportBeacon(1, parseEther("10"))
-      ).to.be.revertedWithCustomError(stakingCore, "RouterModeDisabled");
+      await expect(stakingCore.connect(oracle).reportBeacon(1, parseEther("10"))).to.be.revertedWithCustomError(
+        stakingCore,
+        "RouterModeDisabled",
+      );
     });
 
     it("notifyBeaconDeposit reverts when router mode is enabled", async () => {
       await stakingCore.connect(gov).enableRouterMode(stakingCore.target);
 
-      await expect(
-        stakingCore.connect(gov).notifyBeaconDeposit(parseEther("1"))
-      ).to.be.revertedWithCustomError(stakingCore, "RouterModeDisabled");
+      await expect(stakingCore.connect(gov).notifyBeaconDeposit(parseEther("1"))).to.be.revertedWithCustomError(
+        stakingCore,
+        "RouterModeDisabled",
+      );
     });
   });
 });

@@ -7,14 +7,14 @@ modular-staking contract suite (`StToken`, `StakingCore`, `WithdrawalQueueV2`,
 
 **Roles** (all are `bytes32` keccak labels except `DEFAULT_ADMIN_ROLE`):
 
-| Role                  | Power                                                    | Held by   |
-| --------------------- | -------------------------------------------------------- | --------- |
-| `DEFAULT_ADMIN_ROLE`  | Grant/revoke any role                                    | GOV multisig |
-| `GOV`                 | Param changes, unpause, fee/oracle wiring                | GOV multisig |
-| `GUARDIAN`            | Pause + finalize the withdrawal queue                    | GOV multisig (or fast-response key) |
-| `ORACLE` / `SUBMITTER`| Submit beacon reports                                    | Oracle bot key(s) |
-| `NODE_OPERATOR` / NOR | Register validators, register/exit on `ValidatorModule`  | NOR multisig |
-| `MINTER`              | Mint/burn `StToken` shares                               | `StakingCore`, `WithdrawalQueueV2` |
+| Role                   | Power                                                   | Held by                             |
+| ---------------------- | ------------------------------------------------------- | ----------------------------------- |
+| `DEFAULT_ADMIN_ROLE`   | Grant/revoke any role                                   | GOV multisig                        |
+| `GOV`                  | Param changes, unpause, fee/oracle wiring               | GOV multisig                        |
+| `GUARDIAN`             | Pause + finalize the withdrawal queue                   | GOV multisig (or fast-response key) |
+| `ORACLE` / `SUBMITTER` | Submit beacon reports                                   | Oracle bot key(s)                   |
+| `NODE_OPERATOR` / NOR  | Register validators, register/exit on `ValidatorModule` | NOR multisig                        |
+| `MINTER`               | Mint/burn `StToken` shares                              | `StakingCore`, `WithdrawalQueueV2`  |
 
 > Code references: `contracts/v2/modular-staking/*.sol`. Pull the live address
 > set from `deployments/<network>/manifest.json` before running any
@@ -79,7 +79,7 @@ triple — coordinate with all submitters before broadcasting.
 
 Trigger: an oracle report would reduce total beacon balance by more than
 `maxSlashBps` (default 5%). The adapter reverts `SlashTooLarge(actual,max)`,
-so the system is *frozen on stale data* until GOV explicitly authorizes the
+so the system is _frozen on stale data_ until GOV explicitly authorizes the
 loss.
 
 ```bash
@@ -97,7 +97,7 @@ cast send $ORACLE "setMaxSlashBps(uint256)" 500 --from $GOV
 
 **Downstream:** share price (`pricePerShare`) drops on next rebase; queued
 withdrawal claims settle at the post-slash exchange rate. Communicate the
-event publicly *before* finalizing the report — users with claimable
+event publicly _before_ finalizing the report — users with claimable
 positions should know the new payout rate.
 
 ---

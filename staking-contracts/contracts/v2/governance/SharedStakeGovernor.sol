@@ -42,8 +42,8 @@ contract SharedStakeGovernor is
     )
         Governor("SharedStakeGovernor")
         GovernorSettings(
-            7200, /* votingDelay: ~1 day @ 12s block time */
-            40320, /* votingPeriod: ~1 week */
+            7200 /* votingDelay: ~1 day @ 12s block time */,
+            40320 /* votingPeriod: ~1 week */,
             1000e18 /* proposalThreshold: 1000 veSGT */
         )
         GovernorVotes(_veToken)
@@ -61,12 +61,9 @@ contract SharedStakeGovernor is
         return super.votingPeriod();
     }
 
-    function quorum(uint256 blockNumber)
-        public
-        view
-        override(IGovernor, GovernorVotesQuorumFraction)
-        returns (uint256)
-    {
+    function quorum(
+        uint256 blockNumber
+    ) public view override(IGovernor, GovernorVotesQuorumFraction) returns (uint256) {
         return super.quorum(blockNumber);
     }
 
@@ -74,12 +71,7 @@ contract SharedStakeGovernor is
         return super.proposalThreshold();
     }
 
-    function state(uint256 proposalId)
-        public
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (ProposalState)
-    {
+    function state(uint256 proposalId) public view override(Governor, GovernorTimelockControl) returns (ProposalState) {
         return super.state(proposalId);
     }
 
@@ -115,12 +107,9 @@ contract SharedStakeGovernor is
         return super._executor();
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(Governor, GovernorTimelockControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

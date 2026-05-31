@@ -23,19 +23,8 @@ import {ethers} from "ethers";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-  verifyGuardianRole,
-  finalizeOnce,
-  Config,
-} from "../../../scripts/keepers/withdrawalFinalizer";
-import {
-  makeFakeContract,
-  makeFakeProvider,
-  makeFakeWallet,
-  makeFakeTx,
-  patchEthers,
-  RestoreFn,
-} from "./helpers";
+import {verifyGuardianRole, finalizeOnce, Config} from "../../../scripts/keepers/withdrawalFinalizer";
+import {makeFakeContract, makeFakeProvider, makeFakeWallet, makeFakeTx, patchEthers, RestoreFn} from "./helpers";
 
 const GUARDIAN_ROLE = ethers.keccak256(ethers.toUtf8Bytes("GUARDIAN"));
 const GUARDIAN_ADDR = "0x00000000000000000000000000000000000000A1";

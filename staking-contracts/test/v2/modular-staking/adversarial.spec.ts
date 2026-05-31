@@ -40,13 +40,7 @@ describe("SharedStake V2 adversarial", () => {
     oracle: SignerWithAddress,
     impostor: SignerWithAddress;
 
-  let stToken: any,
-    feeController: any,
-    router: any,
-    mod1: any,
-    queue: any,
-    mockBeaconDeposit: any,
-    oracleAdapter: any;
+  let stToken: any, feeController: any, router: any, mod1: any, queue: any, mockBeaconDeposit: any, oracleAdapter: any;
   let expectedWithdrawalCreds: string;
 
   async function deployStack() {
@@ -60,12 +54,12 @@ describe("SharedStake V2 adversarial", () => {
       gov.address,
       gov.address,
       deployer.address,
-      ZeroAddress,        // referral registry
-      ZeroAddress,        // debt pool (disabled)
-      1000,               // feeBps
-      5000,               // treasurySplitBps
-      5000,               // operatorSplitBps
-      0,                  // debtPoolSplitBps (disabled)
+      ZeroAddress, // referral registry
+      ZeroAddress, // debt pool (disabled)
+      1000, // feeBps
+      5000, // treasurySplitBps
+      5000, // operatorSplitBps
+      0, // debtPoolSplitBps (disabled)
     );
 
     const StakingRouter = await ethers.getContractFactory("StakingRouter");
@@ -145,14 +139,15 @@ describe("SharedStake V2 adversarial", () => {
   describe("2. Fake module reporting", () => {
     it("non-module address cannot call reportModuleBeaconBalance", async () => {
       await expect(
-        router.connect(impostor).reportModuleBeaconBalance(SOLO, parseEther("32"))
+        router.connect(impostor).reportModuleBeaconBalance(SOLO, parseEther("32")),
       ).to.be.revertedWithCustomError(router, "NotModule");
     });
 
     it("non-module address cannot call notifyBeaconDeposit", async () => {
-      await expect(
-        router.connect(impostor).notifyBeaconDeposit(SOLO, parseEther("32"))
-      ).to.be.revertedWithCustomError(router, "NotModule");
+      await expect(router.connect(impostor).notifyBeaconDeposit(SOLO, parseEther("32"))).to.be.revertedWithCustomError(
+        router,
+        "NotModule",
+      );
     });
   });
 
@@ -164,9 +159,10 @@ describe("SharedStake V2 adversarial", () => {
       await queue.connect(gov).finalize(1, {value: parseEther("1.1")});
 
       await queue.connect(alice).claimWithdrawal(1, alice.address);
-      await expect(
-        queue.connect(alice).claimWithdrawal(1, alice.address)
-      ).to.be.revertedWithCustomError(queue, "RequestAlreadyClaimed");
+      await expect(queue.connect(alice).claimWithdrawal(1, alice.address)).to.be.revertedWithCustomError(
+        queue,
+        "RequestAlreadyClaimed",
+      );
     });
   });
 
@@ -177,9 +173,10 @@ describe("SharedStake V2 adversarial", () => {
       await queue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
       await queue.connect(gov).finalize(1, {value: parseEther("1.1")});
 
-      await expect(
-        queue.connect(bob).claimWithdrawal(1, bob.address)
-      ).to.be.revertedWithCustomError(queue, "NotRequestOwner");
+      await expect(queue.connect(bob).claimWithdrawal(1, bob.address)).to.be.revertedWithCustomError(
+        queue,
+        "NotRequestOwner",
+      );
     });
   });
 
@@ -188,9 +185,10 @@ describe("SharedStake V2 adversarial", () => {
     it("deposit beyond cap reverts MintCapExceeded", async () => {
       // Cap is 100 ETH on SOLO (set in fixture).
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("99")});
-      await expect(
-        router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})
-      ).to.be.revertedWithCustomError(router, "MintCapExceeded");
+      await expect(router.connect(alice).submit(ZeroAddress, {value: parseEther("2")})).to.be.revertedWithCustomError(
+        router,
+        "MintCapExceeded",
+      );
     });
   });
 
@@ -200,7 +198,7 @@ describe("SharedStake V2 adversarial", () => {
       const now = Math.floor(Date.now() / 1000);
       const stale = now - 7 * 3600; // 7 hours ago, default cap is 6 hours
       await expect(
-        oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), stale)
+        oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), stale),
       ).to.be.revertedWithCustomError(oracleAdapter, "StaleReport");
     });
   });
@@ -239,9 +237,10 @@ describe("SharedStake V2 adversarial", () => {
       await mod1.connect(oracle).reportBeacon(1, parseEther("32"));
 
       // Now sanity check: 2x max plausible is 1 * 32 * 2 = 64 ETH. > 64 must revert.
-      await expect(
-        mod1.connect(oracle).reportBeacon(1, parseEther("65"))
-      ).to.be.revertedWithCustomError(mod1, "BeaconBalanceSanityFailed");
+      await expect(mod1.connect(oracle).reportBeacon(1, parseEther("65"))).to.be.revertedWithCustomError(
+        mod1,
+        "BeaconBalanceSanityFailed",
+      );
     });
 
     it("rejects validator-count inflation beyond deposited validators", async () => {
@@ -255,9 +254,7 @@ describe("SharedStake V2 adversarial", () => {
 
       // Keep reported balance equal to baseline so router delta checks would not
       // catch this by themselves; validator-count guard must catch it.
-      await expect(
-        mod1.connect(oracle).reportBeacon(1_000, parseEther("32"))
-      )
+      await expect(mod1.connect(oracle).reportBeacon(1_000, parseEther("32")))
         .to.be.revertedWithCustomError(mod1, "BeaconValidatorCountSanityFailed")
         .withArgs(1000, 1);
     });
@@ -266,9 +263,7 @@ describe("SharedStake V2 adversarial", () => {
   // ── 9. Unauthorized beacon report ────────────────────────────────────────
   describe("9. Unauthorized reportBeacon path", () => {
     it("non-ORACLE caller reverts AccessControl", async () => {
-      await expect(
-        mod1.connect(impostor).reportBeacon(1, parseEther("32"))
-      ).to.be.reverted;
+      await expect(mod1.connect(impostor).reportBeacon(1, parseEther("32"))).to.be.reverted;
     });
   });
 
@@ -276,9 +271,7 @@ describe("SharedStake V2 adversarial", () => {
   describe("10. Unauthorized registerModule", () => {
     it("non-GOV caller reverts AccessControl", async () => {
       const FAKE = ethers.keccak256(ethers.toUtf8Bytes("FAKE_MOD"));
-      await expect(
-        router.connect(impostor).registerModule(FAKE, mod1.target, 0)
-      ).to.be.reverted;
+      await expect(router.connect(impostor).registerModule(FAKE, mod1.target, 0)).to.be.reverted;
     });
   });
 
@@ -301,7 +294,7 @@ describe("SharedStake V2 adversarial", () => {
       // Now Alice owns shares whose value is reduced. Request withdrawal of 1 stETH.
       // 1 stETH at the new rate is worth less than 1 ETH-equivalent at the original rate.
       const ethValueAtRequestTime = await stToken.getPooledEthByShares(
-        await stToken.getSharesByPooledEth(parseEther("1"))
+        await stToken.getSharesByPooledEth(parseEther("1")),
       );
       // The post-slash balance equals 1:1 in stETH terms but 30/32 in original-ETH terms,
       // so a 1 stETH withdrawal request locks 1 stETH worth (rate * shares) of ETH.
@@ -340,9 +333,10 @@ describe("SharedStake V2 adversarial", () => {
       await lst.connect(alice).approve(lstMod.target, parseEther("1"));
 
       // wrap of 1 LST → 100 ETH equiv, exceeding 10 ETH cap → revert.
-      await expect(
-        lstMod.connect(alice).wrapLST(parseEther("1"), alice.address)
-      ).to.be.revertedWithCustomError(router, "MintCapExceeded");
+      await expect(lstMod.connect(alice).wrapLST(parseEther("1"), alice.address)).to.be.revertedWithCustomError(
+        router,
+        "MintCapExceeded",
+      );
     });
   });
 
@@ -363,9 +357,7 @@ describe("SharedStake V2 adversarial", () => {
       expect(await stToken.totalPooledEther()).to.equal(0n);
       expect(await stToken.getTotalShares()).to.be.gt(0n);
 
-      await expect(
-        router.connect(bob).submit(ZeroAddress, {value: parseEther("1")}),
-      ).to.be.reverted;
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.be.reverted;
     });
   });
 
@@ -384,9 +376,10 @@ describe("SharedStake V2 adversarial", () => {
       const ts = blk!.timestamp;
       await oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), ts);
 
-      await expect(
-        oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), ts),
-      ).to.be.revertedWithCustomError(oracleAdapter, "NonMonotonicReportTimestamp");
+      await expect(oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), ts)).to.be.revertedWithCustomError(
+        oracleAdapter,
+        "NonMonotonicReportTimestamp",
+      );
     });
   });
 

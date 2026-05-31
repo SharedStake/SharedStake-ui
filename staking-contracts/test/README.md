@@ -11,6 +11,7 @@ This directory contains all test suites for the SharedStake smart contracts.
 ## Running Tests
 
 ### Foundry Tests
+
 ```bash
 cd staking-contracts
 forge test
@@ -18,6 +19,7 @@ forge test --match-path test/foundry/ModularStakingInvariants.t.sol
 ```
 
 ### Hardhat Tests
+
 ```bash
 cd staking-contracts
 npx hardhat test

@@ -30,10 +30,7 @@ contract StTokenERC4626Wrapper is ERC4626 {
     // Cached to avoid repeated asset() calls; same address as ERC4626._asset.
     IERC20 private immutable ST_TOKEN;
 
-    constructor(address stToken)
-        ERC20("SharedStake Wrapped StToken", "wstToken-4626")
-        ERC4626(IERC20(stToken))
-    {
+    constructor(address stToken) ERC20("SharedStake Wrapped StToken", "wstToken-4626") ERC4626(IERC20(stToken)) {
         require(stToken != address(0), "StTokenERC4626Wrapper: zero address");
         ST_TOKEN = IERC20(stToken);
     }

@@ -83,9 +83,10 @@ describe("QuorumOracleAdapter operational flows", () => {
     await ethers.provider.send("evm_increaseTime", [7 * 60 * 60]);
     await ethers.provider.send("evm_mine", []);
 
-    await expect(
-      quorumAdapter.connect(submitter2).submitReport(1, balance, ts)
-    ).to.be.revertedWithCustomError(quorumAdapter, "StaleReport");
+    await expect(quorumAdapter.connect(submitter2).submitReport(1, balance, ts)).to.be.revertedWithCustomError(
+      quorumAdapter,
+      "StaleReport",
+    );
 
     expect(await quorumAdapter.reportVotes(reportHash)).to.equal(1n);
     expect(await quorumAdapter.reportFinalized(reportHash)).to.equal(false);

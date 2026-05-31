@@ -56,15 +56,15 @@ describe("StakingRouter E2E (SharedStake V2 modular)", () => {
 
     const FeeController = await ethers.getContractFactory("FeeController");
     feeController = await FeeController.deploy(
-      gov.address,        // gov
-      gov.address,        // treasury
-      deployer.address,   // operator
-      ZeroAddress,        // referral registry (unused in this suite)
-      ZeroAddress,        // debt pool (disabled)
-      1000,               // 10% fee
-      5000,               // 50/50 split
-      5000,               // operator split
-      0,                  // debt pool split (disabled)
+      gov.address, // gov
+      gov.address, // treasury
+      deployer.address, // operator
+      ZeroAddress, // referral registry (unused in this suite)
+      ZeroAddress, // debt pool (disabled)
+      1000, // 10% fee
+      5000, // 50/50 split
+      5000, // operator split
+      0, // debt pool split (disabled)
     );
 
     const StakingRouter = await ethers.getContractFactory("StakingRouter");
@@ -74,9 +74,7 @@ describe("StakingRouter E2E (SharedStake V2 modular)", () => {
     mockBeaconDeposit = await MockBeaconDeposit.deploy();
 
     const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-    validatorModule = await ValidatorModule.deploy(
-      router.target, SOLO, gov.address, mockBeaconDeposit.target,
-    );
+    validatorModule = await ValidatorModule.deploy(router.target, SOLO, gov.address, mockBeaconDeposit.target);
 
     const WithdrawalQueueV2 = await ethers.getContractFactory("WithdrawalQueueV2");
     withdrawalQueue = await WithdrawalQueueV2.deploy(stToken.target, gov.address);
@@ -136,11 +134,7 @@ describe("StakingRouter E2E (SharedStake V2 modular)", () => {
     // tests in other suites that advance evm time via `evm_increaseTime`.
     const blk = await ethers.provider.getBlock("latest");
     const now = blk!.timestamp;
-    await oracleAdapter.connect(oracleSigner).submitReport(
-      1,
-      parseEther("32.5"),
-      now,
-    );
+    await oracleAdapter.connect(oracleSigner).submitReport(1, parseEther("32.5"), now);
 
     // Pool stays at 32.5 ETH because fees are captured via share dilution,
     // not by increasing totalPooledEther beyond actual ETH backing.

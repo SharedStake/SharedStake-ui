@@ -16,19 +16,8 @@
  */
 import {expect} from "chai";
 import {ethers} from "ethers";
-import {
-  verifySubmitterRole,
-  reportOnce,
-  Config,
-} from "../../../scripts/keepers/oracleReporter";
-import {
-  makeFakeContract,
-  makeFakeProvider,
-  makeFakeWallet,
-  makeFakeTx,
-  patchEthers,
-  RestoreFn,
-} from "./helpers";
+import {verifySubmitterRole, reportOnce, Config} from "../../../scripts/keepers/oracleReporter";
+import {makeFakeContract, makeFakeProvider, makeFakeWallet, makeFakeTx, patchEthers, RestoreFn} from "./helpers";
 
 const SUBMITTER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("SUBMITTER"));
 const SUBMITTER_ADDR = "0x00000000000000000000000000000000000000C3";
@@ -150,9 +139,7 @@ describe("keepers/oracleReporter", () => {
       globalThis.fetch = (async (url: string) => {
         fetchCalled = true;
         expect(url).to.contain("/eth/v1/beacon/states/head/validators");
-        return makeBeaconResponse([
-          {balance: "32000000000", status: "active_ongoing", pubkey: cfg.pubkeys[0]},
-        ]);
+        return makeBeaconResponse([{balance: "32000000000", status: "active_ongoing", pubkey: cfg.pubkeys[0]}]);
       }) as typeof globalThis.fetch;
 
       await reportOnce(cfg);

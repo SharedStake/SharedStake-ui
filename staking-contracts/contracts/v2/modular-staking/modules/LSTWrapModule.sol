@@ -77,12 +77,10 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     /// @notice Deposit `lstAmount` of the wrapped LST in exchange for stToken.
     ///         Caller must have approved this contract for at least `lstAmount`.
     /// @param recipient Address to receive the minted stToken.
-    function wrapLST(uint256 lstAmount, address recipient)
-        external
-        nonReentrant
-        whenNotPaused(PAUSE_WRAP)
-        returns (uint256 ethEquiv)
-    {
+    function wrapLST(
+        uint256 lstAmount,
+        address recipient
+    ) external nonReentrant whenNotPaused(PAUSE_WRAP) returns (uint256 ethEquiv) {
         if (lstAmount == 0) revert Errors.InvalidAmount();
         if (recipient == address(0)) revert Errors.ZeroAddress();
         if (address(priceOracle) == address(0)) revert PriceOracleNotSet();
@@ -107,12 +105,10 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
 
     /// @notice Burn `stTokenAmount` of stToken and receive LST in return.
     ///         Caller must hold the stToken; the Router will burn it from `msg.sender`.
-    function unwrapLST(uint256 stTokenAmount, address recipient)
-        external
-        nonReentrant
-        whenNotPaused(PAUSE_UNWRAP)
-        returns (uint256 lstAmount)
-    {
+    function unwrapLST(
+        uint256 stTokenAmount,
+        address recipient
+    ) external nonReentrant whenNotPaused(PAUSE_UNWRAP) returns (uint256 lstAmount) {
         if (stTokenAmount == 0) revert Errors.InvalidAmount();
         if (recipient == address(0)) revert Errors.ZeroAddress();
         if (address(priceOracle) == address(0)) revert PriceOracleNotSet();

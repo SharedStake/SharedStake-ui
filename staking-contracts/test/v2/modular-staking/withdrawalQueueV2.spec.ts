@@ -81,24 +81,23 @@ describe("WithdrawalQueueV2", () => {
 
     it("reverts for amount below MIN_WITHDRAWAL", async () => {
       await expect(
-        queue.connect(alice).requestWithdrawals([parseEther("0.001")], alice.address)
+        queue.connect(alice).requestWithdrawals([parseEther("0.001")], alice.address),
       ).to.be.revertedWithCustomError(queue, "AmountOutOfBounds");
     });
 
     it("reverts for amount above MAX_WITHDRAWAL", async () => {
       await expect(
-        queue.connect(alice).requestWithdrawals([parseEther("1001")], alice.address)
+        queue.connect(alice).requestWithdrawals([parseEther("1001")], alice.address),
       ).to.be.revertedWithCustomError(queue, "AmountOutOfBounds");
     });
 
     it("reverts with zero owner address", async () => {
-      await expect(
-        queue.connect(alice).requestWithdrawals([parseEther("1")], ZeroAddress)
-      ).to.be.reverted;
+      await expect(queue.connect(alice).requestWithdrawals([parseEther("1")], ZeroAddress)).to.be.reverted;
     });
 
     it("batch request: multiple amounts in one call", async () => {
-      const ids = await queue.connect(alice)
+      const ids = await queue
+        .connect(alice)
         .requestWithdrawals.staticCall([parseEther("1"), parseEther("2")], alice.address);
       expect(ids.length).to.equal(2);
     });
@@ -112,15 +111,11 @@ describe("WithdrawalQueueV2", () => {
     });
 
     it("only GUARDIAN can finalize", async () => {
-      await expect(
-        queue.connect(alice).finalize(1, {value: parseEther("1")})
-      ).to.be.reverted;
+      await expect(queue.connect(alice).finalize(1, {value: parseEther("1")})).to.be.reverted;
     });
 
     it("GUARDIAN (gov) can finalize a batch", async () => {
-      await expect(
-        queue.connect(gov).finalize(2, {value: parseEther("3")})
-      ).to.emit(queue, "BatchFinalized");
+      await expect(queue.connect(gov).finalize(2, {value: parseEther("3")})).to.emit(queue, "BatchFinalized");
     });
 
     it("finalizes correct ETH per request at 1:1 rate", async () => {
@@ -135,9 +130,10 @@ describe("WithdrawalQueueV2", () => {
     });
 
     it("reverts if insufficient ETH provided", async () => {
-      await expect(
-        queue.connect(gov).finalize(1, {value: parseEther("0.0001")})
-      ).to.be.revertedWithCustomError(queue, "InsufficientFinalizeEth");
+      await expect(queue.connect(gov).finalize(1, {value: parseEther("0.0001")})).to.be.revertedWithCustomError(
+        queue,
+        "InsufficientFinalizeEth",
+      );
     });
 
     it("returns excess ETH to caller", async () => {
@@ -155,9 +151,10 @@ describe("WithdrawalQueueV2", () => {
 
     it("reverts on invalid request range", async () => {
       // nextRequestId is 3; requesting to finalize id 5 (doesn't exist) should revert.
-      await expect(
-        queue.connect(gov).finalize(5, {value: parseEther("5")})
-      ).to.be.revertedWithCustomError(queue, "InvalidRequestRange");
+      await expect(queue.connect(gov).finalize(5, {value: parseEther("5")})).to.be.revertedWithCustomError(
+        queue,
+        "InvalidRequestRange",
+      );
     });
   });
 
@@ -167,9 +164,7 @@ describe("WithdrawalQueueV2", () => {
     it("only ORACLE can update bunker mode and report timestamp", async () => {
       const ts = (await ethers.provider.getBlock("latest"))!.timestamp;
 
-      await expect(
-        queue.connect(alice).updateModeFromOracle(true, ts)
-      ).to.be.reverted;
+      await expect(queue.connect(alice).updateModeFromOracle(true, ts)).to.be.reverted;
 
       await queue.connect(oracle).updateModeFromOracle(true, ts);
       expect(await queue.withdrawalMode()).to.equal(1n); // BUNKER
@@ -180,46 +175,39 @@ describe("WithdrawalQueueV2", () => {
       const ts = (await ethers.provider.getBlock("latest"))!.timestamp;
       await queue.connect(oracle).updateModeFromOracle(true, ts);
 
-      await expect(
-        queue.connect(oracle).updateModeFromOracle(false, ts)
-      )
+      await expect(queue.connect(oracle).updateModeFromOracle(false, ts))
         .to.be.revertedWithCustomError(queue, "StaleReportTimestamp")
         .withArgs(ts, ts);
 
-      await expect(
-        queue.connect(oracle).updateModeFromOracle(false, ts - 1)
-      )
+      await expect(queue.connect(oracle).updateModeFromOracle(false, ts - 1))
         .to.be.revertedWithCustomError(queue, "StaleReportTimestamp")
         .withArgs(ts - 1, ts);
     });
 
     it("applies bunker finalize constraints (batch-size + minimum age)", async () => {
-      await queue.connect(alice).requestWithdrawals(
-        [parseEther("1"), parseEther("1"), parseEther("1")],
-        alice.address
-      );
+      await queue.connect(alice).requestWithdrawals([parseEther("1"), parseEther("1"), parseEther("1")], alice.address);
       await queue.connect(gov).setBunkerMaxRequestsPerFinalize(2);
       await queue.connect(gov).setBunkerMinRequestAge(24 * 60 * 60);
 
       const ts = (await ethers.provider.getBlock("latest"))!.timestamp;
       await queue.connect(oracle).updateModeFromOracle(true, ts);
 
-      await expect(
-        queue.connect(gov).finalize(3, {value: parseEther("3")})
-      ).to.be.revertedWithCustomError(queue, "BunkerBatchTooLarge");
+      await expect(queue.connect(gov).finalize(3, {value: parseEther("3")})).to.be.revertedWithCustomError(
+        queue,
+        "BunkerBatchTooLarge",
+      );
 
-      await expect(
-        queue.connect(gov).finalize(2, {value: parseEther("2")})
-      ).to.be.revertedWithCustomError(queue, "RequestTooYoung");
+      await expect(queue.connect(gov).finalize(2, {value: parseEther("2")})).to.be.revertedWithCustomError(
+        queue,
+        "RequestTooYoung",
+      );
 
       await ethers.provider.send("evm_increaseTime", [24 * 60 * 60 + 1]);
       await ethers.provider.send("evm_mine", []);
       const ts2 = (await ethers.provider.getBlock("latest"))!.timestamp;
       await queue.connect(oracle).updateModeFromOracle(true, ts2);
 
-      await expect(
-        queue.connect(gov).finalize(2, {value: parseEther("2")})
-      ).to.emit(queue, "BatchFinalized");
+      await expect(queue.connect(gov).finalize(2, {value: parseEther("2")})).to.emit(queue, "BatchFinalized");
     });
 
     it("keeps turbo mode finalize behavior unaffected", async () => {
@@ -230,9 +218,7 @@ describe("WithdrawalQueueV2", () => {
       const ts = (await ethers.provider.getBlock("latest"))!.timestamp;
       await queue.connect(oracle).updateModeFromOracle(false, ts); // TURBO
 
-      await expect(
-        queue.connect(gov).finalize(2, {value: parseEther("2")})
-      ).to.emit(queue, "BatchFinalized");
+      await expect(queue.connect(gov).finalize(2, {value: parseEther("2")})).to.emit(queue, "BatchFinalized");
     });
 
     it("keeps claims available for already finalized requests in bunker mode", async () => {
@@ -274,23 +260,26 @@ describe("WithdrawalQueueV2", () => {
 
     it("reverts on double-claim (replay protection)", async () => {
       await queue.connect(alice).claimWithdrawal(1, alice.address);
-      await expect(
-        queue.connect(alice).claimWithdrawal(1, alice.address)
-      ).to.be.revertedWithCustomError(queue, "RequestAlreadyClaimed");
+      await expect(queue.connect(alice).claimWithdrawal(1, alice.address)).to.be.revertedWithCustomError(
+        queue,
+        "RequestAlreadyClaimed",
+      );
     });
 
     it("reverts when non-owner tries to claim", async () => {
-      await expect(
-        queue.connect(bob).claimWithdrawal(1, bob.address)
-      ).to.be.revertedWithCustomError(queue, "NotRequestOwner");
+      await expect(queue.connect(bob).claimWithdrawal(1, bob.address)).to.be.revertedWithCustomError(
+        queue,
+        "NotRequestOwner",
+      );
     });
 
     it("reverts when request not yet finalized", async () => {
       await queue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
       // request 2 is not finalized
-      await expect(
-        queue.connect(alice).claimWithdrawal(2, alice.address)
-      ).to.be.revertedWithCustomError(queue, "RequestNotFinalized");
+      await expect(queue.connect(alice).claimWithdrawal(2, alice.address)).to.be.revertedWithCustomError(
+        queue,
+        "RequestNotFinalized",
+      );
     });
   });
 

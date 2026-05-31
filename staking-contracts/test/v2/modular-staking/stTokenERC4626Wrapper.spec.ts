@@ -43,9 +43,7 @@ describe("StTokenERC4626Wrapper", () => {
 
   it("reverts on zero address stToken", async () => {
     const Wrapper = await ethers.getContractFactory("StTokenERC4626Wrapper");
-    await expect(
-      Wrapper.deploy(ethers.ZeroAddress)
-    ).to.be.revertedWith("StTokenERC4626Wrapper: zero address");
+    await expect(Wrapper.deploy(ethers.ZeroAddress)).to.be.revertedWith("StTokenERC4626Wrapper: zero address");
   });
 
   it("has correct name and symbol", async () => {
@@ -100,9 +98,10 @@ describe("StTokenERC4626Wrapper", () => {
     const victimAmount = 1n;
     await mintAndApprove(bob, victimAmount);
 
-    await expect(
-      wrapper.connect(bob).deposit(victimAmount, bob.address),
-    ).to.be.revertedWithCustomError(wrapper, "ZeroSharesDeposit");
+    await expect(wrapper.connect(bob).deposit(victimAmount, bob.address)).to.be.revertedWithCustomError(
+      wrapper,
+      "ZeroSharesDeposit",
+    );
   });
 
   it("second depositor receives proportional shares", async () => {

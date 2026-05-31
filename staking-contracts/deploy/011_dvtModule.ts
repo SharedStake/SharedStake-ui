@@ -1,10 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
-import {
-  DVTModule__factory,
-  StakingRouter__factory,
-  WithdrawalQueueV2__factory,
-} from "../types";
+import {DVTModule__factory, StakingRouter__factory, WithdrawalQueueV2__factory} from "../types";
 import {
   allowlistModuleCodeHash,
   assertGovernanceSigner,
@@ -58,14 +54,7 @@ const func: DeployFunction = async hre => {
   const moduleRuntimeCode = await hre.ethers.provider.getCode(dvtModule.target as string);
   const moduleCodeHash = hre.ethers.keccak256(moduleRuntimeCode);
   await allowlistModuleCodeHash(router, moduleType, moduleCodeHash, govSigner, "DVTModule");
-  await registerOrUpdateModule(
-    router,
-    govSigner,
-    moduleId,
-    dvtModule.target as string,
-    mintCapWei,
-    "DVTModule",
-  );
+  await registerOrUpdateModule(router, govSigner, moduleId, dvtModule.target as string, mintCapWei, "DVTModule");
 
   const withdrawalQueueAddress = await address(WithdrawalQueueV2__factory);
   if (!withdrawalQueueAddress) throw new Error("WithdrawalQueueV2 not deployed");

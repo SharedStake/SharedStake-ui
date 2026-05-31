@@ -51,4 +51,3 @@ describe("CuratedNorModuleLite", () => {
     expect(await module.depositedValidatorCount()).to.eq(1);
   });
 });
-

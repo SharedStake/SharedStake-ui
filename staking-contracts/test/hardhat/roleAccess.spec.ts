@@ -37,12 +37,12 @@ describe("modular-staking role/access sweep", () => {
         gov.address,
         gov.address,
         deployer.address,
-        ZeroAddress,        // referral registry
-        ZeroAddress,        // debt pool (disabled)
-        1000,               // feeBps
-        5000,               // treasurySplitBps
-        5000,               // operatorSplitBps
-        0,                  // debtPoolSplitBps (disabled)
+        ZeroAddress, // referral registry
+        ZeroAddress, // debt pool (disabled)
+        1000, // feeBps
+        5000, // treasurySplitBps
+        5000, // operatorSplitBps
+        0, // debtPoolSplitBps (disabled)
       );
 
       const ORACLE_ROLE = await stakingCore.ORACLE();
@@ -101,12 +101,12 @@ describe("modular-staking role/access sweep", () => {
         gov.address,
         gov.address,
         deployer.address,
-        ZeroAddress,        // referral registry
-        ZeroAddress,        // debt pool (disabled)
-        1000,               // feeBps
-        5000,               // treasurySplitBps
-        5000,               // operatorSplitBps
-        0,                  // debtPoolSplitBps (disabled)
+        ZeroAddress, // referral registry
+        ZeroAddress, // debt pool (disabled)
+        1000, // feeBps
+        5000, // treasurySplitBps
+        5000, // operatorSplitBps
+        0, // debtPoolSplitBps (disabled)
       );
 
       const GUARDIAN_ROLE = await router.GUARDIAN();
@@ -124,11 +124,11 @@ describe("modular-staking role/access sweep", () => {
       const moduleType = await module1.moduleType();
       const moduleCodeHash = ethers.keccak256(await ethers.provider.getCode(module1.target));
 
-      await expect(router.connect(outsider).registerModule(
-        ethers.keccak256(ethers.toUtf8Bytes("ROLE_SWEEP_EXTRA")),
-        module1.target,
-        0,
-      )).to.be.reverted;
+      await expect(
+        router
+          .connect(outsider)
+          .registerModule(ethers.keccak256(ethers.toUtf8Bytes("ROLE_SWEEP_EXTRA")), module1.target, 0),
+      ).to.be.reverted;
       await expect(router.connect(outsider).setMintCap(SOLO, parseEther("50"))).to.be.reverted;
       await expect(router.connect(outsider).setModuleInflowLimit(SOLO, 3600, parseEther("10"))).to.be.reverted;
       await expect(router.connect(outsider).setDefaultModule(SOLO)).to.be.reverted;

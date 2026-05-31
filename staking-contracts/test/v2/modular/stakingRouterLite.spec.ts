@@ -18,10 +18,7 @@ describe("StakingRouterLite", () => {
   const configureModuleData = async (module: CuratedNorModuleLite, keyCount: number) => {
     const pubkeys = Array.from({length: keyCount}, (_, i) => buildBytes(i % 2 === 0 ? "aa" : "bb", 48));
     const signatures = Array.from({length: keyCount}, (_, i) => buildBytes(i % 2 === 0 ? "cc" : "dd", 96));
-    const roots = Array.from(
-      {length: keyCount},
-      (_, i) => `0x${(i + 1).toString(16).padStart(2, "0").repeat(32)}`,
-    );
+    const roots = Array.from({length: keyCount}, (_, i) => `0x${(i + 1).toString(16).padStart(2, "0").repeat(32)}`);
 
     await module.setDepositData(pubkeys, signatures, roots);
   };

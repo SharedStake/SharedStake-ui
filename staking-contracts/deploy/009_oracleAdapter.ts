@@ -24,7 +24,7 @@ const func: DeployFunction = async hre => {
   if (govSigner.address.toLowerCase() !== gov.toLowerCase()) {
     throw new Error(
       `Governance signer mismatch: signer=${govSigner.address} resolvedGov=${gov}. ` +
-      "Set governance env/config so the current GOV signer executes oracle wiring.",
+        "Set governance env/config so the current GOV signer executes oracle wiring.",
     );
   }
 
@@ -43,7 +43,7 @@ const func: DeployFunction = async hre => {
       console.log(`  Granting ORACLE role to OracleAdapter on ${moduleName}...`);
       await moduleContract.connect(govSigner).grantRole(ORACLE, adapter.target as string);
     }
-    if (gov.toLowerCase() !== (adapter.target as string).toLowerCase() && await moduleContract.hasRole(ORACLE, gov)) {
+    if (gov.toLowerCase() !== (adapter.target as string).toLowerCase() && (await moduleContract.hasRole(ORACLE, gov))) {
       console.log(`  Revoking direct ORACLE role from gov on ${moduleName}...`);
       await moduleContract.connect(govSigner).revokeRole(ORACLE, gov);
     }

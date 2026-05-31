@@ -166,9 +166,7 @@ export async function reportOnce(cfg: Config) {
   const lastReport: bigint = await adapter.lastReportTime();
   const now = Number(latestBlock.timestamp);
   if (lastReport > 0n && now - Number(lastReport) < cfg.minReportIntervalSec) {
-    console.log(
-      `[oracle] last report ${now - Number(lastReport)}s ago (< ${cfg.minReportIntervalSec}s); skipping`
-    );
+    console.log(`[oracle] last report ${now - Number(lastReport)}s ago (< ${cfg.minReportIntervalSec}s); skipping`);
     return;
   }
 
@@ -194,7 +192,7 @@ export async function reportOnce(cfg: Config) {
 
   const totalBalanceWei = totalBalanceGwei * 10n ** 9n;
   console.log(
-    `[oracle] reporting validators=${activeCount}, total=${ethers.formatEther(totalBalanceWei)} ETH, ts=${now}`
+    `[oracle] reporting validators=${activeCount}, total=${ethers.formatEther(totalBalanceWei)} ETH, ts=${now}`,
   );
 
   if (cfg.dryRun) {
@@ -225,9 +223,7 @@ export async function verifySubmitterRole(oracle: ethers.Contract, submitter: st
   const SUBMITTER_ROLE: string = await oracle.SUBMITTER();
   const has: boolean = await oracle.hasRole(SUBMITTER_ROLE, submitter);
   if (!has) {
-    throw new Error(
-      `Address ${submitter} does not hold the SUBMITTER role on oracle ${await oracle.getAddress()}`
-    );
+    throw new Error(`Address ${submitter} does not hold the SUBMITTER role on oracle ${await oracle.getAddress()}`);
   }
 }
 

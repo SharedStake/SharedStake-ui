@@ -227,8 +227,9 @@ contract StakingRouterLite is AccessControl, IStakingRouterLite {
             revert ValueMismatch();
         }
 
-        (bytes[] memory pubkeys, bytes[] memory signatures, bytes32[] memory roots) = IStakingModuleLite(moduleData.module)
-            .getDepositData(depositsCount);
+        (bytes[] memory pubkeys, bytes[] memory signatures, bytes32[] memory roots) = IStakingModuleLite(
+            moduleData.module
+        ).getDepositData(depositsCount);
 
         if (pubkeys.length != depositsCount || signatures.length != depositsCount || roots.length != depositsCount) {
             revert InvalidArrayLength();
@@ -252,7 +253,12 @@ contract StakingRouterLite is AccessControl, IStakingRouterLite {
         emit ModuleDepositsExecuted(moduleId, depositsCount);
     }
 
-    function _validateBps(uint16 targetShareBps, uint16 maxShareBps, uint16 moduleFeeBps, uint16 treasuryFeeBps) internal pure {
+    function _validateBps(
+        uint16 targetShareBps,
+        uint16 maxShareBps,
+        uint16 moduleFeeBps,
+        uint16 treasuryFeeBps
+    ) internal pure {
         if (
             targetShareBps > MAX_BPS ||
             maxShareBps > MAX_BPS ||

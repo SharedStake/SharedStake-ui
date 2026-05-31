@@ -31,13 +31,14 @@ interface IStakingRouter {
     function wrapFromModule(bytes32 moduleId, address recipient, uint256 ethEquiv) external;
 
     /// @notice Called by an LST module to burn stToken shares on LST withdrawal.
-    function unwrapToModule(bytes32 moduleId, address caller, uint256 stTokenAmount)
-        external
-        returns (uint256 ethValue);
+    function unwrapToModule(
+        bytes32 moduleId,
+        address caller,
+        uint256 stTokenAmount
+    ) external returns (uint256 ethValue);
 
     /// @notice Module registry getter.
-    function modules(bytes32 moduleId)
-        external
-        view
-        returns (address addr, bytes32 moduleType, uint256 mintCapEth, bool active, bool paused);
+    function modules(
+        bytes32 moduleId
+    ) external view returns (address addr, bytes32 moduleType, uint256 mintCapEth, bool active, bool paused);
 }

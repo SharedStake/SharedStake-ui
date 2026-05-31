@@ -31,15 +31,15 @@ const GOERLIPK = process.env.GOERLIPK
 // const GOERLI_RPC_URL = `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_GOERLI_KEY}`;
 
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY;
-const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL
-  || (ALCHEMY_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}` : undefined);
+const MAINNET_RPC_URL =
+  process.env.MAINNET_RPC_URL || (ALCHEMY_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}` : undefined);
 
 // Guard: refuse to use the public Anvil test key for mainnet deployments.
 const _isMainnetRun = process.argv.some(a => a === "mainnet") || process.env.HARDHAT_NETWORK === "mainnet";
 if (_isMainnetRun && !process.env.MAINNET_PRIVATE_KEY) {
   throw new Error(
     "MAINNET_PRIVATE_KEY is not set. Refusing to deploy to mainnet with the public Anvil test key.\n" +
-    "Export MAINNET_PRIVATE_KEY=<your deployer private key> before running.",
+      "Export MAINNET_PRIVATE_KEY=<your deployer private key> before running.",
   );
 }
 const MAINNET_PRIVATE_KEY = process.env.MAINNET_PRIVATE_KEY ?? GOERLIPK;
@@ -133,18 +133,20 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       tags: ["hardhat"],
-      ...(MAINNET_RPC_URL ? { forking: { url: MAINNET_RPC_URL } } : {}),
+      ...(MAINNET_RPC_URL ? {forking: {url: MAINNET_RPC_URL}} : {}),
     },
     localhost: {
       accounts: [`0x${GOERLIPK}`],
     },
-    ...(MAINNET_RPC_URL ? {
-      mainnet: {
-        url: MAINNET_RPC_URL,
-        accounts: [`0x${MAINNET_PRIVATE_KEY}`],
-        chainId: chainIds.mainnet,
-      },
-    } : {}),
+    ...(MAINNET_RPC_URL
+      ? {
+          mainnet: {
+            url: MAINNET_RPC_URL,
+            accounts: [`0x${MAINNET_PRIVATE_KEY}`],
+            chainId: chainIds.mainnet,
+          },
+        }
+      : {}),
     sepolia: {
       url: SEPOLIA_RPC_URL,
       accounts: [`0x${SEPOLIA_PRIVATE_KEY}`],

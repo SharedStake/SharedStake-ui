@@ -13,13 +13,7 @@
  */
 import {expect} from "chai";
 import {ethers} from "ethers";
-import {
-  verifyGuardianRole,
-  checkOnce,
-  triggerPause,
-  Config,
-  State,
-} from "../../../scripts/keepers/balanceMonitor";
+import {verifyGuardianRole, checkOnce, triggerPause, Config, State} from "../../../scripts/keepers/balanceMonitor";
 import {makeFakeContract, makeFakeTx} from "./helpers";
 
 const GUARDIAN_ROLE = ethers.keccak256(ethers.toUtf8Bytes("GUARDIAN"));

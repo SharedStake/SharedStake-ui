@@ -5,6 +5,7 @@ This directory contains the complete SharedStake V3 modular staking smart contra
 ## Overview
 
 These contracts implement the complete modular staking system including:
+
 - **StakingRouter**: Main router for modular staking operations
 - **StakingCore**: Core staking logic and state management
 - **StToken**: Rebasing staking token
@@ -29,6 +30,7 @@ These contracts implement the complete modular staking system including:
 This directory includes ALL components from the SharedDeposit submodule:
 
 ### Build & Configuration
+
 - `hardhat.config.ts` - Hardhat build configuration
 - `foundry.toml` - Foundry build configuration
 - `foundry.lock` - Foundry dependency lock file
@@ -39,11 +41,13 @@ This directory includes ALL components from the SharedDeposit submodule:
 - `.cursorrules` - Project development guidelines
 
 ### Testing
+
 - `test/` - Complete test suite (Hardhat tests)
 - `test/v2/modular-staking/` - Modular staking specific tests
 - `scripts/` - Test and build scripts
 
 ### Deployment
+
 - `deploy/` - Deployment scripts
 - `deploy/v2-modular-staking/` - Modular staking deployment scripts
 - `deployments/` - Deployment artifacts and addresses
@@ -51,15 +55,18 @@ This directory includes ALL components from the SharedDeposit submodule:
 - `runbooks/` - Operational runbooks
 
 ### CI/CD
+
 - `.github/` - GitHub Actions workflows
 - `scripts/` - Build and deployment automation
 
 ### Documentation
+
 - `docs/` - Complete documentation
 - `README-CONTRACTS.md` - Original SharedDeposit README
 - `deploy_log.md` - Deployment history
 
 ### Supporting Infrastructure
+
 - `lib/` - Shared libraries and utilities
 - `utils/` - Utility scripts
 - `types/` - TypeScript type definitions
@@ -72,6 +79,7 @@ This directory includes ALL components from the SharedDeposit submodule:
 - `flats/` - Flattened contracts
 
 ### Services
+
 - `docker-compose.keepers.yml` - Keeper services
 - `.env.keeper.example` - Environment configuration template
 
@@ -104,6 +112,7 @@ staking-contracts/
 ## Security Audit
 
 ✅ **6-Pass Internal Security Audit Complete**
+
 - 398 contract tests passing
 - 7 Foundry invariants passing
 - All critical security issues resolved

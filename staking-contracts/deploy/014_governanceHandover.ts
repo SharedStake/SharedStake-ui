@@ -89,10 +89,14 @@ const func: DeployFunction = async hre => {
 
     if (!signerIsDefaultAdmin) {
       if (isLocal) {
-        console.log(`  ${deploymentName}: signer lacks DEFAULT_ADMIN_ROLE; skipping immediate migration on local network.`);
+        console.log(
+          `  ${deploymentName}: signer lacks DEFAULT_ADMIN_ROLE; skipping immediate migration on local network.`,
+        );
         continue;
       }
-      throw new Error(`${deploymentName}: signer lacks DEFAULT_ADMIN_ROLE; refusing partial handover on non-local network.`);
+      throw new Error(
+        `${deploymentName}: signer lacks DEFAULT_ADMIN_ROLE; refusing partial handover on non-local network.`,
+      );
     }
 
     console.log(`  ${deploymentName}: migrating roles to timelock...`);

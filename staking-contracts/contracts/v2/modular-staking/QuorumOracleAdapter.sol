@@ -19,8 +19,8 @@ contract QuorumOracleAdapter is AccessControl {
     uint256 public quorum;
     uint256 public submitterCount;
 
-    uint256 public constant MIN_DRIFT_BPS = 100;  // 1% minimum drift cap (cannot be disabled)
-    uint256 public constant MIN_SLASH_BPS = 50;   // 0.5% minimum slash cap (cannot be disabled)
+    uint256 public constant MIN_DRIFT_BPS = 100; // 1% minimum drift cap (cannot be disabled)
+    uint256 public constant MIN_SLASH_BPS = 50; // 0.5% minimum slash cap (cannot be disabled)
 
     uint256 public maxStalenessSeconds = 6 hours;
     uint256 public maxDriftBps = 1000; // 10% per-validator balance change cap
@@ -106,15 +106,7 @@ contract QuorumOracleAdapter is AccessControl {
         hasVoted[reportHash][msg.sender] = true;
         uint256 votes = ++reportVotes[reportHash];
 
-        emit VoteSubmitted(
-            reportHash,
-            msg.sender,
-            beaconValidators,
-            beaconBalance,
-            reportTimestamp,
-            votes,
-            quorum
-        );
+        emit VoteSubmitted(reportHash, msg.sender, beaconValidators, beaconBalance, reportTimestamp, votes, quorum);
 
         if (votes < quorum) return;
 

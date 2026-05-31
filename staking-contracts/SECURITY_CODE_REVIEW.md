@@ -39,6 +39,7 @@ The smart contract migration is complete and functional, but there are several c
 ### Security Warnings
 
 **Time-Based Decisions (24 instances):**
+
 - DebtPool.sol: 2 warnings
 - MigrationHelper.sol: 2 warnings
 - OracleAdapter.sol: 6 warnings
@@ -50,10 +51,12 @@ The smart contract migration is complete and functional, but there are several c
 **Risk:** Time-based decisions can be manipulated by miners/validators through timestamp manipulation.
 
 **Low-Level Calls (1 instance):**
+
 - DebtPool.sol:335 - `call` usage
 - **Risk:** Low-level calls can bypass safety checks; ensure proper validation
 
 **Code Quality Issues:**
+
 - Empty blocks (6 instances)
 - Ordering issues (10 instances)
 - Custom errors not used (4 instances)
@@ -94,7 +97,7 @@ The smart contract migration is complete and functional, but there are several c
    - **Recommendation:** Refactor into smaller, testable functions
 
 3. **Low-Level Call Usage (MEDIUM RISK):**
-   - DebtPool uses low-level `call` 
+   - DebtPool uses low-level `call`
    - **Recommendation:** Ensure proper return value checking and reentrancy guards
 
 4. **Empty Code Blocks (LOW RISK):**
@@ -111,6 +114,7 @@ The smart contract migration is complete and functional, but there are several c
 ### DebtPool.sol
 
 **Security Features:** ✅
+
 - AccessControl with GOV, ADMIN, FEE_CONTROLLER roles
 - Pausable for emergency stops
 - Merkle proof validation for claims
@@ -118,6 +122,7 @@ The smart contract migration is complete and functional, but there are several c
 - Slippage validation (1% tolerance)
 
 **Concerns:** ⚠️
+
 - Time-based decisions (lines 124, 171)
 - Low-level call usage (line 335)
 - Struct ordering issue
@@ -127,6 +132,7 @@ The smart contract migration is complete and functional, but there are several c
 ### FeeController.sol
 
 **Security Features:** ✅
+
 - AccessControl with GOV role
 - Fee caps (MAX_FEE_BPS = 2000 = 20%)
 - Split validation (sum ≤ 10000)
@@ -140,12 +146,14 @@ The smart contract migration is complete and functional, but there are several c
 ### StakingRouter.sol
 
 **Security Features:** ✅
+
 - Comprehensive module registry
 - Policy checks and limits
 - Role-based access control
 - Emergency pause capabilities
 
 **Concerns:** ⚠️
+
 - High cyclomatic complexity (2 functions)
 - 16 state variables (exceeds recommended 15)
 - Time-based decisions (4 instances)
@@ -156,11 +164,13 @@ The smart contract migration is complete and functional, but there are several c
 ### OracleAdapter.sol
 
 **Security Features:** ✅
+
 - Single-submitter sanity gating
 - Timestamp validation
 - Report validation logic
 
 **Concerns:** ⚠️
+
 - High cyclomatic complexity (12 vs 8 max)
 - Multiple time-based decisions (6 instances)
 
@@ -169,11 +179,13 @@ The smart contract migration is complete and functional, but there are several c
 ### StakingCore.sol
 
 **Security Features:** ✅
+
 - Role-based MINTER/ORACLE controls
 - Mutual exclusivity with StakingRouter
 - Fee controller integration
 
 **Concerns:** ⚠️
+
 - High cyclomatic complexity
 - Complex fallback/receive logic
 - Empty code blocks
@@ -199,11 +211,13 @@ The smart contract migration is complete and functional, but there are several c
 ## Dependency Security
 
 **OpenZeppelin Contracts:** ✅
+
 - Using reputable, audited library
 - AccessControl, Pausable, ERC20 patterns
 - Industry-standard security practices
 
 **External Dependencies:** ✅
+
 - No suspicious external calls identified
 - Minimal external contract interactions
 - Proper interface usage
@@ -257,17 +271,20 @@ The smart contract migration is complete and functional, but there are several c
 **Current Status:** ⚠️ **NOT READY FOR MAINNET**
 
 **Blocking Issues:**
+
 1. High cyclomatic complexity functions (5 instances)
 2. Time-based business logic (24 instances)
 3. Low-level call safety verification needed
 
 **Recommended Actions Before Mainnet:**
+
 1. Complete HIGH PRIORITY refactoring
 2. Security audit by professional firm
 3. Extended testing on testnet
 4. Bug bounty program launch
 
 **Testnet Deployment:** ✅ **ACCEPTABLE**
+
 - Core functionality works
 - Security patterns in place
 - Issues are code quality, not critical vulnerabilities

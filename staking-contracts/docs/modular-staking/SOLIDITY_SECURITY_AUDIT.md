@@ -16,7 +16,7 @@ The following critical and high-severity issues were identified and fixed during
 
 2. **FeeController deploy script missing debtPool args**
    - **Severity**: CRITICAL
-   - **Issue**: The FeeController constructor was missing the _debtPool and _debtPoolSplitBps arguments, causing deployment failures or incorrect initialization.
+   - **Issue**: The FeeController constructor was missing the \_debtPool and \_debtPoolSplitBps arguments, causing deployment failures or incorrect initialization.
    - **Fix**: Added placeholder arguments (ZeroAddress and 0) with comments explaining they should be updated post-DebtPool deployment.
    - **Status**: Fixed
 
@@ -55,20 +55,24 @@ The following critical and high-severity issues were identified and fixed during
 ## Additional Security Considerations
 
 ### Access Control
+
 - All contracts use OpenZeppelin AccessControl for role-based permissions
 - Governance roles are transferred to Timelock controller in production
 - Multi-sig governance required for sensitive operations
 
 ### Reentrancy Protection
+
 - Contracts that make external calls use ReentrancyGuard
 - Follows checks-effects-interactions pattern
 
 ### Input Validation
+
 - Zero-address checks on all critical address parameters
 - Range validation on numeric inputs
 - Array bounds checking where applicable
 
 ### Upgrade Safety
+
 - Storage layout considerations for upgradeable contracts
 - Proper initialization patterns
 - Gap management for future upgrades
@@ -76,12 +80,14 @@ The following critical and high-severity issues were identified and fixed during
 ## Audit Recommendations
 
 ### Immediate Actions
+
 1. ✅ Deploy ReferralRegistry and DebtPool using new scripts
 2. ✅ Verify all role grants are executed correctly
 3. ✅ Test FeeController recipient updates
 4. ✅ Validate governance handover completes successfully
 
 ### Future Enhancements
+
 1. Consider implementing pause mechanisms for all critical contracts
 2. Add circuit breakers for emergency shutdown
 3. Implement timelock delays for sensitive parameter changes
@@ -90,6 +96,7 @@ The following critical and high-severity issues were identified and fixed during
 ## Testing Coverage
 
 Security fixes should be validated with:
+
 - Unit tests for each fixed function
 - Integration tests for role wiring
 - Fuzz testing for edge cases
@@ -98,6 +105,7 @@ Security fixes should be validated with:
 ## Deployment Checklist
 
 Before deploying to production:
+
 - [ ] All CRITICAL fixes verified on testnet
 - [ ] All HIGH fixes verified on testnet
 - [ ] Role wiring validated

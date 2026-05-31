@@ -21,9 +21,7 @@ describe("Governance + Referral hardening", () => {
       const codeHash = ethers.keccak256(ethers.toUtf8Bytes("ALICE_PARTNER_CODE"));
       const metadata = ethers.keccak256(ethers.toUtf8Bytes("campaign:homepage-v2"));
 
-      await expect(
-        registry.connect(gov).registerReferralCode(codeHash, referrer.address, metadata),
-      )
+      await expect(registry.connect(gov).registerReferralCode(codeHash, referrer.address, metadata))
         .to.emit(registry, "ReferralCodeRegistered")
         .withArgs(codeHash, referrer.address, metadata);
 
@@ -44,9 +42,7 @@ describe("Governance + Referral hardening", () => {
 
       await registry.connect(codeAdmin).registerReferralCode(codeHash, referrer.address, metadataA);
 
-      await expect(
-        registry.connect(codeAdmin).updateReferralCode(codeHash, outsider.address, metadataB),
-      )
+      await expect(registry.connect(codeAdmin).updateReferralCode(codeHash, outsider.address, metadataB))
         .to.emit(registry, "ReferralCodeUpdated")
         .withArgs(codeHash, referrer.address, outsider.address, metadataB);
 
@@ -67,13 +63,10 @@ describe("Governance + Referral hardening", () => {
       await registry.connect(codeAdmin).registerReferralCode(codeHash, referrer.address, metadata);
 
       await registry.connect(gov).revokeRole(codeAdminRole, codeAdmin.address);
-      await expect(
-        registry.connect(codeAdmin).updateReferralCode(codeHash, outsider.address, metadata),
-      ).to.be.reverted;
+      await expect(registry.connect(codeAdmin).updateReferralCode(codeHash, outsider.address, metadata)).to.be.reverted;
 
-      await expect(
-        registry.connect(outsider).registerReferralCode(codeHash, outsider.address, metadata),
-      ).to.be.reverted;
+      await expect(registry.connect(outsider).registerReferralCode(codeHash, outsider.address, metadata)).to.be
+        .reverted;
     });
   });
 
@@ -172,10 +165,7 @@ describe("Governance + Referral hardening", () => {
     });
 
     it("reverts claim when nothing accrued", async () => {
-      await expect(registry.connect(referrer).claimFees()).to.be.revertedWithCustomError(
-        registry,
-        "NoFeesToClaim",
-      );
+      await expect(registry.connect(referrer).claimFees()).to.be.revertedWithCustomError(registry, "NoFeesToClaim");
     });
 
     it("reverts claim when min referral stake not met", async () => {
@@ -188,19 +178,13 @@ describe("Governance + Referral hardening", () => {
       await stToken.setTotalPooledEther(feeShares);
       await registry.connect(feeCtl).depositReferralFeeShares(feeShares);
 
-      await expect(registry.connect(referrer).claimFees()).to.be.revertedWithCustomError(
-        registry,
-        "MinStakeNotMet",
-      );
+      await expect(registry.connect(referrer).claimFees()).to.be.revertedWithCustomError(registry, "MinStakeNotMet");
     });
 
     it("enforces GOV-only fee parameter updates and cap", async () => {
       await expect(registry.connect(outsider).setReferralFeeBps(600)).to.be.reverted;
 
-      await expect(registry.connect(gov).setReferralFeeBps(3001)).to.be.revertedWithCustomError(
-        registry,
-        "FeeTooHigh",
-      );
+      await expect(registry.connect(gov).setReferralFeeBps(3001)).to.be.revertedWithCustomError(registry, "FeeTooHigh");
 
       await registry.connect(gov).setReferralFeeBps(600);
       expect(await registry.referralFeeBps()).to.equal(600n);
@@ -366,9 +350,10 @@ describe("Governance + Referral hardening", () => {
       await sgt.connect(holder).approve(voteEscrow.target, lockAmount);
       await voteEscrow.connect(holder).create_lock(lockAmount, 30);
 
-      await expect(
-        voteEscrow.connect(holder).transfer(receiver.address, 1),
-      ).to.be.revertedWithCustomError(voteEscrow, "NonTransferable");
+      await expect(voteEscrow.connect(holder).transfer(receiver.address, 1)).to.be.revertedWithCustomError(
+        voteEscrow,
+        "NonTransferable",
+      );
     });
   });
 

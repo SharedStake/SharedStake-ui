@@ -1,6 +1,6 @@
 /**
  * Integration tests for DebtPool merkle tree functionality with OpenZeppelin standard
- * 
+ *
  * Tests the complete flow:
  * - Build merkle tree off-chain using @openzeppelin/merkle-tree
  * - Deploy DebtPool with mock ST_TOKEN and WSTETH
@@ -30,7 +30,7 @@ describe("DebtPool Merkle Tree Integration", () => {
   let merkleTree: StandardMerkleTree<any>;
   let merkleRoot: string;
   let proofs: Map<string, any>;
-  
+
   const DISTRIBUTION_ID = 1;
   const TOTAL_AMOUNT = parseEther("10"); // 10 wstETH total
 
@@ -44,17 +44,8 @@ describe("DebtPool Merkle Tree Integration", () => {
   ];
 
   async function deployFresh() {
-    [
-      deployer,
-      gov,
-      admin,
-      feeController,
-      recipient1,
-      recipient2,
-      recipient3,
-      recipient4,
-      recipient5,
-    ] = await ethers.getSigners();
+    [deployer, gov, admin, feeController, recipient1, recipient2, recipient3, recipient4, recipient5] =
+      await ethers.getSigners();
 
     // Deploy mock tokens
     const MockERC20 = await ethers.getContractFactory("MockERC20");
@@ -63,20 +54,14 @@ describe("DebtPool Merkle Tree Integration", () => {
 
     // Deploy DebtPool
     const DebtPool = await ethers.getContractFactory("DebtPool");
-    debtPool = await DebtPool.deploy(
-      stToken.target,
-      wstETH.target,
-      gov.address,
-      admin.address,
-      feeController.address
-    );
+    debtPool = await DebtPool.deploy(stToken.target, wstETH.target, gov.address, admin.address, feeController.address);
 
     // Build merkle tree off-chain using OZ StandardMerkleTree
     const values = claims.map(claim => [
       claim.distributionId,
       claim.leafIndex,
       recipient1.address, // Temporary, will be replaced below
-      claim.amount
+      claim.amount,
     ]);
 
     // Create proper values with actual recipient addresses
@@ -100,7 +85,7 @@ describe("DebtPool Merkle Tree Integration", () => {
         leafIndex: i,
         proof: proof,
         amount: claims[i].amount,
-        distributionId: DISTRIBUTION_ID
+        distributionId: DISTRIBUTION_ID,
       });
     }
 
@@ -128,13 +113,9 @@ describe("DebtPool Merkle Tree Integration", () => {
 
       // Claim with valid proof
       const proofData = proofs.get(recipient1.address.toLowerCase());
-      await debtPool.connect(recipient1).claim(
-        proofData.distributionId,
-        proofData.leafIndex,
-        recipient1.address,
-        proofData.amount,
-        proofData.proof
-      );
+      await debtPool
+        .connect(recipient1)
+        .claim(proofData.distributionId, proofData.leafIndex, recipient1.address, proofData.amount, proofData.proof);
 
       // Verify claim was successful
       const claimed = await debtPool.claimed(DISTRIBUTION_ID, 0);
@@ -151,23 +132,15 @@ describe("DebtPool Merkle Tree Integration", () => {
 
       // First claim
       const proofData = proofs.get(recipient1.address.toLowerCase());
-      await debtPool.connect(recipient1).claim(
-        proofData.distributionId,
-        proofData.leafIndex,
-        recipient1.address,
-        proofData.amount,
-        proofData.proof
-      );
+      await debtPool
+        .connect(recipient1)
+        .claim(proofData.distributionId, proofData.leafIndex, recipient1.address, proofData.amount, proofData.proof);
 
       // Second claim should revert
       await expect(
-        debtPool.connect(recipient1).claim(
-          proofData.distributionId,
-          proofData.leafIndex,
-          recipient1.address,
-          proofData.amount,
-          proofData.proof
-        )
+        debtPool
+          .connect(recipient1)
+          .claim(proofData.distributionId, proofData.leafIndex, recipient1.address, proofData.amount, proofData.proof),
       ).to.be.revertedWithCustomError(debtPool, "AlreadyClaimed");
     });
 
@@ -185,8 +158,8 @@ describe("DebtPool Merkle Tree Integration", () => {
           proofData1.leafIndex,
           recipient1.address,
           proofData1.amount,
-          proofData2.proof // Wrong proof
-        )
+          proofData2.proof, // Wrong proof
+        ),
       ).to.be.revertedWithCustomError(debtPool, "InvalidMerkleProof");
     });
 
@@ -199,13 +172,9 @@ describe("DebtPool Merkle Tree Integration", () => {
       const wrongAmount = parseEther("999").toString(); // Wrong amount
 
       await expect(
-        debtPool.connect(recipient1).claim(
-          proofData.distributionId,
-          proofData.leafIndex,
-          recipient1.address,
-          wrongAmount,
-          proofData.proof
-        )
+        debtPool
+          .connect(recipient1)
+          .claim(proofData.distributionId, proofData.leafIndex, recipient1.address, wrongAmount, proofData.proof),
       ).to.be.revertedWithCustomError(debtPool, "InvalidMerkleProof");
     });
 
@@ -214,17 +183,19 @@ describe("DebtPool Merkle Tree Integration", () => {
       await debtPool.connect(admin).createDistribution(merkleRoot, TOTAL_AMOUNT);
 
       const recipients = [recipient1, recipient2, recipient3, recipient4, recipient5];
-      
+
       // All recipients claim successfully
       for (let i = 0; i < recipients.length; i++) {
         const proofData = proofs.get(recipients[i].address.toLowerCase());
-        await debtPool.connect(recipients[i]).claim(
-          proofData.distributionId,
-          proofData.leafIndex,
-          recipients[i].address,
-          proofData.amount,
-          proofData.proof
-        );
+        await debtPool
+          .connect(recipients[i])
+          .claim(
+            proofData.distributionId,
+            proofData.leafIndex,
+            recipients[i].address,
+            proofData.amount,
+            proofData.proof,
+          );
 
         // Verify claim was marked
         const claimed = await debtPool.claimed(DISTRIBUTION_ID, i);
@@ -242,13 +213,15 @@ describe("DebtPool Merkle Tree Integration", () => {
       // All recipients claim
       for (let i = 0; i < recipients.length; i++) {
         const proofData = proofs.get(recipients[i].address.toLowerCase());
-        await debtPool.connect(recipients[i]).claim(
-          proofData.distributionId,
-          proofData.leafIndex,
-          recipients[i].address,
-          proofData.amount,
-          proofData.proof
-        );
+        await debtPool
+          .connect(recipients[i])
+          .claim(
+            proofData.distributionId,
+            proofData.leafIndex,
+            recipients[i].address,
+            proofData.amount,
+            proofData.proof,
+          );
 
         totalClaimed += BigInt(claims[i].amount);
 
@@ -271,13 +244,9 @@ describe("DebtPool Merkle Tree Integration", () => {
       const proofData = proofs.get(recipient1.address.toLowerCase());
 
       await expect(
-        debtPool.connect(recipient1).claim(
-          proofData.distributionId,
-          proofData.leafIndex,
-          recipient1.address,
-          proofData.amount,
-          proofData.proof
-        )
+        debtPool
+          .connect(recipient1)
+          .claim(proofData.distributionId, proofData.leafIndex, recipient1.address, proofData.amount, proofData.proof),
       ).to.be.revertedWithCustomError(debtPool, "DistributionNotFinalized");
     });
 
@@ -293,8 +262,8 @@ describe("DebtPool Merkle Tree Integration", () => {
           proofData.leafIndex,
           recipient1.address,
           0, // Zero amount
-          proofData.proof
-        )
+          proofData.proof,
+        ),
       ).to.be.revertedWithCustomError(debtPool, "InvalidAmount");
     });
   });
@@ -309,13 +278,9 @@ describe("DebtPool Merkle Tree Integration", () => {
 
       // This should succeed if the encoding is consistent
       await expect(
-        debtPool.connect(recipient1).claim(
-          proofData.distributionId,
-          proofData.leafIndex,
-          recipient1.address,
-          proofData.amount,
-          proofData.proof
-        )
+        debtPool
+          .connect(recipient1)
+          .claim(proofData.distributionId, proofData.leafIndex, recipient1.address, proofData.amount, proofData.proof),
       ).to.not.be.reverted;
     });
   });
@@ -332,7 +297,7 @@ describe("DebtPool Merkle Tree Integration", () => {
         proofData.leafIndex,
         recipient1.address,
         proofData.amount,
-        proofData.proof
+        proofData.proof,
       );
 
       expect(canClaimResult).to.be.true;
@@ -344,7 +309,7 @@ describe("DebtPool Merkle Tree Integration", () => {
 
       // Try to withdraw unclaimed fees immediately - should revert
       await expect(
-        debtPool.connect(gov).withdrawUnclaimedFees(DISTRIBUTION_ID, gov.address)
+        debtPool.connect(gov).withdrawUnclaimedFees(DISTRIBUTION_ID, gov.address),
       ).to.be.revertedWithCustomError(debtPool, "DistributionNotFinalized");
     });
 
@@ -354,22 +319,16 @@ describe("DebtPool Merkle Tree Integration", () => {
 
       // Have some recipients claim to create unclaimed amount
       const proofData = proofs.get(recipient1.address.toLowerCase());
-      await debtPool.connect(recipient1).claim(
-        proofData.distributionId,
-        proofData.leafIndex,
-        recipient1.address,
-        proofData.amount,
-        proofData.proof
-      );
+      await debtPool
+        .connect(recipient1)
+        .claim(proofData.distributionId, proofData.leafIndex, recipient1.address, proofData.amount, proofData.proof);
 
       // Time-warp past MIN_CLAIM_PERIOD (30 days)
       await ethers.provider.send("evm_increaseTime", [30 * 24 * 60 * 60]); // 30 days in seconds
       await ethers.provider.send("evm_mine", []);
 
       // Now withdrawal should succeed
-      await expect(
-        debtPool.connect(gov).withdrawUnclaimedFees(DISTRIBUTION_ID, gov.address)
-      ).to.not.be.reverted;
+      await expect(debtPool.connect(gov).withdrawUnclaimedFees(DISTRIBUTION_ID, gov.address)).to.not.be.reverted;
     });
   });
 });
