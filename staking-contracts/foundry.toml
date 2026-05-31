@@ -6,6 +6,7 @@ cache_path = "cache/foundry"
 libs = ["node_modules", "lib"]
 remappings = [
     "@openzeppelin/=node_modules/@openzeppelin/",
+    "solmate/=node_modules/solmate/",
 ]
 # solc-version = "0.8.20"  # Let Foundry auto-detect from pragma
 optimizer = true
