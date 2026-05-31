@@ -63,10 +63,10 @@
     </div>
 
     <div
-      v-if="store.error || txError"
+      v-if="store.error"
       class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
     >
-      {{ store.error || txError }}
+      {{ store.error }}
     </div>
     <div
       v-if="txHash"
@@ -111,7 +111,6 @@ export default {
       mode: 0, // 0 = wrap, 1 = unwrap
       inputAmount: '',
       txHash: null,
-      txError: null,
     }
   },
 
@@ -156,7 +155,6 @@ export default {
     async handleAction() {
       if (!this.canSubmit) return
       this.txHash = null
-      this.txError = null
       try {
         let tx
         if (this.mode === 0) {
@@ -168,7 +166,6 @@ export default {
         this.inputAmount = ''
       } catch (e) {
         console.error('Wrap/unwrap error:', e)
-        this.txError = e?.reason || e?.message || 'Wrap/unwrap failed'
       }
     },
   },
