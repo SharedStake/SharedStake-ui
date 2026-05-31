@@ -1,5 +1,6 @@
 /**
- * Pinia store for the Lido-parity staking protocol (StakingCore / StToken / WstToken / WithdrawalQueueV2).
+ * Pinia store for the SharedStake V2 modular staking protocol
+ * (StakingCore / StToken / WstToken / WithdrawalQueueV2).
  *
  * Separating this from the legacy wallet store keeps the new protocol isolated
  * while still sharing the wallet connection (provider/signer) from useWalletStore.
@@ -7,48 +8,54 @@
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
 import { useWalletStore } from './wallet'
+import { normalizeChainId } from '@/utils/common'
 
 import stTokenABI from '@/contracts/abis/stToken.json'
 import wstTokenABI from '@/contracts/abis/wstToken.json'
 import stakingCoreABI from '@/contracts/abis/stakingCore.json'
 import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
+import stakingRouterABI from '@/contracts/abis/stakingRouter.json'
+import feeControllerABI from '@/contracts/abis/feeController.json'
+import debtPoolABI from '@/contracts/abis/debtPool.json'
+import mainnetAddresses from '@/contracts/addresses/mainnet.json'
+import goerliAddresses from '@/contracts/addresses/goerli.json'
+import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
+import localAddresses from '@/contracts/addresses/local.json'
 
 // Placeholder zero address used when contracts are not deployed on the connected chain.
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
-// Per-chain contract addresses. Update with real addresses after deployment.
-const CONTRACT_ADDRESSES = {
-  '0x1': {   // mainnet — populated after audit + deploy
-    stakingCore: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-  },
-  '0xaa36a7': { // sepolia testnet
-    stakingCore: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-  },
-  '0x7a69': { // localhost (hardhat)
-    stakingCore: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-  },
-}
-
-function normalizeChainId(id) {
-  if (!id && id !== 0) return ''
-  if (typeof id === 'bigint') return '0x' + id.toString(16)
-  if (typeof id === 'number') return '0x' + id.toString(16)
-  if (typeof id === 'string' && !id.startsWith('0x')) return '0x' + parseInt(id).toString(16)
-  return id.toLowerCase()
+const ADDRESS_BOOK_BY_CHAIN = {
+  '0x1': mainnetAddresses,
+  '0x5': goerliAddresses,
+  '0xaa36a7': sepoliaAddresses,
+  '0x7a69': localAddresses,
+  '0x539': localAddresses, // Ganache-style local chain id
 }
 
 function getAddresses(chainId) {
   const cid = normalizeChainId(chainId)
-  return CONTRACT_ADDRESSES[cid] || null
+  const source = ADDRESS_BOOK_BY_CHAIN[cid]
+  if (!source) return null
+  return {
+    stakingCore: source.stakingCore || ZERO_ADDR,
+    stToken: source.stToken || ZERO_ADDR,
+    wstToken: source.wstToken || ZERO_ADDR,
+    withdrawalQueueV2: source.withdrawalQueueV2 || ZERO_ADDR,
+    stakingRouter: source.stakingRouter || ZERO_ADDR,
+    feeController: source.feeController || ZERO_ADDR,
+    debtPool: source.debtPool || ZERO_ADDR,
+  }
+}
+
+function normalizeAmountInput(value) {
+  if (typeof value === 'string') return value.trim()
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new Error('Invalid numeric amount')
+    return value.toString()
+  }
+  if (typeof value === 'bigint') return value.toString()
+  return String(value ?? '').trim()
 }
 
 export const useModularStakingStore = defineStore('modularStaking', {
@@ -87,6 +94,17 @@ export const useModularStakingStore = defineStore('modularStaking', {
     moduleInflowUsed: '0',      // ETH used in current window (wei)
     moduleInflowLimit: '0',     // ETH limit per window (wei) — 0 = unlimited
     moduleInflowWindowReset: 0, // unix timestamp when window resets
+
+    // FeeController config (read-only, display only)
+    feeConfig: {
+      treasury: 0,
+      operator: 0,
+      referral: 0,
+      debtPool: 0,
+    },
+
+    // DebtPool info (gated, display only)
+    debtPoolInfo: null, // null = not deployed, object = { distributionId, totalAccumulated, totalClaimed }
 
     // Contract deployment status
     contractsDeployed: false,
@@ -138,10 +156,19 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
     _getContracts() {
       const walletStore = useWalletStore()
-      const provider = walletStore.ethersProvider
+      let provider = walletStore.ethersProvider
+      if (!provider && typeof window !== 'undefined' && window.ethereum) {
+        provider = new ethers.BrowserProvider(window.ethereum)
+        walletStore.setEthersProvider(provider)
+        if (!walletStore.network && window.ethereum.chainId) {
+          walletStore.setNetwork(String(window.ethereum.chainId).toLowerCase())
+        }
+      }
       if (!provider) return null
 
-      const chainId = this.chainId
+      const fallbackWindowChainId =
+        typeof window !== 'undefined' && window.ethereum ? window.ethereum.chainId : null
+      const chainId = this.chainId || walletStore.network || fallbackWindowChainId
       const addresses = getAddresses(chainId)
       if (!addresses) return null
 
@@ -161,6 +188,22 @@ export const useModularStakingStore = defineStore('modularStaking', {
       }
 
       return { addresses, make, makeSigned }
+    },
+
+    async _withTx(fn) {
+      this.loading = true
+      this.error = null
+      try {
+        const result = await fn()
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
+        return result
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
 
     // ── Data fetching ──────────────────────────────────────────────────────────
@@ -236,6 +279,86 @@ export const useModularStakingStore = defineStore('modularStaking', {
           const rate = (BigInt(this.totalPooledEther) * BigInt(1e18)) / BigInt(this.totalShares)
           this.exchangeRate = ethers.formatEther(rate)
         }
+
+        // Read StakingRouter module metadata (non-fatal if missing).
+        try {
+          const routerAddr = addresses.stakingRouter
+          if (routerAddr && routerAddr !== ZERO_ADDR) {
+            const router = make(stakingRouterABI, routerAddr)
+            if (router) {
+              const modId = await router.defaultModuleId()
+              this.defaultModuleId = modId
+
+              if (modId && modId !== '0x0000000000000000000000000000000000000000000000000000000000000000') {
+                const mod = await router.modules(modId)
+                this.defaultModuleInfo = {
+                  addr: mod.addr,
+                  moduleType: mod.moduleType,
+                  mintCapEth: mod.mintCapEth.toString(),
+                  active: mod.active,
+                  paused: mod.paused,
+                }
+
+                const winState = await router.moduleInflowWindowState(modId)
+                this.moduleInflowUsed = winState.inflowEth.toString()
+
+                const limitCfg = await router.moduleInflowLimitConfig(modId)
+                this.moduleInflowLimit = limitCfg.maxInflowEthPerWindow.toString()
+
+                // Compute window reset timestamp.
+                const now = Math.floor(Date.now() / 1000)
+                const windowStart = Number(winState.windowStart)
+                const windowSeconds = Number(limitCfg.windowSeconds)
+                if (windowSeconds > 0) {
+                  const elapsed = now - windowStart
+                  const remaining = Math.max(0, windowSeconds - (elapsed % windowSeconds))
+                  this.moduleInflowWindowReset = now + remaining
+                } else {
+                  this.moduleInflowWindowReset = 0
+                }
+              }
+            }
+          }
+        } catch (routerErr) {
+          console.warn('ModularStakingStore: failed to read StakingRouter metadata', routerErr)
+        }
+
+        // Read FeeController config (read-only, display only)
+        try {
+          const feeControllerAddr = addresses.feeController
+          if (feeControllerAddr && feeControllerAddr !== ZERO_ADDR) {
+            const feeController = make(feeControllerABI, feeControllerAddr)
+            if (feeController && typeof feeController.getFeeConfig === 'function') {
+              const config = await feeController.getFeeConfig()
+              this.feeConfig = {
+                treasury: Number(config.treasurySplitBps),
+                operator: Number(config.operatorSplitBps),
+                referral: Number(config.referralSplitBps),
+                debtPool: Number(config.debtPoolSplitBps),
+              }
+            }
+          }
+        } catch (feeErr) {
+          console.warn('ModularStakingStore: failed to read FeeController config', feeErr)
+        }
+
+        // Read DebtPool info (gated, display only)
+        try {
+          const debtPoolAddr = addresses.debtPool
+          if (debtPoolAddr && debtPoolAddr !== ZERO_ADDR) {
+            const debtPool = make(debtPoolABI, debtPoolAddr)
+            if (debtPool && typeof debtPool.getStats === 'function') {
+              const stats = await debtPool.getStats()
+              this.debtPoolInfo = {
+                distributionId: stats._currentDistributionId.toString(),
+                totalAccumulated: stats._totalAccumulated.toString(),
+                totalClaimed: stats._totalClaimed.toString(),
+              }
+            }
+          }
+        } catch (debtErr) {
+          console.warn('ModularStakingStore: failed to read DebtPool info', debtErr)
+        }
       } catch (e) {
         console.error('ModularStakingStore.init error:', e)
         this.error = e.message
@@ -275,36 +398,75 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
     // ── Transactions ──────────────────────────────────────────────────────────
 
-    async stake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
-      this.loading = true
-      this.error = null
-      try {
+    async stake(ethAmountStr, opts = {}) {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available on this network')
 
         const { addresses, makeSigned } = ctx
-        const stakingCore = await makeSigned(stakingCoreABI, addresses.stakingCore)
-        if (!stakingCore) throw new Error('StakingCore not deployed')
 
-        const amount = ethers.parseEther(ethAmountStr)
-        const tx = await stakingCore.submit(referral, { value: amount })
+        // Prefer StakingRouter (modular V2 path) when available,
+        // falling back to StakingCore for legacy / non-modular deployments.
+        let contract = null
+        let contractName = 'StakingRouter'
+        if (addresses.stakingRouter && addresses.stakingRouter !== ZERO_ADDR) {
+          contract = await makeSigned(stakingRouterABI, addresses.stakingRouter)
+        }
+        if (!contract) {
+          contract = await makeSigned(stakingCoreABI, addresses.stakingCore)
+          contractName = 'StakingCore'
+        }
+        if (!contract) throw new Error(`${contractName} not deployed`)
+
+        const amount = ethers.parseEther(normalizeAmountInput(ethAmountStr))
+        const referralAddressInput =
+          typeof opts === 'string'
+            ? opts
+            : typeof opts === 'object' && opts !== null
+              ? opts.referralAddress
+              : null
+        const referralCodeHashInput =
+          typeof opts === 'object' && opts !== null ? opts.referralCodeHash : null
+
+        let referralAddress = ZERO_ADDR
+        try {
+          if (referralAddressInput && ethers.isAddress(referralAddressInput)) {
+            const canonical = ethers.getAddress(referralAddressInput)
+            if (canonical !== ZERO_ADDR) {
+              referralAddress = canonical
+            }
+          }
+        } catch {
+          referralAddress = ZERO_ADDR
+        }
+
+        let referralCodeHash = null
+        if (typeof referralCodeHashInput === 'string' && ethers.isHexString(referralCodeHashInput, 32)) {
+          referralCodeHash = referralCodeHashInput
+        }
+
+        const hasSubmitWithReferralCode =
+          typeof contract.submitWithReferralCode === 'function' &&
+          contract.interface &&
+          typeof contract.interface.hasFunction === 'function' &&
+          contract.interface.hasFunction('submitWithReferralCode(bytes32)')
+
+        let tx
+        if (referralCodeHash && hasSubmitWithReferralCode) {
+          tx = await contract.submitWithReferralCode(referralCodeHash, { value: amount })
+        } else if (referralAddress !== ZERO_ADDR) {
+          tx = await contract.submit(referralAddress, { value: amount })
+        } else {
+          tx = await contract.submit(ZERO_ADDR, { value: amount })
+        }
+
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async wrap(stAmountStr) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -313,7 +475,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const stToken = await makeSigned(stTokenABI, addresses.stToken)
         if (!wstToken || !stToken) throw new Error('Contracts not deployed')
 
-        const amount = ethers.parseEther(stAmountStr)
+        const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
 
         // Approve wstToken to spend stToken only if allowance is insufficient.
         const allowance = await stToken.allowance(await stToken.runner.getAddress(), addresses.wstToken)
@@ -324,22 +486,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
         const wrapTx = await wstToken.wrap(amount)
         await wrapTx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return wrapTx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async unwrap(wstAmountStr) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -347,25 +499,15 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const wstToken = await makeSigned(wstTokenABI, addresses.wstToken)
         if (!wstToken) throw new Error('WstToken not deployed')
 
-        const amount = ethers.parseEther(wstAmountStr)
+        const amount = ethers.parseEther(normalizeAmountInput(wstAmountStr))
         const tx = await wstToken.unwrap(amount)
         await tx.wait()
-
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async requestWithdrawal(stAmountStr) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -374,24 +516,15 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
 
         const walletStore = useWalletStore()
-        const amount = ethers.parseEther(stAmountStr)
+        const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
         const tx = await queue.requestWithdrawals([amount], walletStore.address)
         await tx.wait()
-
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
     },
 
     async claimWithdrawal(requestId) {
-      this.loading = true
-      this.error = null
-      try {
+      return this._withTx(async () => {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -402,15 +535,23 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const walletStore = useWalletStore()
         const tx = await queue.claimWithdrawal(requestId, walletStore.address)
         await tx.wait()
-
-        await this.init(this.chainId, walletStore.address)
         return tx
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
+      })
+    },
+
+    async finalize(lastRequestId) {
+      return this._withTx(async () => {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const queue = await makeSigned(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
+        if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
+
+        const tx = await queue.finalize(lastRequestId)
+        await tx.wait()
+        return tx
+      })
     },
   },
 })

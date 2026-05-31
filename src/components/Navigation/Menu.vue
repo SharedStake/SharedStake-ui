@@ -6,21 +6,15 @@
         <DropdownArrow />
       </div>
       <DropdownGroup>
-        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
-          <span>Stake</span>
-          <div class="coming-soon">
-            Coming Soon
-          </div>
-        </div>
+        <DropdownItemRouter to="/v2">
+          Stake (V2)
+        </DropdownItemRouter>
         <DropdownItemRouter to="/rollover">
           Rollover
         </DropdownItemRouter>
-        <div class="flex items-center gap-1 px-4 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap disabled-dropdown-item has-coming-soon">
-          <span>Withdraw</span>
-          <div class="coming-soon">
-            Coming Soon
-          </div>
-        </div>
+        <DropdownItemRouter to="/v2">
+          Withdraw (V2)
+        </DropdownItemRouter>
         <DropdownItemRouter to="/withdraw-from-deprecated">
           Withdraw from Deprecated
         </DropdownItemRouter>
@@ -40,23 +34,23 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
-      <DropdownItemAnchor
-        href="https://docs.sharedstake.finance/"
+      <DropdownItemRouter
+        to="/docs"
         class="px-6"
       >
         Learn
         <DropdownArrow />
-      </DropdownItemAnchor>
+      </DropdownItemRouter>
       <DropdownGroup>
         <DropdownItemRouter to="/blog">
           Blog
         </DropdownItemRouter>
-        <DropdownItemRouter to="/architecture">
+        <DropdownItemRouter to="/docs/architecture">
           Architecture
         </DropdownItemRouter>
-        <DropdownItemAnchor href="https://docs.sharedstake.finance/">
+        <DropdownItemRouter to="/docs">
           Docs
-        </DropdownItemAnchor>
+        </DropdownItemRouter>
         <DropdownItemAnchor href="https://snapshot.org/#/sharedstake.eth">
           DAO
         </DropdownItemAnchor>

@@ -77,10 +77,22 @@
         {{ store.error }}
       </div>
       <div
+        v-if="requestError || claimError"
+        class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
+      >
+        {{ requestError || claimError }}
+      </div>
+      <div
         v-if="requestTxHash"
         class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
       >
-        Request submitted! Tx: {{ requestTxHash.slice(0, 10) }}...
+        Withdrawal requested! Tx: {{ requestTxHash.slice(0, 10) }}...
+      </div>
+      <div
+        v-if="claimTxHash"
+        class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
+      >
+        Claimed! Tx: {{ claimTxHash.slice(0, 10) }}...
       </div>
 
       <button
@@ -202,7 +214,10 @@ export default {
       activeTab: 0,
       withdrawAmount: '',
       requestTxHash: null,
+      requestError: null,
       claimingId: null,
+      claimTxHash: null,
+      claimError: null,
     }
   },
 
@@ -243,6 +258,7 @@ export default {
     async handleRequest() {
       if (!this.canRequest) return
       this.requestTxHash = null
+      this.requestError = null
       try {
         const tx = await this.store.requestWithdrawal(this.withdrawAmount)
         this.requestTxHash = tx.hash
@@ -250,15 +266,20 @@ export default {
         this.activeTab = 1
       } catch (e) {
         console.error('Withdrawal request error:', e)
+        this.requestError = e?.reason || e?.message || 'Request failed'
       }
     },
 
     async handleClaim(requestId) {
+      this.claimTxHash = null
+      this.claimError = null
       this.claimingId = requestId
       try {
-        await this.store.claimWithdrawal(requestId)
+        const tx = await this.store.claimWithdrawal(requestId)
+        this.claimTxHash = tx.hash
       } catch (e) {
         console.error('Claim error:', e)
+        this.claimError = e?.reason || e?.message || 'Claim failed'
       } finally {
         this.claimingId = null
       }

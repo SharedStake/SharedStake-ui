@@ -350,9 +350,6 @@
               <router-link to="/docs/architecture">Architecture</router-link>
             </span>
             <span class="link footerLink">
-              <router-link to="/architecture">Architecture</router-link>
-            </span>
-            <span class="link footerLink">
               <router-link to="/blog">Blog</router-link>
             </span>
             <span class="link footerLink">

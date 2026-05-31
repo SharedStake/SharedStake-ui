@@ -8,11 +8,10 @@
   },
   "scripts": {
     "test": "bun test",
+    "test:run": "vitest run",
     "dev": "tsx watch src/server.ts",
     "start": "node dist/src/server.js",
     "build": "tsc -p tsconfig.json",
-    "test": "vitest",
-    "test:run": "vitest run",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:reset": "prisma migrate reset --force --skip-seed",
