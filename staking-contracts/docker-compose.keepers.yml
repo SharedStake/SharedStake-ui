@@ -1,0 +1,85 @@
+services:
+  deposit-sweep:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env.keeper
+    command: >
+      sh -lc "npm ci --legacy-peer-deps --no-audit --no-fund &&
+      npx ts-node scripts/keepers/depositSweep.ts --watch --interval=60"
+    restart: unless-stopped
+
+  oracle-reporter:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env.keeper
+    command: >
+      sh -lc "npm ci --legacy-peer-deps --no-audit --no-fund &&
+      npx ts-node scripts/keepers/oracleReporter.ts --watch --interval=900"
+    restart: unless-stopped
+
+  withdrawal-finalizer:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env.keeper
+    command: >
+      sh -lc "npm ci --legacy-peer-deps --no-audit --no-fund &&
+      npx ts-node scripts/keepers/withdrawalFinalizer.ts --watch --interval=120"
+    restart: unless-stopped
+
+  balance-monitor:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env.keeper
+    command: >
+      sh -lc "npm ci --legacy-peer-deps --no-audit --no-fund &&
+      npx ts-node scripts/keepers/balanceMonitor.ts --watch --interval=60"
+    restart: unless-stopped
+
+  referral-service:
+    profiles: ["referral"]
+    image: node:20-alpine
+    working_dir: /repo/services/referral-service
+    volumes:
+      - ..:/repo
+      - referral-service-data:/repo/services/referral-service/data
+    env_file:
+      - ../services/referral-service/.env
+    command: >
+      sh -lc "npm install --no-audit --no-fund &&
+      npx prisma migrate deploy &&
+      npm run dev"
+    ports:
+      - "8787:8787"
+    restart: unless-stopped
+
+  referral-sync-worker:
+    profiles: ["referral"]
+    image: node:20-alpine
+    working_dir: /repo/services/referral-service
+    volumes:
+      - ..:/repo
+      - referral-service-data:/repo/services/referral-service/data
+    env_file:
+      - ../services/referral-service/.env
+    command: >
+      sh -lc "npm install --no-audit --no-fund &&
+      npx prisma migrate deploy &&
+      npm run worker:sync"
+    depends_on:
+      - referral-service
+    restart: unless-stopped
+
+volumes:
+  referral-service-data:

@@ -1,0 +1,65 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_addrs",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "MINTER",
+    "outputs": [
+      {
+        "internalType": "contract ISharedDeposit",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "SGETH",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "WSGETH",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeSplitter",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

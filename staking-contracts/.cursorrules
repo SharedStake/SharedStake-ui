@@ -1,0 +1,347 @@
+# SharedDeposit - Solidity/Hardhat Project Guidelines
+
+## Project Overview
+This is a Solidity smart contract project for Ethereum liquid staking derivatives, built with Hardhat, TypeScript, and supporting multiple Solidity compiler versions.
+
+**Key Components:**
+- Core contracts: `contracts/v2/core/` - Main staking and withdrawal logic
+- Interfaces: `contracts/interfaces/` and `contracts/v2/interfaces/` - Contract interfaces
+- Libraries: `contracts/v2/lib/` - Shared utilities and base contracts
+- Periphery: `contracts/v2/periphery/` - Supporting contracts (Zap, FeeCalc, etc.)
+- Governance: `contracts/governance/` - Governance and token management contracts
+- Tests: `test/v2/` - Test suites
+- Deploy scripts: `deploy/` and `scripts/` - Deployment automation
+
+## Architecture Patterns
+
+### Contract Structure
+- **Core Contracts**: Primary business logic (SgETH, WithdrawalQueue, SharedDepositMinterV2)
+- **Interface-First Design**: All external contracts exposed via interfaces
+- **Library Pattern**: Reusable logic in `contracts/v2/lib/`
+- **Upgradeable Contracts**: Using OpenZeppelin Upgradeable patterns where applicable
+- **Error Handling**: Custom errors defined in `contracts/v2/lib/Errors.sol`
+
+### Deployment Patterns
+- Uses `hardhat-deploy` for deployment automation
+- Tagged deployments with dependencies (`func.tags`, `func.dependencies`)
+- Named accounts configuration in `hardhat.config.ts`
+- Environment-based configuration via `.env` files
+
+### Error Convention
+Following UNIv3-style shortened error strings: `{origin contract}:reason`
+Common reasons:
+- `CBL0` - Contract balance will be less than 0
+- `VL0` - Value less than or equal to 0
+- `VLC` - Value less than cap
+- `AGC` - Amount greater than cap
+- `NA` - No Access / Not allowed
+- `AE` - Already exists
+- `0AD` - 0 address
+
+## Code Quality Standards
+
+### Solidity Standards
+1. **Pragma Version**: Match contract requirements (0.6.11 to 0.8.20 supported)
+2. **License**: Include SPDX-License-Identifier at top of all files
+3. **Import Order**: Interfaces → Libraries → Contracts (imports-on-top enforced)
+4. **Visibility**: Explicit visibility for all functions (func-visibility enforced)
+5. **Function Names**: Follow mixedCase convention
+6. **State Variables**: Use leading underscore for private variables (where applicable)
+7. **Complexity**: Code complexity max 8 (code-complexity enforced)
+8. **Line Length**: Max 200 characters (max-line-length enforced)
+9. **Error Messages**: Custom errors preferred over require strings, max 128 chars if used
+
+### TypeScript/JavaScript Standards
+1. **Type Safety**: Use TypeScript strict mode (enabled in tsconfig.json)
+2. **ESLint**: Follow `.eslintrc.yaml` configuration
+3. **Prettier**: Auto-format with `.prettierrc.yaml` settings
+4. **Async/Await**: Prefer async/await over promises
+5. **Error Handling**: Proper try/catch blocks with meaningful error messages
+
+### Testing Standards
+1. **Test Coverage**: Aim for >80% coverage on core contracts
+2. **Test Structure**: Use describe/it blocks with clear descriptions
+3. **Fixtures**: Use Hardhat fixtures for test setup
+4. **Edge Cases**: Test boundary conditions and error paths
+5. **Gas Testing**: Use hardhat-gas-reporter for gas optimization awareness
+
+## Code Review Process
+
+### Required Review Passes (Minimum 3, Maximum 5)
+
+**Pass 1: Functionality & Compilation**
+- Verify all contracts compile without errors
+- Check for missing imports or broken dependencies
+- Ensure all function calls reference existing contracts/interfaces
+- Validate that tests run successfully
+- Check for TypeScript compilation errors
+
+**Pass 2: Architecture & Security**
+- Verify upgradeable patterns are correctly implemented
+- Check access control (onlyOwner, roles, etc.) is properly enforced
+- Ensure no unprotected state-changing functions
+- Validate reentrancy guards where needed
+- Check for overflow/underflow risks (Solidity 0.8+ handles automatically)
+- Verify zero-address checks for critical operations
+- Review pause mechanisms (GranularPause) are correctly applied
+
+**Pass 3: Code Quality & Standards**
+- Remove duplicate code or extract to libraries
+- Verify function signatures match interface definitions
+- Check for unused imports or variables
+- Ensure consistent error handling patterns
+- Verify all public/external functions have NatSpec comments
+- Check Solidity and TypeScript linting passes (`npm run lint`)
+
+**Pass 4: Edge Cases & Gas Optimization (if issues found in Pass 3)**
+- Test critical paths and error conditions
+- Verify all function parameters are validated
+- Check for unnecessary storage reads/writes
+- Review loop optimizations
+- Check for potential gas optimizations (immutable variables, etc.)
+
+**Pass 5: Final Validation (if issues found in Pass 4)**
+- Comprehensive end-to-end validation
+- Final documentation review
+- Verify all security best practices followed
+- Check deployment scripts work correctly
+
+### Review Completion Criteria
+- All contracts compile without errors or warnings
+- All tests pass (`npm run test`)
+- Linting passes (`npm run lint`)
+- No duplicate or unused code
+- Architecture patterns maintained
+- Security best practices followed
+- Documentation updated
+
+## Rule Enforcement Mechanisms
+
+### Mandatory Pre-Commit Checks
+
+Before any code changes are considered complete:
+
+1. **Compilation Check**
+   ```bash
+   npm run build  # Runs prettier, lint, and compile
+   ```
+
+2. **Linting Check**
+   ```bash
+   npm run lint:sol  # Solidity linting
+   npm run lint:ts   # TypeScript linting
+   ```
+
+3. **Testing Check**
+   ```bash
+   npm run test  # Run all tests
+   ```
+
+4. **Prettier Check**
+   ```bash
+   npm run prettier:check  # Verify formatting
+   ```
+
+### Validation Checklist
+
+**Pre-Commit Validation:**
+- [ ] Contracts compile without errors (`npm run build`)
+- [ ] All linting passes (`npm run lint`)
+- [ ] All tests pass (`npm run test`)
+- [ ] Code formatted with Prettier (`npm run prettier:check`)
+- [ ] No duplicate or unused functions
+- [ ] Error handling patterns consistent
+- [ ] NatSpec comments added for public/external functions
+- [ ] Security considerations documented
+- [ ] Interface definitions match implementations
+
+### Common Violations to Avoid
+
+1. **Missing Access Control** - Ensure proper onlyOwner/role checks
+2. **Unsafe External Calls** - Use checks-effects-interactions pattern
+3. **Missing Zero-Address Checks** - Validate addresses before use
+4. **Duplicate Code** - Extract to libraries or base contracts
+5. **Inconsistent Error Handling** - Use custom errors consistently
+6. **Missing NatSpec** - Document all public/external functions
+7. **Unoptimized Gas Usage** - Use immutable, avoid unnecessary storage
+8. **Broken Interface Compliance** - Ensure implementations match interfaces
+
+## Consistency Guidelines
+
+### Contract File Structure
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+// Imports: Interfaces first, then libraries, then contracts
+import "../interfaces/IContract.sol";
+import "../lib/BaseContract.sol";
+
+/// @title ContractName
+/// @notice Brief description
+/// @dev Detailed implementation notes
+contract ContractName is BaseContract {
+    // State variables
+    // Events
+    // Modifiers
+    // Functions
+}
+```
+
+### Test File Structure
+```typescript
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { ContractName } from "../typechain-types";
+
+describe("ContractName", function () {
+    let contract: ContractName;
+    
+    beforeEach(async function () {
+        // Setup
+    });
+    
+    describe("Functionality", function () {
+        it("should do something", async function () {
+            // Test
+        });
+    });
+});
+```
+
+### Deployment Script Structure
+```typescript
+import { DeployFunction } from "hardhat-deploy/types";
+
+const func: DeployFunction = async function (hre) {
+    // Deployment logic
+};
+
+export default func;
+func.tags = ["contractName"];
+func.dependencies = ["dependency1", "dependency2"];
+```
+
+## Security Best Practices
+
+### Access Control
+- Use OpenZeppelin's Ownable, AccessControl, or custom role-based systems
+- Always validate `msg.sender` permissions before state changes
+- Implement pause mechanisms for critical operations
+
+### Reentrancy Protection
+- Use checks-effects-interactions pattern
+- Apply `nonReentrant` modifier from OpenZeppelin for external calls
+- Lock state before external calls
+
+### Input Validation
+- Check for zero addresses in constructors and setters
+- Validate array lengths and bounds
+- Use SafeMath patterns (or rely on Solidity 0.8+ overflow protection)
+- Validate user inputs match expected ranges
+
+### Upgradeable Contracts
+- Initialize properly (no constructor, use initializer)
+- Avoid storage layout conflicts
+- Test upgrade paths thoroughly
+- Use TransparentUpgradeableProxy or UUPS patterns correctly
+
+## Documentation Requirements
+
+### Contract Documentation
+- Add NatSpec comments for all public/external functions
+- Document state variables with `@notice` or `@dev`
+- Include examples in complex functions
+- Document security considerations
+
+### Code Comments
+- Explain "why" not "what" in comments
+- Mark TODO items with `// TODO:` prefix
+- Document gas optimization decisions
+- Note any known limitations or edge cases
+
+### Testing Documentation
+- Document test scenarios and expected outcomes
+- Include integration test documentation
+- Document gas benchmarks where relevant
+
+## Development Workflow
+
+### Before Making Changes
+1. Read existing code patterns in similar contracts
+2. Check for existing utilities in `contracts/v2/lib/`
+3. Review interface definitions before implementing
+4. Understand deployment dependencies
+
+### During Development
+1. Follow established patterns (library usage, error handling)
+2. Write tests alongside implementation
+3. Run linting frequently (`npm run lint`)
+4. Format code with Prettier (`npm run prettier`)
+5. Check gas usage with hardhat-gas-reporter
+
+### After Changes
+1. Run full test suite (`npm run test`)
+2. Verify linting passes (`npm run lint`)
+3. Check compilation (`npm run build`)
+4. Review gas reports if applicable
+5. Update documentation
+
+### Before Committing
+1. Ensure all validation checks pass
+2. Review code for security issues
+3. Verify no sensitive data in code
+4. Update CHANGELOG if needed
+5. Ensure commit messages follow convention
+
+## Commit Message Conventions
+
+Follow conventional commits format:
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `refactor:` - Code refactoring
+- `test:` - Test additions/changes
+- `chore:` - Build/tooling changes
+- `perf:` - Performance improvements
+- `security:` - Security fixes
+
+Example: `feat: add withdrawal queue batch processing`
+
+## Agent Guidelines
+
+When working with this codebase:
+
+1. **Respect Existing Patterns**: Follow established contract structure and naming conventions
+2. **Use Libraries**: Extract reusable logic to `contracts/v2/lib/` instead of duplicating
+3. **Maintain Interface Compatibility**: When updating contracts, ensure interfaces match
+4. **Test Thoroughly**: Write comprehensive tests covering happy paths and edge cases
+5. **Document Public APIs**: Add NatSpec comments for all external-facing functions
+6. **Security First**: Always consider security implications of changes
+7. **Gas Awareness**: Consider gas costs in optimization decisions (200 optimizer runs)
+8. **Error Handling**: Use custom errors consistently across the codebase
+
+## Tools & Scripts Reference
+
+### Development Commands
+- `npm run build` - Format, lint, and compile
+- `npm run test` - Run test suite
+- `npm run lint` - Run all linters
+- `npm run lint:sol` - Lint Solidity only
+- `npm run lint:ts` - Lint TypeScript only
+- `npm run prettier` - Format code
+- `npm run prettier:check` - Check formatting
+- `npm run compile` - Compile contracts only
+- `npm run coverage` - Generate coverage report
+
+### Deployment Commands
+- `npm run deploy:sepolia` - Deploy to Sepolia
+- `npm run verify:sepolia` - Verify contracts on Sepolia
+
+### Gas Optimization
+- Runs: 200 (optimized for call costs vs deploy costs)
+- Always review gas reports before finalizing changes
+- Consider immutable variables for constants
+- Minimize storage reads/writes in loops
+
+This comprehensive rule set ensures consistent, maintainable, and secure smart contract development across the SharedDeposit project.

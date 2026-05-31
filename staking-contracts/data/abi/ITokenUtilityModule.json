@@ -1,0 +1,138 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_requestContract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "defaultVal",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAdminFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_requestContract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "defaultVal",
+        "type": "uint256"
+      }
+    ],
+    "name": "getBoost",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_sender",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_requestContract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "defaultVal",
+        "type": "uint256"
+      }
+    ],
+    "name": "getEpochLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_requestContract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "defaultVal",
+        "type": "uint256"
+      }
+    ],
+    "name": "getWithdrawalTotal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

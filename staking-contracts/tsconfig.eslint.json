@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["scripts/**/*.ts", "deploy/**/*.ts", "test/**/*.ts", "utils/**/*.ts", ".eslintrc.js"],
+  "exclude": ["node_modules", "contracts", "abis", "artifacts", "cache", "types", "z"]
+}

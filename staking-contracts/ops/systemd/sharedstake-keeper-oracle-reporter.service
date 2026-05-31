@@ -1,0 +1,25 @@
+[Unit]
+Description=SharedStake Keeper - oracleReporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=sharedstake
+Group=sharedstake
+WorkingDirectory=/opt/sharedstake/SharedDeposit
+EnvironmentFile=/etc/sharedstake/keeper.env
+ExecStart=/usr/bin/env npx ts-node scripts/keepers/oracleReporter.ts --watch --interval=900
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/sharedstake/SharedDeposit
+UMask=0077
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

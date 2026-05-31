@@ -1,0 +1,153 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_sgEth",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_minter",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Deposit",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "ref",
+        "type": "address"
+      }
+    ],
+    "name": "DepositFrontend",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "ref",
+        "type": "address"
+      }
+    ],
+    "name": "DepositRef",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "data",
+        "type": "bytes32"
+      }
+    ],
+    "name": "ExtraDepositData",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "ref",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "frontend",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "data",
+        "type": "bytes32"
+      }
+    ],
+    "name": "depositWithEvents",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "addrs",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "bytesToBroadcast",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "multicall",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]

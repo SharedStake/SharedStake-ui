@@ -1,0 +1,21 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "inBlockList",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_isInBlocklist",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
