@@ -43,11 +43,12 @@ contract WstToken is ERC20Permit, ReentrancyGuard {
         wstAmount = ST_TOKEN.getSharesByPooledEth(stAmount);
         if (wstAmount == 0) revert Errors.InvalidAmount();
 
+        // CEI: mint (state change) before external transfer (interaction).
+        // nonReentrant guards the function, but correct ordering is maintained for clarity.
+        _mint(msg.sender, wstAmount);
+
         // Pull stTokens into this contract (they rebase in place over time).
         IERC20(address(ST_TOKEN)).safeTransferFrom(msg.sender, address(this), stAmount);
-
-        // Mint wstToken 1:1 with shares deposited.
-        _mint(msg.sender, wstAmount);
         emit Wrap(msg.sender, stAmount, wstAmount);
     }
 
