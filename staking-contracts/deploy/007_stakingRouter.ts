@@ -48,7 +48,9 @@ const func: DeployFunction = async hre => {
     }
   }
 
-  // If StakingCore exists, enable router mode to prevent dual-mode operation
+  // If StakingCore exists, enable router mode and revoke its MINTER role for defense-in-depth.
+  // routerMode is a one-way latch, but revoking MINTER ensures StakingCore cannot mint
+  // even if a future code path bypasses the latch.
   const stakingCoreDeployment = await hre.deployments.getOrNull("StakingCore");
   if (stakingCoreDeployment) {
     console.log("  Enabling router mode on StakingCore to prevent dual-mode operation...");
@@ -56,6 +58,14 @@ const func: DeployFunction = async hre => {
     const currentRouterMode = await stakingCore.routerMode();
     if (!currentRouterMode) {
       await stakingCore.connect(govSigner).enableRouterMode(router.target as string);
+    }
+
+    // Revoke StakingCore's MINTER role — router is now the sole minter.
+    const MINTER = await stToken.MINTER();
+    const coreHasMinter = await stToken.hasRole(MINTER, stakingCoreDeployment.address);
+    if (coreHasMinter) {
+      console.log("  Revoking MINTER from StakingCore (StakingRouter is now the sole minter)...");
+      await stToken.connect(accounts.deployer).removeMinter(stakingCoreDeployment.address);
     }
   }
 };
