@@ -1,131 +1,95 @@
 export const architectureMeta = {
-  title: "SharedStake V2 Modular Staking — Architecture",
-  subtitle:
-    "Non-upgradeable, module-composable staking protocol. StakingRouter coordinates validator modules, fee distribution, and on-chain governance.",
-  updatedAt: "2026-05-15",
+  title: "SharedStake Architecture Workspace",
+  subtitle: "Working draft for v2 evolution and contract-readiness execution",
+  updatedAt: "2026-05-06",
   sources: [
     "https://docs.sharedstake.finance/sharedstake-v2.md",
     "https://docs.sharedstake.finance/sharedstake-v2/key-changes-over-v1.md",
+    "https://docs.sharedstake.finance/sharedstake-v2/phased-launch.md",
     "https://docs.sharedstake.finance/sharedstake-v2/shareddeposit-v2-architecture.md",
   ],
   localDocs: [
-    "docs/modular-staking/UPGRADE_PATH.md",
-    "src/architecture/MODULAR_STAKING_ARCHITECTURE.md",
-    "SharedDeposit/contracts/v2/modular-staking/",
-    "SharedDeposit/test/v2/modular-staking/",
+    "llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md",
+    "src/architecture/lido-competitor-parity-phase2-plan.md",
+    "src/architecture/LIDO_PARITY_ARCHITECTURE.md",
+    "src/architecture/contracts-v1-invariants.md",
+    "src/architecture/contracts-v1-access-control-matrix.md",
+    "src/architecture/contracts-v1-readiness-runthrough.md",
+    "SharedDeposit/contracts/v2/core/README.md",
+    "SharedDeposit/test/v2/core",
   ],
 };
 
 export const coreArchitecture = [
   {
-    title: "StakingRouter",
+    title: "Token Layer",
     points: [
-      "Central coordinator: receives ETH from users, routes to modules.",
-      "Owns the MINTER role on StToken — only contract that mints/burns shares.",
-      "Tracks per-module beacon balances; triggers StToken rebases on oracle reports.",
-      "Enforces per-module inflow limits, pause state, and sanity caps on oracle deltas.",
+      "sgETH: 1:1 ETH-pegged token for mint/redeem and LP-style usage.",
+      "wsgETH: yield-bearing wrapper that accrues staking performance.",
+      "Price/share accounting relies on on-chain state and sync cycles.",
     ],
   },
   {
-    title: "ValidatorModule / DVTModule",
+    title: "Minter + Buffer Layer",
     points: [
-      "ValidatorModule: single-operator 32-ETH validator path with withdrawal credential enforcement.",
-      "DVTModule extends ValidatorModule with an on-chain cluster registry for Distributed Validator Technology.",
-      "Both share _doBeaconDeposit() with pubkey deduplication and withdrawal-cred validation.",
-      "Paused independently; oracle reports blocked while paused.",
+      "SharedDepositMinterV2 handles deposit, stake, unstake, and withdraw flows.",
+      "ETH buffer handles normal exit demand and peg support before validator exits.",
+      "Pause/slash/fee operations are controlled by governance roles.",
     ],
   },
   {
-    title: "FeeController",
+    title: "Rewards + Exit Layer",
     points: [
-      "Configures treasury/operator fee split and the referral registry address.",
-      "Called by StakingRouter on each reward distribution; mints fee shares to treasury/operator.",
-      "Referral tracking via MasterChef-style ReferralRegistry.",
-    ],
-  },
-  {
-    title: "Governance Stack",
-    points: [
-      "VoteEscrowV2: lock SGT → veSGT for voting weight; 30% penalty on emergency withdraw.",
-      "GovernanceTimelock: 48h delay on all parameter changes.",
-      "SharedStakeGovernor: OZ Governor wired to veSGT + Timelock.",
-      "VoteEscrowV2.gov must be the Timelock — penalty rate changes require a full governance vote.",
-    ],
-  },
-  {
-    title: "WithdrawalQueueV2",
-    points: [
-      "Users request withdrawals; GOV finalizes batches with ETH from operator exits.",
-      "Bunker mode adds minimum age and batch-size guards during validator churn events.",
-      "Used as the exit path during Router-to-Router migrations.",
-    ],
-  },
-  {
-    title: "MigrationHelper",
-    points: [
-      "Signal-only contract — holds no funds, moves no funds.",
-      "GOV announces a new router; 14-day notice clock starts.",
-      "activateMigration() sets migrationActive = true (front-ends redirect to newRouter).",
-      "Activated state is terminal; cancelMigration() only works before activation.",
-    ],
-  },
-  {
-    title: "StTokenERC4626Wrapper",
-    points: [
-      "ERC-4626 compliant vault wrapping the rebasing stToken into a non-rebasing vault token.",
-      "Enables DeFi composability: Aave, Compound, Pendle, and other yield protocols.",
-      "asset = stToken shares; vault share appreciates as protocol accrues staking rewards.",
-      "Withdrawal returns stToken shares synchronously; convert to ETH via WithdrawalQueueV2.",
+      "RewardsReceiver routes EL/CL rewards into deposit or withdrawal paths.",
+      "WithdrawalQueue/Withdrawals provide delayed redemption when buffer is insufficient.",
+      "FeeSplitter and periphery contracts route protocol/operator/reflection flows.",
     ],
   },
 ];
 
 export const phaseRoadmap = [
   {
-    phase: "Phase 1 — DONE",
-    name: "Modular Core",
+    phase: "Phase 0-1",
+    name: "Core Launch",
     additions: [
-      "StakingRouter + StToken + ValidatorModule deployed and tested.",
-      "FeeController with treasury/operator/referral routing.",
-      "WithdrawalQueueV2 with bunker mode.",
-      "6-pass internal security audit complete; all CRITICAL/HIGH fixed.",
+      "Non-custodial, non-upgradeable core with guarded rollout.",
+      "Deposit + redeem-via-buffer + withdrawal flows.",
+      "Minimal contract surface focused on mainnet hardening.",
     ],
   },
   {
-    phase: "Phase 2 — DONE",
-    name: "DVT + Governance",
+    phase: "Phase 2",
+    name: "Attribution + Controls",
     additions: [
-      "DVTModule: on-chain cluster registry, depositToBeaconChainInCluster.",
-      "VoteEscrowV2 + GovernanceTimelock + SharedStakeGovernor deployed.",
-      "MigrationHelper: 14-day-notice migration coordination contract.",
-      "307 Hardhat + 22 keeper unit + 13 ERC-4626 + 7 Foundry invariant tests; 20 Playwright E2E tests.",
+      "Additive attribution entrypoints landed in StakingCore and StakingRouter.",
+      "DAO-routed fee telemetry events emitted on reward reports (core + router).",
+      "Quorum-oracle path, bunker controls, per-module inflow limits, and core/router beacon-baseline guards are covered by tests.",
     ],
   },
   {
-    phase: "Phase 3 — PENDING",
-    name: "Mainnet Deployment",
+    phase: "Phase 3",
+    name: "Operator Decentralization",
     additions: [
-      "Set expectedWithdrawalCredentials on all ValidatorModule instances.",
-      "Transfer GOV + DEFAULT_ADMIN_ROLE to GovernanceTimelock.",
-      "External human security audit of full V2 surface.",
-      "Configure .env.keeper and supervised keeper processes.",
+      "Expand beyond a single operator path.",
+      "Permissionless onboarding model (ERC-6551 + STEAK/SGT gating in docs).",
+      "Operational guardrails for operator performance and failures.",
     ],
   },
   {
     phase: "Phase 4",
-    name: "Operator Decentralization",
+    name: "Fee Switch + Redistribution",
     additions: [
-      "Permissionless operator onboarding (ERC-6551 + SGT gating).",
-      "Operator performance guards and exit-event handling.",
-      "Additional DVT cluster operators beyond core team.",
+      "Protocol fee-switch activation policy.",
+      "Redistribution to locked SGT staking path.",
+      "Replacement for deprecated veSGT-style flow.",
     ],
   },
   {
     phase: "Phase 5",
-    name: "Multi-Chain",
+    name: "Multi-Chain Minter",
     additions: [
       "Minter extension to additional L1/L2 environments.",
-      "Cross-domain accounting for sgETH mint paths.",
+      "Cross-domain accounting and controls for sgETH mint paths.",
       "Chain-by-chain rollout with independent risk limits.",
     ],
   },
@@ -133,181 +97,128 @@ export const phaseRoadmap = [
 
 export const contractV1Readiness = [
   {
-    status: "done",
-    title: "Core contracts + test suite",
-    goal: "Production-ready non-upgradeable contracts with full test coverage.",
+    status: "in_progress",
+    title: "Freeze v1 scope and invariants",
+    goal: "Turn roadmap language into auditable contract invariants and out-of-scope boundaries.",
     currentState:
-      "342 Hardhat/keeper/ERC-4626 + 7 Foundry invariant tests green. Fork tests cover fee distribution, withdrawal queue, governance params, and DVT credential enforcement.",
-    nextStep: "External human audit before mainnet.",
+      "Core contract scope is already concentrated under SharedDeposit/contracts/v2/core, but invariants are not yet written as formal release gates.",
+    nextStep:
+      "Publish invariant spec and require explicit sign-off before any new feature merges.",
     tasks: [
-      "StakingRouter, ValidatorModule, DVTModule, FeeController, WithdrawalQueueV2.",
-      "MigrationHelper coordination contract.",
-      "VoteEscrowV2 + GovernanceTimelock + SharedStakeGovernor.",
-    ],
-  },
-  {
-    status: "done",
-    title: "Security audit (6 passes)",
-    goal: "No unaddressed CRITICAL/HIGH findings before mainnet.",
-    currentState:
-      "6 internal audit passes complete. All CRITICAL/HIGH fixed. 4 MEDIUM findings accepted by design (documented with rationale). DVTM-04 accepted.",
-    nextStep: "External paid human audit.",
-    tasks: [
-      "Pass 1-2: 15 findings fixed.",
-      "Pass 3: No CRITICAL/HIGH; 3 MEDIUM accepted, 4 LOW/INFO fixed.",
-      "Pass 4 (DVT): DVTM-01/02/03 fixed; DVTM-04 accepted by design.",
-      "Pass 5: All candidates below threshold.",
-      "Pass 6: LSTWrapModule oracle order + missing unwrapLST guard fixed.",
-    ],
-  },
-  {
-    status: "done",
-    title: "Governance wiring",
-    goal: "All privileged parameter paths gated behind 48h governance delay.",
-    currentState:
-      "VoteEscrowV2.gov = GovernanceTimelock. Deployer admin role renounced. Governor has PROPOSER + CANCELLER roles. Deploy script asserts gov transfer.",
-    nextStep: "Transfer StakingRouter GOV + DEFAULT_ADMIN_ROLE to Timelock on mainnet.",
-    tasks: [
-      "013_governance.ts: deploys and wires all governance contracts.",
-      "Hard assertion: veGov == timelock.target post-deploy.",
-      "Docs: docs/modular-staking/UPGRADE_PATH.md.",
+      "Write spec for mint/redeem, pause, slash, fee split, withdrawal-queue behavior.",
+      "Define hard caps/limits (buffer limits, queue rules, validator count transitions).",
+      "Publish canonical contract interaction sequence diagrams.",
     ],
   },
   {
     status: "in_progress",
-    title: "Mainnet pre-deployment checklist",
-    goal: "Ops and governance tasks before mainnet launch.",
+    title: "Access-control matrix and key ceremony",
+    goal: "Eliminate ambiguous privileges before external audit and deployment.",
     currentState:
-      "Code complete. Four ops/governance tasks remain (not code changes).",
-    nextStep: "Complete all four pre-mainnet blockers.",
+      "Roles exist (GOV/NOR/DEFAULT_ADMIN_ROLE/Ownable), access matrices are drafted, deployment defaults were hardened to avoid deployer-retained control, and dedicated access-control + role-admin mapping tests now cover core/router/queue/quorum/policy modules. Signer ceremony policy is still pending.",
+    nextStep:
+      "Create contract-by-contract privilege table and multisig runbook with threshold and rotation policy.",
     tasks: [
-      "Set expectedWithdrawalCredentials on all ValidatorModule instances.",
-      "Transfer GOV + DEFAULT_ADMIN_ROLE to GovernanceTimelock.",
-      "Complete external human security audit.",
-      "Configure keeper environment and supervised processes.",
+      "Enumerate all privileged methods per contract and expected caller role.",
+      "Define multisig threshold, signer rotation plan, and emergency procedures.",
+      "Add tests that prove non-privileged callers cannot exercise sensitive paths.",
+    ],
+  },
+  {
+    status: "todo",
+    title: "Economic safety and stress testing",
+    goal: "Validate behavior under churn, slashing, and thin-liquidity conditions.",
+    currentState:
+      "Unit tests exist for many happy/unhappy paths, but scenario-level stress simulations are not yet formalized as release criteria.",
+    nextStep:
+      "Add scripted stress scenarios for buffer depletion, queued exits, slash events, and fee-mode switches.",
+    tasks: [
+      "Model high-withdrawal periods and queue starvation edge cases.",
+      "Test fee/reflection distribution under low and high yield regimes.",
+      "Simulate negative events (slash + pause + resume + backlog processing).",
+    ],
+  },
+  {
+    status: "in_progress",
+    title: "Test coverage hardening",
+    goal: "Upgrade current unit/e2e tests into release gates for contract v1.",
+    currentState:
+      "There is broad coverage in SharedDeposit/test/v2/core plus parity/modular suites, including adversarial, role-negative, quorum operational, bunker-mode, attribution telemetry, and baseline-guard paths. Local suites are passing (179 parity/modular tests), but invariant/fuzz gates are still pending.",
+    nextStep:
+      "Define minimum test matrix and pass thresholds, then enforce in CI for release branches.",
+    tasks: [
+      "Promote core test suites into CI pass/fail release criteria.",
+      "Add invariant/fuzz tests around queue accounting and share conversions.",
+      "Add fork tests that replay real operator/reward patterns.",
+    ],
+  },
+  {
+    status: "todo",
+    title: "Security review pipeline",
+    goal: "Treat audits as a stage in a broader secure release pipeline.",
+    currentState:
+      "Audit intent is documented in core README, but issue triage workflow and regression policy are not yet codified in this workspace.",
+    nextStep:
+      "Create findings tracker template and mandatory test-per-fix policy.",
+    tasks: [
+      "Run static analysis and linting with zero-high-severity policy.",
+      "Prepare external audit scope focused on v2/core and custom libs.",
+      "Track all findings in a remediation log with regression tests per fix.",
     ],
   },
   {
     status: "todo",
     title: "Deployment reproducibility",
-    goal: "Deterministic release manifest with addresses, constructor args, and verification links.",
+    goal: "Make deployment deterministic and easy to verify for third parties.",
     currentState:
-      "Deploy scripts exist (001-013 in deploy/v2-modular-staking/). Manifests not yet published per-network.",
-    nextStep: "Create per-network release manifest and publish bytecode verification.",
+      "Deployment scripts and artifacts exist, but deterministic release manifests and bytecode attestations are not packaged as a single public checklist.",
+    nextStep:
+      "Create per-network release manifest with addresses, constructor args, commit hash, and verification links.",
     tasks: [
-      "Pin compiler version, optimizer settings, and expected bytecode hashes.",
+      "Pin compiler/config, deployment scripts, and expected bytecode hashes.",
       "Document per-network params and governance addresses.",
-      "Publish verification checklist for Etherscan and downstream integrators.",
+      "Publish verification checklist for explorers and downstream integrators.",
     ],
   },
   {
     status: "todo",
     title: "Operational runbooks",
-    goal: "Playbooks for pause/unpause, validator exits, and queue incidents.",
+    goal: "Define runtime actions for normal operations and incidents.",
     currentState:
-      "Pause controls and queue finalization are in contracts. Operator runbooks not yet written.",
-    nextStep: "Write and rehearse incident runbooks before mainnet.",
+      "Operational controls are present in contracts (pause/flip state/withdraw queue), but operator-facing playbooks are not yet written in one place.",
+    nextStep:
+      "Write incident runbooks and rehearse drills before mainnet promotion.",
     tasks: [
-      "Pause/unpause, slash handling, withdrawal queue backlog.",
-      "SLOs for reward sync cadence and withdrawal processing.",
-      "On-call and escalation paths for governance/operators.",
-    ],
-  },
-];
-
-export const governanceModel = [
-  {
-    title: "VoteEscrowV2",
-    points: [
-      "Lock SGT for 7–730 days to receive veSGT voting weight.",
-      "Voting weight decays linearly to zero at lock expiry.",
-      "emergencyWithdraw() available before expiry with 30% SGT penalty.",
-      "gov address = GovernanceTimelock; penalty rate changes require governance vote.",
-    ],
-  },
-  {
-    title: "GovernanceTimelock",
-    points: [
-      "48h delay (1s on hardhat for test speed).",
-      "Governor has PROPOSER + CANCELLER roles.",
-      "address(0) executor — anyone can execute once delay has passed.",
-      "Deployer DEFAULT_ADMIN_ROLE renounced post-deploy (self-governing).",
-    ],
-  },
-  {
-    title: "SharedStakeGovernor",
-    points: [
-      "OZ Governor with veSGT as voting token.",
-      "Proposals require a voting period + quorum threshold.",
-      "Passed proposals execute via GovernanceTimelock.",
-      "All StakingRouter / FeeController / VoteEscrowV2 param changes go through here.",
-    ],
-  },
-];
-
-export const upgradePath = [
-  {
-    title: "Minor: Parameter Change",
-    points: [
-      "No migration needed.",
-      "Governance proposal → Timelock 48h delay → execute.",
-      "Examples: fee bps, inflow limits, oracle delta caps.",
-    ],
-  },
-  {
-    title: "Module Upgrade",
-    points: [
-      "Deploy new module (e.g. DVTModuleV2).",
-      "Governance registerModule on StakingRouter with new module address.",
-      "Governance deregisterModule for old module once funds are moved.",
-      "No user action required.",
-    ],
-  },
-  {
-    title: "Router Migration (Full)",
-    points: [
-      "Deploy new StakingRouter.",
-      "GOV calls MigrationHelper.announceMigration(newRouter) — 14-day notice starts.",
-      "Users withdraw via WithdrawalQueueV2 during voluntary exit window.",
-      "After 14 days: GOV calls activateMigration(); front-ends redirect to newRouter.",
-      "migrationActive = true is terminal; cannot be rolled back.",
-    ],
-  },
-  {
-    title: "Emergency Path",
-    points: [
-      "GUARDIAN pauses deposits on old router immediately.",
-      "Governance votes to fast-track: cancelMigration() + fresh announceMigration with shorter notice.",
-      "MigrationHelper does not enforce an early activation path by design.",
+      "Create runbooks for pause/unpause, slash handling, and queue incident response.",
+      "Define SLOs for reward sync cadence and withdrawal processing.",
+      "Set on-call and escalation paths for governance/operators.",
     ],
   },
 ];
 
 export const releaseTracks = [
   {
-    milestone: "Code Complete (NOW)",
+    milestone: "Internal Alpha",
     criteria: [
-      "342 Hardhat/keeper/ERC-4626 + 7 Foundry tests green.",
-      "6-pass internal audit complete; no unaddressed CRITICAL/HIGH.",
-      "Fork tests: fee distribution, withdrawal queue, governance params, DVT credentials.",
-      "20 Playwright E2E tests passing.",
+      "All core flows pass local + fork tests.",
+      "Invariant suite green for at least 1k randomized runs per scenario.",
+      "Spec and role matrix reviewed by protocol + frontend teams.",
     ],
   },
   {
-    milestone: "Mainnet Ready",
+    milestone: "Public Testnet Beta",
     criteria: [
-      "External human audit complete and findings resolved.",
-      "expectedWithdrawalCredentials set on all ValidatorModule instances.",
-      "GOV + DEFAULT_ADMIN_ROLE transferred to GovernanceTimelock.",
-      "Keeper environment configured and supervised keeper processes rehearsed.",
+      "External testers can complete deposit/stake/withdrawal loops reliably.",
+      "Monitoring dashboards and alerting in place for key metrics.",
+      "Known-issue list published with mitigation guidance.",
     ],
   },
   {
     milestone: "Mainnet V1",
     criteria: [
-      "Deployment reproducibility checklist completed.",
-      "Operational runbooks written and rehearsed.",
-      "Emergency response drills completed.",
+      "Audit findings resolved or explicitly accepted with governance sign-off.",
+      "Deployment reproducibility and verification checklist completed.",
+      "Emergency response drills completed before launch.",
     ],
   },
 ];

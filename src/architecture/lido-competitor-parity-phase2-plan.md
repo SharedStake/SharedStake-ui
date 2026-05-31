@@ -137,7 +137,7 @@ P3-prep (implemented as standalone module):
 - Role manifest + emergency runbook updated.
 
 Current validation snapshot (2026-05-06):
-- `npx hardhat test test/v2/modular-staking/*.spec.ts test/v2/modular/*.spec.ts` → 179 passing.
+- `npx hardhat test test/v2/lido-parity/*.spec.ts test/v2/modular/*.spec.ts` → 179 passing.
 - `npx hardhat test` (full `SharedDeposit`) → 220 passing.
 - `solhint` on changed parity contracts is warnings-only (no errors).
 

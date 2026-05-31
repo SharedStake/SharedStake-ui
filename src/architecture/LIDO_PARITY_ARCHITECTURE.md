@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-This document captures the module boundaries, trust assumptions, storage design, and threat model for the SharedStake V2 Lido-parity staking core. It accompanies the implementation in `SharedDeposit/contracts/v2/modular-staking/`.
+This document captures the module boundaries, trust assumptions, storage design, and threat model for the SharedStake V2 Lido-parity staking core. It accompanies the implementation in `SharedDeposit/contracts/v2/lido-parity/`.
 
 ### Goal
 
