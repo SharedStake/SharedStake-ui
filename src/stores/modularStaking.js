@@ -42,7 +42,7 @@ function normalizeChainId(id) {
   if (!id && id !== 0) return ''
   if (typeof id === 'bigint') return '0x' + id.toString(16)
   if (typeof id === 'number') return '0x' + id.toString(16)
-  if (typeof id === 'string' && !id.startsWith('0x')) return '0x' + parseInt(id).toString(16)
+  if (typeof id === 'string' && !id.toLowerCase().startsWith('0x')) return '0x' + parseInt(id, 10).toString(16)
   return id.toLowerCase()
 }
 

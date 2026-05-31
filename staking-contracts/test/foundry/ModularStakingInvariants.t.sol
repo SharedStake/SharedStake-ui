@@ -263,17 +263,27 @@ contract ModularStakingInvariants is Test {
   }
 
   /**
-   * @notice Invariant 3: Exchange rate never drops below observed minimum
-   *         (except during slashes, which we don't simulate here)
+   * @notice Invariant 3: Exchange rate is monotonically non-decreasing across runs.
+   *         Checked as: current rate >= rate at the previous invariant invocation.
+   *         (In production, slashes CAN decrease rate, but our handler doesn't slash)
+   *
+   * NOTE: The previous implementation updated minRateObserved downward when rate
+   *       dropped, then asserted rate >= (the new lower min) — a tautology that
+   *       never fires. Fixed to assert current >= previous and update to current.
    */
   function invariant_exchangeRateNonDecreasing() public {
-    uint256 rate = _rate();
-    if (rate < minRateObserved) {
-      minRateObserved = rate;
+    uint256 currentRate = _rate();
+    if (minRateObserved == type(uint256).max) {
+      // First invocation — establish baseline; no assertion yet.
+      minRateObserved = currentRate;
+      return;
     }
-    // Rate should never decrease below the minimum we've ever seen
-    // (In production, slashes CAN decrease rate, but our handler doesn't slash)
-    assertGe(rate, minRateObserved);
+    // Allow 1-wei rounding tolerance from integer division in share math.
+    assertGe(currentRate + 1, minRateObserved);
+    // Only track upward movement so any future drop is caught.
+    if (currentRate > minRateObserved) {
+      minRateObserved = currentRate;
+    }
   }
 
   /**

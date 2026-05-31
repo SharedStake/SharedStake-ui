@@ -40,6 +40,7 @@ contract DebtPool is AccessControl, Pausable {
         uint256 claimedAmount;
         uint256 timestamp;
         bool finalized;
+        bool swept; // set by withdrawUnclaimedFees so claim() gives a clear error instead of InsufficientBalance
     }
     mapping(uint256 => Distribution) public distributions;
 
@@ -65,6 +66,10 @@ contract DebtPool is AccessControl, Pausable {
     error UnwrapFailed();
     error InsufficientWstETHReceived();
     error NotFeeController();
+    /// @notice Claim amount would exceed the distribution's declared total (bad merkle tree).
+    error ExceedsDistributionTotal(uint256 requested, uint256 remaining);
+    /// @notice Distribution has been swept by governance; remaining funds were recovered.
+    error DistributionSwept();
 
     modifier onlyDistributionFinalized(uint256 _distributionId) {
         if (!distributions[_distributionId].finalized) revert DistributionNotFinalized();
@@ -118,7 +123,8 @@ contract DebtPool is AccessControl, Pausable {
             totalAmount: _totalAmount,
             claimedAmount: 0,
             timestamp: block.timestamp,
-            finalized: true
+            finalized: true,
+            swept: false
         });
 
         emit DistributionCreated(distributionId, _merkleRoot, _totalAmount);
@@ -151,6 +157,7 @@ contract DebtPool is AccessControl, Pausable {
         if (unclaimed == 0) revert NoUnclaimedFees();
 
         dist.totalAmount = dist.totalAmount - unclaimed;
+        dist.swept = true; // mark swept so claim() surfaces a clear error, not InsufficientBalance
 
         bool success = WSTETH.transfer(_recipient, unclaimed);
         if (!success) revert InsufficientBalance();
@@ -172,18 +179,25 @@ contract DebtPool is AccessControl, Pausable {
         if (claimed[_distributionId][_leafIndex]) revert AlreadyClaimed();
         if (_amount == 0) revert InvalidAmount();
 
+        // Reject claims on swept distributions with a clear error (not InsufficientBalance).
+        Distribution storage dist = distributions[_distributionId];
+        if (dist.swept) revert DistributionSwept();
+
         // Verify merkle proof with OZ standard double-hash leaf encoding
         // Leaf format: keccak256(bytes.concat(keccak256(abi.encode(distributionId, leafIndex, recipient, amount))))
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(_distributionId, _leafIndex, _recipient, _amount))));
-        if (!MerkleProof.verify(_proof, distributions[_distributionId].merkleRoot, leaf)) {
+        if (!MerkleProof.verify(_proof, dist.merkleRoot, leaf)) {
             revert InvalidMerkleProof();
         }
 
-        // Mark as claimed
-        claimed[_distributionId][_leafIndex] = true;
+        // Cap check — merkle leaf amounts must not exceed declared distribution total.
+        if (dist.claimedAmount + _amount > dist.totalAmount) {
+            revert ExceedsDistributionTotal(_amount, dist.totalAmount - dist.claimedAmount);
+        }
 
-        // Update distribution claimed amount
-        distributions[_distributionId].claimedAmount += _amount;
+        // Mark as claimed (all checks passed — state change before external transfer)
+        claimed[_distributionId][_leafIndex] = true;
+        dist.claimedAmount += _amount;
         totalWSTETHClaimed += _amount;
 
         // Transfer wstETH

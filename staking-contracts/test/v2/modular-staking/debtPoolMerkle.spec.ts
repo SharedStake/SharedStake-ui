@@ -303,6 +303,25 @@ describe("DebtPool Merkle Tree Integration", () => {
       expect(canClaimResult).to.be.true;
     });
 
+    it("claim reverts when cumulative claims would exceed distribution total (cap invariant)", async () => {
+      // Build a tree with one leaf claiming more than the declared total
+      const overAmount = TOTAL_AMOUNT + parseEther("1"); // 11 wstETH > 10 wstETH total
+      const overTree = StandardMerkleTree.of(
+        [[DISTRIBUTION_ID, 0, recipient1.address, overAmount.toString()]],
+        ["uint256", "uint256", "address", "uint256"],
+      );
+      const overRoot = overTree.root;
+      await wstETH.mint(debtPool.target, overAmount);
+      await debtPool.connect(admin).createDistribution(overRoot, TOTAL_AMOUNT);
+      const distId = await debtPool.distributionId();
+      const [, proof] = overTree.entries().next().value as [number, [number, number, string, string]];
+      await expect(
+        debtPool
+          .connect(recipient1)
+          .claim(distId, 0, recipient1.address, overAmount, overTree.getProof([DISTRIBUTION_ID, 0, recipient1.address, overAmount.toString()])),
+      ).to.be.revertedWithCustomError(debtPool, "ExceedsDistributionTotal");
+    });
+
     it("withdrawUnclaimedFees reverts before MIN_CLAIM_PERIOD elapsed (fix 2: lock period)", async () => {
       // Setup distribution
       await debtPool.connect(admin).createDistribution(merkleRoot, TOTAL_AMOUNT);

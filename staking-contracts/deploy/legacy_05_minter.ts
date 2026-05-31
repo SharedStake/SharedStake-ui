@@ -26,7 +26,8 @@ const func: DeployFunction = async hre => {
     depositContractAddr = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
   }
 
-  const multiSig = hre.network.tags.hardhat ? accounts.multiSig.address : accounts.deployer.address;
+  // Use multiSig on all networks (matches governance.ts resolveGovernanceAddress pattern).
+  const multiSig = (accounts.multiSig ?? accounts.deployer).address;
   const numValidators = 1000;
   const adminFee = 0;
 
