@@ -1,6 +1,6 @@
 # SharedStake Staking Contracts
 
-This directory contains the complete SharedStake V3 modular staking smart contracts and all associated build, test, and deployment infrastructure, copied from the SharedDeposit submodule for direct management in this repository.
+This directory contains the complete SharedStake V3 modular staking smart contracts and all associated build, test, and deployment infrastructure. This is a self-contained, production-ready smart contract system migrated from the SharedDeposit submodule.
 
 ## Overview
 
