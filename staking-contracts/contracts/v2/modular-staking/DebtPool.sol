@@ -257,8 +257,8 @@ contract DebtPool is AccessControl, Pausable {
     {
         return (
             WSTETH.balanceOf(address(this)),
-            _totalStETHSharesReceived,
-            _totalWSTETHClaimed,
+            totalStETHSharesReceived,
+            totalWSTETHClaimed,
             distributionId,
             paused()
         );

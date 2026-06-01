@@ -23,4 +23,12 @@ interface IOperatorRegistry {
     /// @param operator Operator address
     /// @return Count of escrowed NFTs
     function escrowedNftCount(address operator) external view returns (uint256);
+
+    /// @notice Lock a SharedStake NFT to earn SGT bond credit.
+    ///         The NFT is escrowed here and returned on exitBond.
+    /// @param tokenId ERC-721 token ID to lock (caller must approve first)
+    function lockNftForCredit(uint256 tokenId) external;
+
+    /// @notice SGT credit applied per locked NFT (in wei).
+    function nftSgtCredit() external view returns (uint256);
 }

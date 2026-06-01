@@ -1,4 +1,46 @@
-# SharedDeposit
+# SharedStake Contracts
+
+## V3 Modular Staking (Current — Production Target)
+
+All new contracts are in `contracts/v2/modular-staking/`:
+
+| Contract | Purpose |
+|----------|---------|
+| `StakingCore.sol` | Core rebasing stToken accounting (Lido-parity) |
+| `StToken.sol` | Rebasing liquid staking token |
+| `WstToken.sol` | Wrapped non-rebasing stToken (ERC-4626) |
+| `StakingRouter.sol` | Routes deposits to validator modules |
+| `WithdrawalQueueV2.sol` | FIFO withdrawal queue |
+| `FeeController.sol` | Fee splitting: treasury/operator/referral/debt |
+| `OracleAdapter.sol` | Single-submitter beacon oracle |
+| `QuorumOracleAdapter.sol` | Multi-submitter quorum beacon oracle |
+| `DebtPool.sol` | Merkle-tree fee distribution for debt repayment |
+| `ValidatorModule.sol` | Solo validator deposit module |
+| `DVTModule.sol` | DVT cluster deposit module (threshold-of-N) |
+| `LSTWrapModule.sol` | LST wrapping module (stETH etc.) |
+| `OperatorRegistry.sol` | ETH+SGT bond system for node operators |
+| `MigrationHelper.sol` | Safe router migration with 14-day notice period |
+| `GovernanceTimelock.sol` | 7-day timelock for governance actions |
+| `SharedStakeGovernor.sol` | OZ Governor with veSGT voting |
+| `VoteEscrowV2.sol` | SGT locking for governance power |
+| `ReferralRegistry.sol` | On-chain referral tracking |
+| `ReferralCodeRegistry.sol` | Referral code management |
+| `InstitutionalPolicyRegistry.sol` | Institutional compliance policy |
+
+Deploy scripts: `deploy/001_stToken.ts` through `deploy/020_migrationHelper.ts`
+Architecture docs: `../src/architecture/LIDO_PARITY_ARCHITECTURE.md`
+
+---
+
+## V2 Legacy (Archived — Mainnet Only)
+
+The following contracts are deployed on mainnet and remain operational but are not being updated. They live in `contracts/v2/core/`:
+- `SharedDepositMinterV2.sol` — legacy minter
+- `SgETH.sol` / `WSGEth.sol` — legacy liquid staking tokens
+- `WithdrawalQueue.sol` — legacy withdrawal queue
+- `RewardsReceiver.sol` — legacy rewards distribution
+
+---
 
 Contracts powering https://sharedstake.org / https://sharedstake.finance
 
@@ -105,9 +147,13 @@ Spec:
 - Governance path uses `VoteEscrowV2`, `SharedStakeGovernor`, and `GovernanceTimelock`; deployment handoff moves `GOV` and admin authority to timelock.
 - Optional operator NFT bond credit is escrow-based: NFTs reduce SGT bond requirements while locked and are returned on `exitBond()`.
 
-# SharedDeposit V3
+# SharedDeposit V3 (Archived Spec — Superseded by V3 Modular Staking above)
 
-Spec:
+The original V3 spec items below have been implemented as the modular staking system described at
+the top of this file. See `contracts/v2/modular-staking/` for the current implementation and
+`../src/architecture/LIDO_PARITY_ARCHITECTURE.md` for architecture diagrams and threat model.
+
+Original spec (historical reference only):
 
 - Use CLI options to set ETH1 exit as this upgradeable contract - contract needs to be upgradeable
 - This allows trustless staking as ETH cannot to be taken by an admin

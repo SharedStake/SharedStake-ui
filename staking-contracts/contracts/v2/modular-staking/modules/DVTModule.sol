@@ -275,9 +275,12 @@ contract DVTModule is ValidatorModule {
         emit BeaconChainDeposit(pubkeyMem, DEPOSIT_AMOUNT, _bufferedEther);
 
         if (address(operatorRegistry) != address(0)) {
-            if (p.proposer != executor) {
-                operatorRegistry.incrementActive(p.proposer);
-            }
+            // One beacon deposit = one validator slot consumed by the executor.
+            // Do not increment the proposer's active count: they are not running an
+            // independent validator for this deposit — the cluster runs one shared
+            // validator. Charging both proposer and executor would (a) double-count
+            // active validators and (b) cause a permanent revert if the proposer's
+            // slot was filled between proposal creation and final approval.
             operatorRegistry.incrementActive(executor);
         }
     }

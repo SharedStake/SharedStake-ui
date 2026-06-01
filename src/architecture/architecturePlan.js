@@ -15,8 +15,8 @@ export const architectureMeta = {
     "src/architecture/contracts-v1-invariants.md",
     "src/architecture/contracts-v1-access-control-matrix.md",
     "src/architecture/contracts-v1-readiness-runthrough.md",
-    "SharedDeposit/contracts/v2/core/README.md",
-    "SharedDeposit/test/v2/core",
+    "staking-contracts/contracts/v2/core/README.md",
+    "staking-contracts/test/v2/core",
   ],
 };
 
@@ -101,7 +101,7 @@ export const contractV1Readiness = [
     title: "Freeze v1 scope and invariants",
     goal: "Turn roadmap language into auditable contract invariants and out-of-scope boundaries.",
     currentState:
-      "Core contract scope is already concentrated under SharedDeposit/contracts/v2/core, but invariants are not yet written as formal release gates.",
+      "Core contract scope is already concentrated under staking-contracts/contracts/v2/core, but invariants are not yet written as formal release gates.",
     nextStep:
       "Publish invariant spec and require explicit sign-off before any new feature merges.",
     tasks: [
@@ -143,7 +143,7 @@ export const contractV1Readiness = [
     title: "Test coverage hardening",
     goal: "Upgrade current unit/e2e tests into release gates for contract v1.",
     currentState:
-      "There is broad coverage in SharedDeposit/test/v2/core plus parity/modular suites, including adversarial, role-negative, quorum operational, bunker-mode, attribution telemetry, and baseline-guard paths. Local suites are passing (179 parity/modular tests), but invariant/fuzz gates are still pending.",
+      "There is broad coverage in staking-contracts/test/v2/core plus parity/modular suites, including adversarial, role-negative, quorum operational, bunker-mode, attribution telemetry, and baseline-guard paths. Local suites are passing (179 parity/modular tests), but invariant/fuzz gates are still pending.",
     nextStep:
       "Define minimum test matrix and pass thresholds, then enforce in CI for release branches.",
     tasks: [

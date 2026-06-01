@@ -8,7 +8,7 @@ This document runs through all seven release gates for a production-quality
 ## 1) Scope Freeze and Invariants
 
 - Current signal:
-  - Core surface is well-bounded in `SharedDeposit/contracts/v2/core`.
+  - Core surface is well-bounded in `staking-contracts/contracts/v2/core`.
   - Existing tests cover many function-level cases.
   - Formal invariant spec was missing.
 - Action taken:
@@ -41,8 +41,8 @@ This document runs through all seven release gates for a production-quality
 ## 4) Test Coverage Hardening
 
 - Current signal:
-  - `SharedDeposit/test/v2/core` contains broad tests (`minter`, `wsgETH`, `queue`, `e2e`).
-  - Baseline local run currently passes (`41 passing` via `npm --prefix SharedDeposit test`).
+  - `staking-contracts/test/v2/core` contains broad tests (`minter`, `wsgETH`, `queue`, `e2e`).
+  - Baseline local run currently passes (765 tests via `yarn test` in `staking-contracts/`).
   - No explicit invariant/fuzz pass threshold bound to release.
 - Required next actions:
   - Define a minimum required matrix and failure policy in CI.

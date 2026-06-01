@@ -1,5 +1,8 @@
 # Architecture Workspace
 
+> **V3 contracts live in `staking-contracts/contracts/v2/modular-staking/`.** See `LIDO_PARITY_ARCHITECTURE.md` for the full system design.
+> Note: The `SharedDeposit/` git submodule was removed; all contract source is now directly in `staking-contracts/`.
+
 This folder is the frontend-facing architecture workspace for iterative planning.
 
 ## Files
@@ -21,8 +24,8 @@ This folder is the frontend-facing architecture workspace for iterative planning
 1. Edit `architecturePlan.js`.
 2. Keep each checklist item concrete and testable.
 3. Reflect contract changes in:
-   - `SharedDeposit/contracts/v2/core/README.md`
-   - `SharedDeposit/contracts/v2/lido-parity/`
+   - `staking-contracts/contracts/v2/core/README.md`
+   - `staking-contracts/contracts/v2/modular-staking/`
    - `src/architecture/LIDO_PARITY_ARCHITECTURE.md`
    - `llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md`
 4. Keep source links current when GitBook pages change.

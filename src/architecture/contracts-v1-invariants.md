@@ -6,9 +6,9 @@ Last updated: 2026-05-01
 
 This spec covers the v1 contract surface under:
 
-- `SharedDeposit/contracts/v2/core`
-- `SharedDeposit/contracts/v2/lib` (custom libs)
-- `SharedDeposit/contracts/v2/periphery` (where used by core flows)
+- `staking-contracts/contracts/v2/core`
+- `staking-contracts/contracts/v2/lib` (custom libs)
+- `staking-contracts/contracts/v2/periphery` (where used by core flows)
 
 ## Invariants
 
