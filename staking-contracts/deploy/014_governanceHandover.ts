@@ -24,6 +24,7 @@ const GOVERNED_DEPLOYMENTS = [
   "ReferralRegistry",
   "ReferralCodeRegistry",
   "DebtPool",
+  "OperatorRegistry",
 ];
 
 async function grantRoleIfNeeded(contract: any, role: string, holder: string, label: string) {
