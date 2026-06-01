@@ -143,6 +143,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "OperatorNotEligible",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "WithdrawalCredentialsNotConfigured",
     "type": "error"
@@ -226,6 +237,19 @@
       }
     ],
     "name": "ExpectedWithdrawalCredentialsSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "registry",
+        "type": "address"
+      }
+    ],
+    "name": "OperatorRegistrySet",
     "type": "event"
   },
   {
@@ -652,6 +676,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "operatorRegistry",
+    "outputs": [
+      {
+        "internalType": "contract IOperatorRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint16",
@@ -753,6 +790,19 @@
       }
     ],
     "name": "setExpectedWithdrawalCredentials",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "registry",
+        "type": "address"
+      }
+    ],
+    "name": "setOperatorRegistry",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

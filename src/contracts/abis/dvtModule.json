@@ -1077,6 +1077,11 @@
         "internalType": "bool",
         "name": "cancelled",
         "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
       }
     ],
     "stateMutability": "view",

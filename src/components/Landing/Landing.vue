@@ -478,9 +478,13 @@ export default {
   },
   async mounted() {
     this.setupTvl();
-    if (!this.isMobile()) {
-      this.setupApy();
-      this.getValidatorInfo();
+    if (!this.isMobile() && !import.meta.env.DEV) {
+      this.setupApy().catch(() => {
+        this.APY = '5';
+      });
+      this.getValidatorInfo().catch(() => {
+        // Third-party validator stats are best-effort; may be blocked by CORS locally.
+      });
     }
   },
   methods: {

@@ -95,6 +95,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "until",
+        "type": "uint256"
+      }
+    ],
+    "name": "SlashLockActive",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "ZeroAddress",
     "type": "error"
@@ -369,6 +380,25 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "until",
+        "type": "uint256"
+      }
+    ],
+    "name": "SlashLockSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "additionalSlots",
         "type": "uint256"
       },
@@ -533,19 +563,6 @@
         "internalType": "uint256",
         "name": "slots",
         "type": "uint256"
-      }
-    ],
-    "name": "expandSlots",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "slots",
-        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -587,6 +604,11 @@
         "internalType": "uint256",
         "name": "totalSlots",
         "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "configName",
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -708,27 +730,14 @@
         "internalType": "uint256",
         "name": "totalSlots",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "bytes32",
         "name": "configName",
         "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "slots",
-        "type": "uint256"
       }
     ],
-    "name": "registerBond",
-    "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -845,6 +854,24 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "until",
+        "type": "uint256"
+      }
+    ],
+    "name": "setSlashLock",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "sgtToken",
     "outputs": [
@@ -873,6 +900,25 @@
     "name": "slash",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "slashLockUntil",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
