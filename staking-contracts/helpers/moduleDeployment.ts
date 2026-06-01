@@ -98,10 +98,7 @@ export async function allowlistModuleCodeHash(
  * Enable strict code-hash enforcement on StakingRouter. Idempotent.
  * Once enabled it cannot be disabled on-chain.
  */
-export async function enableCodeHashAllowlistEnforcement(
-  router: any,
-  govSigner: SignerWithAddress,
-): Promise<void> {
+export async function enableCodeHashAllowlistEnforcement(router: any, govSigner: SignerWithAddress): Promise<void> {
   const enforced: boolean = await router.enforceModuleCodeHashAllowlist();
   if (enforced) {
     console.log("  Code hash allowlist enforcement already enabled");

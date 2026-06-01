@@ -364,4 +364,369 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       await validatorModule.connect(gov).setExpectedWithdrawalCredentials(validatorExpectedCreds);
     });
   });
+
+  // ── OperatorRegistry integration fork tests ────────────────────────────
+
+  describe("OperatorRegistry integration", () => {
+    let operatorRegistry: any;
+    let mockSgt: any;
+    const DEFAULT_CONFIG = ethers.keccak256(ethers.toUtf8Bytes("default"));
+
+    before(async () => {
+      // Deploy mock SGT token
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      mockSgt = await MockERC20.deploy("SharedStake Governance Token", "SGT");
+
+      // Deploy OperatorRegistry
+      const OperatorRegistry = await ethers.getContractFactory("OperatorRegistry");
+      operatorRegistry = await OperatorRegistry.deploy(mockSgt.target, gov.address);
+
+      // Set up default bond config: 1 ETH per slot, 1000 SGT per slot, max 10 slots
+      await operatorRegistry.connect(gov).setBondConfig(DEFAULT_CONFIG, parseEther("1"), parseEther("1000"), 10);
+      await operatorRegistry.connect(gov).setDefaultConfig(DEFAULT_CONFIG);
+
+      // Grant CALLER role to validatorModule
+      const CALLER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("CALLER"));
+      await operatorRegistry.connect(gov).grantCaller(validatorModule.target);
+
+      // Set registry on validatorModule
+      await validatorModule.connect(gov).setOperatorRegistry(operatorRegistry.target);
+    });
+
+    it("unregistered operator cannot deposit even with NODE_OPERATOR role", async () => {
+      // Grant nodeOp NODE_OPERATOR role
+      const NODE_OPERATOR_ROLE = ethers.keccak256(ethers.toUtf8Bytes("NODE_OPERATOR"));
+      await validatorModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, nodeOp.address);
+
+      // Submit 32 ETH to buffer
+      await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
+
+      // Try depositToBeaconChain - should revert OperatorNotEligible
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await expect(
+        validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
+      ).to.be.revertedWithCustomError(validatorModule, "OperatorNotEligible");
+    });
+
+    it("registered operator can deposit", async () => {
+      // Mint SGT to nodeOp
+      await mockSgt.mint(nodeOp.address, parseEther("1000"));
+
+      // Register nodeOp with 1 slot, 1 ETH bond + 1000 SGT
+      await mockSgt.connect(nodeOp).approve(operatorRegistry.target, parseEther("1000"));
+      await operatorRegistry.connect(nodeOp).registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("1000"), {value: parseEther("1")});
+
+      // Deposit 32 ETH to buffer
+      await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
+
+      // depositToBeaconChain should succeed
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await expect(
+        validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
+      ).to.not.be.reverted;
+
+      // Check operatorRegistry.operators(nodeOp).activeValidators == 1
+      const opData = await operatorRegistry.getOperator(nodeOp.address);
+      expect(opData.activeValidators).to.equal(1n);
+    });
+
+    it("operator with no slots cannot deposit twice", async () => {
+      // nodeOp already has 1 active validator and 1 total slot from previous test
+      // Try second deposit - should revert OperatorNotEligible
+      await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await expect(
+        validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
+      ).to.be.revertedWithCustomError(validatorModule, "OperatorNotEligible");
+    });
+
+    it("expandSlots allows second deposit after top-up", async () => {
+      // Mint more SGT to nodeOp
+      await mockSgt.mint(nodeOp.address, parseEther("1000"));
+
+      // Expand slots by 1 with ETH+SGT
+      await mockSgt.connect(nodeOp).approve(operatorRegistry.target, parseEther("1000"));
+      await operatorRegistry.connect(nodeOp).expandSlotsWithSgt(1, parseEther("1000"), {value: parseEther("1")});
+
+      // Now second deposit should succeed
+      await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await expect(
+        validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
+      ).to.not.be.reverted;
+
+      // Check activeValidators == 2
+      const opData = await operatorRegistry.getOperator(nodeOp.address);
+      expect(opData.activeValidators).to.equal(2n);
+    });
+
+    it("exitBond reverts while active validators > 0", async () => {
+      // nodeOp has 2 active validators
+      await expect(operatorRegistry.connect(nodeOp).exitBond()).to.be.revertedWithCustomError(
+        operatorRegistry,
+        "ActiveValidatorsExist",
+      );
+    });
+
+    it("exitBond returns ETH and SGT after decrementActive", async () => {
+      // Decrement active validators (simulating validator exits)
+      await operatorRegistry.connect(gov).decrementActive(nodeOp.address);
+      await operatorRegistry.connect(gov).decrementActive(nodeOp.address);
+
+      const ethBefore = await ethers.provider.getBalance(nodeOp.address);
+      const sgtBefore = await mockSgt.balanceOf(nodeOp.address);
+
+      // exitBond should now succeed
+      await operatorRegistry.connect(nodeOp).exitBond();
+
+      const ethAfter = await ethers.provider.getBalance(nodeOp.address);
+      const sgtAfter = await mockSgt.balanceOf(nodeOp.address);
+
+      // Operator should receive ETH + SGT back (minus gas for ETH)
+      expect(ethAfter).to.be.gt(ethBefore);
+      expect(sgtAfter - sgtBefore).to.equal(parseEther("2000")); // 2 slots * 1000 SGT
+    });
+
+    it("slash reduces sgtBonded", async () => {
+      // Register nodeOp again for slash test
+      await mockSgt.mint(nodeOp.address, parseEther("1000"));
+      await mockSgt.connect(nodeOp).approve(operatorRegistry.target, parseEther("1000"));
+      await operatorRegistry.connect(nodeOp).registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("1000"), {value: parseEther("1")});
+
+      const sgtBondedBefore = (await operatorRegistry.getOperator(nodeOp.address)).sgtBonded;
+
+      // Slash 500 SGT
+      await operatorRegistry.connect(gov).slash(nodeOp.address, parseEther("500"));
+
+      const sgtBondedAfter = (await operatorRegistry.getOperator(nodeOp.address)).sgtBonded;
+
+      // Verify sgtBonded reduced
+      expect(sgtBondedBefore - sgtBondedAfter).to.equal(parseEther("500"));
+    });
+
+    it("zero registry address falls back to role-only access", async () => {
+      // Set operatorRegistry to address(0)
+      await validatorModule.connect(gov).setOperatorRegistry(ZeroAddress);
+
+      // NODE_OPERATOR role holder should still be able to deposit without registry
+      await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await expect(
+        validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
+      ).to.not.be.reverted;
+
+      // Restore registry for other tests
+      await validatorModule.connect(gov).setOperatorRegistry(operatorRegistry.target);
+    });
+  });
+
+  // ── DVT multi-operator threshold fork tests ────────────────────────────
+
+  describe("DVT multi-operator threshold", () => {
+    let op1: SignerWithAddress;
+    let op2: SignerWithAddress;
+    let op3: SignerWithAddress;
+
+    before(async () => {
+      [op1, op2, op3] = await ethers.getSigners();
+
+      // Grant NODE_OPERATOR role to all operators
+      const NODE_OPERATOR_ROLE = ethers.keccak256(ethers.toUtf8Bytes("NODE_OPERATOR"));
+      await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, op1.address);
+      await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, op2.address);
+      await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, op3.address);
+    });
+
+    it("registers a 2-of-3 cluster", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster"));
+      const operators = [op1.address, op2.address, op3.address];
+      await expect(dvtModule.connect(gov).registerCluster(CLUSTER_ID, operators, 2)).to.not.be.reverted;
+
+      const cluster = await dvtModule.getCluster(CLUSTER_ID);
+      expect(cluster.threshold).to.equal(2);
+      expect(cluster.operators.length).to.equal(3);
+    });
+
+    it("single operator proposeDeposit does not auto-execute for threshold=2", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-2"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
+
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
+
+      // Get proposal ID from event
+      const receipt = await tx.wait();
+      const event = receipt?.logs.find((log: any) => {
+        try {
+          const parsed = dvtModule.interface.parseLog(log);
+          return parsed?.name === "DepositProposed";
+        } catch {
+          return false;
+        }
+      });
+      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
+
+      const proposal = await dvtModule.depositProposals(proposalId);
+      expect(proposal.approvalCount).to.equal(1n);
+      expect(proposal.executed).to.be.false;
+    });
+
+    it("second operator approveDeposit reaches threshold and executes", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-3"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
+
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
+
+      const receipt = await tx.wait();
+      const event = receipt?.logs.find((log: any) => {
+        try {
+          const parsed = dvtModule.interface.parseLog(log);
+          return parsed?.name === "DepositProposed";
+        } catch {
+          return false;
+        }
+      });
+      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
+
+      const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
+
+      await dvtModule.connect(op2).approveDeposit(proposalId);
+
+      const beaconAfter = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
+      expect(beaconAfter - beaconBefore).to.equal(parseEther("32"));
+
+      const proposal = await dvtModule.depositProposals(proposalId);
+      expect(proposal.executed).to.be.true;
+    });
+
+    it("third approval after execution does nothing (proposal already executed)", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-4"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
+
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
+
+      const receipt = await tx.wait();
+      const event = receipt?.logs.find((log: any) => {
+        try {
+          const parsed = dvtModule.interface.parseLog(log);
+          return parsed?.name === "DepositProposed";
+        } catch {
+          return false;
+        }
+      });
+      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
+
+      await dvtModule.connect(op2).approveDeposit(proposalId);
+
+      await expect(dvtModule.connect(op3).approveDeposit(proposalId)).to.be.revertedWithCustomError(
+        dvtModule,
+        "ProposalNotActive",
+      );
+    });
+
+    it("cancelProposal blocks further approvals", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-5"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
+
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
+
+      const receipt = await tx.wait();
+      const event = receipt?.logs.find((log: any) => {
+        try {
+          const parsed = dvtModule.interface.parseLog(log);
+          return parsed?.name === "DepositProposed";
+        } catch {
+          return false;
+        }
+      });
+      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
+
+      await dvtModule.connect(op2).cancelProposal(proposalId);
+
+      await expect(dvtModule.connect(op3).approveDeposit(proposalId)).to.be.revertedWithCustomError(
+        dvtModule,
+        "ProposalNotActive",
+      );
+    });
+
+    it("threshold=1 cluster: proposeDeposit auto-executes without separate approve call", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("1-of-1-cluster"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address], 1);
+
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
+
+      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
+
+      const beaconAfter = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
+      expect(beaconAfter - beaconBefore).to.equal(parseEther("32"));
+
+      const receipt = await tx.wait();
+      const event = receipt?.logs.find((log: any) => {
+        try {
+          const parsed = dvtModule.interface.parseLog(log);
+          return parsed?.name === "DepositProposed";
+        } catch {
+          return false;
+        }
+      });
+      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
+
+      const proposal = await dvtModule.depositProposals(proposalId);
+      expect(proposal.executed).to.be.true;
+    });
+
+    it("depositToBeaconChainInCluster reverts UseProposalQueue", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("deprecated-cluster"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address], 1);
+
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+
+      await expect(
+        dvtModule.connect(op1).depositToBeaconChainInCluster(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
+      ).to.be.revertedWithCustomError(dvtModule, "UseProposalQueue");
+    });
+
+    it("unregistered operator cannot propose even in valid cluster", async () => {
+      // Set operatorRegistry on dvtModule
+      await dvtModule.connect(gov).setOperatorRegistry(operatorRegistry.target);
+
+      // Grant CALLER role to dvtModule
+      const CALLER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("CALLER"));
+      await operatorRegistry.connect(gov).grantCaller(dvtModule.target);
+
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("registry-cluster"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address], 1);
+
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+
+      // op1 is not registered in operatorRegistry
+      await expect(
+        dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
+      ).to.be.revertedWithCustomError(dvtModule, "OperatorNotEligible");
+
+      // Restore registry state for other tests
+      await dvtModule.connect(gov).setOperatorRegistry(ZeroAddress);
+    });
+  });
 });

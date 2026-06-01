@@ -72,14 +72,14 @@ describe("DVTModule", () => {
   });
 
   it("inherits ValidatorModule behavior: reportBeacon", async () => {
-    // Register cluster with nodeOp so depositToBeaconChainInCluster is available
+    // Register cluster with nodeOp so proposeDeposit is available
     const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_BEACON"));
     await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);
 
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
     await dvtModule
       .connect(nodeOp)
-      .depositToBeaconChainInCluster(
+      .proposeDeposit(
         CLUSTER_ID,
         "0x" + "00".repeat(48),
         EXPECTED_CREDS,
@@ -107,6 +107,23 @@ describe("DVTModule", () => {
     ).to.be.revertedWithCustomError(dvtModule, "UseClusteredDeposit");
   });
 
+  it("depositToBeaconChainInCluster reverts with UseProposalQueue", async () => {
+    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_DEPRECATED"));
+    await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);
+    await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
+    await expect(
+      dvtModule
+        .connect(nodeOp)
+        .depositToBeaconChainInCluster(
+          CLUSTER_ID,
+          "0x" + "00".repeat(48),
+          EXPECTED_CREDS,
+          "0x" + "00".repeat(96),
+          "0x" + "00".repeat(32),
+        ),
+    ).to.be.revertedWithCustomError(dvtModule, "UseProposalQueue");
+  });
+
   it("rejects clustered deposit when NODE_OPERATOR is not part of that cluster", async () => {
     const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_MEMBERSHIP"));
     await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);
@@ -118,7 +135,7 @@ describe("DVTModule", () => {
     await expect(
       dvtModule
         .connect(outsider)
-        .depositToBeaconChainInCluster(
+        .proposeDeposit(
           CLUSTER_ID,
           "0x" + "00".repeat(48),
           EXPECTED_CREDS,
@@ -128,11 +145,11 @@ describe("DVTModule", () => {
     ).to.be.revertedWithCustomError(dvtModule, "OperatorNotInCluster");
   });
 
-  it("rejects threshold > 1 until multi-operator approvals are implemented", async () => {
+  it("allows threshold > 1 for multi-operator clusters", async () => {
     const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_THRESHOLD"));
     await expect(
       dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address, outsider.address], 2),
-    ).to.be.revertedWithCustomError(dvtModule, "UnsupportedThreshold");
+    ).to.not.be.reverted;
   });
 
   it("has granular pause on router submit", async () => {
@@ -168,7 +185,7 @@ describe("DVTModule", () => {
     await expect(
       unconfigured
         .connect(nodeOp)
-        .depositToBeaconChainInCluster(
+        .proposeDeposit(
           UNCONFIGURED_ID,
           "0x" + "00".repeat(48),
           EXPECTED_CREDS,

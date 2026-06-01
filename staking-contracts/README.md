@@ -146,6 +146,24 @@ npm run lint:sol
 npm run prettier
 ```
 
+### Local Mainnet Fork Testing
+
+This is REQUIRED before any contract deployment or PR merge:
+
+```bash
+# Run all tests including fork tests (requires public RPC)
+cd SharedStake-ui/staking-contracts
+MAINNET_RPC_URL=https://ethereum.publicnode.com npx hardhat test test/v2/modular-staking/fork.spec.ts
+
+# Run full test suite
+npx hardhat test
+
+# Run fork + unit tests together
+MAINNET_RPC_URL=https://ethereum.publicnode.com npx hardhat test
+```
+
+The fork tests shadow the real beacon deposit contract (0x00000000219ab540356cBB839Cbe05303d7705Fa) with MockBeaconDeposit at the canonical address so no valid BLS data is required. MAINNET_RPC_URL can be any public endpoint (ethereum.publicnode.com works).
+
 ## Deployment
 
 See `deploy/` directory for deployment scripts and `docs/modular-staking/DEPLOYMENT_GUIDE.md` for comprehensive deployment instructions.

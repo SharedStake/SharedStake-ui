@@ -318,7 +318,13 @@ describe("DebtPool Merkle Tree Integration", () => {
       await expect(
         debtPool
           .connect(recipient1)
-          .claim(distId, 0, recipient1.address, overAmount, overTree.getProof([DISTRIBUTION_ID, 0, recipient1.address, overAmount.toString()])),
+          .claim(
+            distId,
+            0,
+            recipient1.address,
+            overAmount,
+            overTree.getProof([DISTRIBUTION_ID, 0, recipient1.address, overAmount.toString()]),
+          ),
       ).to.be.revertedWithCustomError(debtPool, "ExceedsDistributionTotal");
     });
 

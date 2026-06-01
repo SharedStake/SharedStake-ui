@@ -5,14 +5,12 @@
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
 import { useWalletStore } from './wallet'
-import { normalizeChainId } from '@/utils/common'
 
 import voteEscrowV2ABI from '@/contracts/abis/voteEscrowV2.json'
 import sharedStakeGovernorABI from '@/contracts/abis/sharedStakeGovernor.json'
 import sgtABI from '@/contracts/abis/erc20.json'
 
 import mainnetAddresses from '@/contracts/addresses/mainnet.json'
-import goerliAddresses from '@/contracts/addresses/goerli.json'
 import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
 import localAddresses from '@/contracts/addresses/local.json'
 
@@ -20,10 +18,17 @@ const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 const ADDRESS_BOOK = {
   '0x1': mainnetAddresses,
-  '0x5': goerliAddresses,
   '0xaa36a7': sepoliaAddresses,
   '0x7a69': localAddresses,
   '0x539': localAddresses,
+}
+
+function normalizeChainId(id) {
+  if (!id && id !== 0) return ''
+  if (typeof id === 'bigint') return '0x' + id.toString(16)
+  if (typeof id === 'number') return '0x' + id.toString(16)
+  if (typeof id === 'string' && !id.toLowerCase().startsWith('0x')) return '0x' + parseInt(id, 10).toString(16)
+  return id.toLowerCase()
 }
 
 function getAddresses(chainId) {
@@ -31,10 +36,10 @@ function getAddresses(chainId) {
   const source = ADDRESS_BOOK[cid]
   if (!source) return null
   return {
-    voteEscrowV2: source.voteEscrowV2 || ZERO_ADDR,
+    voteEscrowV2: source.voteEscrowV2 || source.veSGT || ZERO_ADDR,
     sharedStakeGovernor: source.sharedStakeGovernor || ZERO_ADDR,
     governanceTimelock: source.governanceTimelock || ZERO_ADDR,
-    sgtV2: source.sgtV2 || ZERO_ADDR,
+    sgtV2: source.sgtV2 || source.SGT || ZERO_ADDR,
   }
 }
 

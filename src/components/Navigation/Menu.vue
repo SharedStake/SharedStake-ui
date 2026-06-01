@@ -40,6 +40,39 @@
     </div>
 
     <div class="relative py-2 cursor-pointer group">
+      <div class="flex items-center gap-1 px-6 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap">
+        <span>Validators</span>
+        <DropdownArrow />
+      </div>
+      <DropdownGroup>
+        <DropdownItemRouter to="/v2">
+          Liquid Stake (V2 Beta)
+        </DropdownItemRouter>
+        <DropdownItemRouter to="/solo-stake">
+          Run a Solo Validator
+        </DropdownItemRouter>
+        <DropdownItemRouter to="/dvt-stake">
+          Run a DVT Cluster
+        </DropdownItemRouter>
+      </DropdownGroup>
+    </div>
+
+    <div class="relative py-2 cursor-pointer group">
+      <div class="flex items-center gap-1 px-6 py-2 text-base font-semibold text-white transition-all duration-100 whitespace-nowrap">
+        <span>Govern</span>
+        <DropdownArrow />
+      </div>
+      <DropdownGroup>
+        <DropdownItemRouter to="/govern">
+          Lock SGT → veSGT
+        </DropdownItemRouter>
+        <DropdownItemAnchor href="https://snapshot.org/#/sharedstake.eth">
+          Vote on Snapshot
+        </DropdownItemAnchor>
+      </DropdownGroup>
+    </div>
+
+    <div class="relative py-2 cursor-pointer group">
       <DropdownItemAnchor
         href="https://docs.sharedstake.finance/"
         class="px-6"

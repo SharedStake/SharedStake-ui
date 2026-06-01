@@ -165,6 +165,41 @@
         </router-link>
       </div>
 
+      <!-- Validators Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">
+          Validators
+        </div>
+        <router-link
+          class="link"
+          to="/solo-stake"
+          @click.native="showSidebar = false"
+        >
+          Solo Validator
+        </router-link>
+        <router-link
+          class="link"
+          to="/dvt-stake"
+          @click.native="showSidebar = false"
+        >
+          DVT Cluster
+        </router-link>
+        <router-link
+          class="link"
+          to="/govern"
+          @click.native="showSidebar = false"
+        >
+          Governance / veSGT
+        </router-link>
+        <router-link
+          class="link"
+          to="/v2"
+          @click.native="showSidebar = false"
+        >
+          V2 Staking (Beta)
+        </router-link>
+      </div>
+
       <!-- Learn & Resources Section -->
       <div class="sidebar-section">
         <div class="sidebar-section-header">

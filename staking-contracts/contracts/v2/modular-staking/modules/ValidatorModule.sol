@@ -6,6 +6,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.
 import {IStakingRouter} from "../interfaces/IStakingRouter.sol";
 import {IStakingModule} from "../interfaces/IStakingModule.sol";
 import {IDepositContract} from "../interfaces/IDepositContract.sol";
+import {IOperatorRegistry} from "../interfaces/IOperatorRegistry.sol";
 import {GranularPause} from "../../lib/GranularPause.sol";
 import {Errors} from "../../lib/Errors.sol";
 
@@ -54,12 +55,14 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     uint256 internal _depositedValidatorCount; // number of validator deposits ever pushed on beacon
     bytes32 public expectedWithdrawalCredentials; // validated withdrawal creds prefix
     mapping(bytes32 => bool) internal _depositedPubkeys; // keccak256(pubkey) → already deposited
+    IOperatorRegistry public operatorRegistry; // Optional operator registry for bond-based access
 
     // ── Events ────────────────────────────────────────────────────────────────
     event DepositReceived(uint256 amount, uint256 newBufferedEther);
     event BeaconReported(uint256 beaconValidators, uint256 beaconBalance);
     event BeaconChainDeposit(bytes pubkey, uint256 amount, uint256 newBufferedEther);
     event ExpectedWithdrawalCredentialsSet(bytes32 indexed expected);
+    event OperatorRegistrySet(address indexed registry);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error NotRouter(address caller);
@@ -71,6 +74,7 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     error InvalidWithdrawalCredentials();
     error BeaconDepositContractUnavailable(address beaconDepositContract);
     error DuplicatePubkey(bytes32 pubkeyHash);
+    error OperatorNotEligible(address operator);
 
     constructor(address router, bytes32 moduleId, address gov, address beaconDepositContract) {
         if (router == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -157,7 +161,17 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
         bytes calldata signature,
         bytes32 deposit_data_root
     ) external virtual onlyRole(NODE_OPERATOR) nonReentrant whenNotPaused(PAUSE_RECEIVE) {
+        // Check operator registry if configured
+        if (address(operatorRegistry) != address(0)) {
+            if (!operatorRegistry.canDeposit(msg.sender)) revert OperatorNotEligible(msg.sender);
+        }
+
         _doBeaconDeposit(pubkey, withdrawal_credentials, signature, deposit_data_root);
+
+        // Increment active validator count after successful deposit
+        if (address(operatorRegistry) != address(0)) {
+            operatorRegistry.incrementActive(msg.sender);
+        }
     }
 
     /// @dev Core deposit logic extracted so subclasses (e.g. DVTModule) can reuse
@@ -210,6 +224,13 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
         if (_expected == bytes32(0)) revert InvalidWithdrawalCredentials();
         expectedWithdrawalCredentials = _expected;
         emit ExpectedWithdrawalCredentialsSet(_expected);
+    }
+
+    /// @notice Set the operator registry for bond-based access control
+    /// @param registry Address of the OperatorRegistry contract, or address(0) to disable
+    function setOperatorRegistry(address registry) external onlyRole(GOV) {
+        operatorRegistry = IOperatorRegistry(registry);
+        emit OperatorRegistrySet(registry);
     }
 
     // ── Pause ────────────────────────────────────────────────────────────────

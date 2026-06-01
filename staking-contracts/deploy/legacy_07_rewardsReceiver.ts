@@ -31,11 +31,7 @@ const func: DeployFunction = async hre => {
 
   const owner = (ship.accounts.multiSig ?? ship.accounts.deployer).address;
   await deploy(RewardsReceiver__factory, {
-    args: [
-      withdrawalQueue.target,
-      [sgEth.target, wsgEth.target, paymentSplitter.target, minter.target],
-      owner,
-    ],
+    args: [withdrawalQueue.target, [sgEth.target, wsgEth.target, paymentSplitter.target, minter.target], owner],
   });
 
   const rr = await connect(RewardsReceiver__factory);

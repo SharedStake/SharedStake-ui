@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import {ValidatorModule} from "./ValidatorModule.sol";
+import {IDepositContract} from "../../interfaces/IDepositContract.sol";
 
 /// @title DVTModule - Distributed Validator Technology variant of ValidatorModule
 /// @notice Extends ValidatorModule with an on-chain DVT cluster registry.
@@ -26,24 +27,47 @@ contract DVTModule is ValidatorModule {
     bytes32[] internal _clusterIds;
     mapping(bytes32 => uint256) internal _clusterIdToIndex; // 1-based; 0 = not registered
 
+    // ── Deposit proposal queue ─────────────────────────────────────────────
+    struct DepositProposal {
+        bytes32 clusterId;
+        bytes pubkey;
+        bytes withdrawal_credentials;
+        bytes signature;
+        bytes32 deposit_data_root;
+        uint256 approvalCount;
+        bool executed;
+        bool cancelled;
+    }
+
+    mapping(bytes32 => DepositProposal) public depositProposals;
+    mapping(bytes32 => mapping(address => bool)) public hasApproved;
+    mapping(bytes32 => bytes32[]) internal _clusterProposals;
+
     // ── Events ────────────────────────────────────────────────────────────────
     event ClusterRegistered(bytes32 indexed clusterId, address[] operators, uint8 threshold);
     event ClusterDeactivated(bytes32 indexed clusterId);
     event ClusterReactivated(bytes32 indexed clusterId);
     event ClusterDeposit(bytes32 indexed clusterId, uint256 depositIndex, bytes pubkey);
+    event DepositProposed(bytes32 indexed clusterId, bytes32 indexed proposalId, address indexed proposer, bytes pubkey);
+    event DepositApproved(bytes32 indexed proposalId, address indexed approver, uint256 approvalCount, uint8 threshold);
+    event DepositProposalCancelled(bytes32 indexed proposalId, address indexed by);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error ClusterAlreadyRegistered(bytes32 clusterId);
     error ClusterNotFound(bytes32 clusterId);
     error ClusterNotActive(bytes32 clusterId);
     error InvalidThreshold(uint8 threshold, uint256 operatorCount);
-    error UnsupportedThreshold(uint8 threshold);
     error EmptyOperators();
     error InvalidOperator(address operator);
     error DuplicateOperator(address operator);
     error OperatorNotInCluster(bytes32 clusterId, address operator);
     error UseClusteredDeposit();
+    error UseProposalQueue();
     error IndexOutOfBounds(uint256 index, uint256 length);
+    error ProposalAlreadyExists(bytes32 proposalId);
+    error ProposalNotActive(bytes32 proposalId);
+    error AlreadyApproved(bytes32 proposalId, address approver);
+    error ProposalNotFound(bytes32 proposalId);
 
     constructor(
         address router,
@@ -72,12 +96,10 @@ contract DVTModule is ValidatorModule {
     // ── Cluster registry (GOV only) ──────────────────────────────────────────
 
     /// @notice Register a new DVT cluster. `threshold` must be ≥ 1 and ≤ operators.length.
-    /// @dev Current implementation supports single-operator execution only.
-    ///      Multi-operator threshold approvals must be implemented before allowing threshold > 1.
+    /// @dev Multi-operator threshold approvals use the proposeDeposit/approveDeposit flow.
     function registerCluster(bytes32 clusterId, address[] calldata operators, uint8 threshold) external onlyRole(GOV) {
         if (operators.length == 0) revert EmptyOperators();
         if (threshold == 0 || threshold > operators.length) revert InvalidThreshold(threshold, operators.length);
-        if (threshold != 1) revert UnsupportedThreshold(threshold);
         if (_clusterIdToIndex[clusterId] != 0) revert ClusterAlreadyRegistered(clusterId);
 
         for (uint256 i = 0; i < operators.length; ++i) {
@@ -118,22 +140,148 @@ contract DVTModule is ValidatorModule {
 
     /// @notice Push 32 ETH to the beacon deposit contract, attributed to `clusterId`.
     ///         Reverts if the cluster is not registered or not active.
+    /// @dev Deprecated: Use proposeDeposit/approveDeposit instead for all deposits.
     function depositToBeaconChainInCluster(
+        bytes32 clusterId,
+        bytes calldata,
+        bytes calldata,
+        bytes calldata,
+        bytes32
+    ) external onlyRole(NODE_OPERATOR) nonReentrant whenNotPaused(PAUSE_RECEIVE) {
+        revert UseProposalQueue();
+    }
+
+    // ── Deposit proposal queue (NODE_OPERATOR) ─────────────────────────────
+
+    /// @notice Propose a 32-ETH beacon deposit for a cluster. The proposer's approval is counted.
+    ///         If the cluster threshold is 1, the deposit executes immediately.
+    function proposeDeposit(
         bytes32 clusterId,
         bytes calldata pubkey,
         bytes calldata withdrawal_credentials,
         bytes calldata signature,
         bytes32 deposit_data_root
     ) external onlyRole(NODE_OPERATOR) nonReentrant whenNotPaused(PAUSE_RECEIVE) {
-        if (_clusterIdToIndex[clusterId] == 0 || !clusters[clusterId].active) {
-            revert ClusterNotActive(clusterId);
+        if (_clusterIdToIndex[clusterId] == 0 || !clusters[clusterId].active) revert ClusterNotActive(clusterId);
+        if (!_clusterOperatorSet[clusterId][msg.sender]) revert OperatorNotInCluster(clusterId, msg.sender);
+
+        // Check OperatorRegistry if set (inherited from ValidatorModule)
+        if (address(operatorRegistry) != address(0)) {
+            if (!operatorRegistry.canDeposit(msg.sender)) revert OperatorNotEligible(msg.sender);
         }
-        if (!_clusterOperatorSet[clusterId][msg.sender]) {
-            revert OperatorNotInCluster(clusterId, msg.sender);
+
+        bytes32 proposalId = keccak256(abi.encodePacked(clusterId, pubkey, withdrawal_credentials, signature, deposit_data_root));
+        if (depositProposals[proposalId].approvalCount > 0) revert ProposalAlreadyExists(proposalId);
+
+        depositProposals[proposalId] = DepositProposal({
+            clusterId: clusterId,
+            pubkey: pubkey,
+            withdrawal_credentials: withdrawal_credentials,
+            signature: signature,
+            deposit_data_root: deposit_data_root,
+            approvalCount: 1,
+            executed: false,
+            cancelled: false
+        });
+        hasApproved[proposalId][msg.sender] = true;
+        _clusterProposals[clusterId].push(proposalId);
+        emit DepositProposed(clusterId, proposalId, msg.sender, pubkey);
+
+        if (clusters[clusterId].threshold == 1) {
+            _executeProposal(proposalId, msg.sender);
+        } else {
+            emit DepositApproved(proposalId, msg.sender, 1, clusters[clusterId].threshold);
         }
-        uint256 depositIndex = clusterDepositCount[clusterId]++;
-        emit ClusterDeposit(clusterId, depositIndex, pubkey);
-        _doBeaconDeposit(pubkey, withdrawal_credentials, signature, deposit_data_root);
+    }
+
+    /// @notice Approve an existing proposal. Executes when approvalCount reaches threshold.
+    function approveDeposit(bytes32 proposalId) external onlyRole(NODE_OPERATOR) nonReentrant whenNotPaused(PAUSE_RECEIVE) {
+        DepositProposal storage p = depositProposals[proposalId];
+        if (p.approvalCount == 0) revert ProposalNotFound(proposalId);
+        if (p.executed || p.cancelled) revert ProposalNotActive(proposalId);
+        if (!_clusterOperatorSet[p.clusterId][msg.sender]) revert OperatorNotInCluster(p.clusterId, msg.sender);
+        if (hasApproved[proposalId][msg.sender]) revert AlreadyApproved(proposalId, msg.sender);
+
+        hasApproved[proposalId][msg.sender] = true;
+        p.approvalCount++;
+        emit DepositApproved(proposalId, msg.sender, p.approvalCount, clusters[p.clusterId].threshold);
+
+        if (p.approvalCount >= clusters[p.clusterId].threshold) {
+            _executeProposal(proposalId, msg.sender);
+        }
+    }
+
+    /// @notice Cancel a proposal. Only cluster operators or GOV can cancel.
+    function cancelProposal(bytes32 proposalId) external {
+        DepositProposal storage p = depositProposals[proposalId];
+        if (p.approvalCount == 0) revert ProposalNotFound(proposalId);
+        if (p.executed) revert ProposalNotActive(proposalId);
+        bool isClusterOp = _clusterOperatorSet[p.clusterId][msg.sender];
+        bool isGov = hasRole(GOV, msg.sender);
+        if (!isClusterOp && !isGov) revert OperatorNotInCluster(p.clusterId, msg.sender);
+        p.cancelled = true;
+        emit DepositProposalCancelled(proposalId, msg.sender);
+    }
+
+    /// @notice View all proposal IDs for a cluster (for UI enumeration).
+    function clusterProposalCount(bytes32 clusterId) external view returns (uint256) {
+        return _clusterProposals[clusterId].length;
+    }
+
+    function clusterProposalAt(bytes32 clusterId, uint256 index) external view returns (bytes32) {
+        return _clusterProposals[clusterId][index];
+    }
+
+    function _executeProposal(bytes32 proposalId, address executor) internal {
+        DepositProposal storage p = depositProposals[proposalId];
+        p.executed = true;
+        uint256 depositIndex = clusterDepositCount[p.clusterId]++;
+        emit ClusterDeposit(p.clusterId, depositIndex, p.pubkey);
+
+        // Copy storage to memory for calldata compatibility
+        bytes memory pubkeyMem = p.pubkey;
+        bytes memory withdrawalCredsMem = p.withdrawal_credentials;
+        bytes memory signatureMem = p.signature;
+        bytes32 depositDataRootMem = p.deposit_data_root;
+
+        // Inline deposit logic to handle storage->calldata conversion
+        if (_bufferedEther < DEPOSIT_AMOUNT) {
+            revert InsufficientBuffer(_bufferedEther, DEPOSIT_AMOUNT);
+        }
+
+        bytes32 expected = expectedWithdrawalCredentials;
+        if (expected == bytes32(0)) revert WithdrawalCredentialsNotConfigured();
+        if (withdrawalCredsMem.length != 32) revert InvalidWithdrawalCredentials();
+        bytes32 provided;
+        assembly {
+            provided := mload(add(withdrawalCredsMem, 32))
+        }
+        if (provided != expected) revert InvalidWithdrawalCredentials();
+
+        if (BEACON_DEPOSIT_CONTRACT.code.length == 0) {
+            revert BeaconDepositContractUnavailable(BEACON_DEPOSIT_CONTRACT);
+        }
+
+        bytes32 pkHash = keccak256(pubkeyMem);
+        if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
+        _depositedPubkeys[pkHash] = true;
+        _depositedValidatorCount += 1;
+
+        _bufferedEther -= DEPOSIT_AMOUNT;
+
+        IDepositContract(BEACON_DEPOSIT_CONTRACT).deposit{value: DEPOSIT_AMOUNT}(
+            pubkeyMem,
+            withdrawalCredsMem,
+            signatureMem,
+            depositDataRootMem
+        );
+
+        ROUTER.notifyBeaconDeposit(MODULE_ID, DEPOSIT_AMOUNT);
+        emit BeaconChainDeposit(pubkeyMem, DEPOSIT_AMOUNT, _bufferedEther);
+
+        if (address(operatorRegistry) != address(0)) {
+            operatorRegistry.incrementActive(executor);
+        }
     }
 
     // ── Views ────────────────────────────────────────────────────────────────

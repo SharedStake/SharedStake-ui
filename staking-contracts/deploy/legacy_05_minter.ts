@@ -31,13 +31,7 @@ const func: DeployFunction = async hre => {
   const numValidators = 1000;
   const adminFee = 0;
 
-  const addresses = [
-    feeCalc.target,
-    sgEth.target,
-    wsgEth.target,
-    multiSig,
-    depositContractAddr,
-  ];
+  const addresses = [feeCalc.target, sgEth.target, wsgEth.target, multiSig, depositContractAddr];
 
   const minter = await deploy(SharedDepositMinterV2__factory, {
     args: [numValidators, adminFee, addresses],

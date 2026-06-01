@@ -21,6 +21,9 @@ const Blog = () => import("../components/Blog/Blog.vue");
 const BlogPost = () => import("../components/Blog/BlogPost.vue");
 const ArchitectureHub = () => import("../components/Architecture/ArchitectureHub.vue");
 const ModularStakingApp = () => import("../components/ModularStaking/ModularStakingApp.vue");
+const SoloStakePanel = () => import("../components/ModularStaking/SoloStakePanel.vue");
+const DVTStakePanel = () => import("../components/ModularStaking/DVTStakePanel.vue");
+const GovernancePage = () => import("../components/Governance/GovernancePage.vue");
 
 // Vue.use(VueRouter); // No longer needed in Vue Router 4
 
@@ -102,6 +105,21 @@ let routes = [{
         path: "/v2",
         name: "V2 Staking",
         component: ModularStakingApp,
+    },
+    {
+        path: "/solo-stake",
+        name: "Solo Stake",
+        component: SoloStakePanel,
+    },
+    {
+        path: "/dvt-stake",
+        name: "DVT Stake",
+        component: DVTStakePanel,
+    },
+    {
+        path: "/govern",
+        name: "Governance",
+        component: GovernancePage,
     },
     ]
 }

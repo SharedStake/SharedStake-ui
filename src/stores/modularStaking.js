@@ -10,31 +10,47 @@ import { useWalletStore } from './wallet'
 
 import stTokenABI from '@/contracts/abis/stToken.json'
 import wstTokenABI from '@/contracts/abis/wstToken.json'
-import stakingCoreABI from '@/contracts/abis/stakingCore.json'
+import stakingRouterABI from '@/contracts/abis/stakingRouter.json'
 import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
+import validatorModuleABI from '@/contracts/abis/validatorModule.json'
 
 // Placeholder zero address used when contracts are not deployed on the connected chain.
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
+// Placeholder module ID for solo validator staking (bytes32(1))
+const SOLO_VALIDATOR_MODULE_ID = '0x' + '0'.repeat(63) + '1'
+
 // Per-chain contract addresses. Update with real addresses after deployment.
 const CONTRACT_ADDRESSES = {
   '0x1': {   // mainnet — populated after audit + deploy
-    stakingCore: ZERO_ADDR,
+    stakingRouter: ZERO_ADDR,
     stToken: ZERO_ADDR,
     wstToken: ZERO_ADDR,
     withdrawalQueueV2: ZERO_ADDR,
+    validatorModule: ZERO_ADDR,
+    dvtModule: ZERO_ADDR,
+    operatorRegistry: ZERO_ADDR,
+    sgtToken: '0x84810bcF08744d5862B8181f12d17bfd57d3b078',
   },
   '0xaa36a7': { // sepolia testnet
-    stakingCore: ZERO_ADDR,
+    stakingRouter: ZERO_ADDR,
     stToken: ZERO_ADDR,
     wstToken: ZERO_ADDR,
     withdrawalQueueV2: ZERO_ADDR,
+    validatorModule: ZERO_ADDR,
+    dvtModule: ZERO_ADDR,
+    operatorRegistry: ZERO_ADDR,
+    sgtToken: ZERO_ADDR,
   },
   '0x7a69': { // localhost (hardhat)
-    stakingCore: ZERO_ADDR,
+    stakingRouter: ZERO_ADDR,
     stToken: ZERO_ADDR,
     wstToken: ZERO_ADDR,
     withdrawalQueueV2: ZERO_ADDR,
+    validatorModule: ZERO_ADDR,
+    dvtModule: ZERO_ADDR,
+    operatorRegistry: ZERO_ADDR,
+    sgtToken: ZERO_ADDR,
   },
 }
 
@@ -87,6 +103,9 @@ export const useModularStakingStore = defineStore('modularStaking', {
     moduleInflowUsed: '0',      // ETH used in current window (wei)
     moduleInflowLimit: '0',     // ETH limit per window (wei) — 0 = unlimited
     moduleInflowWindowReset: 0, // unix timestamp when window resets
+
+    // Validator module (solo staking)
+    validatorModuleInfo: null,  // { bufferedEther, beaconValidators, depositedValidatorCount, beaconBalance }
 
     // Contract deployment status
     contractsDeployed: false,
@@ -231,6 +250,44 @@ export const useModularStakingStore = defineStore('modularStaking', {
           }
         }
 
+        // Read module inflow data from StakingRouter
+        try {
+          const stakingRouter = make(stakingRouterABI, addresses.stakingRouter)
+          if (stakingRouter) {
+            this.defaultModuleId = await stakingRouter.defaultModuleId()
+            const inflowState = await stakingRouter.globalInflowWindowState()
+            const inflowConfig = await stakingRouter.globalInflowLimitConfig()
+            this.moduleInflowUsed = inflowState.totalDeposited.toString()
+            this.moduleInflowLimit = inflowConfig.limit.toString()
+            this.moduleInflowWindowReset = Number(inflowState.windowStart)
+          }
+        } catch (inflowErr) {
+          // Non-fatal: surface in console only. Happens when address is zero.
+          console.warn('ModularStakingStore: failed to read module inflow data', inflowErr)
+        }
+
+        // Read ValidatorModule data for solo staking
+        try {
+          if (addresses.validatorModule && addresses.validatorModule !== ZERO_ADDR) {
+            const validatorModule = make(validatorModuleABI, addresses.validatorModule)
+            if (validatorModule) {
+              const bufferedEther = await validatorModule.bufferedEther()
+              const beaconValidators = await validatorModule.beaconValidators()
+              const depositedValidatorCount = await validatorModule.depositedValidatorCount()
+              const beaconBalance = await validatorModule.beaconBalance()
+              this.validatorModuleInfo = {
+                bufferedEther: bufferedEther.toString(),
+                beaconValidators: beaconValidators.toString(),
+                depositedValidatorCount: depositedValidatorCount.toString(),
+                beaconBalance: beaconBalance.toString(),
+              }
+            }
+          }
+        } catch (validatorModuleErr) {
+          // Non-fatal: surface in console only. Happens when address is zero.
+          console.warn('ModularStakingStore: failed to read validator module data', validatorModuleErr)
+        }
+
         // Compute exchange rate: 1 ETH = how many stTokens
         if (BigInt(this.totalShares) > 0n) {
           const rate = (BigInt(this.totalPooledEther) * BigInt(1e18)) / BigInt(this.totalShares)
@@ -283,11 +340,11 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!ctx) throw new Error('Contracts not available on this network')
 
         const { addresses, makeSigned } = ctx
-        const stakingCore = await makeSigned(stakingCoreABI, addresses.stakingCore)
-        if (!stakingCore) throw new Error('StakingCore not deployed')
+        const stakingRouter = await makeSigned(stakingRouterABI, addresses.stakingRouter)
+        if (!stakingRouter) throw new Error('StakingRouter not deployed')
 
         const amount = ethers.parseEther(ethAmountStr)
-        const tx = await stakingCore.submit(referral, { value: amount })
+        const tx = await stakingRouter.submit(referral, { value: amount })
         await tx.wait()
 
         const walletStore = useWalletStore()
@@ -402,6 +459,34 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const tx = await queue.claimWithdrawal(requestId, walletStore.address)
         await tx.wait()
 
+        await this.init(this.chainId, walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async soloStake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
+      this.loading = true
+      this.error = null
+      try {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const router = await makeSigned(stakingRouterABI, addresses.stakingRouter)
+        if (!router) throw new Error('StakingRouter not deployed')
+
+        const amount = ethers.parseEther(ethAmountStr)
+        if (amount < ethers.parseEther('32')) throw new Error('Minimum 32 ETH for solo staking')
+
+        const tx = await router.submitToModule(SOLO_VALIDATOR_MODULE_ID, referral, { value: amount })
+        await tx.wait()
+
+        const walletStore = useWalletStore()
         await this.init(this.chainId, walletStore.address)
         return tx
       } catch (e) {
