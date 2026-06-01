@@ -51,6 +51,9 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     /// @notice Default config name for new registrations
     bytes32 public defaultConfigName;
 
+    /// @notice Slash lock expiration timestamp per operator
+    mapping(address => uint256) public slashLockUntil;
+
     // ── Events ────────────────────────────────────────────────────────────────
     event BondConfigSet(bytes32 indexed name, uint256 ethBondPerSlot, uint256 sgtBondPerSlot, uint256 maxSlots);
     event DefaultConfigSet(bytes32 indexed name);
@@ -62,6 +65,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     event CallerRevoked(address indexed caller);
     event ActiveIncremented(address indexed operator, uint256 newActiveCount);
     event ActiveDecremented(address indexed operator, uint256 newActiveCount);
+    event SlashLockSet(address indexed operator, uint256 until);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error ConfigNotFound(bytes32 name);
@@ -71,6 +75,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     error ActiveValidatorsExist();
     error NotCaller(address caller);
     error InvalidConfig();
+    error SlashLockActive(uint256 until);
 
     constructor(address _sgtToken, address gov) {
         if (_sgtToken == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -159,6 +164,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     /// @notice Exit bond and return funds (only if no active validators)
     function exitBond() external nonReentrant {
         Operator storage op = operators[msg.sender];
+        if (block.timestamp < slashLockUntil[msg.sender]) revert SlashLockActive(slashLockUntil[msg.sender]);
         if (op.activeValidators > 0) revert ActiveValidatorsExist();
         if (op.ethBonded == 0 && op.sgtBonded == 0) revert Errors.InvalidAmount();
 
@@ -186,7 +192,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     /// @notice Check if an operator is eligible to deposit
     /// @param operator Operator address
     /// @return True if operator has available slots
-    function canDeposit(address operator) external view onlyRole(CALLER) returns (bool) {
+    function canDeposit(address operator) external view returns (bool) {
         Operator storage op = operators[operator];
         return op.activeValidators < op.totalSlots;
     }
@@ -222,6 +228,9 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         // Burn slashed SGT or send to treasury - for now burn
         sgtToken.safeTransfer(address(0xdEaD), sgtAmount);
 
+        // Set 7-day slash lock on exitBond
+        slashLockUntil[operator] = block.timestamp + 7 days;
+
         emit OperatorSlashed(operator, sgtAmount);
     }
 
@@ -235,6 +244,14 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     function revokeCaller(address caller) external onlyRole(GOV) {
         _revokeRole(CALLER, caller);
         emit CallerRevoked(caller);
+    }
+
+    /// @notice Set slash lock expiration for an operator
+    /// @param operator Operator address
+    /// @param until Unix timestamp when lock expires
+    function setSlashLock(address operator, uint256 until) external onlyRole(GOV) {
+        slashLockUntil[operator] = until;
+        emit SlashLockSet(operator, until);
     }
 
     // ── Internal helpers ─────────────────────────────────────────────────────
@@ -251,8 +268,8 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         uint256 requiredEth = config.ethBondPerSlot * slots;
         uint256 requiredSgt = config.sgtBondPerSlot * slots;
 
-        if (ethAmount < requiredEth) revert InsufficientBond(requiredEth, ethAmount);
-        if (sgtAmount < requiredSgt) revert InsufficientBond(requiredSgt, sgtAmount);
+        if (ethAmount != requiredEth) revert InsufficientBond(requiredEth, ethAmount);
+        if (sgtAmount != requiredSgt) revert InsufficientBond(requiredSgt, sgtAmount);
 
         op.ethBonded += ethAmount;
         op.sgtBonded += sgtAmount;

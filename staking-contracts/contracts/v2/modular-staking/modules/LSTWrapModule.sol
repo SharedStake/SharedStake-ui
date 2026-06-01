@@ -88,7 +88,7 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
         // Reject stale oracle readings before querying price — protects against minting
         // unbacked stToken if an LST depegs and the oracle hasn't updated.
         uint256 lastUpdated = priceOracle.lastUpdated();
-        if (lastUpdated > block.timestamp || block.timestamp - lastUpdated > maxOracleAgeSecs) {
+        if (lastUpdated > block.timestamp || block.timestamp - lastUpdated >= maxOracleAgeSecs) {
             revert Errors.StaleOracle();
         }
         ethEquiv = priceOracle.getEthValue(lstAmount);
@@ -115,7 +115,7 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
         if (address(priceOracle) == address(0)) revert PriceOracleNotSet();
 
         uint256 lastUpdated = priceOracle.lastUpdated();
-        if (lastUpdated > block.timestamp || block.timestamp - lastUpdated > maxOracleAgeSecs) {
+        if (lastUpdated > block.timestamp || block.timestamp - lastUpdated >= maxOracleAgeSecs) {
             revert Errors.StaleOracle();
         }
 
