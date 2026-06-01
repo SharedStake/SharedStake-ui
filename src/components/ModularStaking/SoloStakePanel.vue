@@ -131,6 +131,33 @@
         </div>
       </div>
 
+      <!-- NFT Bond Credit -->
+      <div class="rounded-lg border border-border bg-card p-4">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-muted-foreground">SharedStake NFT Balance</span>
+          <span class="font-semibold text-foreground">{{ nftBalance }}</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-sm">
+          <span class="text-muted-foreground">Locked NFT Credit</span>
+          <span class="font-semibold text-foreground">{{ nftCreditApplied }} SGT</span>
+        </div>
+        <button
+          v-if="firstNftTokenId"
+          class="mt-3 w-full rounded-xl py-3 text-sm font-semibold transition-all bg-pink-600 hover:bg-pink-500 text-white cursor-pointer"
+          :disabled="loading || !contractsDeployed"
+          @click="lockNftForCredit"
+        >
+          <span v-if="loading">Locking...</span>
+          <span v-else>Lock NFT for {{ formattedNftCredit }} SGT Discount</span>
+        </button>
+        <div
+          v-if="Number(lockedNftCount) > 0"
+          class="mt-2 text-xs text-green-700 dark:text-green-400"
+        >
+          NFT locked. SGT required reduced to {{ totalSgtBond }} SGT.
+        </div>
+      </div>
+
       <!-- SGT Allowance Check -->
       <div
         v-if="!hasSgtAllowance"
@@ -344,6 +371,12 @@ export default {
       // SGT allowance
       sgtAllowance: '0',
       sgtBalance: '0',
+
+      // NFT bond credit
+      nftBalance: '0',
+      nftTokenIds: [],
+      nftSgtCredit: '0',
+      lockedNftCount: '0',
       
       // Contract deployment status
       contractsDeployed: false,
@@ -384,8 +417,25 @@ export default {
       return (this.ethBondPerSlot * this.slotCount).toFixed(2)
     },
     
+    grossTotalSgtBond() {
+      return this.sgtBondPerSlot * this.slotCount
+    },
+
+    nftCreditApplied() {
+      try {
+        const credit = parseFloat(ethers.formatEther(this.nftSgtCredit || '0'))
+        const count = Number(this.lockedNftCount || '0')
+        return Math.min(this.grossTotalSgtBond, credit * count).toLocaleString()
+      } catch { return '0' }
+    },
+
     totalSgtBond() {
-      return (this.sgtBondPerSlot * this.slotCount).toLocaleString()
+      try {
+        const applied = Number(this.nftCreditApplied.replace(/,/g, ''))
+        return Math.max(0, this.grossTotalSgtBond - applied).toLocaleString()
+      } catch {
+        return (this.sgtBondPerSlot * this.slotCount).toLocaleString()
+      }
     },
     
     hasSgtAllowance() {
@@ -421,6 +471,14 @@ export default {
     
     availableSlots() {
       return Math.max(0, this.operatorInfo.totalSlots - this.operatorInfo.activeValidators)
+    },
+
+    firstNftTokenId() {
+      return this.nftTokenIds.length > 0 ? this.nftTokenIds[0] : null
+    },
+
+    formattedNftCredit() {
+      try { return parseFloat(ethers.formatEther(this.nftSgtCredit || '0')).toLocaleString() } catch { return '0' }
     },
   },
 
@@ -470,6 +528,7 @@ export default {
           validatorModule: '0x0000000000000000000000000000000000000000',
           operatorRegistry: '0x0000000000000000000000000000000000000000',
           sgtToken: '0x84810bcF08744d5862B8181f12d17bfd57d3b078',
+          nftContract: '0x0000000000000000000000000000000000000000',
         },
         '0xaa36a7': {
           stakingRouter: '0x0000000000000000000000000000000000000000',
@@ -479,6 +538,7 @@ export default {
           validatorModule: '0x0000000000000000000000000000000000000000',
           operatorRegistry: '0x0000000000000000000000000000000000000000',
           sgtToken: '0x0000000000000000000000000000000000000000',
+          nftContract: '0x0000000000000000000000000000000000000000',
         },
         '0x7a69': {
           stakingRouter: '0x0000000000000000000000000000000000000000',
@@ -488,6 +548,7 @@ export default {
           validatorModule: '0x0000000000000000000000000000000000000000',
           operatorRegistry: '0x0000000000000000000000000000000000000000',
           sgtToken: '0x0000000000000000000000000000000000000000',
+          nftContract: '0x0000000000000000000000000000000000000000',
         },
       }
       
@@ -545,6 +606,8 @@ export default {
           totalSlots: Number(opInfo.totalSlots),
         }
         
+        await this.fetchNftCreditData()
+
         // If already registered, skip to step 3
         if (this.isRegistered && this.currentStep === 1) {
           this.currentStep = 3
@@ -554,6 +617,37 @@ export default {
       }
     },
     
+    async fetchNftCreditData() {
+      try {
+        const userAddress = this.walletStore.address
+        if (!userAddress) return
+        const result = await this.store.checkNftBalance(userAddress)
+        this.nftBalance = result.balance
+        this.nftTokenIds = result.tokenIds
+        this.nftSgtCredit = this.store.nftSgtCredit
+        this.lockedNftCount = this.store.lockedNftCount
+      } catch (e) {
+        console.warn('Error fetching NFT credit data:', e)
+      }
+    },
+
+    async lockNftForCredit() {
+      if (!this.firstNftTokenId) return
+      this.loading = true
+      this.error = null
+      this.successMessage = null
+      try {
+        await this.store.lockNftForCredit(this.firstNftTokenId)
+        await this.fetchUserData()
+        this.successMessage = 'NFT locked for bond credit'
+      } catch (e) {
+        this.error = e.message
+        console.error('Error locking NFT:', e)
+      } finally {
+        this.loading = false
+      }
+    },
+
     updateBondAmounts() {
       // Ensure slot count is within bounds
       if (this.slotCount < 1) this.slotCount = 1

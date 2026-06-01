@@ -5,8 +5,7 @@ This directory contains all test suites for the SharedStake smart contracts.
 ## Directory Structure
 
 - `foundry/` - Foundry invariant and fuzz tests (Solidity)
-- `hardhat/` - Hardhat TypeScript/JavaScript tests
-- `v2/` - Additional Hardhat tests for V2 contracts
+- `v2/` - Canonical Hardhat TypeScript tests for V2 and modular staking contracts
 
 ## Running Tests
 
@@ -23,16 +22,15 @@ forge test --match-path test/foundry/ModularStakingInvariants.t.sol
 ```bash
 cd staking-contracts
 npx hardhat test
-npx hardhat test test/hardhat/
 npx hardhat test test/v2/
 ```
 
 ## Test Coverage
 
-- **Foundry**: 7 invariant tests passing
+- **Foundry**: Invariant tests for modular staking accounting and safety properties
 - **Hardhat**: Multiple test suites for core, modular staking, and governance contracts
 - **Coverage**: Run `npx hardhat coverage` for detailed coverage reports
 
 ## Historical Note
 
-Previously there was a `tests/` directory at the root level which has been consolidated into `test/hardhat/` for better organization.
+Previously there were duplicate Hardhat test mirrors. The maintained TypeScript suites now live under `test/v2/`; keep new Hardhat coverage there to avoid stale duplicate fixtures.

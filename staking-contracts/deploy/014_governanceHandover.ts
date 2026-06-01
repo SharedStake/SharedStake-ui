@@ -138,7 +138,11 @@ func.dependencies = [
   "lst-wrap",
   "quorum-oracle",
   "referral-code-registry",
+  "referral-code-wiring",
   "referralRegistry",
   "debtPool",
+  "institutionalPolicyRegistry",
+  "operator-registry",
+  "migration",
   "governance",
 ];

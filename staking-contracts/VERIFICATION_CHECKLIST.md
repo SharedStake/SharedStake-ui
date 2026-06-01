@@ -83,15 +83,15 @@
 
 **Testing:**
 
-- ✅ 58 test files (Hardhat + Foundry)
-- ✅ Test infrastructure (test/hardhat/, test/foundry/, test/v2/)
+- ✅ 40 test files (Hardhat + Foundry)
+- ✅ Test infrastructure (test/foundry/, test/v2/)
 - ✅ Test documentation (test/README.md)
 
 **Deployment:**
 
-- ✅ 18 deployment scripts (deploy/ directory)
+- ✅ Deployment scripts (deploy/ directory)
 - ✅ Deployment script paths fixed (import issues resolved)
-- ⚠️ Helper functions missing (helpers/governance.ts, helpers/moduleDeployment.ts)
+- ✅ Helper functions present (`helpers/governance.ts`, `helpers/moduleDeployment.ts`)
 
 **Documentation:**
 
@@ -100,23 +100,13 @@
 - ✅ Deployment guides and runbooks
 - ✅ Verification reports (4 comprehensive reports)
 
-## ⚠️ Known Missing Items
+## ⚠️ Remaining Release Gates
 
-**Deployment Helpers:**
+**Deployment and E2E:**
 
-- ❌ helpers/governance.ts - Required for deployment scripts
-- ❌ helpers/moduleDeployment.ts - Required for module deployments
-
-**Impact:**
-
-- Cannot deploy contracts to any network
-- Cannot perform E2E browser testing
-- Cannot verify UI integration
-
-**Workaround:**
-
-- These helpers need to be created based on original SharedDeposit patterns
-- Not a contract code issue - purely deployment infrastructure
+- Run local deployment and sync `src/contracts/addresses/local.json`.
+- Run wallet/browser E2E against a live local or testnet deployment.
+- Verify governance/timelock handoff and oracle/operator env values per deployment guide.
 
 ## 🚫 Kimi Review Status
 

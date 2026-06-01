@@ -1,6 +1,6 @@
 # SharedStake V2 Modular Staking Architecture
 
-Status: router-first baseline for clean PR reconstruction (docs-first)
+Status: router-first launch candidate with OperatorRegistry, migration helper, and frontend ABI coverage
 
 ## 1. Primary Architecture Decision
 
@@ -32,6 +32,8 @@ Deliver a production-oriented router-based staking system with:
 - `modules/ValidatorModule.sol`: validator-backed module with beacon deposits and report forwarding.
 - `modules/DVTModule.sol`: DVT-oriented validator module variant.
 - `modules/LSTWrapModule.sol`: LST wrapping path into router-minted `StToken`.
+- `OperatorRegistry.sol`: ETH + SGT bond registry for validator/DVT module eligibility, with optional escrowed NFT SGT credit.
+- `MigrationHelper.sol`: governance-controlled router migration notice and activation signal.
 
 ### Oracle, fee, and policy layer
 - `FeeController.sol`: fee bps and treasury/operator/referral/DebtPool split.
@@ -58,6 +60,8 @@ Deliver a production-oriented router-based staking system with:
 | `ValidatorModule` | ETH validator flow for router-based staking. |
 | `DVTModule` | Validator flow variant reserved for DVT operations. |
 | `LSTWrapModule` | LST in/out module using external price oracle. |
+| `OperatorRegistry` | Operator eligibility, bond accounting, slashing, module caller controls, optional NFT credit escrow. |
+| `MigrationHelper` | Timelocked migration announcement and activation state for frontends/integrators. |
 | `StToken` | Global share ledger and rebasing supply source of truth. |
 | `WstToken` | Non-rebasing wrapper over `StToken` shares. |
 | `FeeController` | Protocol fee config and split policy (treasury/operator/referral/DebtPool). |
@@ -103,6 +107,7 @@ Deliver a production-oriented router-based staking system with:
 | `NODE_OPERATOR` | Beacon deposit baseline/deposit flows | Validator operations keys |
 | `MINTER` | Mint/burn and pooled accounting authority on `StToken` | Router path contracts only |
 | `POLICY_ADMIN` | Institutional policy management | Compliance or governance ops |
+| `CALLER` | OperatorRegistry active-validator callbacks | ValidatorModule and DVTModule only |
 
 Trust notes:
 - `MINTER` holders are critical to supply integrity.
@@ -116,6 +121,8 @@ Trust notes:
 - Per-module and global caps in router path.
 - Inflow limiter windows in router path.
 - Bunker mode constraints in withdrawal queue.
+- OperatorRegistry bond accounting for SGT/ETH collateral and optional locked-NFT SGT credit.
+- MigrationHelper's fixed notice period before router migration activation.
 - Explicit beacon baseline notifications to avoid principal/reward misclassification.
 
 ## 8. Confirmed Test Surface

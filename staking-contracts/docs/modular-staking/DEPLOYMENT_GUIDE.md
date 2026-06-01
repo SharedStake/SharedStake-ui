@@ -23,6 +23,8 @@ This guide documents the deployment sequence for the SharedStake V2 modular stak
 | 15  | 015_referralCodeRegistryWiring.ts | N/A                  | V2_GOVERNANCE_ADDRESS                      | Additional role wiring for referral system                                                                        |
 | 16  | 016_referralRegistry.ts           | ReferralRegistry     | V2_GOVERNANCE_ADDRESS                      | Grants ROUTER to StakingCore/StakingRouter, FEE_CTRL to FeeController, sets registry on StakingCore/StakingRouter |
 | 17  | 017_debtPool.ts                   | DebtPool             | V2_GOVERNANCE_ADDRESS                      | Updates FeeController.setRecipients() to include DebtPool address                                                 |
+| 18  | 019_operatorRegistry.ts           | OperatorRegistry     | V2_GOVERNANCE_ADDRESS, V2_SGT_ADDRESS      | Sets default bond config, optional NFT credit, grants CALLER to ValidatorModule/DVTModule                         |
+| 19  | 020_migrationHelper.ts            | MigrationHelper      | V2_GOVERNANCE_ADDRESS                      | Deploys non-custodial migration signal helper for router replacement notices                                      |
 
 ## Environment Variables
 
@@ -30,6 +32,10 @@ This guide documents the deployment sequence for the SharedStake V2 modular stak
 - `V2_OPERATOR_ADDRESS`: Operator address (optional, defaults to governance on local)
 - `V2_NODE_OPERATOR_ADDRESS`: Node operator address (optional, defaults to governance)
 - `V2_ORACLE_SUBMITTERS`: Comma-separated list of oracle submitter addresses (required for non-local networks)
+- `V2_SGT_ADDRESS`: SGT token address for OperatorRegistry on non-local networks
+- `V2_OPERATOR_ETH_BOND_PER_SLOT`, `V2_OPERATOR_SGT_BOND_PER_SLOT`, `V2_OPERATOR_MAX_SLOTS`: optional OperatorRegistry bond tier overrides
+- `V2_OPERATOR_NFT_ADDRESS` or `NFT_CONTRACT_ADDRESS`: optional ERC-721 contract for operator NFT bond credit
+- `V2_OPERATOR_NFT_SGT_CREDIT`: optional SGT-denominated credit per locked NFT
 
 ## Deployment Commands
 
@@ -84,6 +90,18 @@ npx hardhat deploy --network mainnet --tags modular-staking
 - **FEE_CONTROLLER**: Granted to FeeController
 - **DEFAULT_ADMIN_ROLE**: Transferred to GovernanceTimelock
 
+### OperatorRegistry Roles
+
+- **GOV**: GovernanceTimelock or configured governance signer
+- **CALLER**: ValidatorModule and DVTModule after wiring
+- **DEFAULT_ADMIN_ROLE**: Governance
+- **Optional NFT credit**: enabled only when NFT env vars are set; credit cannot be changed while NFTs are escrowed
+
+### MigrationHelper Controls
+
+- **GOV**: Announces, cancels, and activates router migration notices
+- **Delay**: 14-day activation delay enforced by the contract
+
 ## Post-Deployment Verification
 
 After deployment, verify the following:
@@ -93,7 +111,10 @@ After deployment, verify the following:
 3. FeeController recipients include all four addresses
 4. ReferralRegistry is properly wired to StakingCore and StakingRouter
 5. StakingCore ORACLE role is granted to OracleAdapter
-6. All DEFAULT_ADMIN_ROLE and GOV roles are transferred to Timelock
+6. OperatorRegistry is wired to ValidatorModule and DVTModule when those modules are deployed
+7. Optional NFT credit is configured only on approved chains
+8. MigrationHelper references the active StakingRouter and governance
+9. All DEFAULT_ADMIN_ROLE and GOV roles are transferred to Timelock
 
 ## Troubleshooting
 

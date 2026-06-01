@@ -49,17 +49,15 @@ contract FeeCalc is Ownable2Step {
         config.adminFee = amount;
     }
 
-    function processDeposit(uint256 value, address _sender) external view returns (uint256 amt, uint256 fee) {
-        // TODO: semder is currently unsused but can be used later to calculate a fee reduction based on token holdings
-        if (config.chargeOnDeposit) {
+    function processDeposit(uint256 value, address) external view returns (uint256 amt, uint256 fee) {
+                if (config.chargeOnDeposit) {
             fee = (value * adminFee) / BIPS;
             amt = value - fee;
         }
     }
 
-    function processWithdraw(uint256 value, address _sender) external view returns (uint256 amt, uint256 fee) {
-        // TODO: semder is currently unsused but can be used later to calculate a fee reduction based on token holdings
-        if (config.refundFeesOnWithdraw) {
+    function processWithdraw(uint256 value, address) external view returns (uint256 amt, uint256 fee) {
+                if (config.refundFeesOnWithdraw) {
             fee = (value * adminFee) / BIPS;
             amt = value + fee;
         } else if (config.chargeOnExit) {

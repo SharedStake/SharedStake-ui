@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Errors} from "../lib/Errors.sol";
 
@@ -42,6 +43,12 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
 
     // ── State ─────────────────────────────────────────────────────────────────
     IERC20 public immutable sgtToken;
+
+    /// @notice Optional SharedStake NFT contract whose escrowed tokens reduce SGT bond requirements.
+    IERC721 public nftContract;
+
+    /// @notice SGT-denominated credit applied per escrowed NFT.
+    uint256 public nftSgtCredit;
     
     /// @notice Named bond configurations (e.g., "default", "premium")
     mapping(bytes32 => BondConfig) public bondConfigs;
@@ -55,6 +62,15 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     /// @notice Slash lock expiration timestamp per operator
     mapping(address => uint256) public slashLockUntil;
 
+    /// @notice Total NFTs currently held in escrow.
+    uint256 public totalEscrowedNfts;
+
+    /// @notice Escrowed NFTs per operator.
+    mapping(address => uint256[]) public escrowedNfts;
+
+    /// @notice Original operator owner for an escrowed NFT tokenId.
+    mapping(uint256 => address) private _nftEscrowOwner;
+
     // ── Events ────────────────────────────────────────────────────────────────
     event BondConfigSet(bytes32 indexed name, uint256 ethBondPerSlot, uint256 sgtBondPerSlot, uint256 maxSlots);
     event DefaultConfigSet(bytes32 indexed name);
@@ -67,6 +83,9 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     event ActiveIncremented(address indexed operator, uint256 newActiveCount);
     event ActiveDecremented(address indexed operator, uint256 newActiveCount);
     event SlashLockSet(address indexed operator, uint256 until);
+    event NftContractSet(address indexed nft, uint256 sgtCredit);
+    event NftLocked(address indexed operator, uint256 tokenId, uint256 credit);
+    event NftUnlocked(address indexed operator, uint256 tokenId);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error ConfigNotFound(bytes32 name);
@@ -77,6 +96,8 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     error NotCaller(address caller);
     error InvalidConfig();
     error SlashLockActive(uint256 until);
+    error NftNotOwned();
+    error NftAlreadyEscrowed();
 
     constructor(address _sgtToken, address gov) {
         if (_sgtToken == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -120,7 +141,45 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         emit DefaultConfigSet(name);
     }
 
+    /// @notice Configure the optional NFT escrow credit.
+    /// @param nft ERC-721 contract address. Use address(0) to disable new NFT locks.
+    /// @param sgtCredit SGT-denominated credit per escrowed NFT.
+    function setNftContract(address nft, uint256 sgtCredit) external onlyRole(GOV) {
+        if (totalEscrowedNfts > 0 && (nft != address(nftContract) || sgtCredit != nftSgtCredit)) {
+            revert InvalidConfig();
+        }
+        if (nft == address(0)) {
+            nftContract = IERC721(address(0));
+            nftSgtCredit = 0;
+            emit NftContractSet(address(0), 0);
+            return;
+        }
+        if (nft.code.length == 0) revert Errors.NotAContract();
+        if (sgtCredit == 0) revert Errors.InvalidAmount();
+
+        nftContract = IERC721(nft);
+        nftSgtCredit = sgtCredit;
+        emit NftContractSet(nft, sgtCredit);
+    }
+
     // ── Operator actions ─────────────────────────────────────────────────────
+
+    /// @notice Escrow a SharedStake NFT for SGT bond credit.
+    /// @dev The operator must approve this registry for `tokenId` first.
+    function lockNftForCredit(uint256 tokenId) external nonReentrant {
+        IERC721 nft = nftContract;
+        uint256 credit = nftSgtCredit;
+        if (address(nft) == address(0) || credit == 0) revert InvalidConfig();
+        if (_nftEscrowOwner[tokenId] != address(0)) revert NftAlreadyEscrowed();
+        if (nft.ownerOf(tokenId) != msg.sender) revert NftNotOwned();
+
+        _nftEscrowOwner[tokenId] = msg.sender;
+        escrowedNfts[msg.sender].push(tokenId);
+        totalEscrowedNfts += 1;
+        nft.transferFrom(msg.sender, address(this), tokenId);
+
+        emit NftLocked(msg.sender, tokenId, credit);
+    }
 
     /// @notice Register with ETH + SGT bond (only valid registration path)
     function registerBondWithSgt(
@@ -149,7 +208,8 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         Operator storage op = operators[msg.sender];
         if (block.timestamp < slashLockUntil[msg.sender]) revert SlashLockActive(slashLockUntil[msg.sender]);
         if (op.activeValidators > 0) revert ActiveValidatorsExist();
-        if (op.ethBonded == 0 && op.sgtBonded == 0) revert Errors.InvalidAmount();
+        uint256[] storage nftIds = escrowedNfts[msg.sender];
+        if (op.ethBonded == 0 && op.sgtBonded == 0 && nftIds.length == 0) revert Errors.InvalidAmount();
 
         uint256 ethToReturn = op.ethBonded;
         uint256 sgtToReturn = op.sgtBonded;
@@ -157,6 +217,9 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         op.ethBonded = 0;
         op.sgtBonded = 0;
         op.totalSlots = 0;
+        op.configName = bytes32(0);
+
+        _returnEscrowedNfts(msg.sender, nftIds);
 
         if (ethToReturn > 0) {
             (bool success, ) = msg.sender.call{value: ethToReturn}("");
@@ -213,7 +276,8 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
 
         // Reduce totalSlots to match justified slots based on remaining SGT bond
         BondConfig storage cfg = bondConfigs[op.configName];
-        uint256 justified = (cfg.sgtBondPerSlot > 0) ? op.sgtBonded / cfg.sgtBondPerSlot : 0;
+        uint256 collateral = op.sgtBonded + _nftCreditOf(operator);
+        uint256 justified = (cfg.sgtBondPerSlot > 0) ? collateral / cfg.sgtBondPerSlot : 0;
         if (justified < op.totalSlots) op.totalSlots = justified;
 
         // Set 7-day slash lock on exitBond
@@ -254,7 +318,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         if (newTotalSlots > config.maxSlots) revert MaxSlotsExceeded(config.maxSlots, newTotalSlots);
 
         uint256 requiredEth = config.ethBondPerSlot * slots;
-        uint256 requiredSgt = config.sgtBondPerSlot * slots;
+        uint256 requiredSgt = _requiredSgtDelta(config, msg.sender, op.sgtBonded, newTotalSlots);
 
         if (ethAmount != requiredEth) revert InsufficientBond(requiredEth, ethAmount);
         if (sgtAmount != requiredSgt) revert InsufficientBond(requiredSgt, sgtAmount);
@@ -271,6 +335,46 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
 
     function _inferConfig(Operator storage op) internal view returns (bytes32) {
         return op.configName;
+    }
+
+
+    function _returnEscrowedNfts(address operator, uint256[] storage nftIds) internal {
+        uint256 nftCount = nftIds.length;
+        if (nftCount == 0) return;
+
+        uint256[] memory idsToReturn = new uint256[](nftCount);
+        for (uint256 i = 0; i < nftCount; i++) {
+            uint256 tokenId = nftIds[i];
+            idsToReturn[i] = tokenId;
+            delete _nftEscrowOwner[tokenId];
+        }
+        delete escrowedNfts[operator];
+        totalEscrowedNfts -= nftCount;
+
+        IERC721 nft = nftContract;
+        for (uint256 i = 0; i < nftCount; i++) {
+            nft.transferFrom(address(this), operator, idsToReturn[i]);
+            emit NftUnlocked(operator, idsToReturn[i]);
+        }
+    }
+
+    function _nftCreditOf(address operator) internal view returns (uint256) {
+        uint256 credit = nftSgtCredit;
+        if (address(nftContract) == address(0) || credit == 0) return 0;
+        return escrowedNfts[operator].length * credit;
+    }
+
+    function _requiredSgtDelta(
+        BondConfig storage config,
+        address operator,
+        uint256 existingSgtBonded,
+        uint256 newTotalSlots
+    ) internal view returns (uint256) {
+        uint256 requiredTotal = config.sgtBondPerSlot * newTotalSlots;
+        uint256 credit = _nftCreditOf(operator);
+        uint256 targetSgtBond = requiredTotal > credit ? requiredTotal - credit : 0;
+        if (existingSgtBonded >= targetSgtBond) return 0;
+        return targetSgtBond - existingSgtBonded;
     }
 
     // ── Views ────────────────────────────────────────────────────────────────
@@ -294,6 +398,11 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
             return op.totalSlots - op.activeValidators;
         }
         return 0;
+    }
+
+    /// @notice Number of NFTs currently escrowed for an operator.
+    function escrowedNftCount(address operator) external view returns (uint256) {
+        return escrowedNfts[operator].length;
     }
 
     receive() external payable {

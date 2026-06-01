@@ -1,14 +1,14 @@
 # Lido-Parity DeFi Core — Architecture & Threat Model
 
-> Phase: Phase 2 hardening + telemetry  
-> Status: Pre-audit  
-> Last updated: 2026-05-06
+> Phase: PR 379 launch-readiness hardening
+> Status: Internal audit and local verification in progress
+> Last updated: 2026-06-01
 
 ---
 
 ## 1. Overview
 
-This document captures the module boundaries, trust assumptions, storage design, and threat model for the SharedStake V2 Lido-parity staking core. It accompanies the implementation in `SharedDeposit/contracts/v2/lido-parity/`.
+This document captures the module boundaries, trust assumptions, storage design, and threat model for the SharedStake V2 Lido-parity staking core. It accompanies the implementation in `staking-contracts/contracts/v2/modular-staking/`.
 
 ### Goal
 
@@ -99,7 +99,7 @@ All divisions floor. This means:
 | Pause (emergency) | Immediate (GUARDIAN) |
 | Unpause | GOV (no timelock; requires deliberate decision) |
 
-> Note: Timelock wiring is a Phase 4 requirement. MVP uses bare multisig for GOV.
+> Note: Timelock wiring is implemented in deploy scripts (`013_governance.ts` and `014_governanceHandover.ts`); non-local releases must verify governance/timelock execution before accepting TVL.
 
 ---
 
@@ -147,7 +147,7 @@ Rationale:
 | T6 | Claim by non-owner | Bob claims Alice's withdrawal | `owner != msg.sender` check | ✅ Mitigated |
 | T7 | Flash-loan amplified deposit | Deposit large ETH, withdraw before rebase | No same-block withdrawal (queue requires finalization) | ✅ Mitigated |
 | T8 | Fee inflation via fake rewards | Compromised oracle reports enormous rewards | `maxDriftBps` per-validator cap limits fee inflation | ✅ Mitigated |
-| T9 | Governance key compromise | GOV grants malicious MINTER | Timelock delay; multisig threshold | ⚠️ Phase 4 (timelock) |
+| T9 | Governance key compromise | GOV grants malicious MINTER | Timelock delay; multisig threshold; guardian pause/cancel flow | Release gate: verify timelock role handoff |
 | T10 | Admin key loss | DEFAULT_ADMIN locked in contract | Multi-sig admin; key rotation procedure | ⚠️ Operational |
 | T11 | ETH stuck in StakingCore | receive() fallback used unexpectedly | receive() counts as deposit; no silent ETH loss | ✅ Mitigated |
 | T12 | WstToken depeg (can't unwrap) | Insufficient stTokens in WstToken | WstTokens rebase in place; total stToken ≥ total wstToken × rate | ✅ Structural |

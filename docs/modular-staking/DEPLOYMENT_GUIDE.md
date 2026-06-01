@@ -16,6 +16,9 @@ Before running `deploy/v2-modular-staking/*` on non-local networks, set:
 - Optional quorum override: `V2_QUORUM_ORACLE_QUORUM`
 - `V2_STETH_ADDRESS` for StEthPriceOracle Chainlink integration
 - `V2_CHAINLINK_STETH_ETH_FEED` for Chainlink stETH/ETH price feed address
+- `V2_SGT_ADDRESS` for OperatorRegistry outside local networks
+- Optional NFT operator bond credit: `V2_OPERATOR_NFT_ADDRESS` or `NFT_CONTRACT_ADDRESS`, plus `V2_OPERATOR_NFT_SGT_CREDIT`
+- Optional operator bond overrides: `V2_OPERATOR_ETH_BOND_PER_SLOT`, `V2_OPERATOR_SGT_BOND_PER_SLOT`, `V2_OPERATOR_MAX_SLOTS`
 
 Deployment scripts now fail closed on non-local networks when these are missing or inconsistent.
 
@@ -243,9 +246,26 @@ feeController.setRecipients(
 );
 ```
 
+### Phase 3.6: Operator Registry and Migration Helper
+
+#### Step 16: Deploy OperatorRegistry (via deploy script 019_operatorRegistry.ts)
+
+The deploy script:
+1. Resolves SGT from the local `SGTV2` mock or `V2_SGT_ADDRESS` on non-local networks.
+2. Deploys `OperatorRegistry(sgtAddress, gov)`.
+3. Configures the default ETH + SGT bond tier from env defaults.
+4. Optionally wires SharedStake NFT bond credit when `V2_OPERATOR_NFT_ADDRESS` or `NFT_CONTRACT_ADDRESS` is set.
+5. Wires the registry to `ValidatorModule` and `DVTModule` and grants each module `CALLER`.
+
+NFT credit is escrow based: the NFT contract cannot be changed or repriced while any NFT is locked, and NFTs are returned on `exitBond()`.
+
+#### Step 17: Deploy MigrationHelper (via deploy script 020_migrationHelper.ts)
+
+`MigrationHelper(oldRouter, gov)` is deployed after `staking-router` and `governance`. It does not move user funds; it publishes a governance-controlled migration notice and activation signal for frontends and integrators.
+
 ### Phase 4: ValidatorModule Hardening
 
-#### Step 16: Set Expected Withdrawal Credentials
+#### Step 18: Set Expected Withdrawal Credentials
 ```solidity
 // withdrawal_credentials = 32 bytes
 // Example: ETH1 address 0x1234... encoded as 0x010000...1234
@@ -253,7 +273,7 @@ bytes32 expectedCreds = bytes32(uint256(0x0100000000000000000000001234...));
 validatorModule.setExpectedWithdrawalCredentials(expectedCreds);
 ```
 
-#### Step 17: Lower maxDeltaBps Before Accepting TVL
+#### Step 19: Lower maxDeltaBps Before Accepting TVL
 ```solidity
 // Default is 100 (1%). Tighten further if governance policy requires.
 stakingRouter.setMaxDeltaBps(100);
@@ -261,14 +281,14 @@ stakingRouter.setMaxDeltaBps(100);
 
 ### Phase 5: Operational Parameters
 
-#### Step 18: Configure OracleAdapter
+#### Step 20: Configure OracleAdapter
 ```solidity
 oracleAdapter.setMaxStaleness(3600);      // 1 hour
 oracleAdapter.setMaxDriftBps(100);        // 1% max gain
 oracleAdapter.setMaxSlashBps(500);        // 5% max slash
 ```
 
-#### Step 19: Configure Module Caps
+#### Step 21: Configure Module Caps
 ```solidity
 stakingRouter.setMintCap(moduleId, 1000 ether);        // 1K ETH cap per module
 stakingRouter.setModuleInflowLimit(moduleId, 86400, 100 ether); // 100 ETH/day

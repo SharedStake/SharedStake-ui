@@ -25,8 +25,8 @@
 
 - ✅ Fixed deployment script import paths (../../utils → ../utils)
 - ✅ Fixed types import paths (../../types → ../types)
-- ✅ Verified deployment scripts are present for all 17 contracts
-- ❌ Missing helper functions (helpers/governance.ts, helpers/moduleDeployment.ts)
+- ✅ Verified deployment scripts are present, including OperatorRegistry and MigrationHelper
+- ✅ Helper functions present (`helpers/governance.ts`, `helpers/moduleDeployment.ts`)
 
 ### 4. Documentation
 
@@ -39,25 +39,19 @@
 
 ### End-to-End Browser Testing - BLOCKED
 
-**Blocking Issue:** Deployment scripts require missing helper functions
+**Blocking Issue:** A live local/testnet deployment and synced address JSON are still required
 
 **Missing Components:**
 
-1. `staking-contracts/helpers/governance.ts` - Contains:
-   - `resolveGovernanceAddress()` - Used in 10 deployment scripts
-   - `resolveOperatorAddress()` - Used in fee controller deployment
-   - `resolveNodeOperatorAddress()` - Used in module deployments
-   - `resolveOracleSubmitterAddresses()` - Used in oracle deployments
+1. Configure required env values (`V2_GOVERNANCE_ADDRESS`, oracle submitters, SGT address on non-local networks, and operator/NFT settings if enabled).
 
-2. `staking-contracts/helpers/moduleDeployment.ts` - Contains:
-   - Module deployment helper functions
-   - Used in ValidatorModule and DVTModule deployments
+2. Run deployment scripts against localhost or testnet, then sync generated addresses into the UI address book.
 
 **Impact:**
 
-- ❌ Cannot deploy contracts on local network
-- ❌ Cannot deploy on mainnet fork
-- ❌ Cannot get contract addresses for UI
+- ⚠️ Local deployment not executed in this report
+- ⚠️ Mainnet fork execution requires configured `MAINNET_RPC_URL`
+- ⚠️ UI address JSON must be synced after deployment
 - ❌ Cannot test staking/unstaking flows in browser
 - ❌ Cannot test referral system end-to-end
 - ❌ Cannot verify UI integration with new contracts

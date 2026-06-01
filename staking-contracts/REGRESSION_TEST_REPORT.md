@@ -41,22 +41,22 @@ Comprehensive regression testing was performed on the migrated smart contracts i
 
 **2. Deployment Infrastructure**
 
-- ⚠️ **Deployment Scripts**: Present but require missing dependencies
-- ⚠️ **Helper Functions**: helpers/governance and helpers/moduleDeployment directories missing
-- ⚠️ **Path Issues**: Fixed import paths in deployment scripts (../../ → ../)
+- ✅ **Deployment Scripts**: Present with governance and module helper dependencies restored
+- ✅ **Helper Functions**: `helpers/governance.ts` and `helpers/moduleDeployment.ts` are present
+- ✅ **Path Issues**: Fixed import paths in deployment scripts (../../ → ../)
 
 ### ❌ Blocked Tests
 
 **1. End-to-End Browser Testing**
 
-- ❌ **Cannot Deploy**: Missing deployment dependencies prevent contract deployment
-- ❌ **No Contract Addresses**: Cannot update UI with new contract addresses
-- ❌ **Browser Integration**: Cannot test UI integration without deployed contracts
+- ⚠️ **Local Deploy Not Run Here**: Deployment scripts compile through Hardhat, but browser E2E still requires a live local deployment and synced addresses
+- ⚠️ **No Contract Addresses**: UI address JSON must be updated after deployment
+- ⚠️ **Browser Integration**: Requires local or testnet deployment before wallet/browser E2E
 
 **2. Mainnet Fork Testing**
 
-- ❌ **Deployment Blocked**: Cannot deploy on mainnet fork without working deployment scripts
-- ❌ **Integration Testing**: Cannot test contract interactions on forked network
+- ⚠️ **Fork Execution Not Available Here**: Fork tests require `MAINNET_RPC_URL`; in this environment the fork spec is pending/skipped
+- ⚠️ **Integration Testing**: Run against a configured fork or testnet deployment before mainnet
 
 ## Detailed Findings
 
@@ -104,10 +104,10 @@ Comprehensive regression testing was performed on the migrated smart contracts i
 
 **🚧 Remaining Issues:**
 
-- ❌ Missing `helpers/governance.ts` directory
-- ❌ Missing `helpers/moduleDeployment.ts` directory
-- ❌ Deployment scripts depend on these missing helpers
-- ❌ Cannot deploy contracts without these dependencies
+- ✅ `helpers/governance.ts` directory present
+- ✅ `helpers/moduleDeployment.ts` directory present
+- ✅ Deployment scripts use the shared helper layer
+- ⚠️ Network deployment still requires configured governance, oracle, SGT, and operator env values
 
 **Required Helper Functions:**
 

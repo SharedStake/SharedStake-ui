@@ -15,6 +15,7 @@ import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
 import localAddresses from '@/contracts/addresses/local.json'
 
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+const PROPOSAL_STATES = ['Pending', 'Active', 'Canceled', 'Defeated', 'Succeeded', 'Queued', 'Expired', 'Executed']
 
 const ADDRESS_BOOK = {
   '0x1': mainnetAddresses,
@@ -66,6 +67,8 @@ export const useGovernanceStore = defineStore('governance', {
     // SGT
     sgtBalance: '0',
     sgtAllowance: '0',
+
+    proposals: [],
 
     contractsDeployed: false,
   }),
@@ -175,6 +178,7 @@ export const useGovernanceStore = defineStore('governance', {
           } catch (err) {
             console.warn('GovernanceStore: failed to read quorum', err)
           }
+          await this.loadProposals()
         }
 
         if (sgt && userAddress) {
@@ -187,6 +191,114 @@ export const useGovernanceStore = defineStore('governance', {
       }
     },
 
+
+    async loadProposals() {
+      const ctx = this._getContracts()
+      if (!ctx) return []
+
+      const { addresses, make } = ctx
+      const walletStore = useWalletStore()
+      const provider = walletStore.ethersProvider
+      if (!provider) return []
+
+      try {
+        const gov = make(sharedStakeGovernorABI, addresses.sharedStakeGovernor)
+        const latestBlock = await provider.getBlockNumber()
+        const fromBlock = Math.max(latestBlock - 10000, 0)
+        const events = await gov.queryFilter(gov.filters.ProposalCreated(), fromBlock, latestBlock)
+
+        const proposals = await Promise.all(events.map(async event => {
+          const args = event.args
+          const proposalId = args.proposalId.toString()
+          let stateValue = null
+          let stateLabel = 'Unknown'
+          try {
+            stateValue = Number(await gov.state(args.proposalId))
+            stateLabel = PROPOSAL_STATES[stateValue] || 'Unknown'
+          } catch (err) {
+            console.warn('GovernanceStore: failed to read proposal state', proposalId, err)
+          }
+
+          return {
+            proposalId,
+            proposer: args.proposer,
+            targets: Array.from(args.targets || []),
+            values: Array.from(args.values || []).map(v => v.toString()),
+            calldatas: Array.from(args.calldatas || []),
+            voteStart: args.voteStart?.toString?.() || '0',
+            voteEnd: args.voteEnd?.toString?.() || '0',
+            description: args.description || '',
+            state: stateValue,
+            stateLabel,
+            blockNumber: event.blockNumber,
+            transactionHash: event.transactionHash,
+          }
+        }))
+
+        this.proposals = proposals.sort((a, b) => b.blockNumber - a.blockNumber)
+        return this.proposals
+      } catch (e) {
+        console.error('GovernanceStore.loadProposals error:', e)
+        this.error = e.message
+        return []
+      }
+    },
+
+    async createProposal(description, targets, values, calldatas) {
+      return this._withTx(async () => {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Governance contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const gov = await makeSigned(sharedStakeGovernorABI, addresses.sharedStakeGovernor)
+
+        const cleanDescription = String(description || '').trim()
+        if (!cleanDescription) throw new Error('Proposal description is required')
+        if (!Array.isArray(targets) || !Array.isArray(values) || !Array.isArray(calldatas)) {
+          throw new Error('Proposal actions must be arrays')
+        }
+        if (targets.length === 0 || targets.length !== values.length || targets.length !== calldatas.length) {
+          throw new Error('Proposal action arrays must be non-empty and the same length')
+        }
+
+        const normalizedTargets = targets.map(target => {
+          if (!ethers.isAddress(target)) throw new Error(`Invalid target address: ${target}`)
+          return target
+        })
+        const normalizedValues = values.map(value => {
+          const parsed = BigInt(String(value || '0'))
+          if (parsed < 0n) throw new Error(`Invalid proposal value: ${value}`)
+          return parsed
+        })
+        const normalizedCalldatas = calldatas.map(data => {
+          const value = String(data || '0x').trim()
+          if (!ethers.isHexString(value)) throw new Error(`Invalid calldata: ${value}`)
+          return value
+        })
+
+        const tx = await gov.propose(normalizedTargets, normalizedValues, normalizedCalldatas, cleanDescription)
+        await tx.wait()
+        await this.loadProposals()
+        return tx
+      })
+    },
+
+    async castVote(proposalId, support) {
+      return this._withTx(async () => {
+        const ctx = this._getContracts()
+        if (!ctx) throw new Error('Governance contracts not available')
+
+        const { addresses, makeSigned } = ctx
+        const gov = await makeSigned(sharedStakeGovernorABI, addresses.sharedStakeGovernor)
+        const vote = Number(support)
+        if (![0, 1, 2].includes(vote)) throw new Error('Invalid vote option')
+
+        const tx = await gov.castVote(BigInt(proposalId), vote)
+        await tx.wait()
+        await this.loadProposals()
+        return tx
+      })
+    },
     async lockSGT(amountStr, days) {
       return this._withTx(async () => {
         const ctx = this._getContracts()

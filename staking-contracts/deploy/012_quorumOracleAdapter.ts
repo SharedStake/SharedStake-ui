@@ -86,24 +86,24 @@ const func: DeployFunction = async hre => {
 
   // Revoke single-submitter OracleAdapter ORACLE role to enforce quorum
   // This ensures only QuorumOracleAdapter can submit oracle reports
-  const oracleAdapterDeployment = await ship.get(OracleAdapter__factory).catch(() => null);
+  const oracleAdapterDeployment = await ship.getOrNull(OracleAdapter__factory, "OracleAdapterValidator");
   if (oracleAdapterDeployment) {
     console.log("  Revoking single-submitter OracleAdapter ORACLE role to enforce quorum...");
     const ORACLE = await validatorModule.ORACLE();
-    const oracleAdapter = await ship.get(OracleAdapter__factory);
+    const oracleAdapterAddress = oracleAdapterDeployment.address;
 
     // Revoke from ValidatorModule
-    if (await validatorModule.hasRole(ORACLE, oracleAdapter.address)) {
+    if (await validatorModule.hasRole(ORACLE, oracleAdapterAddress)) {
       console.log("  Revoking ORACLE from OracleAdapter on ValidatorModule...");
-      await validatorModule.connect(govSigner).revokeRole(ORACLE, oracleAdapter.address);
+      await validatorModule.connect(govSigner).revokeRole(ORACLE, oracleAdapterAddress);
     }
 
     // Revoke from DVTModule if it exists
     if (dvtAddress) {
       const dvtModule = await connect(DVTModule__factory);
-      if (await dvtModule.hasRole(ORACLE, oracleAdapter.address)) {
+      if (await dvtModule.hasRole(ORACLE, oracleAdapterAddress)) {
         console.log("  Revoking ORACLE from OracleAdapter on DVTModule...");
-        await dvtModule.connect(govSigner).revokeRole(ORACLE, oracleAdapter.address);
+        await dvtModule.connect(govSigner).revokeRole(ORACLE, oracleAdapterAddress);
       }
     }
 

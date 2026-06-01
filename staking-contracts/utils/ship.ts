@@ -55,10 +55,20 @@ class Ship {
     return this.hre.ethers.provider;
   }
 
-  address = async <T extends ContractFactory>(contractFactory: new () => T) => {
-    const contractName = contractFactory.name.split("__")[0];
+  address = async <T extends ContractFactory>(contractFactory: (new () => T) | string) => {
+    const contractName = typeof contractFactory === "string" ? contractFactory : contractFactory.name.split("__")[0];
     const dep = await this.hre.deployments.getOrNull(contractName);
     return dep?.address;
+  };
+
+  get = async <T extends ContractFactory>(contractFactory: (new () => T) | string, aliasName?: string) => {
+    const contractName = typeof contractFactory === "string" ? contractFactory : contractFactory.name.split("__")[0];
+    return await this.hre.deployments.get(aliasName ?? contractName);
+  };
+
+  getOrNull = async <T extends ContractFactory>(contractFactory: (new () => T) | string, aliasName?: string) => {
+    const contractName = typeof contractFactory === "string" ? contractFactory : contractFactory.name.split("__")[0];
+    return await this.hre.deployments.getOrNull(aliasName ?? contractName);
   };
 
   deployed = async (address: string) => {

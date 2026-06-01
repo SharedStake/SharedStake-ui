@@ -143,7 +143,7 @@ contract DVTModule is ValidatorModule {
     ///         Reverts if the cluster is not registered or not active.
     /// @dev Deprecated: Use proposeDeposit/approveDeposit instead for all deposits.
     function depositToBeaconChainInCluster(
-        bytes32 clusterId,
+        bytes32,
         bytes calldata,
         bytes calldata,
         bytes calldata,
@@ -251,14 +251,7 @@ contract DVTModule is ValidatorModule {
             revert InsufficientBuffer(_bufferedEther, DEPOSIT_AMOUNT);
         }
 
-        bytes32 expected = expectedWithdrawalCredentials;
-        if (expected == bytes32(0)) revert WithdrawalCredentialsNotConfigured();
-        if (withdrawalCredsMem.length != 32) revert InvalidWithdrawalCredentials();
-        bytes32 provided;
-        assembly {
-            provided := mload(add(withdrawalCredsMem, 32))
-        }
-        if (provided != expected) revert InvalidWithdrawalCredentials();
+        _validateWithdrawalCredentials(withdrawalCredsMem);
 
         if (BEACON_DEPOSIT_CONTRACT.code.length == 0) {
             revert BeaconDepositContractUnavailable(BEACON_DEPOSIT_CONTRACT);
@@ -287,6 +280,17 @@ contract DVTModule is ValidatorModule {
             }
             operatorRegistry.incrementActive(executor);
         }
+    }
+
+    function _validateWithdrawalCredentials(bytes memory withdrawalCredsMem) internal view {
+        bytes32 expected = expectedWithdrawalCredentials;
+        if (expected == bytes32(0)) revert WithdrawalCredentialsNotConfigured();
+        if (withdrawalCredsMem.length != 32) revert InvalidWithdrawalCredentials();
+        bytes32 provided;
+        assembly {
+            provided := mload(add(withdrawalCredsMem, 32))
+        }
+        if (provided != expected) revert InvalidWithdrawalCredentials();
     }
 
     // ── Views ────────────────────────────────────────────────────────────────

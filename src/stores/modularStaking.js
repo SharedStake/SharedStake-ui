@@ -13,12 +13,19 @@ import wstTokenABI from '@/contracts/abis/wstToken.json'
 import stakingRouterABI from '@/contracts/abis/stakingRouter.json'
 import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
 import validatorModuleABI from '@/contracts/abis/validatorModule.json'
+import operatorRegistryABI from '@/contracts/abis/operatorRegistry.json'
 
 // Placeholder zero address used when contracts are not deployed on the connected chain.
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 // Placeholder module ID for solo validator staking (bytes32(1))
 const SOLO_VALIDATOR_MODULE_ID = '0x' + '0'.repeat(63) + '1'
+const ERC721_ENUMERABLE_ABI = [
+  'function balanceOf(address owner) view returns (uint256)',
+  'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
+  'function approve(address to, uint256 tokenId)',
+  'function getApproved(uint256 tokenId) view returns (address)',
+]
 
 // Per-chain contract addresses. Update with real addresses after deployment.
 const CONTRACT_ADDRESSES = {
@@ -31,6 +38,7 @@ const CONTRACT_ADDRESSES = {
     dvtModule: ZERO_ADDR,
     operatorRegistry: ZERO_ADDR,
     sgtToken: '0x84810bcF08744d5862B8181f12d17bfd57d3b078',
+    nftContract: ZERO_ADDR,
   },
   '0xaa36a7': { // sepolia testnet
     stakingRouter: ZERO_ADDR,
@@ -41,6 +49,7 @@ const CONTRACT_ADDRESSES = {
     dvtModule: ZERO_ADDR,
     operatorRegistry: ZERO_ADDR,
     sgtToken: ZERO_ADDR,
+    nftContract: ZERO_ADDR,
   },
   '0x7a69': { // localhost (hardhat)
     stakingRouter: ZERO_ADDR,
@@ -51,6 +60,7 @@ const CONTRACT_ADDRESSES = {
     dvtModule: ZERO_ADDR,
     operatorRegistry: ZERO_ADDR,
     sgtToken: ZERO_ADDR,
+    nftContract: ZERO_ADDR,
   },
 }
 
@@ -106,6 +116,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
     // Validator module (solo staking)
     validatorModuleInfo: null,  // { bufferedEther, beaconValidators, depositedValidatorCount, beaconBalance }
+
+    // Optional NFT bond credit
+    nftBalance: '0',
+    nftTokenIds: [],
+    nftSgtCredit: '0',
+    lockedNftCount: '0',
 
     // Contract deployment status
     contractsDeployed: false,
@@ -164,8 +180,9 @@ export const useModularStakingStore = defineStore('modularStaking', {
       const addresses = getAddresses(chainId)
       if (!addresses) return null
 
-      // Check that contracts are actually deployed (non-zero address).
-      const allDeployed = Object.values(addresses).every(a => a !== ZERO_ADDR)
+      // Check that core staking contracts are deployed. NFT credit is optional.
+      const requiredContracts = ['stakingRouter', 'stToken', 'wstToken', 'withdrawalQueueV2', 'validatorModule']
+      const allDeployed = requiredContracts.every(key => addresses[key] && addresses[key] !== ZERO_ADDR)
       this.contractsDeployed = allDeployed
       if (!allDeployed) return null
 
@@ -469,6 +486,81 @@ export const useModularStakingStore = defineStore('modularStaking', {
       }
     },
 
+
+    async checkNftBalance(userAddress) {
+      const walletStore = useWalletStore()
+      const provider = walletStore.ethersProvider
+      const addresses = getAddresses(this.chainId)
+      if (!provider || !addresses || !userAddress || !addresses.nftContract || addresses.nftContract === ZERO_ADDR) {
+        this.nftBalance = '0'
+        this.nftTokenIds = []
+        this.nftSgtCredit = '0'
+        this.lockedNftCount = '0'
+        return { balance: '0', tokenIds: [] }
+      }
+
+      const nft = new ethers.Contract(addresses.nftContract, ERC721_ENUMERABLE_ABI, provider)
+      const balance = await nft.balanceOf(userAddress)
+      const maxToRead = balance > 20n ? 20n : balance
+      const tokenIds = []
+      for (let i = 0n; i < maxToRead; i++) {
+        try {
+          tokenIds.push((await nft.tokenOfOwnerByIndex(userAddress, i)).toString())
+        } catch (err) {
+          console.warn('ModularStakingStore: NFT token enumeration failed', err)
+          break
+        }
+      }
+
+      this.nftBalance = balance.toString()
+      this.nftTokenIds = tokenIds
+
+      if (addresses.operatorRegistry && addresses.operatorRegistry !== ZERO_ADDR) {
+        const registry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, provider)
+        try {
+          this.nftSgtCredit = (await registry.nftSgtCredit()).toString()
+          this.lockedNftCount = (await registry.escrowedNftCount(userAddress)).toString()
+        } catch (err) {
+          console.warn('ModularStakingStore: NFT credit metadata unavailable', err)
+        }
+      }
+
+      return { balance: balance.toString(), tokenIds }
+    },
+
+    async lockNftForCredit(tokenId) {
+      this.loading = true
+      this.error = null
+      try {
+        const walletStore = useWalletStore()
+        const provider = walletStore.ethersProvider
+        const addresses = getAddresses(this.chainId)
+        if (!provider || !addresses) throw new Error('Contracts not available')
+        if (!addresses.operatorRegistry || addresses.operatorRegistry === ZERO_ADDR) throw new Error('OperatorRegistry not deployed')
+        if (!addresses.nftContract || addresses.nftContract === ZERO_ADDR) throw new Error('NFT contract not configured')
+
+        const signer = await provider.getSigner()
+        const nft = new ethers.Contract(addresses.nftContract, ERC721_ENUMERABLE_ABI, signer)
+        const registry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, signer)
+        const id = BigInt(tokenId)
+
+        const approved = await nft.getApproved(id)
+        if (approved.toLowerCase() !== addresses.operatorRegistry.toLowerCase()) {
+          const approveTx = await nft.approve(addresses.operatorRegistry, id)
+          await approveTx.wait()
+        }
+
+        const tx = await registry.lockNftForCredit(id)
+        await tx.wait()
+        await this.checkNftBalance(walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
     async soloStake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
       this.loading = true
       this.error = null

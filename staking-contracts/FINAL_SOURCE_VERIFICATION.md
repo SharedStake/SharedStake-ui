@@ -91,13 +91,13 @@ Evidence:
 
 **Testing:**
 
-- ✅ 58 test files (Hardhat + Foundry)
-- ✅ Test infrastructure (test/hardhat/, test/foundry/, test/v2/)
+- ✅ 40 test files (Hardhat + Foundry)
+- ✅ Test infrastructure (test/foundry/, test/v2/)
 - ✅ Test documentation (test/README.md)
 
 **Deployment:**
 
-- ✅ 18 deployment scripts (deploy/ directory)
+- ✅ Deployment scripts (deploy/ directory)
 - ✅ Deployment configurations for multiple networks
 - ✅ Deployment documentation
 

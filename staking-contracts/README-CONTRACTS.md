@@ -61,6 +61,10 @@ export ALCHEMY_GOERLI_KEY='xx'
 - `WithdrawalQueue.GOV`, `FeeCalc.owner`, and `RewardsReceiver.owner` are now wired to governance at deployment.
 - `sgETH` admin is transferred from deployer to governance during `minter` deployment.
 - The `deploymentSecurity.spec.ts` suite asserts these invariants and should be treated as a release gate.
+- Modular staking deploy scripts now include OperatorRegistry (`019_operatorRegistry.ts`) and MigrationHelper (`020_migrationHelper.ts`).
+- OperatorRegistry requires `V2_SGT_ADDRESS` outside local networks. Optional NFT bond credit is enabled with `V2_OPERATOR_NFT_ADDRESS` or `NFT_CONTRACT_ADDRESS` plus `V2_OPERATOR_NFT_SGT_CREDIT`.
+- `MigrationHelper` deploys after `staking-router` and `governance`; it is a non-custodial migration signal contract with the 14-day notice flow documented in `docs/modular-staking/UPGRADE_PATH.md`.
+- Coverage must target the TypeScript test suite: `hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles "./test/**/*.ts"`.
 
 # Slither
 
@@ -97,7 +101,9 @@ AE - Already exists
 
 Spec:
 
-- TODO
+- Router-first staking architecture under `contracts/v2/modular-staking` with `StToken`, `WstToken`, `StakingRouter`, `WithdrawalQueueV2`, `ValidatorModule`, `DVTModule`, `LSTWrapModule`, `OperatorRegistry`, oracle adapters, referral registry, and DebtPool.
+- Governance path uses `VoteEscrowV2`, `SharedStakeGovernor`, and `GovernanceTimelock`; deployment handoff moves `GOV` and admin authority to timelock.
+- Optional operator NFT bond credit is escrow-based: NFTs reduce SGT bond requirements while locked and are returned on `exitBond()`.
 
 # SharedDeposit V3
 

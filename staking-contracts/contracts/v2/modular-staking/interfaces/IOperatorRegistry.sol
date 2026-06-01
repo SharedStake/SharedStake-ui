@@ -18,4 +18,9 @@ interface IOperatorRegistry {
     /// @notice Decrement active validator count after validator exit
     /// @param operator Operator address
     function decrementActive(address operator) external;
+
+    /// @notice Number of NFTs currently escrowed for an operator.
+    /// @param operator Operator address
+    /// @return Count of escrowed NFTs
+    function escrowedNftCount(address operator) external view returns (uint256);
 }

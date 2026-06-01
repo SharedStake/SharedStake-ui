@@ -6,9 +6,18 @@ import {assertGovernanceSigner, getGovernanceSigner} from "../helpers/moduleDepl
 import {isLocalNetwork, resolveGovernanceAddress} from "../helpers/governance";
 
 const SGT_ADDRESS_ENV_KEYS = ["V2_SGT_ADDRESS"];
+const NFT_ADDRESS_ENV_KEYS = ["NFT_CONTRACT_ADDRESS", "V2_OPERATOR_NFT_ADDRESS"];
 
 function readConfiguredSgtAddress(): string | undefined {
   for (const key of SGT_ADDRESS_ENV_KEYS) {
+    const val = process.env[key]?.trim();
+    if (val) return val;
+  }
+  return undefined;
+}
+
+function readConfiguredNftAddress(): string | undefined {
+  for (const key of NFT_ADDRESS_ENV_KEYS) {
     const val = process.env[key]?.trim();
     if (val) return val;
   }
@@ -61,6 +70,7 @@ const func: DeployFunction = async hre => {
   // ── Bond config defaults ────────────────────────────────────────────────────
   const ethBondPerSlot = hre.ethers.parseEther(process.env.V2_OPERATOR_ETH_BOND_PER_SLOT ?? "1");
   const sgtBondPerSlot = hre.ethers.parseEther(process.env.V2_OPERATOR_SGT_BOND_PER_SLOT ?? "1000");
+  const nftSgtCredit = hre.ethers.parseEther(process.env.V2_OPERATOR_NFT_SGT_CREDIT ?? "100");
   const maxSlots = BigInt(process.env.V2_OPERATOR_MAX_SLOTS ?? "100");
   const DEFAULT_CONFIG = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("default"));
 
@@ -82,6 +92,26 @@ const func: DeployFunction = async hre => {
     );
   } else {
     console.log("  Default bond config already set");
+  }
+
+  // ── Optional SharedStake NFT credit ─────────────────────────────────────────
+  const configuredNft = readConfiguredNftAddress();
+  if (configuredNft) {
+    if (!isAddress(configuredNft) || configuredNft.toLowerCase() === ZeroAddress.toLowerCase()) {
+      throw new Error(
+        `Invalid NFT contract address. Set one of ${NFT_ADDRESS_ENV_KEYS.join(", ")} to a deployed ERC-721.`,
+      );
+    }
+
+    const registryAny = registry as any;
+    const currentNft = await registryAny.nftContract();
+    const currentCredit = await registryAny.nftSgtCredit();
+    if (currentNft.toLowerCase() !== configuredNft.toLowerCase() || currentCredit !== nftSgtCredit) {
+      console.log(`  Configuring NFT credit: ${configuredNft} -> ${hre.ethers.formatEther(nftSgtCredit)} SGT`);
+      await registryAny.connect(govSigner).setNftContract(configuredNft, nftSgtCredit);
+    } else {
+      console.log("  NFT credit already configured");
+    }
   }
 
   // ── Wire to ValidatorModule ─────────────────────────────────────────────────

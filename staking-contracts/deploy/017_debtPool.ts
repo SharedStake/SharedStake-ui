@@ -34,9 +34,9 @@ const func: DeployFunction = async hre => {
   try {
     // Read current recipients
     const currentRecipients = await feeController.getRecipients();
-    const treasury = currentRecipients.treasury;
-    const operator = currentRecipients.operator;
-    const referralRegistry = currentRecipients.referralRegistry;
+    const treasury = currentRecipients[0];
+    const operator = currentRecipients[1];
+    const referralRegistry = await feeController.referralRegistry();
 
     console.log("  Updating FeeController recipients to include DebtPool...");
     const govSigner = accounts.multiSig ?? accounts.deployer;
@@ -54,4 +54,4 @@ const func: DeployFunction = async hre => {
 
 export default func;
 func.tags = ["modular-staking", "debtPool"];
-func.dependencies = ["feeController", "stToken", "wstToken"];
+func.dependencies = ["feeController", "stToken", "wstToken", "referralRegistry"];
