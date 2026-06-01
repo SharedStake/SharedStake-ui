@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IReportable} from "./interfaces/IReportable.sol";
 import {Errors} from "../lib/Errors.sol";
+import {OracleValidation} from "./lib/OracleValidation.sol";
 
 /// @title QuorumOracleAdapter - threshold-consensus beacon report adapter
 /// @notice Accepts report votes from authorized submitters and forwards the
@@ -64,17 +65,11 @@ contract QuorumOracleAdapter is AccessControl {
     event MinReportIntervalSet(uint256 seconds_);
 
     // ── Errors ────────────────────────────────────────────────────────────────
+    // Validation errors are declared in OracleValidation and bubble up from library calls.
     error InvalidQuorum(uint256 provided, uint256 submitterCount_);
     error DuplicateVote(bytes32 reportHash, address submitter);
     error ReportAlreadyFinalized(bytes32 reportHash);
-    error StaleReport(uint256 reportAge, uint256 maxAge);
-    error FutureReportTimestamp(uint256 reportTimestamp, uint256 currentTimestamp);
-    error BalanceDriftTooHigh(uint256 actual, uint256 max);
-    error SlashTooLarge(uint256 actual, uint256 max);
     error BelowMinimum(uint256 value, uint256 minimum);
-    error InvalidBeaconReportTuple(uint256 beaconValidators, uint256 beaconBalance);
-    error NonMonotonicReportTimestamp(uint256 reportTimestamp, uint256 lastReportTimestamp);
-    error ReportTooFrequent(uint256 earliestNextReportTime, uint256 currentTime);
 
     constructor(address reportTarget, address gov, uint256 initialQuorum) {
         if (reportTarget == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -121,67 +116,17 @@ contract QuorumOracleAdapter is AccessControl {
         emit ReportFinalized(reportHash, beaconValidators, beaconBalance, reportTimestamp, votes);
     }
 
-    function _validateBeaconTuple(uint256 beaconValidators, uint256 beaconBalance) private pure {
-        if (beaconValidators == 0 && beaconBalance != 0) {
-            revert InvalidBeaconReportTuple(beaconValidators, beaconBalance);
-        }
-    }
-
-    function _validateTimestamp(uint256 reportTimestamp) private view {
-        if (reportTimestamp > block.timestamp) {
-            revert FutureReportTimestamp(reportTimestamp, block.timestamp);
-        }
-        if (lastReportTimestamp != 0 && reportTimestamp <= lastReportTimestamp) {
-            revert NonMonotonicReportTimestamp(reportTimestamp, lastReportTimestamp);
-        }
-    }
-
-    function _validateReportInterval() private view {
-        if (lastReportTime != 0 && minReportIntervalSeconds != 0) {
-            uint256 earliest = lastReportTime + minReportIntervalSeconds;
-            if (block.timestamp < earliest) {
-                revert ReportTooFrequent(earliest, block.timestamp);
-            }
-        }
-    }
-
-    function _validateStaleness(uint256 reportTimestamp) private view {
-        uint256 reportAge = block.timestamp - reportTimestamp;
-        if (reportAge > maxStalenessSeconds) {
-            revert StaleReport(reportAge, maxStalenessSeconds);
-        }
-    }
-
-    function _validateDrift(uint256 beaconValidators, uint256 beaconBalance) private view {
-        if (lastBeaconValidators > 0 && beaconValidators > 0) {
-            uint256 prevAvg = lastBeaconBalance / lastBeaconValidators;
-            uint256 newAvg = beaconBalance / beaconValidators;
-
-            if (prevAvg > 0 && newAvg > prevAvg) {
-                uint256 gainBps = ((newAvg - prevAvg) * 10000) / prevAvg;
-                if (gainBps > maxDriftBps) revert BalanceDriftTooHigh(gainBps, maxDriftBps);
-            }
-        }
-    }
-
-    function _validateSlashGuard(uint256 beaconBalance) private view {
-        if (lastBeaconBalance > 0 && beaconBalance < lastBeaconBalance) {
-            uint256 lossBps = ((lastBeaconBalance - beaconBalance) * 10000) / lastBeaconBalance;
-            if (lossBps > maxSlashBps) revert SlashTooLarge(lossBps, maxSlashBps);
-        }
-    }
-
     function _enforceSanityChecks(
         uint256 beaconValidators,
         uint256 beaconBalance,
         uint256 reportTimestamp
     ) internal view {
-        _validateBeaconTuple(beaconValidators, beaconBalance);
-        _validateTimestamp(reportTimestamp);
-        _validateReportInterval();
-        _validateStaleness(reportTimestamp);
-        _validateDrift(beaconValidators, beaconBalance);
-        _validateSlashGuard(beaconBalance);
+        OracleValidation.validateBeaconTuple(beaconValidators, beaconBalance);
+        OracleValidation.validateTimestamp(reportTimestamp, lastReportTimestamp);
+        OracleValidation.validateReportInterval(lastReportTime, minReportIntervalSeconds);
+        OracleValidation.validateStaleness(reportTimestamp, maxStalenessSeconds);
+        OracleValidation.validateDrift(beaconValidators, beaconBalance, lastBeaconValidators, lastBeaconBalance, maxDriftBps);
+        OracleValidation.validateSlashGuard(beaconBalance, lastBeaconBalance, maxSlashBps);
     }
 
     // ── Config (GOV only) ─────────────────────────────────────────────────────

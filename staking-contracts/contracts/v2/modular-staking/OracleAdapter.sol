@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IReportable} from "./interfaces/IReportable.sol";
 import {Errors} from "../lib/Errors.sol";
+import {OracleValidation} from "./lib/OracleValidation.sol";
 
 /// @title OracleAdapter - beacon chain report ingestion with sanity gates
 /// @notice Accepts signed reports from authorized submitters and forwards valid
@@ -52,14 +53,8 @@ contract OracleAdapter is AccessControl {
     event MinReportIntervalSet(uint256 seconds_);
 
     // ── Errors ────────────────────────────────────────────────────────────────
-    error StaleReport(uint256 reportAge, uint256 maxAge);
-    error BalanceDriftTooHigh(uint256 actual, uint256 max);
-    error SlashTooLarge(uint256 actual, uint256 max);
+    // Validation errors are declared in OracleValidation and bubble up from library calls.
     error BelowMinimum(uint256 value, uint256 minimum);
-    error FutureReportTimestamp(uint256 reportTimestamp, uint256 currentTimestamp);
-    error InvalidBeaconReportTuple(uint256 beaconValidators, uint256 beaconBalance);
-    error NonMonotonicReportTimestamp(uint256 reportTimestamp, uint256 lastReportTimestamp);
-    error ReportTooFrequent(uint256 earliestNextReportTime, uint256 currentTime);
 
     constructor(address reportTarget, address gov) {
         if (reportTarget == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -69,62 +64,6 @@ contract OracleAdapter is AccessControl {
     }
 
     // ── Report submission ─────────────────────────────────────────────────────
-
-    /// @notice Validate beacon report tuple integrity
-    function _validateBeaconTuple(uint256 beaconValidators, uint256 beaconBalance) private pure {
-        if (beaconValidators == 0 && beaconBalance != 0) {
-            revert InvalidBeaconReportTuple(beaconValidators, beaconBalance);
-        }
-    }
-
-    /// @notice Validate report timestamp is not in future and is monotonic
-    function _validateTimestamp(uint256 reportTimestamp) private view {
-        if (reportTimestamp > block.timestamp) {
-            revert FutureReportTimestamp(reportTimestamp, block.timestamp);
-        }
-        if (lastReportTimestamp != 0 && reportTimestamp <= lastReportTimestamp) {
-            revert NonMonotonicReportTimestamp(reportTimestamp, lastReportTimestamp);
-        }
-    }
-
-    /// @notice Validate minimum report interval
-    function _validateReportInterval() private view {
-        if (lastReportTime != 0 && minReportIntervalSeconds != 0) {
-            uint256 earliest = lastReportTime + minReportIntervalSeconds;
-            if (block.timestamp < earliest) {
-                revert ReportTooFrequent(earliest, block.timestamp);
-            }
-        }
-    }
-
-    /// @notice Validate report staleness
-    function _validateStaleness(uint256 reportTimestamp) private view {
-        uint256 reportAge = block.timestamp > reportTimestamp ? block.timestamp - reportTimestamp : 0;
-        if (reportAge > maxStalenessSeconds) {
-            revert StaleReport(reportAge, maxStalenessSeconds);
-        }
-    }
-
-    /// @notice Validate balance drift per validator
-    function _validateDrift(uint256 beaconValidators, uint256 beaconBalance) private view {
-        if (lastBeaconValidators > 0 && beaconValidators > 0) {
-            uint256 prevAvg = lastBeaconBalance / lastBeaconValidators;
-            uint256 newAvg = beaconBalance / beaconValidators;
-
-            if (prevAvg > 0 && newAvg > prevAvg) {
-                uint256 gainBps = ((newAvg - prevAvg) * 10000) / prevAvg;
-                if (gainBps > maxDriftBps) revert BalanceDriftTooHigh(gainBps, maxDriftBps);
-            }
-        }
-    }
-
-    /// @notice Validate slash guard
-    function _validateSlashGuard(uint256 beaconBalance) private view {
-        if (lastBeaconBalance > 0 && beaconBalance < lastBeaconBalance) {
-            uint256 lossBps = ((lastBeaconBalance - beaconBalance) * 10000) / lastBeaconBalance;
-            if (lossBps > maxSlashBps) revert SlashTooLarge(lossBps, maxSlashBps);
-        }
-    }
 
     /// @notice Submit a beacon chain report.
     ///         Reverts if any sanity check fails.
@@ -136,12 +75,12 @@ contract OracleAdapter is AccessControl {
         uint256 beaconBalance,
         uint256 reportTimestamp
     ) external onlyRole(SUBMITTER) {
-        _validateBeaconTuple(beaconValidators, beaconBalance);
-        _validateTimestamp(reportTimestamp);
-        _validateReportInterval();
-        _validateStaleness(reportTimestamp);
-        _validateDrift(beaconValidators, beaconBalance);
-        _validateSlashGuard(beaconBalance);
+        OracleValidation.validateBeaconTuple(beaconValidators, beaconBalance);
+        OracleValidation.validateTimestamp(reportTimestamp, lastReportTimestamp);
+        OracleValidation.validateReportInterval(lastReportTime, minReportIntervalSeconds);
+        OracleValidation.validateStaleness(reportTimestamp, maxStalenessSeconds);
+        OracleValidation.validateDrift(beaconValidators, beaconBalance, lastBeaconValidators, lastBeaconBalance, maxDriftBps);
+        OracleValidation.validateSlashGuard(beaconBalance, lastBeaconBalance, maxSlashBps);
 
         // All checks pass — update state and forward to report target.
         lastBeaconBalance = beaconBalance;

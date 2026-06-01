@@ -31,11 +31,6 @@ import localAddresses from './addresses/local.json'
 
 let _addresses = {};
 
-let _geyser_vEth2_old;
-let _geyser_SGT_old;
-let _geyser_SGT_uniswap_old;
-let _geyser_vEth2_saddle_old;
-
 // V2 changes
 const chainIdGoerli = "0x5";
 const chainIdMainnet = "0x1";
@@ -329,12 +324,6 @@ export const geyser_SGT_uniswap = (useSigner = false) => createContract("geyser"
 export const geyser_SGT_vEth2_uniswap = (useSigner = false) => createContract("geyser", "geyser_SGT_vEth2_uniswap", useSigner);
 export const geyser_vEth2_saddle = (useSigner = false) => createContract("geyser_new", "geyser_vEth2_saddle", useSigner);
 
-// Legacy geyser contracts
-export const geyser_vEth2_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_old", useSigner);
-export const geyser_SGT_old = (useSigner = false) => createContract("geyser", "geyser_SGT_old", useSigner);
-export const geyser_SGT_uniswap_old = (useSigner = false) => createContract("geyser", "geyser_SGT_uniswap_old", useSigner);
-export const geyser_vEth2_saddle_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_saddle_old", useSigner);
-
 // Utility contracts
 const isDevMode = typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV;
 const mockAirdropState = {
@@ -439,9 +428,4 @@ export const createDeprecatedWithdrawalsContract = (address, useSigner = false) 
     return createContractWithAddress(address, 'withdrawals', useSigner);
 };
 
-export const oldPools = {
-    geyser_SGT: _geyser_SGT_old,
-    geyser_SGT_uniswap: _geyser_SGT_uniswap_old,
-    geyser_vEth2: _geyser_vEth2_old,
-    geyser_vEth2_saddle: _geyser_vEth2_saddle_old
-}
+export const oldPools = {}
