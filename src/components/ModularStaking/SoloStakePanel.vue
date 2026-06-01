@@ -621,9 +621,10 @@ export default {
         const operatorRegistry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, signer)
         
         const ethAmount = ethers.parseEther(this.totalEthBond)
-        const configName = ethers.encodeBytes32String('default') // Use default config
+        const configName = ethers.keccak256(ethers.toUtf8Bytes('default')) // Use default config
+        const sgtAmountInWei = ethers.parseEther(this.totalSgtBond.replace(/,/g, ''))
         
-        const tx = await operatorRegistry.registerBond(configName, this.slotCount, { value: ethAmount })
+        const tx = await operatorRegistry.registerBondWithSgt(configName, this.slotCount, sgtAmountInWei, { value: ethAmount })
         await tx.wait()
         
         // Refresh user data
@@ -654,8 +655,9 @@ export default {
         const operatorRegistry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, signer)
         
         const ethAmount = ethers.parseEther((this.ethBondPerSlot * this.expandSlotCount).toString())
+        const sgtAmountInWei = ethers.parseEther((this.sgtBondPerSlot * this.expandSlotCount).toString())
         
-        const tx = await operatorRegistry.expandSlots(this.expandSlotCount, { value: ethAmount })
+        const tx = await operatorRegistry.expandSlotsWithSgt(this.expandSlotCount, sgtAmountInWei, { value: ethAmount })
         await tx.wait()
         
         // Refresh user data

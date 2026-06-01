@@ -37,6 +37,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         uint256 sgtBonded;           // SGT currently bonded
         uint256 activeValidators;    // Currently active validators
         uint256 totalSlots;          // Total slots earned (bond capacity)
+        bytes32 configName;          // Bond config used for registration
     }
 
     // ── State ─────────────────────────────────────────────────────────────────
@@ -121,15 +122,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
 
     // ── Operator actions ─────────────────────────────────────────────────────
 
-    /// @notice Register as an operator with a bond (permissionless)
-    /// @param configName Bond config to use
-    /// @param slots Number of slots to earn
-    function registerBond(bytes32 configName, uint256 slots) external payable nonReentrant {
-        _bond(configName, slots, msg.value, 0);
-        emit BondRegistered(msg.sender, configName, msg.value, 0);
-    }
-
-    /// @notice Register with ETH + SGT bond
+    /// @notice Register with ETH + SGT bond (only valid registration path)
     function registerBondWithSgt(
         bytes32 configName,
         uint256 slots,
@@ -140,17 +133,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         emit BondRegistered(msg.sender, configName, msg.value, sgtAmount);
     }
 
-    /// @notice Expand slots by adding more bond
-    function expandSlots(uint256 slots) external payable nonReentrant {
-        Operator storage op = operators[msg.sender];
-        if (op.totalSlots == 0) revert Errors.InvalidAmount();
-
-        bytes32 configName = _inferConfig(op);
-        _bond(configName, slots, msg.value, 0);
-        emit SlotsExpanded(msg.sender, slots, msg.value, 0);
-    }
-
-    /// @notice Expand slots with ETH + SGT
+    /// @notice Expand slots with ETH + SGT (only valid expansion path)
     function expandSlotsWithSgt(uint256 slots, uint256 sgtAmount) external payable nonReentrant {
         Operator storage op = operators[msg.sender];
         if (op.totalSlots == 0) revert Errors.InvalidAmount();
@@ -228,6 +211,11 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         // Burn slashed SGT or send to treasury - for now burn
         sgtToken.safeTransfer(address(0xdEaD), sgtAmount);
 
+        // Reduce totalSlots to match justified slots based on remaining SGT bond
+        BondConfig storage cfg = bondConfigs[op.configName];
+        uint256 justified = (cfg.sgtBondPerSlot > 0) ? op.sgtBonded / cfg.sgtBondPerSlot : 0;
+        if (justified < op.totalSlots) op.totalSlots = justified;
+
         // Set 7-day slash lock on exitBond
         slashLockUntil[operator] = block.timestamp + 7 days;
 
@@ -261,7 +249,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         if (config.maxSlots == 0) revert ConfigNotFound(configName);
 
         Operator storage op = operators[msg.sender];
-        
+
         uint256 newTotalSlots = op.totalSlots + slots;
         if (newTotalSlots > config.maxSlots) revert MaxSlotsExceeded(config.maxSlots, newTotalSlots);
 
@@ -274,13 +262,15 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         op.ethBonded += ethAmount;
         op.sgtBonded += sgtAmount;
         op.totalSlots = newTotalSlots;
+
+        // Store configName on initial registration
+        if (op.totalSlots == slots) {
+            op.configName = configName;
+        }
     }
 
-    function _inferConfig(Operator storage /* op */) internal view returns (bytes32) {
-        // Infer config from existing bond ratios
-        // For simplicity, use default config
-        if (defaultConfigName == bytes32(0)) revert InvalidConfig();
-        return defaultConfigName;
+    function _inferConfig(Operator storage op) internal view returns (bytes32) {
+        return op.configName;
     }
 
     // ── Views ────────────────────────────────────────────────────────────────
@@ -290,10 +280,11 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         uint256 ethBonded,
         uint256 sgtBonded,
         uint256 activeValidators,
-        uint256 totalSlots
+        uint256 totalSlots,
+        bytes32 configName
     ) {
         Operator storage op = operators[operator];
-        return (op.ethBonded, op.sgtBonded, op.activeValidators, op.totalSlots);
+        return (op.ethBonded, op.sgtBonded, op.activeValidators, op.totalSlots, op.configName);
     }
 
     /// @notice Get available slots for an operator

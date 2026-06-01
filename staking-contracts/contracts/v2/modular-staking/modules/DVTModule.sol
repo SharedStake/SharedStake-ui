@@ -37,6 +37,7 @@ contract DVTModule is ValidatorModule {
         uint256 approvalCount;
         bool executed;
         bool cancelled;
+        address proposer;
     }
 
     mapping(bytes32 => DepositProposal) public depositProposals;
@@ -181,7 +182,8 @@ contract DVTModule is ValidatorModule {
             deposit_data_root: deposit_data_root,
             approvalCount: 1,
             executed: false,
-            cancelled: false
+            cancelled: false,
+            proposer: msg.sender
         });
         hasApproved[proposalId][msg.sender] = true;
         _clusterProposals[clusterId].push(proposalId);
@@ -280,6 +282,9 @@ contract DVTModule is ValidatorModule {
         emit BeaconChainDeposit(pubkeyMem, DEPOSIT_AMOUNT, _bufferedEther);
 
         if (address(operatorRegistry) != address(0)) {
+            if (p.proposer != executor) {
+                operatorRegistry.incrementActive(p.proposer);
+            }
             operatorRegistry.incrementActive(executor);
         }
     }
