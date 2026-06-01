@@ -77,15 +77,20 @@ describe("DVTModule", () => {
     await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);
 
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
+
+    // Use proposal queue for threshold=1 cluster
     await dvtModule
       .connect(nodeOp)
-      .depositToBeaconChainInCluster(
+      .proposeDeposit(
         CLUSTER_ID,
         "0x" + "00".repeat(48),
         EXPECTED_CREDS,
         "0x" + "00".repeat(96),
         "0x" + "00".repeat(32),
       );
+    // For threshold=1, proposer can approve immediately
+    await dvtModule.connect(nodeOp).approveDeposit(CLUSTER_ID, 0);
+
     await dvtModule.connect(oracle).reportBeacon(1, parseEther("32"));
     expect(await dvtModule.beaconBalance()).to.equal(parseEther("32"));
     expect(await dvtModule.beaconValidators()).to.equal(1);
@@ -115,10 +120,11 @@ describe("DVTModule", () => {
 
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
 
+    // Use proposal queue - outsider should not be able to propose for cluster they're not in
     await expect(
       dvtModule
         .connect(outsider)
-        .depositToBeaconChainInCluster(
+        .proposeDeposit(
           CLUSTER_ID,
           "0x" + "00".repeat(48),
           EXPECTED_CREDS,
@@ -128,11 +134,31 @@ describe("DVTModule", () => {
     ).to.be.revertedWithCustomError(dvtModule, "OperatorNotInCluster");
   });
 
-  it("rejects threshold > 1 until multi-operator approvals are implemented", async () => {
+  it("supports threshold > 1 with multi-operator proposal queue", async () => {
     const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_THRESHOLD"));
-    await expect(
-      dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address, outsider.address], 2),
-    ).to.be.revertedWithCustomError(dvtModule, "UnsupportedThreshold");
+    // Now supports threshold > 1
+    await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address, outsider.address], 2);
+
+    await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
+
+    // Propose deposit from nodeOp
+    await dvtModule
+      .connect(nodeOp)
+      .proposeDeposit(
+        CLUSTER_ID,
+        "0x" + "00".repeat(48),
+        EXPECTED_CREDS,
+        "0x" + "00".repeat(96),
+        "0x" + "00".repeat(32),
+      );
+
+    // Need both operators to approve for threshold=2
+    await dvtModule.connect(nodeOp).approveDeposit(CLUSTER_ID, 0);
+    await dvtModule.connect(outsider).approveDeposit(CLUSTER_ID, 0);
+
+    // Deposit should execute after threshold approvals
+    await dvtModule.connect(oracle).reportBeacon(1, parseEther("32"));
+    expect(await dvtModule.beaconBalance()).to.equal(parseEther("32"));
   });
 
   it("has granular pause on router submit", async () => {
@@ -165,10 +191,11 @@ describe("DVTModule", () => {
     await router.connect(gov).registerModule(UNCONFIGURED_ID, unconfigured.target, 0);
     await router.submitToModule(UNCONFIGURED_ID, ZeroAddress, {value: parseEther("32")});
 
+    // Use proposal queue - should revert when withdrawal credentials not configured
     await expect(
       unconfigured
         .connect(nodeOp)
-        .depositToBeaconChainInCluster(
+        .proposeDeposit(
           UNCONFIGURED_ID,
           "0x" + "00".repeat(48),
           EXPECTED_CREDS,
