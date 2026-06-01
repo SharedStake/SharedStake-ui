@@ -163,8 +163,7 @@ describe("DVTModule", () => {
       [CLUSTER_ID, pubkey, EXPECTED_CREDS, signature, depositDataRoot]
     );
 
-    // Need both operators to approve for threshold=2
-    await dvtModule.connect(nodeOp).approveDeposit(proposalId);
+    // Proposer (nodeOp) already counted as first approval, need outsider's approval for threshold=2
     await dvtModule.connect(outsider).approveDeposit(proposalId);
 
     // Deposit should execute after threshold approvals
