@@ -157,12 +157,10 @@ describe("DVTModule", () => {
         depositDataRoot,
       );
 
-    // Compute proposalId
-    const proposalId = ethers.keccak256(
-      ethers.AbiCoder.defaultAbiCoder().encode(
-        ["bytes32", "bytes", "bytes", "bytes", "bytes32"],
-        [CLUSTER_ID, pubkey, EXPECTED_CREDS, signature, depositDataRoot]
-      )
+    // Compute proposalId using solidityPackedKeccak256 (equivalent to keccak256(abi.encodePacked(...)))
+    const proposalId = ethers.solidityPackedKeccak256(
+      ["bytes32", "bytes", "bytes", "bytes", "bytes32"],
+      [CLUSTER_ID, pubkey, EXPECTED_CREDS, signature, depositDataRoot]
     );
 
     // Need both operators to approve for threshold=2
