@@ -79,17 +79,19 @@ describe("DVTModule", () => {
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
 
     // Use proposal queue for threshold=1 cluster
+    const pubkey = "0x" + "00".repeat(48);
+    const signature = "0x" + "00".repeat(96);
+    const depositDataRoot = "0x" + "00".repeat(32);
     await dvtModule
       .connect(nodeOp)
       .proposeDeposit(
         CLUSTER_ID,
-        "0x" + "00".repeat(48),
+        pubkey,
         EXPECTED_CREDS,
-        "0x" + "00".repeat(96),
-        "0x" + "00".repeat(32),
+        signature,
+        depositDataRoot,
       );
-    // For threshold=1, proposer can approve immediately
-    await dvtModule.connect(nodeOp).approveDeposit(CLUSTER_ID, 0);
+    // For threshold=1, deposit executes immediately on propose (no separate approve needed)
 
     await dvtModule.connect(oracle).reportBeacon(1, parseEther("32"));
     expect(await dvtModule.beaconBalance()).to.equal(parseEther("32"));
@@ -142,19 +144,30 @@ describe("DVTModule", () => {
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
 
     // Propose deposit from nodeOp
+    const pubkey = "0x" + "00".repeat(48);
+    const signature = "0x" + "00".repeat(96);
+    const depositDataRoot = "0x" + "00".repeat(32);
     await dvtModule
       .connect(nodeOp)
       .proposeDeposit(
         CLUSTER_ID,
-        "0x" + "00".repeat(48),
+        pubkey,
         EXPECTED_CREDS,
-        "0x" + "00".repeat(96),
-        "0x" + "00".repeat(32),
+        signature,
+        depositDataRoot,
       );
 
+    // Compute proposalId
+    const proposalId = ethers.keccak256(
+      ethers.AbiCoder.defaultAbiCoder().encode(
+        ["bytes32", "bytes", "bytes", "bytes", "bytes32"],
+        [CLUSTER_ID, pubkey, EXPECTED_CREDS, signature, depositDataRoot]
+      )
+    );
+
     // Need both operators to approve for threshold=2
-    await dvtModule.connect(nodeOp).approveDeposit(CLUSTER_ID, 0);
-    await dvtModule.connect(outsider).approveDeposit(CLUSTER_ID, 0);
+    await dvtModule.connect(nodeOp).approveDeposit(proposalId);
+    await dvtModule.connect(outsider).approveDeposit(proposalId);
 
     // Deposit should execute after threshold approvals
     await dvtModule.connect(oracle).reportBeacon(1, parseEther("32"));
