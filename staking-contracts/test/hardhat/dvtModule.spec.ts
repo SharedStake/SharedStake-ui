@@ -163,6 +163,10 @@ describe("DVTModule", () => {
       [CLUSTER_ID, pubkey, EXPECTED_CREDS, signature, depositDataRoot]
     );
 
+    // Grant NODE_OPERATOR role to outsider so they can approve
+    const NODE_OPERATOR_ROLE = await dvtModule.NODE_OPERATOR();
+    await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, outsider.address);
+
     // Proposer (nodeOp) already counted as first approval, need outsider's approval for threshold=2
     await dvtModule.connect(outsider).approveDeposit(proposalId);
 
