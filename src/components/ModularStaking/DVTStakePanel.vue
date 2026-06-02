@@ -280,7 +280,7 @@
 </template>
 
 <script>
-import { useModularStakingStore } from '@/stores/modularStaking'
+import { getModularStakingAddresses, useModularStakingStore } from '@/stores/modularStaking'
 import { useWalletStore } from '@/stores/wallet'
 import { ethers } from 'ethers'
 import dvtModuleABI from '@/contracts/abis/dvtModule.json'
@@ -387,49 +387,7 @@ export default {
     },
     
     getAddresses(chainId) {
-      const normalizeChainId = (id) => {
-        if (!id && id !== 0) return ''
-        if (typeof id === 'bigint') return '0x' + id.toString(16)
-        if (typeof id === 'number') return '0x' + id.toString(16)
-        if (typeof id === 'string' && !id.toLowerCase().startsWith('0x')) return '0x' + parseInt(id, 10).toString(16)
-        return id.toLowerCase()
-      }
-      
-      const CONTRACT_ADDRESSES = {
-        '0x1': {
-          stakingRouter: '0x0000000000000000000000000000000000000000',
-          stToken: '0x0000000000000000000000000000000000000000',
-          wstToken: '0x0000000000000000000000000000000000000000',
-          withdrawalQueueV2: '0x0000000000000000000000000000000000000000',
-          validatorModule: '0x0000000000000000000000000000000000000000',
-          dvtModule: '0x0000000000000000000000000000000000000000',
-          operatorRegistry: '0x0000000000000000000000000000000000000000',
-          sgtToken: '0x84810bcF08744d5862B8181f12d17bfd57d3b078',
-        },
-        '0xaa36a7': {
-          stakingRouter: '0x0000000000000000000000000000000000000000',
-          stToken: '0x0000000000000000000000000000000000000000',
-          wstToken: '0x0000000000000000000000000000000000000000',
-          withdrawalQueueV2: '0x0000000000000000000000000000000000000000',
-          validatorModule: '0x0000000000000000000000000000000000000000',
-          dvtModule: '0x0000000000000000000000000000000000000000',
-          operatorRegistry: '0x0000000000000000000000000000000000000000',
-          sgtToken: '0x0000000000000000000000000000000000000000',
-        },
-        '0x7a69': {
-          stakingRouter: '0x0000000000000000000000000000000000000000',
-          stToken: '0x0000000000000000000000000000000000000000',
-          wstToken: '0x0000000000000000000000000000000000000000',
-          withdrawalQueueV2: '0x0000000000000000000000000000000000000000',
-          validatorModule: '0x0000000000000000000000000000000000000000',
-          dvtModule: '0x0000000000000000000000000000000000000000',
-          operatorRegistry: '0x0000000000000000000000000000000000000000',
-          sgtToken: '0x0000000000000000000000000000000000000000',
-        },
-      }
-      
-      const cid = normalizeChainId(chainId)
-      return CONTRACT_ADDRESSES[cid] || null
+      return getModularStakingAddresses(chainId)
     },
     
     async getDVTContract() {

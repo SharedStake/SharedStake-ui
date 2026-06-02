@@ -1,3 +1,0 @@
-[submodule "infra"]
-	path = infra
-	url = https://github.com/chimera-defi/eth2-quickstart

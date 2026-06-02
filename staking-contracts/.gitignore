@@ -24,3 +24,5 @@ lib/forge-std
 # Build artifacts
 flats
 deployments
+data/abi
+lib/abi

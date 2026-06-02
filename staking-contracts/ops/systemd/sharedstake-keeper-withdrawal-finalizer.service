@@ -7,7 +7,7 @@ After=network-online.target
 Type=simple
 User=sharedstake
 Group=sharedstake
-WorkingDirectory=/opt/sharedstake/SharedDeposit
+WorkingDirectory=/opt/sharedstake/SharedStake-ui/staking-contracts
 EnvironmentFile=/etc/sharedstake/keeper.env
 ExecStart=/usr/bin/env npx ts-node scripts/keepers/withdrawalFinalizer.ts --watch --interval=120
 Restart=always
@@ -17,7 +17,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
-ReadWritePaths=/opt/sharedstake/SharedDeposit
+ReadWritePaths=/opt/sharedstake/SharedStake-ui/staking-contracts
 UMask=0077
 LimitNOFILE=65536
 

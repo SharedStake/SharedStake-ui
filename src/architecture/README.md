@@ -1,7 +1,7 @@
 # Architecture Workspace
 
 > **V3 contracts live in `staking-contracts/contracts/v2/modular-staking/`.** See `LIDO_PARITY_ARCHITECTURE.md` for the full system design.
-> Note: The `SharedDeposit/` git submodule was removed; all contract source is now directly in `staking-contracts/`.
+> All protocol contract source is managed directly in `staking-contracts/`.
 
 This folder is the frontend-facing architecture workspace for iterative planning.
 

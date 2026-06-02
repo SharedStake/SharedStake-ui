@@ -127,7 +127,7 @@ Trust notes:
 
 ## 8. Confirmed Test Surface
 
-`SharedDeposit/test/v2/modular-staking/` contains targeted suites for:
+`staking-contracts/test/v2/modular-staking/` contains targeted suites for:
 - E2E and router E2E flows
 - Router controls (caps, policies, inflow limits)
 - Oracle and quorum behavior

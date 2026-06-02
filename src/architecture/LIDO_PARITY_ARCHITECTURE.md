@@ -99,7 +99,7 @@ All divisions floor. This means:
 | Pause (emergency) | Immediate (GUARDIAN) |
 | Unpause | GOV (no timelock; requires deliberate decision) |
 
-> Note: Timelock wiring is implemented in deploy scripts (`013_governance.ts` and `014_governanceHandover.ts`); non-local releases must verify governance/timelock execution before accepting TVL.
+> Note: Timelock wiring is implemented in deploy scripts (`014_governance.ts` and `015_governanceHandover.ts`); non-local releases must verify governance/timelock execution before accepting TVL.
 
 ---
 

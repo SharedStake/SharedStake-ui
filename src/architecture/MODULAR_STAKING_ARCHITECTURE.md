@@ -99,7 +99,7 @@ All divisions floor. This means:
 | Pause (emergency) | Immediate (GUARDIAN) |
 | Unpause | GOV (no timelock; requires deliberate decision) |
 
-> Note: Timelock wiring is implemented in deploy scripts (`013_governance.ts` and `014_governanceHandover.ts`); non-local releases must verify governance/timelock execution before accepting TVL.
+> Note: Timelock wiring is implemented in deploy scripts (`014_governance.ts` and `015_governanceHandover.ts`); non-local releases must verify governance/timelock execution before accepting TVL.
 
 ---
 
@@ -248,7 +248,7 @@ Rationale:
 - CRITICAL: canClaim leaf encoding synced to double-hash (was always returning false)
 - HIGH: withdrawUnclaimedFees now enforces 30-day MIN_CLAIM_PERIOD
 
-**Merkle tree:** Upgraded to OZ standard double-hash encoding. Off-chain builder at SharedDeposit/scripts/merkle/buildDebtPoolTree.js.
+**Merkle tree:** Upgraded to OZ standard double-hash encoding. Off-chain builder at `staking-contracts/scripts/merkle/buildDebtPoolTree.js`.
 
 **X-Ray Full Enumeration (x-ray pass 2):**
 - CRITICAL: DebtPool.receiveStETHAndUnwrap broken transferFrom removed (fees were silently lost)

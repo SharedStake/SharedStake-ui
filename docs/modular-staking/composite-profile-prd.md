@@ -1,6 +1,6 @@
 # SharedStake V2 Modular Staking Composite Profile
 
-Status: synthesized from the historical PR #376 design thread, current PR #378 parent diff surface, and `SharedDeposit` submodule continuation through `7b6af27`.
+Status: synthesized from the historical PR #376 design thread, current PR #378 parent diff surface, and `staking-contracts` local contract continuation through `7b6af27`.
 
 ## 1. Naming History (What We Called It Before)
 

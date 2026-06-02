@@ -1,6 +1,6 @@
 # SharedStake Staking Contracts
 
-This directory contains the complete SharedStake V3 modular staking smart contracts and all associated build, test, and deployment infrastructure. This is a self-contained, production-ready smart contract system migrated from the SharedDeposit submodule.
+This directory contains the complete SharedStake V3 modular staking smart contracts and all associated build, test, and deployment infrastructure. It is the local source of truth for contract development in this repository.
 
 ## Overview
 
@@ -27,14 +27,14 @@ These contracts implement the complete modular staking system including:
 
 ## Complete Infrastructure
 
-This directory includes ALL components from the SharedDeposit submodule:
+This directory includes the local contract toolchain:
 
 ### Build & Configuration
 
 - `hardhat.config.ts` - Hardhat build configuration
 - `foundry.toml` - Foundry build configuration
 - `foundry.lock` - Foundry dependency lock file
-- `package-contracts.json` - Contract dependencies (renamed from package.json)
+- `package.json` - Contract dependencies and npm scripts
 - `tsconfig.json` - TypeScript configuration
 - `.solhint.json` - Solidity linting rules
 - `.prettierrc.yaml` - Code formatting configuration
@@ -49,7 +49,6 @@ This directory includes ALL components from the SharedDeposit submodule:
 ### Deployment
 
 - `deploy/` - Deployment scripts
-- `deploy/v2-modular-staking/` - Modular staking deployment scripts
 - `deployments/` - Deployment artifacts and addresses
 - `ops/` - Operations scripts
 - `runbooks/` - Operational runbooks
@@ -62,7 +61,6 @@ This directory includes ALL components from the SharedDeposit submodule:
 ### Documentation
 
 - `docs/` - Complete documentation
-- `README-CONTRACTS.md` - Original SharedDeposit README
 - `deploy_log.md` - Deployment history
 
 ### Supporting Infrastructure
@@ -73,9 +71,9 @@ This directory includes ALL components from the SharedDeposit submodule:
 - `data/` - Data files
 - `sharedstake-oracle/` - Oracle infrastructure
 - `tasks/` - Hardhat tasks
-- `artifacts/` - Build artifacts
-- `cache/` - Build cache
-- `out/` - Foundry build output
+- `artifacts/` - Ignored Hardhat build artifacts
+- `cache/` - Ignored Hardhat build cache
+- `out/` - Ignored Foundry build output
 - `flats/` - Flattened contracts
 
 ### Services
@@ -118,16 +116,13 @@ staking-contracts/
 - All critical security issues resolved
 - Comprehensive threat model documented
 
-## Historical Note
-
-These contracts and ALL associated infrastructure were originally developed in the SharedDeposit submodule (https://github.com/chimera-defi/SharedDeposit). They have been copied here in their entirety for direct management in the SharedStake-ui repository while preserving the submodule for historical reference.
 
 ## Build & Test
 
 The complete build system is included:
 
 ```bash
-# Install dependencies (using package-contracts.json)
+# Install dependencies
 npm install
 
 # Run Hardhat build

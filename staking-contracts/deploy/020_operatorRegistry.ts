@@ -29,7 +29,7 @@ function readConfiguredNftAddress(): string | undefined {
  *
  * The registry is optional — modules fall back to role-based access when no
  * registry is set. This script is safe to run after 008_validatorModule and
- * 011_dvtModule have already been deployed.
+ * 012_dvtModule have already been deployed.
  *
  * Default bond config (env-overridable):
  *   V2_OPERATOR_ETH_BOND_PER_SLOT  — ETH per slot (default: 1 ETH)
@@ -37,7 +37,7 @@ function readConfiguredNftAddress(): string | undefined {
  *   V2_OPERATOR_MAX_SLOTS          — max slots per operator (default: 100)
  *
  * SGT token:
- *   local — reuses the SGTV2 MockERC20 deployed by 013_governance.ts
+ *   local — reuses the SGTV2 MockERC20 deployed by 014_governance.ts
  *   other — V2_SGT_ADDRESS env var (mainnet: 0x84810bcF08744d5862B8181f12d17bfd57d3b078)
  */
 const func: DeployFunction = async hre => {
@@ -53,7 +53,7 @@ const func: DeployFunction = async hre => {
   let sgtAddress: string;
   if (isLocal) {
     const localSgt = await address("SGTV2");
-    if (!localSgt) throw new Error("SGTV2 not deployed — run 013_governance first");
+    if (!localSgt) throw new Error("SGTV2 not deployed — run 014_governance first");
     sgtAddress = localSgt;
     console.log("  Using local SGTV2:", sgtAddress);
   } else {

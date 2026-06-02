@@ -1,5 +1,5 @@
 {
-  "name": "SharedDeposit",
+  "name": "sharedstake-staking-contracts",
   "license": "BUSL-1.1",
   "devDependencies": {
     "@metamask/foundryup": "^1.0.1",

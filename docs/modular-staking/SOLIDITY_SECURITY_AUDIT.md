@@ -3,7 +3,7 @@
 **Date:** 2026-05-08
 **Auditor:** Codex GPT-5
 **Scope:** `contracts/v2/modular-staking/*.sol` + `contracts/v2/modular-staking/modules/*.sol`
-**Commit:** `721a055` (SharedDeposit submodule)
+**Commit:** `721a055` (pre-migration internal audit baseline; sources now live in `staking-contracts/`)
 
 ---
 

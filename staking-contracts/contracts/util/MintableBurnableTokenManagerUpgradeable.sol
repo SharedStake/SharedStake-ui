@@ -2,7 +2,7 @@
 pragma solidity 0.8.7;
 pragma experimental ABIEncoderV2;
 
-import {IERC20MintableBurnable} from "../interfaces/IERC20MintableBurnable.sol";
+import {IERC20MintableBurnable} from "../v2/interfaces/IERC20MintableBurnable.sol";
 import {AddressUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 

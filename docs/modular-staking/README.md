@@ -19,6 +19,6 @@ Reference documentation for the SharedStake V2 Modular Staking protocol.
 ## Security Test Gates
 
 - Hardhat adversarial + fuzz:
-  - `cd SharedDeposit && npx hardhat test test/v2/modular-staking/adversarial.spec.ts test/v2/modular-staking/fuzz.spec.ts`
+  - `cd staking-contracts && npx hardhat test test/v2/modular-staking/adversarial.spec.ts test/v2/modular-staking/fuzz.spec.ts`
 - Foundry invariants:
-  - `cd SharedDeposit && npm run test:invariants`
+  - `cd staking-contracts && npm run test:invariants`

@@ -131,7 +131,7 @@ func.dependencies = [
   "stToken",
   "feeController",
   "stakingCore",
-  "withdrawalQueue",
+  "withdrawalQueueV2",
   "oracle-validator",
   "staking-router",
   "validator-module",

@@ -23,7 +23,7 @@ Committed runtime artifacts:
 ## Quick Start
 
 ```bash
-# Install dependencies (from SharedDeposit root)
+# Install dependencies (from staking-contracts root)
 yarn install --frozen-lockfile
 
 # Create runtime env file

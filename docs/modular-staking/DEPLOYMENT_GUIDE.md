@@ -141,7 +141,7 @@ stToken.transferAdmin(address(timelock));
 
 ### Phase 3: Referral System
 
-#### Step 8: Deploy ReferralRegistry (via deploy script 016_referralRegistry.ts)
+#### Step 8: Deploy ReferralRegistry (via deploy script 017_referralRegistry.ts)
 
 Required environment variables:
 - `V2_GOVERNANCE_ADDRESS` (for ReferralRegistry GOV role)
@@ -161,7 +161,7 @@ ReferralRegistry registry = new ReferralRegistry(
 ```
 
 #### Step 9: Wire ReferralRegistry to FeeController
-Note: This is now handled automatically by deploy script 016_referralRegistry.ts
+Note: This is now handled automatically by deploy script 017_referralRegistry.ts
 
 #### Step 10: Optional Fee Token Rotation (governance only)
 ```solidity
@@ -212,7 +212,7 @@ It logs divergence when onchain referrers exist without active backend code mapp
 
 ### Phase 3.5: DebtPool Deployment
 
-#### Step 14: Deploy DebtPool (via deploy script 017_debtPool.ts)
+#### Step 14: Deploy DebtPool (via deploy script 018_debtPool.ts)
 
 Required environment variables:
 - `V2_GOVERNANCE_ADDRESS` (for DebtPool GOV and admin roles)
@@ -248,7 +248,7 @@ feeController.setRecipients(
 
 ### Phase 3.6: Operator Registry and Migration Helper
 
-#### Step 16: Deploy OperatorRegistry (via deploy script 019_operatorRegistry.ts)
+#### Step 16: Deploy OperatorRegistry (via deploy script 020_operatorRegistry.ts)
 
 The deploy script:
 1. Resolves SGT from the local `SGTV2` mock or `V2_SGT_ADDRESS` on non-local networks.
@@ -259,7 +259,7 @@ The deploy script:
 
 NFT credit is escrow based: the NFT contract cannot be changed or repriced while any NFT is locked, and NFTs are returned on `exitBond()`.
 
-#### Step 17: Deploy MigrationHelper (via deploy script 020_migrationHelper.ts)
+#### Step 17: Deploy MigrationHelper (via deploy script 021_migrationHelper.ts)
 
 `MigrationHelper(oldRouter, gov)` is deployed after `staking-router` and `governance`. It does not move user funds; it publishes a governance-controlled migration notice and activation signal for frontends and integrators.
 

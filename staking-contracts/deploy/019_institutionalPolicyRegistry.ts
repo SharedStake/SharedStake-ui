@@ -5,7 +5,7 @@ import {resolveGovernanceAddress} from "../helpers/governance";
 
 /**
  * Deploys the InstitutionalPolicyRegistry for allowlist/blocklist policy management.
- * Optional component — skipped if already deployed. Referenced by 014_governanceHandover.ts.
+ * Optional component — skipped if already deployed. Referenced by 015_governanceHandover.ts.
  */
 const func: DeployFunction = async hre => {
   const ship = await Ship.init(hre);

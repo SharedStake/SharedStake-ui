@@ -19,7 +19,6 @@ import "../interfaces/ITokenUtilityModule.sol";
 
     Sushi: https://github.com/sushiswap/sushiswap/blob/canary/contracts/MasterChefV2.sol
     Iron: https://github.com/chimera-defi/iron-core-v2/blob/master/contracts/IronChef.sol
-    Sharedstake: https://github.com/chimera-defi/SharedDeposit/blob/main/contracts/governance/MasterChef.sol
 
 */
 contract MasterChef is Ownable {

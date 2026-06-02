@@ -4,6 +4,7 @@
  */
 // import axios from "axios"
 import { ethers } from "ethers";
+import { useToast } from "vue-toastification";
 
 export const getCurrentGasPrices = async () => {
   try {
@@ -56,36 +57,54 @@ export const getCurrentGasPrices = async () => {
   }
 };
 
-import Notify from "bnc-notify";
+const ETHERSCAN_HOST_BY_CHAIN = {
+  "0x1": "etherscan.io",
+  "0x5": "goerli.etherscan.io",
+  "0xaa36a7": "sepolia.etherscan.io",
+};
 
-export const notify = Notify({
-  dappId: "ba574938-2a97-44e8-812f-653f9a6a499b", // [String] The API key created by step one above
-  networkId: 5, // [Integer] The Ethereum network ID your Dapp uses.
-  darkMode: true,
-  desktopPosition: "topRight",
-});
+const getToast = () => useToast();
+
+const txUrlForHash = (hash) => {
+  const chainId = window.ethereum?.chainId?.toLowerCase?.() || "0x1";
+  const host = ETHERSCAN_HOST_BY_CHAIN[chainId] || ETHERSCAN_HOST_BY_CHAIN["0x1"];
+  return `https://${host}/tx/${hash}`;
+};
+
+const shortHash = (hash) => `${hash.slice(0, 10)}...${hash.slice(-8)}`;
+
+export const notify = {
+  hash(hash) {
+    const toast = getToast();
+    toast.info(`Transaction submitted: ${shortHash(hash)}`, {
+      timeout: 8000,
+      onClick: () => window.open(txUrlForHash(hash), "_blank", "noopener,noreferrer"),
+    });
+
+    const emitter = {
+      on(event, handler) {
+        if (event === "all" && typeof handler === "function") {
+          window.setTimeout(() => handler({ hash }), 0);
+        }
+        return emitter;
+      },
+    };
+
+    return { emitter };
+  },
+  notification(notificationObject) {
+    return notifyNotification(notificationObject.message, notificationObject.type);
+  },
+};
 
 export function notifyHandler(hash) {
-  let { emitter } = notify.hash(hash);
-  let chain = window.ethereum.chainId == "0x5" ? "goerli." : "";
-  emitter.on("all", (transaction) => ({
-    onclick: () =>
-      window.open(
-        `https://${chain}etherscan.io/tx/${transaction.hash}`,
-        "_blank",
-        "noopener norefferer"
-      ),
-  }));
+  notify.hash(hash);
 }
 
 export function notifyNotification(message, type = "pending") {
-  let notificationObject = {
-    eventCode: "notification",
-    type: type,
-    message: message,
-  };
-
-  return notify.notification(notificationObject);
+  const toast = getToast();
+  const normalizedType = type === "error" || type === "success" || type === "info" ? type : "info";
+  return toast[normalizedType](message);
 }
 
 export function toWei(value) {

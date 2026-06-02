@@ -78,4 +78,4 @@ const func: DeployFunction = async hre => {
 
 export default func;
 func.tags = ["modular-staking", "validator-module"];
-func.dependencies = ["staking-router", "withdrawalQueue"];
+func.dependencies = ["staking-router", "withdrawalQueueV2"];

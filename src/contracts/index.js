@@ -17,11 +17,17 @@ import sgtABI from './abis/erc20.json'
 import airdrop_distributor from './abis/distributor.json'
 import migratorABI from './abis/migrator.json' 
 
-// https://github.com/chimera-defi/SharedDeposit/blob/main/data/abi/Withdrawals.json
 import withdrawalsABI from './abis/withdrawals.json'
 import rolloversABI from './abis/rollovers.json'
 import sgETHABI from './abis/sgETH.json'
 import wsgETHABI from './abis/wsgETH.json'
+import stTokenABI from './abis/stToken.json'
+import wstTokenABI from './abis/wstToken.json'
+import stakingRouterABI from './abis/stakingRouter.json'
+import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
+import validatorModuleABI from './abis/validatorModule.json'
+import dvtModuleABI from './abis/dvtModule.json'
+import operatorRegistryABI from './abis/operatorRegistry.json'
 
 // Chain-specific contract addresses
 import mainnetAddresses from './addresses/mainnet.json'
@@ -119,7 +125,14 @@ let _ABIs = {
     withdrawals: withdrawalsABI,
     rollovers: rolloversABI,
     sgETH: sgETHABI,
-    wsgETH: wsgETHABI
+    wsgETH: wsgETHABI,
+    stToken: stTokenABI,
+    wstToken: wstTokenABI,
+    stakingRouter: stakingRouterABI,
+    withdrawalQueueV2: withdrawalQueueV2ABI,
+    validatorModule: validatorModuleABI,
+    dvtModule: dvtModuleABI,
+    operatorRegistry: operatorRegistryABI
 }
 
 let connErr = () => {

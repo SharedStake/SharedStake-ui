@@ -16,15 +16,17 @@ This guide documents the deployment sequence for the SharedStake V2 modular stak
 | 8   | 008_validatorModule.ts            | ValidatorModule      | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
 | 9   | 009_oracleAdapter.ts              | OracleAdapter        | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
 | 10  | 010_lstWrapModule.ts              | LSTWrapModule        | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 11  | 011_dvtModule.ts                  | DVTModule            | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 12  | 012_quorumOracleAdapter.ts        | QuorumOracleAdapter  | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 13  | 013_governance.ts                 | GovernanceTimelock   | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 14  | 014_governanceHandover.ts         | N/A                  | V2_GOVERNANCE_ADDRESS                      | Transfers DEFAULT_ADMIN_ROLE and GOV to Timelock for all governed contracts                                       |
-| 15  | 015_referralCodeRegistryWiring.ts | N/A                  | V2_GOVERNANCE_ADDRESS                      | Additional role wiring for referral system                                                                        |
-| 16  | 016_referralRegistry.ts           | ReferralRegistry     | V2_GOVERNANCE_ADDRESS                      | Grants ROUTER to StakingCore/StakingRouter, FEE_CTRL to FeeController, sets registry on StakingCore/StakingRouter |
-| 17  | 017_debtPool.ts                   | DebtPool             | V2_GOVERNANCE_ADDRESS                      | Updates FeeController.setRecipients() to include DebtPool address                                                 |
-| 18  | 019_operatorRegistry.ts           | OperatorRegistry     | V2_GOVERNANCE_ADDRESS, V2_SGT_ADDRESS      | Sets default bond config, optional NFT credit, grants CALLER to ValidatorModule/DVTModule                         |
-| 19  | 020_migrationHelper.ts            | MigrationHelper      | V2_GOVERNANCE_ADDRESS                      | Deploys non-custodial migration signal helper for router replacement notices                                      |
+| 11  | 011_stTokenERC4626Wrapper.ts      | StTokenERC4626Wrapper | V2_GOVERNANCE_ADDRESS                     | N/A                                                                                                               |
+| 12  | 012_dvtModule.ts                  | DVTModule            | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
+| 13  | 013_quorumOracleAdapter.ts        | QuorumOracleAdapter  | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
+| 14  | 014_governance.ts                 | GovernanceTimelock   | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
+| 15  | 015_governanceHandover.ts         | N/A                  | V2_GOVERNANCE_ADDRESS                      | Transfers DEFAULT_ADMIN_ROLE and GOV to Timelock for all governed contracts                                       |
+| 16  | 016_referralCodeRegistryWiring.ts | N/A                  | V2_GOVERNANCE_ADDRESS                      | Additional role wiring for referral system                                                                        |
+| 17  | 017_referralRegistry.ts           | ReferralRegistry     | V2_GOVERNANCE_ADDRESS                      | Grants ROUTER to StakingCore/StakingRouter, FEE_CTRL to FeeController, sets registry on StakingCore/StakingRouter |
+| 18  | 018_debtPool.ts                   | DebtPool             | V2_GOVERNANCE_ADDRESS                      | Updates FeeController.setRecipients() to include DebtPool address                                                 |
+| 19  | 019_institutionalPolicyRegistry.ts | InstitutionalPolicyRegistry | V2_GOVERNANCE_ADDRESS                | Optional module policy gates                                                                                      |
+| 20  | 020_operatorRegistry.ts           | OperatorRegistry     | V2_GOVERNANCE_ADDRESS, V2_SGT_ADDRESS      | Sets default bond config, optional NFT credit, grants CALLER to ValidatorModule/DVTModule                         |
+| 21  | 021_migrationHelper.ts            | MigrationHelper      | V2_GOVERNANCE_ADDRESS                      | Deploys non-custodial migration signal helper for router replacement notices                                      |
 
 ## Environment Variables
 

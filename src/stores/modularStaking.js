@@ -14,6 +14,10 @@ import stakingRouterABI from '@/contracts/abis/stakingRouter.json'
 import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
 import validatorModuleABI from '@/contracts/abis/validatorModule.json'
 import operatorRegistryABI from '@/contracts/abis/operatorRegistry.json'
+import mainnetAddresses from '@/contracts/addresses/mainnet.json'
+import goerliAddresses from '@/contracts/addresses/goerli.json'
+import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
+import localAddresses from '@/contracts/addresses/local.json'
 
 // Placeholder zero address used when contracts are not deployed on the connected chain.
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -27,41 +31,31 @@ const ERC721_ENUMERABLE_ABI = [
   'function getApproved(uint256 tokenId) view returns (address)',
 ]
 
-// Per-chain contract addresses. Update with real addresses after deployment.
-const CONTRACT_ADDRESSES = {
-  '0x1': {   // mainnet — populated after audit + deploy
-    stakingRouter: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-    validatorModule: ZERO_ADDR,
-    dvtModule: ZERO_ADDR,
-    operatorRegistry: ZERO_ADDR,
-    sgtToken: '0x84810bcF08744d5862B8181f12d17bfd57d3b078',
-    nftContract: ZERO_ADDR,
-  },
-  '0xaa36a7': { // sepolia testnet
-    stakingRouter: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-    validatorModule: ZERO_ADDR,
-    dvtModule: ZERO_ADDR,
-    operatorRegistry: ZERO_ADDR,
-    sgtToken: ZERO_ADDR,
-    nftContract: ZERO_ADDR,
-  },
-  '0x7a69': { // localhost (hardhat)
-    stakingRouter: ZERO_ADDR,
-    stToken: ZERO_ADDR,
-    wstToken: ZERO_ADDR,
-    withdrawalQueueV2: ZERO_ADDR,
-    validatorModule: ZERO_ADDR,
-    dvtModule: ZERO_ADDR,
-    operatorRegistry: ZERO_ADDR,
-    sgtToken: ZERO_ADDR,
-    nftContract: ZERO_ADDR,
-  },
+// Per-chain contract addresses come from the same JSON files used by the
+// legacy contract index. Local/fork deployments update local.json through
+// scripts/contracts/sync-addresses.sh.
+const DEFAULT_CONTRACT_ADDRESSES = {
+  stakingRouter: ZERO_ADDR,
+  stToken: ZERO_ADDR,
+  wstToken: ZERO_ADDR,
+  withdrawalQueueV2: ZERO_ADDR,
+  validatorModule: ZERO_ADDR,
+  dvtModule: ZERO_ADDR,
+  operatorRegistry: ZERO_ADDR,
+  sgtToken: ZERO_ADDR,
+  nftContract: ZERO_ADDR,
+}
+
+const SGT_TOKEN_BY_CHAIN = {
+  '0x1': '0x84810bcF08744d5862B8181f12d17bfd57d3b078',
+}
+
+const ADDRESS_MAPS_BY_CHAIN = {
+  '0x1': mainnetAddresses,
+  '0x5': goerliAddresses,
+  '0xaa36a7': sepoliaAddresses,
+  '0x7a69': localAddresses,
+  '0x539': localAddresses,
 }
 
 function normalizeChainId(id) {
@@ -72,9 +66,32 @@ function normalizeChainId(id) {
   return id.toLowerCase()
 }
 
+function pickAddress(source, key, fallbackKey = null) {
+  if (!source) return ZERO_ADDR
+  return source[key] || (fallbackKey ? source[fallbackKey] : null) || ZERO_ADDR
+}
+
 function getAddresses(chainId) {
   const cid = normalizeChainId(chainId)
-  return CONTRACT_ADDRESSES[cid] || null
+  const source = ADDRESS_MAPS_BY_CHAIN[cid]
+  if (!source) return null
+
+  return {
+    ...DEFAULT_CONTRACT_ADDRESSES,
+    stakingRouter: pickAddress(source, 'stakingRouter'),
+    stToken: pickAddress(source, 'stToken'),
+    wstToken: pickAddress(source, 'wstToken'),
+    withdrawalQueueV2: pickAddress(source, 'withdrawalQueueV2'),
+    validatorModule: pickAddress(source, 'validatorModule'),
+    dvtModule: pickAddress(source, 'dvtModule'),
+    operatorRegistry: pickAddress(source, 'operatorRegistry'),
+    sgtToken: source.sgtToken || source.sgtV2 || SGT_TOKEN_BY_CHAIN[cid] || ZERO_ADDR,
+    nftContract: source.nftContract || ZERO_ADDR,
+  }
+}
+
+export function getModularStakingAddresses(chainId) {
+  return getAddresses(chainId)
 }
 
 export const useModularStakingStore = defineStore('modularStaking', {
