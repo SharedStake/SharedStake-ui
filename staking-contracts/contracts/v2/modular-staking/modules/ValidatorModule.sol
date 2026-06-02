@@ -56,6 +56,7 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     bytes32 public expectedWithdrawalCredentials; // validated withdrawal creds prefix
     mapping(bytes32 => bool) internal _depositedPubkeys; // keccak256(pubkey) → already deposited
     IOperatorRegistry public operatorRegistry; // Optional operator registry for bond-based access
+    mapping(bytes32 => bool) public approvedPubkeys; // keccak256(pubkey) → pre-approved for deposit
 
     // ── Events ────────────────────────────────────────────────────────────────
     event DepositReceived(uint256 amount, uint256 newBufferedEther);
@@ -63,6 +64,8 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     event BeaconChainDeposit(bytes pubkey, uint256 amount, uint256 newBufferedEther);
     event ExpectedWithdrawalCredentialsSet(bytes32 indexed expected);
     event OperatorRegistrySet(address indexed registry);
+    event PubkeyApproved(bytes32 indexed pubkeyHash);
+    event PubkeyRevoked(bytes32 indexed pubkeyHash);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error NotRouter(address caller);
@@ -75,6 +78,7 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     error BeaconDepositContractUnavailable(address beaconDepositContract);
     error DuplicatePubkey(bytes32 pubkeyHash);
     error OperatorNotEligible(address operator);
+    error PubkeyNotApproved(bytes32 pubkeyHash);
 
     constructor(address router, bytes32 moduleId, address gov, address beaconDepositContract) {
         if (router == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -168,7 +172,12 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
 
         _doBeaconDeposit(pubkey, withdrawal_credentials, signature, deposit_data_root);
 
-        // Increment active validator count after successful deposit
+        // Increment active validator count after successful deposit.
+        // NOTE: decrementActive is the keeper's responsibility on validator exit.
+        // It must be called (via OperatorRegistry.decrementActive or the GOV escape
+        // hatch adminDecrementActive) once the validator has fully exited the beacon
+        // chain (EL withdrawal received + validator balance = 0). Omitting this call
+        // will permanently exhaust canDeposit() slots and block exitBond().
         if (address(operatorRegistry) != address(0)) {
             operatorRegistry.incrementActive(msg.sender);
         }
@@ -201,6 +210,9 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
         }
 
         bytes32 pkHash = keccak256(pubkey);
+        if (!approvedPubkeys[pkHash]) revert PubkeyNotApproved(pkHash);
+        // Clear approval after use — each pubkey can only be deposited once
+        delete approvedPubkeys[pkHash];
         if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
         _depositedPubkeys[pkHash] = true;
         _depositedValidatorCount += 1;
@@ -224,6 +236,21 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
         if (_expected == bytes32(0)) revert InvalidWithdrawalCredentials();
         expectedWithdrawalCredentials = _expected;
         emit ExpectedWithdrawalCredentialsSet(_expected);
+    }
+
+    /// @notice Pre-approve a validator pubkey for beacon deposit. Must be called by GOV
+    ///         before `depositToBeaconChain` to prevent withdrawal-credential frontrun attacks.
+    function approvePubkey(bytes calldata pubkey) external onlyRole(GOV) {
+        bytes32 h = keccak256(pubkey);
+        approvedPubkeys[h] = true;
+        emit PubkeyApproved(h);
+    }
+
+    /// @notice Revoke a previously approved pubkey (e.g., if the validator set changes).
+    function revokePubkey(bytes calldata pubkey) external onlyRole(GOV) {
+        bytes32 h = keccak256(pubkey);
+        approvedPubkeys[h] = false;
+        emit PubkeyRevoked(h);
     }
 
     /// @notice Set the operator registry for bond-based access control

@@ -222,6 +222,10 @@ contract DVTModule is ValidatorModule {
         bool isGov = hasRole(GOV, msg.sender);
         if (!isClusterOp && !isGov) revert OperatorNotInCluster(p.clusterId, msg.sender);
         p.cancelled = true;
+        // Reset approvalCount so the same pubkey+sig combo can be re-proposed after
+        // cancellation. Without this, proposeDeposit's `approvalCount > 0` guard would
+        // permanently block re-use of the same deposit data.
+        p.approvalCount = 0;
         emit DepositProposalCancelled(proposalId, msg.sender);
     }
 
@@ -258,6 +262,9 @@ contract DVTModule is ValidatorModule {
         }
 
         bytes32 pkHash = keccak256(pubkeyMem);
+        if (!approvedPubkeys[pkHash]) revert PubkeyNotApproved(pkHash);
+        // Clear approval after use — each pubkey can only be deposited once
+        delete approvedPubkeys[pkHash];
         if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
         _depositedPubkeys[pkHash] = true;
         _depositedValidatorCount += 1;
@@ -281,6 +288,12 @@ contract DVTModule is ValidatorModule {
             // validator. Charging both proposer and executor would (a) double-count
             // active validators and (b) cause a permanent revert if the proposer's
             // slot was filled between proposal creation and final approval.
+            //
+            // NOTE: decrementActive is the keeper's responsibility on validator exit.
+            // It must be called (via OperatorRegistry.decrementActive or the GOV escape
+            // hatch adminDecrementActive) once the validator has fully exited the beacon
+            // chain (EL withdrawal received + validator balance = 0). Omitting this call
+            // will permanently exhaust canDeposit() slots and block exitBond().
             operatorRegistry.incrementActive(executor);
         }
     }

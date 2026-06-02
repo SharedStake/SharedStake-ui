@@ -65,11 +65,20 @@ contract QuorumOracleAdapter is AccessControl {
     event MinReportIntervalSet(uint256 seconds_);
 
     // ── Errors ────────────────────────────────────────────────────────────────
-    // Validation errors are declared in OracleValidation and bubble up from library calls.
     error InvalidQuorum(uint256 provided, uint256 submitterCount_);
     error DuplicateVote(bytes32 reportHash, address submitter);
     error ReportAlreadyFinalized(bytes32 reportHash);
     error BelowMinimum(uint256 value, uint256 minimum);
+
+    // Re-exported from OracleValidation library so these appear in the ABI and
+    // off-chain tools (ethers.js / viem) can decode oracle revert reasons.
+    error StaleReport(uint256 reportAge, uint256 maxAge);
+    error BalanceDriftTooHigh(uint256 actual, uint256 max);
+    error SlashTooLarge(uint256 actual, uint256 max);
+    error FutureReportTimestamp(uint256 reportTimestamp, uint256 currentTimestamp);
+    error InvalidBeaconReportTuple(uint256 beaconValidators, uint256 beaconBalance);
+    error NonMonotonicReportTimestamp(uint256 reportTimestamp, uint256 lastReportTimestamp);
+    error ReportTooFrequent(uint256 earliestNextReportTime, uint256 currentTime);
 
     constructor(address reportTarget, address gov, uint256 initialQuorum) {
         if (reportTarget == address(0) || gov == address(0)) revert Errors.ZeroAddress();

@@ -33,6 +33,10 @@ contract DebtPool is AccessControl, Pausable {
     uint256 public totalStETHSharesReceived; // stETH shares from FeeController (pre-wrap)
     uint256 public totalWSTETHClaimed; // wstETH transferred to claimants
 
+    /// @notice Total wstETH allocated across active distributions but not yet claimed.
+    ///         Used to prevent overbooking — createDistribution checks free balance only.
+    uint256 public totalAllocatedUnclaimed;
+
     // Per-distribution tracking
     struct Distribution {
         bytes32 merkleRoot;
@@ -115,7 +119,9 @@ contract DebtPool is AccessControl, Pausable {
     /// @dev Only ADMIN can call. Increments distributionId and stores merkle root.
     function createDistribution(bytes32 _merkleRoot, uint256 _totalAmount) external onlyRole(ADMIN) whenNotPaused {
         if (_totalAmount == 0) revert InvalidAmount();
-        if (WSTETH.balanceOf(address(this)) < _totalAmount) revert InsufficientBalance();
+        // Check free (unallocated) balance to prevent overbooking across concurrent distributions.
+        if (WSTETH.balanceOf(address(this)) - totalAllocatedUnclaimed < _totalAmount) revert InsufficientBalance();
+        totalAllocatedUnclaimed += _totalAmount;
 
         distributionId++;
         distributions[distributionId] = Distribution({
@@ -156,6 +162,7 @@ contract DebtPool is AccessControl, Pausable {
         uint256 unclaimed = dist.totalAmount - dist.claimedAmount;
         if (unclaimed == 0) revert NoUnclaimedFees();
 
+        totalAllocatedUnclaimed -= unclaimed;
         dist.totalAmount = dist.totalAmount - unclaimed;
         dist.swept = true; // mark swept so claim() surfaces a clear error, not InsufficientBalance
 
@@ -199,6 +206,7 @@ contract DebtPool is AccessControl, Pausable {
         claimed[_distributionId][_leafIndex] = true;
         dist.claimedAmount += _amount;
         totalWSTETHClaimed += _amount;
+        totalAllocatedUnclaimed -= _amount;
 
         // Transfer wstETH
         bool success = WSTETH.transfer(_recipient, _amount);
@@ -305,9 +313,10 @@ contract DebtPool is AccessControl, Pausable {
         uint256 wstETHAmountAfter = WSTETH.balanceOf(address(this));
         uint256 wstETHReceived = wstETHAmountAfter - wstETHAmountBefore;
 
-        // Allow 1% slippage relative to stETH amount
-        uint256 minExpected = (stEthAmount * 99) / 100;
-        if (wstETHReceived < minExpected) revert InsufficientWstETHReceived();
+        // wstETH is always worth more than stETH (rate > 1 and growing), so comparing
+        // raw wstETH amounts to stETH amounts is wrong — wstETHReceived will always be
+        // numerically less than stEthAmount. Just verify the wrap produced non-zero output.
+        if (wstETHReceived == 0) revert InsufficientWstETHReceived();
 
         emit WstETHUnwrapped(stEthAmount, wstETHReceived);
     }

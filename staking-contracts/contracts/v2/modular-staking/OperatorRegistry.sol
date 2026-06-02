@@ -71,6 +71,9 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     /// @notice Original operator owner for an escrowed NFT tokenId.
     mapping(uint256 => address) private _nftEscrowOwner;
 
+    /// @notice NFT tokenIds pending withdrawal (pull pattern) after exitBond.
+    mapping(address => uint256[]) public pendingNftWithdrawals;
+
     // ── Events ────────────────────────────────────────────────────────────────
     event BondConfigSet(bytes32 indexed name, uint256 ethBondPerSlot, uint256 sgtBondPerSlot, uint256 maxSlots);
     event DefaultConfigSet(bytes32 indexed name);
@@ -219,7 +222,17 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         op.totalSlots = 0;
         op.configName = bytes32(0);
 
-        _returnEscrowedNfts(msg.sender, nftIds);
+        // Move escrowed NFTs to pendingNftWithdrawals so the operator can pull them
+        // via withdrawEscrowedNfts(). This avoids reverting the entire bond exit if any
+        // individual NFT transferFrom fails (paused NFT, blacklisted token, etc.).
+        uint256 nftCount = nftIds.length;
+        if (nftCount > 0) {
+            uint256[] storage pending = pendingNftWithdrawals[msg.sender];
+            for (uint256 i = 0; i < nftCount; i++) {
+                pending.push(nftIds[i]);
+            }
+            delete escrowedNfts[msg.sender];
+        }
 
         if (ethToReturn > 0) {
             (bool success, ) = msg.sender.call{value: ethToReturn}("");
@@ -243,7 +256,12 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         return op.activeValidators < op.totalSlots;
     }
 
-    /// @notice Increment active validator count (called after successful deposit)
+    /// @notice Increment active validator count (called after successful deposit).
+    /// @dev MUST be paired with a corresponding decrementActive call when the validator
+    ///      fully exits the beacon chain (EL withdrawal received + validator balance = 0).
+    ///      Modules call this on deposit; the caller (keeper/oracle) is responsible for
+    ///      calling decrementActive on exit — tracked via reportBeacon decrementals or a
+    ///      dedicated keeper watching the beacon chain.
     /// @param operator Operator address
     function incrementActive(address operator) external onlyRole(CALLER) {
         Operator storage op = operators[operator];
@@ -252,12 +270,32 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         emit ActiveIncremented(operator, op.activeValidators);
     }
 
-    /// @notice Decrement active validator count (called after validator exit)
+    /// @notice Decrement active validator count (called after validator exit).
+    /// @dev This MUST be called when a validator fully exits the beacon chain
+    ///      (EL withdrawal received + validator balance = 0). Failing to call this will
+    ///      permanently prevent canDeposit() from returning true once totalSlots is
+    ///      exhausted, and will permanently block exitBond() for the operator.
+    ///      Operators should track this via the oracle's reportBeacon decrementals or a
+    ///      keeper watching beacon chain exits.
     /// @param operator Operator address
     function decrementActive(address operator) external onlyRole(CALLER) {
         Operator storage op = operators[operator];
         if (op.activeValidators == 0) revert Errors.InvalidAmount();
         op.activeValidators -= 1;
+        emit ActiveDecremented(operator, op.activeValidators);
+    }
+
+    /// @notice Emergency decrement for validator exits not captured by modules.
+    /// @dev Use when a validator has fully exited the beacon chain (EL withdrawal
+    ///      received + validator balance = 0) but decrementActive was never called
+    ///      by the module — e.g., due to a missing keeper or oracle gap. This unblocks
+    ///      canDeposit() and exitBond() for affected operators.
+    /// @param operator Operator address
+    /// @param count Number of active validators to decrement
+    function adminDecrementActive(address operator, uint256 count) external onlyRole(GOV) {
+        Operator storage op = operators[operator];
+        if (count > op.activeValidators) revert Errors.InvalidAmount();
+        op.activeValidators -= count;
         emit ActiveDecremented(operator, op.activeValidators);
     }
 
@@ -278,6 +316,9 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         BondConfig storage cfg = bondConfigs[op.configName];
         uint256 collateral = op.sgtBonded + _nftCreditOf(operator);
         uint256 justified = (cfg.sgtBondPerSlot > 0) ? collateral / cfg.sgtBondPerSlot : 0;
+        // Never reduce totalSlots below activeValidators — doing so would
+        // permanently lock the operator (exitBond requires activeValidators == 0).
+        if (justified < op.activeValidators) justified = op.activeValidators;
         if (justified < op.totalSlots) op.totalSlots = justified;
 
         // Set 7-day slash lock on exitBond
@@ -338,24 +379,23 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     }
 
 
-    function _returnEscrowedNfts(address operator, uint256[] storage nftIds) internal {
-        uint256 nftCount = nftIds.length;
-        if (nftCount == 0) return;
-
-        uint256[] memory idsToReturn = new uint256[](nftCount);
-        for (uint256 i = 0; i < nftCount; i++) {
-            uint256 tokenId = nftIds[i];
-            idsToReturn[i] = tokenId;
-            delete _nftEscrowOwner[tokenId];
-        }
-        delete escrowedNfts[operator];
-        totalEscrowedNfts -= nftCount;
-
+    /// @notice Pull pending NFTs back to the caller after exitBond().
+    /// @dev Separated from exitBond() to prevent a single reverting transferFrom from
+    ///      bricking the entire bond exit (e.g. paused NFT contract, blacklisted token).
+    function withdrawEscrowedNfts() external nonReentrant {
+        uint256[] storage pending = pendingNftWithdrawals[msg.sender];
+        uint256 count = pending.length;
+        if (count == 0) revert Errors.InvalidAmount();
         IERC721 nft = nftContract;
-        for (uint256 i = 0; i < nftCount; i++) {
-            nft.transferFrom(address(this), operator, idsToReturn[i]);
-            emit NftUnlocked(operator, idsToReturn[i]);
+        for (uint256 i = count; i > 0; ) {
+            unchecked { --i; }
+            uint256 tokenId = pending[i];
+            delete _nftEscrowOwner[tokenId];
+            pending.pop();
+            nft.transferFrom(address(this), msg.sender, tokenId);
+            emit NftUnlocked(msg.sender, tokenId);
         }
+        totalEscrowedNfts -= count;
     }
 
     function _nftCreditOf(address operator) internal view returns (uint256) {

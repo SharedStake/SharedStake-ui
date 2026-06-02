@@ -87,6 +87,13 @@ library OracleValidation {
                 uint256 gainBps = ((newAvg - prevAvg) * 10000) / prevAvg;
                 if (gainBps > maxDriftBps_) revert BalanceDriftTooHigh(gainBps, maxDriftBps_);
             }
+            // Guard downward drift symmetrically: a per-validator balance drop beyond
+            // maxDriftBps per report can be used to iteratively drain beacon accounting
+            // without triggering the slash guard (which only caps total balance loss).
+            if (prevAvg > 0 && newAvg < prevAvg) {
+                uint256 dropBps = ((prevAvg - newAvg) * 10000) / prevAvg;
+                if (dropBps > maxDriftBps_) revert BalanceDriftTooHigh(dropBps, maxDriftBps_);
+            }
         }
     }
 

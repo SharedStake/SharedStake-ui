@@ -141,12 +141,16 @@ describe("WithdrawalQueueV2", () => {
 
       const tx = await queue.connect(gov).finalize(1, {value: parseEther("2")});
       const receipt = await tx.wait();
-      const gasUsed = receipt!.gasUsed * receipt!.gasPrice;
+      const gasUsed1 = receipt!.gasUsed * receipt!.gasPrice;
+
+      // Excess ETH stored in pendingRefunds — gov must withdraw it
+      const tx2 = await queue.connect(gov).withdrawRefund();
+      const receipt2 = await tx2.wait();
+      const gasUsed2 = receipt2!.gasUsed * receipt2!.gasPrice;
 
       const govAfter = await ethers.provider.getBalance(gov.address);
-      // Gov paid ~1 ETH (finalized) + gas, got ~1 ETH back.
-      // Net cost ≈ ~1 ETH + gas.
-      expect(govBefore - govAfter - gasUsed).to.be.closeTo(parseEther("1"), parseEther("0.01"));
+      // Gov paid ~1 ETH (finalized) + gas on both txs, got ~1 ETH back via withdrawRefund.
+      expect(govBefore - govAfter - gasUsed1 - gasUsed2).to.be.closeTo(parseEther("1"), parseEther("0.01"));
     });
 
     it("reverts on invalid request range", async () => {

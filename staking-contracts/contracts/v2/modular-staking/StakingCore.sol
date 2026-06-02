@@ -203,6 +203,13 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
             revert InvalidBeaconReportTuple(newBeaconValidators, newBeaconBalance);
         }
 
+        // Reject (0,0) reports unless this is the deliberate initialization report
+        // (before any validators have been added). After the first non-zero report,
+        // a (0,0) report would collapse totalPooledEther to bufferedEther only.
+        if (newBeaconValidators == 0 && newBeaconBalance == 0 && _beaconBalance > 0) {
+            revert Errors.InvalidAmount();
+        }
+
         // Sanity: beacon balance cannot be more than 1.5× the maximum honest value.
         if (newBeaconValidators > 0) {
             uint256 maxPlausible = (newBeaconValidators * 32 ether * 3) / 2;
@@ -224,11 +231,17 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
 
         uint256 postTotalPooled = _bufferedEther + newBeaconBalance;
         uint256 locked = _queueLockedEther();
-        // Ensure we don't underflow if queue has more locked than pooled
+        // Ensure we don't underflow if queue has more locked than pooled.
         // locked == postTotalPooled is the legitimate wind-down state (all ETH in queue).
-        // locked > postTotalPooled is an invariant violation — reject the report.
-        if (locked > postTotalPooled) revert QueueExceedsPooledEther(locked, postTotalPooled);
-        postTotalPooled -= locked; // reaches 0 cleanly during wind-down
+        // locked > postTotalPooled can occur after a major validator slash. Hard-reverting
+        // here would permanently freeze oracle reporting. Instead, cap postTotalPooled at
+        // locked so oracle reports proceed — no positive delta (rewards) are distributed
+        // until the beacon balance recovers. The exchange rate may drop (loss socialised),
+        // but the protocol does not freeze.
+        if (locked > postTotalPooled) {
+            postTotalPooled = locked;
+        }
+        postTotalPooled -= locked; // reaches 0 cleanly during wind-down or slash recovery
         ST_TOKEN.setTotalPooledEther(postTotalPooled);
 
         // Distribute fee shares when there are positive rewards.

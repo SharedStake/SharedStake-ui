@@ -345,6 +345,7 @@ describe("StakingRouter", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
       await mod1.connect(oracle).reportBeacon(1, parseEther("33"));
 
@@ -421,6 +422,7 @@ describe("StakingRouter", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       // Module's internal totalEth() is temporarily lower until the next report,
@@ -705,6 +707,7 @@ describe("StakingRouter", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       // Validator module reports 32.5 ETH on beacon (delta +0.5 ETH reward).
@@ -777,6 +780,7 @@ describe("StakingRouter", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       const treasuryBefore = await stToken.sharesOf(gov.address);
@@ -809,6 +813,7 @@ describe("StakingRouter", () => {
       const creds1 = expectedWithdrawalCreds;
       const sig1 = ethers.hexlify(ethers.randomBytes(96));
       const root1 = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey1);
       await mod1.connect(gov).depositToBeaconChain(pubkey1, creds1, sig1, root1);
       expect(await router.moduleBeaconBalance(SOLO)).to.equal(parseEther("32"));
 
@@ -822,6 +827,7 @@ describe("StakingRouter", () => {
       const creds2 = expectedWithdrawalCreds;
       const sig2 = ethers.hexlify(ethers.randomBytes(96));
       const root2 = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey2);
       await mod1.connect(gov).depositToBeaconChain(pubkey2, creds2, sig2, root2);
       expect(await router.moduleBeaconBalance(SOLO)).to.equal(parseEther("64"));
 
@@ -848,6 +854,7 @@ describe("StakingRouter", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       // Now totalPooledEther is still 32 (32 buffered → 32 on beacon, accounting unchanged).
@@ -869,6 +876,7 @@ describe("StakingRouter", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       const govSharesAfter1 = await stToken.sharesOf(gov.address);
@@ -1072,6 +1080,7 @@ describe("StakingRouter", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
       await mod1.connect(oracle).reportBeacon(1, parseEther("33"));
 

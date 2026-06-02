@@ -49,7 +49,9 @@ describe("OperatorRegistry NFT bond credit", () => {
     expect(opData.sgtBonded).to.equal(parseEther("750"));
     expect(opData.totalSlots).to.equal(1n);
 
-    await expect(registry.connect(operator).exitBond())
+    await registry.connect(operator).exitBond();
+    // NFTs use pull pattern — operator must claim them separately after exitBond
+    await expect(registry.connect(operator).withdrawEscrowedNfts())
       .to.emit(registry, "NftUnlocked")
       .withArgs(operator.address, 5);
     expect(await nft.ownerOf(5)).to.equal(operator.address);
@@ -86,6 +88,7 @@ describe("OperatorRegistry NFT bond credit", () => {
     ).to.be.revertedWithCustomError(registry, "InvalidConfig");
 
     await registry.connect(operator).exitBond();
+    await registry.connect(operator).withdrawEscrowedNfts();
     await expect(registry.connect(gov).setNftContract(ethers.ZeroAddress, 0))
       .to.emit(registry, "NftContractSet")
       .withArgs(ethers.ZeroAddress, 0);

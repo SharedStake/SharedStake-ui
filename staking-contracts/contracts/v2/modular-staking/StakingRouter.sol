@@ -399,9 +399,7 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         _enforcePolicy(moduleId, recipient);
 
         if (m.mintCapEth != 0) {
-            // For validator modules, include pending beacon principal tracked in
-            // `moduleBeaconBalance` but not yet reflected in module-reported beaconBalance().
-            uint256 newTotal = _effectiveModuleTotalForCap(moduleId, m.addr);
+            uint256 newTotal = _effectiveModuleTotalForCap(moduleId, m.addr) + ethEquiv;
             if (newTotal > m.mintCapEth) revert MintCapExceeded(moduleId, newTotal, m.mintCapEth);
         }
 
@@ -413,7 +411,7 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         uint256 shares = ShareMath.getSharesByPooledEth(ethEquiv, currentShares, currentPooled);
         if (shares == 0) revert Errors.InvalidAmount();
 
-        ST_TOKEN.setTotalPooledEther(_enforceGlobalCap(currentPooled + ethEquiv));
+        _enforceGlobalCap(currentPooled + ethEquiv);
         ST_TOKEN.mintShares(recipient, shares);
 
         emit LSTWrapped(moduleId, recipient, ethEquiv, shares);
@@ -429,6 +427,13 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         _requireLSTWrapModuleType(moduleId, m.moduleType, this.unwrapToModule.selector);
         if (caller == address(0)) revert Errors.ZeroAddress();
         if (stTokenAmount == 0) revert Errors.InvalidAmount();
+
+        // Security note: `caller` is trusted to be the actual initiating user, supplied by
+        // the registered module. Registered modules MUST NOT pass arbitrary addresses —
+        // they should transfer stToken from the user to themselves first, then pass
+        // address(this) as caller, to prevent a malicious module from burning any staker's
+        // shares without consent. This is enforced by convention + module code review, not
+        // by a runtime allowance check (which would require an extra user approval step).
 
         // Compute shares from token amount at current exchange rate.
         uint256 shares = ST_TOKEN.getSharesByPooledEth(stTokenAmount);

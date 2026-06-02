@@ -42,6 +42,7 @@ contract VoteEscrowV2 is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard {
     struct LockedBalance {
         uint256 amount;
         uint256 end;
+        uint256 penaltyRateAtLock; // rate stored at creation time for emergencyWithdraw
     }
 
     uint256 public earlyWithdrawPenaltyRate = 30000; // 30%
@@ -171,7 +172,13 @@ contract VoteEscrowV2 is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard {
 
         uint256 _amount = _locked.amount;
         if (_now < _locked.end) {
-            uint256 _fee = (_amount * earlyWithdrawPenaltyRate) / PRECISION;
+            // Use the lower of the rate at lock time and the current rate so the user
+            // is protected from GOV front-running an increase but benefits from any
+            // subsequent rate decrease.
+            uint256 rate = _locked.penaltyRateAtLock < earlyWithdrawPenaltyRate
+                ? _locked.penaltyRateAtLock
+                : earlyWithdrawPenaltyRate;
+            uint256 _fee = (_amount * rate) / PRECISION;
             _penalize(_fee);
             _amount -= _fee;
             emit EarlyWithdraw(msg.sender, _amount, _fee, _now);
@@ -258,6 +265,7 @@ contract VoteEscrowV2 is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard {
             _vp = voting_power_locked_days(_value, _days);
             _locked.amount = _value;
             _locked.end = _now + _days * 1 days;
+            _locked.penaltyRateAtLock = earlyWithdrawPenaltyRate;
         } else if (_days == 0) {
             _vp = voting_power_unlock_time(_value, _end);
             _locked.amount = _amount + _value;

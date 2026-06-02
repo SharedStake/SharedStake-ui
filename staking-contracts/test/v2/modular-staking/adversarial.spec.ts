@@ -231,6 +231,7 @@ describe("SharedStake V2 adversarial", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       // First report normalizes baseline (1 validator, 32 ETH).
@@ -250,6 +251,7 @@ describe("SharedStake V2 adversarial", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       // Keep reported balance equal to baseline so router delta checks would not
@@ -285,6 +287,7 @@ describe("SharedStake V2 adversarial", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
       await mod1.connect(oracle).reportBeacon(1, parseEther("32"));
 
@@ -349,6 +352,7 @@ describe("SharedStake V2 adversarial", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
       await mod1.connect(oracle).reportBeacon(1, parseEther("32"));
 
@@ -370,6 +374,7 @@ describe("SharedStake V2 adversarial", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       const blk = await ethers.provider.getBlock("latest");
@@ -392,6 +397,7 @@ describe("SharedStake V2 adversarial", () => {
       const creds = expectedWithdrawalCreds;
       const sig = ethers.hexlify(ethers.randomBytes(96));
       const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       const firstBlk = await ethers.provider.getBlock("latest");

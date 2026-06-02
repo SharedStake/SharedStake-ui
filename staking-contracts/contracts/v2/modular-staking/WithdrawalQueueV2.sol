@@ -53,6 +53,9 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     // ETH locked for finalized-but-unclaimed requests.
     uint256 public lockedEther;
 
+    // Pull-based refunds for excess ETH sent during finalize.
+    mapping(address => uint256) public pendingRefunds;
+
     // Queue finalization mode is oracle-controlled.
     WithdrawalMode public withdrawalMode;
     uint256 public lastOracleReportTimestamp;
@@ -139,9 +142,11 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         // Reduce totalPooledEther BEFORE burning shares to keep exchange rate
         // consistent throughout the transaction (atomic state update).
         uint256 currentPooled = ST_TOKEN.totalPooledEther();
-        if (currentPooled >= ethValue) {
-            ST_TOKEN.setTotalPooledEther(currentPooled - ethValue);
-        }
+        // Revert rather than silently skipping the accounting update — skipping would
+        // leave totalPooledEther inflated by ethValue, allowing all remaining share
+        // holders to appear wealthier than they are.
+        if (currentPooled < ethValue) revert Errors.InvalidAmount();
+        ST_TOKEN.setTotalPooledEther(currentPooled - ethValue);
         ST_TOKEN.burnShares(msg.sender, shares);
 
         requestId = nextRequestId++;
@@ -194,12 +199,23 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         lockedEther += totalEthRequired;
         lastFinalizedRequestId = lastRequestId;
 
-        // Return any excess ETH to the caller.
+        // Accrue any excess ETH for pull-based withdrawal instead of push refund.
+        // Push refund (sendValue) can revert if caller is a contract without receive(),
+        // and enables griefing via front-run dust sends.
         if (msg.value > totalEthRequired) {
-            payable(msg.sender).sendValue(msg.value - totalEthRequired);
+            pendingRefunds[msg.sender] += msg.value - totalEthRequired;
         }
 
         emit BatchFinalized(fromId, lastRequestId, totalEthRequired);
+    }
+
+    /// @notice Withdraw any pending refund accrued from excess ETH sent during finalize().
+    ///         Uses pull pattern to avoid revert risk when caller is a contract.
+    function withdrawRefund() external nonReentrant {
+        uint256 amount = pendingRefunds[msg.sender];
+        if (amount == 0) revert Errors.InvalidAmount();
+        pendingRefunds[msg.sender] = 0;
+        payable(msg.sender).sendValue(amount);
     }
 
     // ── Oracle mode update ────────────────────────────────────────────────────
@@ -228,6 +244,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     }
 
     function setBunkerMinRequestAge(uint256 minAge) external onlyRole(GOV) {
+        if (minAge == 0) revert Errors.InvalidAmount();
         bunkerMinRequestAge = minAge;
         emit BunkerParamsUpdated(bunkerMaxRequestsPerFinalize, bunkerMinRequestAge);
     }

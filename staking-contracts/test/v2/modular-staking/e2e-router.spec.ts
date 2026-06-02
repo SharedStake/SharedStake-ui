@@ -120,6 +120,7 @@ describe("StakingRouter E2E (SharedStake V2 modular)", () => {
     const sig = ethers.hexlify(ethers.randomBytes(96));
     const root = ethers.hexlify(ethers.randomBytes(32));
 
+    await validatorModule.connect(gov).approvePubkey(pubkey);
     await validatorModule.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
     expect(await validatorModule.bufferedEther()).to.equal(0n);

@@ -77,6 +77,7 @@ describe("DVTModule", () => {
     await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);
 
     await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
+    await dvtModule.connect(gov).approvePubkey("0x" + "00".repeat(48));
     await dvtModule
       .connect(nodeOp)
       .proposeDeposit(
@@ -204,6 +205,7 @@ describe("DVTModule", () => {
     await router.connect(gov).registerModule(MODULE_ID, solo.target, 0);
     await router.submitToModule(MODULE_ID, ZeroAddress, {value: parseEther("32")});
 
+    await solo.connect(gov).approvePubkey("0x" + "00".repeat(48));
     await expect(
       solo
         .connect(gov)

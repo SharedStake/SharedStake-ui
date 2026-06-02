@@ -31,4 +31,9 @@ interface IOperatorRegistry {
 
     /// @notice SGT credit applied per locked NFT (in wei).
     function nftSgtCredit() external view returns (uint256);
+
+    /// @notice Pull NFTs back after exitBond() using the two-step pull pattern.
+    ///         Separated from exitBond() to prevent a single reverting transferFrom
+    ///         from bricking the entire bond exit.
+    function withdrawEscrowedNfts() external;
 }
