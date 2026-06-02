@@ -14,7 +14,7 @@ import {resolveGovernanceAddress, resolveOracleSubmitterAddresses} from "../help
  * as the active ORACLE on ValidatorModule/DVTModule.
  *
  * Default: quorum = 3 for mainnet, 1 for local/testnet.
- * TODO: Set up 5 submitters on mainnet, quorum = 3 minimum (Opus recommendation).
+ * Production: configure 5 submitters on mainnet, quorum = 3 minimum (Opus recommendation).
  */
 const func: DeployFunction = async hre => {
   const ship = await Ship.init(hre);

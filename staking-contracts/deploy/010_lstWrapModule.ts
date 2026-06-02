@@ -2,6 +2,13 @@ import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {LSTWrapModule__factory, StEthPriceOracle__factory, StakingRouter__factory} from "../types";
 import {parseEther} from "ethers";
+import {
+  assertGovernanceSigner,
+  getGovernanceSigner,
+  pauseModuleAfterRegistrationIfRequested,
+  readPauseAfterRegistration,
+} from "../helpers/moduleDeployment";
+import {resolveGovernanceAddress} from "../helpers/governance";
 
 /**
  * Deploys an LSTWrapModule for stETH and registers it with the StakingRouter.
@@ -21,6 +28,7 @@ import {parseEther} from "ethers";
  *   - others   → required as STETH_CHAINLINK_FEED env var (or skip).
  */
 const LST_WRAP_STETH = "LST_WRAP_STETH";
+const LST_WRAP_PAUSED_ENV_KEYS = ["V2_LST_WRAP_MODULE_PAUSED", "V2_MODULES_DARK_LAUNCH"];
 
 function stethAddressFor(networkName: string): string | undefined {
   switch (networkName) {
@@ -46,7 +54,8 @@ function chainlinkFeedAddressFor(networkName: string): string | undefined {
 }
 
 const func: DeployFunction = async hre => {
-  const {deploy, connect, accounts, address} = await Ship.init(hre);
+  const ship = await Ship.init(hre);
+  const {deploy, connect, accounts, address} = ship;
 
   const routerAddress = await address(StakingRouter__factory);
   if (!routerAddress) throw new Error("StakingRouter not deployed");
@@ -63,8 +72,10 @@ const func: DeployFunction = async hre => {
     return;
   }
 
-  const govSigner = accounts.multiSig ?? accounts.deployer;
-  const gov = govSigner.address;
+  const gov = await resolveGovernanceAddress(hre, ship);
+  const govSigner = getGovernanceSigner(ship);
+  assertGovernanceSigner(ship, gov);
+  const pauseAfterRegistration = readPauseAfterRegistration(hre, LST_WRAP_PAUSED_ENV_KEYS, "LSTWrapModule");
   const moduleId = hre.ethers.keccak256(hre.ethers.toUtf8Bytes(LST_WRAP_STETH));
 
   // Deploy the LST module pointing at the on-chain stETH token.
@@ -100,6 +111,7 @@ const func: DeployFunction = async hre => {
     console.log(`  Registering LSTWrapModule with router (cap=${cap} wei)...`);
     await router.connect(govSigner).registerModule(moduleId, lstMod.target as string, cap);
   }
+  await pauseModuleAfterRegistrationIfRequested(router, govSigner, moduleId, "LSTWrapModule", pauseAfterRegistration);
 };
 
 export default func;

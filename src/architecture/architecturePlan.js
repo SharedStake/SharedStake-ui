@@ -1,7 +1,8 @@
 export const architectureMeta = {
-  title: "SharedStake Architecture Workspace",
-  subtitle: "Working draft for v2 evolution and contract-readiness execution",
-  updatedAt: "2026-05-06",
+  title: "SharedStake V3 Modular Staking Architecture",
+  subtitle:
+    "Router-first staking architecture, governed module rollout, and contract-readiness execution",
+  updatedAt: "2026-06-02",
   sources: [
     "https://docs.sharedstake.finance/sharedstake-v2.md",
     "https://docs.sharedstake.finance/sharedstake-v2/key-changes-over-v1.md",
@@ -9,216 +10,304 @@ export const architectureMeta = {
     "https://docs.sharedstake.finance/sharedstake-v2/shareddeposit-v2-architecture.md",
   ],
   localDocs: [
-    "llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md",
-    "src/architecture/lido-competitor-parity-phase2-plan.md",
-    "src/architecture/LIDO_PARITY_ARCHITECTURE.md",
-    "src/architecture/contracts-v1-invariants.md",
-    "src/architecture/contracts-v1-access-control-matrix.md",
-    "src/architecture/contracts-v1-readiness-runthrough.md",
-    "staking-contracts/contracts/v2/core/README.md",
-    "staking-contracts/test/v2/core",
+    "docs/modular-staking/architecture.md",
+    "docs/modular-staking/diagrams.md",
+    "docs/modular-staking/DEPLOYMENT_GUIDE.md",
+    "docs/modular-staking/UPGRADE_PATH.md",
+    "docs/modular-staking/AUDIT_WORKFLOW.md",
+    "staking-contracts/contracts/v2/modular-staking/StakingRouter.sol",
+    "staking-contracts/contracts/v2/modular-staking/modules/ValidatorModule.sol",
+    "staking-contracts/contracts/v2/modular-staking/modules/DVTModule.sol",
+    "staking-contracts/contracts/v2/modular-staking/modules/LSTWrapModule.sol",
   ],
 };
 
 export const coreArchitecture = [
   {
-    title: "Token Layer",
+    title: "Router + Accounting Plane",
     points: [
-      "sgETH: 1:1 ETH-pegged token for mint/redeem and LP-style usage.",
-      "wsgETH: yield-bearing wrapper that accrues staking performance.",
-      "Price/share accounting relies on on-chain state and sync cycles.",
+      "StakingRouter is the canonical staking entrypoint and pooled-accounting coordinator.",
+      "StToken tracks rebasing share ownership; WstToken provides non-rebasing wrapped exposure.",
+      "WithdrawalQueueV2 burns shares at request time and settles finalized ETH claims.",
     ],
   },
   {
-    title: "Minter + Buffer Layer",
+    title: "Execution Modules",
     points: [
-      "SharedDepositMinterV2 handles deposit, stake, unstake, and withdraw flows.",
-      "ETH buffer handles normal exit demand and peg support before validator exits.",
-      "Pause/slash/fee operations are controlled by governance roles.",
+      "ValidatorModule handles solo-validator ETH flow behind the router.",
+      "DVTModule extends validator flow with cluster-attributed deposits and DVT controls.",
+      "LSTWrapModule accepts oracle-priced LST exposure and mints/burns through router callbacks.",
     ],
   },
   {
-    title: "Rewards + Exit Layer",
+    title: "Control Plane",
     points: [
-      "RewardsReceiver routes EL/CL rewards into deposit or withdrawal paths.",
-      "WithdrawalQueue/Withdrawals provide delayed redemption when buffer is insufficient.",
-      "FeeSplitter and periphery contracts route protocol/operator/reflection flows.",
+      "GOV owns registration, caps, default routing, policy assignment, and unpause actions.",
+      "GUARDIAN can pause globally or per-module for fast incident response.",
+      "Code-hash allowlisting, inflow windows, mint caps, and policy registries bound module risk.",
     ],
   },
 ];
 
 export const phaseRoadmap = [
   {
-    phase: "Phase 0-1",
-    name: "Core Launch",
+    phase: "Phase 0",
+    name: "Local Contract Migration",
     additions: [
-      "Non-custodial, non-upgradeable core with guarded rollout.",
-      "Deposit + redeem-via-buffer + withdrawal flows.",
-      "Minimal contract surface focused on mainnet hardening.",
+      "All Solidity sources live under staking-contracts with no tracked submodules.",
+      "Duplicate contract copies and stale import paths are removed.",
+      "Contract audit workflow runs dependency audit, lint, compile, Hardhat tests, Foundry invariants, and Slither.",
+    ],
+  },
+  {
+    phase: "Phase 1",
+    name: "Dark Module Deployment",
+    additions: [
+      "Deploy router, token, queue, fee, oracle, and module contracts with verified addresses.",
+      "Register modules with conservative caps and keep risky inflow paths paused until governance enables them.",
+      "Wire withdrawal credentials, keepers, oracle submitters, and governance handover before user-facing launch.",
     ],
   },
   {
     phase: "Phase 2",
-    name: "Attribution + Controls",
+    name: "Governed Activation",
     additions: [
-      "Additive attribution entrypoints landed in StakingCore and StakingRouter.",
-      "DAO-routed fee telemetry events emitted on reward reports (core + router).",
-      "Quorum-oracle path, bunker controls, per-module inflow limits, and core/router beacon-baseline guards are covered by tests.",
+      "Use Governor/Timelock proposals to raise caps, unpause modules, and set default routing.",
+      "Roll out validator, DVT, and LST modules independently with telemetry-based risk budgets.",
+      "Keep GUARDIAN-only pause and GOV-only unpause separation intact.",
     ],
   },
   {
     phase: "Phase 3",
-    name: "Operator Decentralization",
+    name: "Operational Expansion",
     additions: [
-      "Expand beyond a single operator path.",
-      "Permissionless onboarding model (ERC-6551 + STEAK/SGT gating in docs).",
-      "Operational guardrails for operator performance and failures.",
-    ],
-  },
-  {
-    phase: "Phase 4",
-    name: "Fee Switch + Redistribution",
-    additions: [
-      "Protocol fee-switch activation policy.",
-      "Redistribution to locked SGT staking path.",
-      "Replacement for deprecated veSGT-style flow.",
-    ],
-  },
-  {
-    phase: "Phase 5",
-    name: "Multi-Chain Minter",
-    additions: [
-      "Minter extension to additional L1/L2 environments.",
-      "Cross-domain accounting and controls for sgETH mint paths.",
-      "Chain-by-chain rollout with independent risk limits.",
+      "Expand operator registry capacity, NFT bond credit policy, and DVT cluster onboarding.",
+      "Tune inflow windows, oracle cadence, and withdrawal finalization based on production telemetry.",
+      "Publish release manifests and external audit results before mainnet promotion.",
     ],
   },
 ];
 
 export const contractV1Readiness = [
   {
-    status: "in_progress",
-    title: "Freeze v1 scope and invariants",
-    goal: "Turn roadmap language into auditable contract invariants and out-of-scope boundaries.",
+    status: "done",
+    title: "Local contract migration",
+    goal: "Keep every production Solidity source local to staking-contracts and out of submodules.",
     currentState:
-      "Core contract scope is already concentrated under staking-contracts/contracts/v2/core, but invariants are not yet written as formal release gates.",
+      "PR 379 has no tracked gitlinks, no Solidity files outside staking-contracts, and no duplicate production Solidity basenames or exact duplicate Solidity blobs.",
     nextStep:
-      "Publish invariant spec and require explicit sign-off before any new feature merges.",
+      "Keep the layout checks in docs/modular-staking/AUDIT_WORKFLOW.md and .github/workflows/audit.yml green for every follow-up.",
     tasks: [
-      "Write spec for mint/redeem, pause, slash, fee split, withdrawal-queue behavior.",
-      "Define hard caps/limits (buffer limits, queue rules, validator count transitions).",
-      "Publish canonical contract interaction sequence diagrams.",
+      "Run gitlink, outside-contract, duplicate-source, and conflict-marker checks before merge.",
+      "Keep Foundry dependencies materialized through the ignored lib/forge-std path only.",
+      "Do not reintroduce contract copies under frontend or legacy submodule paths.",
+    ],
+  },
+  {
+    status: "done",
+    title: "Automated audit gates",
+    goal: "Make contract safety checks repeatable locally and in GitHub Actions.",
+    currentState:
+      "Root CI and the Contract Audit workflow pass on the PR head, including dependency audit, Solidity lint, Hardhat compile, modular Hardhat tests, Foundry invariants, and Slither.",
+    nextStep:
+      "Keep moderate-or-higher dependency advisories blocked and treat Slither regressions as review findings.",
+    tasks: [
+      "Run npm audit --audit-level=moderate inside staking-contracts.",
+      "Run npx hardhat test test/v2/modular-staking/*.spec.ts before contract changes land.",
+      "Run npm run setup:foundry and npm run test:invariants on clean machines.",
     ],
   },
   {
     status: "in_progress",
-    title: "Access-control matrix and key ceremony",
-    goal: "Eliminate ambiguous privileges before external audit and deployment.",
+    title: "Deployment readiness",
+    goal: "Prepare the dark-launch deployment path without accidentally opening module inflows.",
     currentState:
-      "Roles exist (GOV/NOR/DEFAULT_ADMIN_ROLE/Ownable), access matrices are drafted, deployment defaults were hardened to avoid deployer-retained control, and dedicated access-control + role-admin mapping tests now cover core/router/queue/quorum/policy modules. Signer ceremony policy is still pending.",
+      "Deployment scripts deploy and register modules; local networks default enabled for integration testing, while non-local deployments default to paused dark-launch state unless explicitly overridden.",
     nextStep:
-      "Create contract-by-contract privilege table and multisig runbook with threshold and rotation policy.",
+      "Add explicit deployment controls for dark-launching modules with paused state and conservative caps, then activate with Governor/Timelock proposals.",
     tasks: [
-      "Enumerate all privileged methods per contract and expected caller role.",
-      "Define multisig threshold, signer rotation plan, and emergency procedures.",
-      "Add tests that prove non-privileged callers cannot exercise sensitive paths.",
-    ],
-  },
-  {
-    status: "todo",
-    title: "Economic safety and stress testing",
-    goal: "Validate behavior under churn, slashing, and thin-liquidity conditions.",
-    currentState:
-      "Unit tests exist for many happy/unhappy paths, but scenario-level stress simulations are not yet formalized as release criteria.",
-    nextStep:
-      "Add scripted stress scenarios for buffer depletion, queued exits, slash events, and fee-mode switches.",
-    tasks: [
-      "Model high-withdrawal periods and queue starvation edge cases.",
-      "Test fee/reflection distribution under low and high yield regimes.",
-      "Simulate negative events (slash + pause + resume + backlog processing).",
+      "Populate src/contracts/addresses after verified testnet/mainnet deployment.",
+      "Set expectedWithdrawalCredentials before validator deposits.",
+      "Document each module default, cap, inflow window, and pause state in the deployment manifest.",
     ],
   },
   {
     status: "in_progress",
-    title: "Test coverage hardening",
-    goal: "Upgrade current unit/e2e tests into release gates for contract v1.",
+    title: "Governance activation",
+    goal: "Enable modules only through auditable governance actions after observation gates clear.",
     currentState:
-      "There is broad coverage in staking-contracts/test/v2/core plus parity/modular suites, including adversarial, role-negative, quorum operational, bunker-mode, attribution telemetry, and baseline-guard paths. Local suites are passing (179 parity/modular tests), but invariant/fuzz gates are still pending.",
+      "StakingRouter exposes GOV-only setMintCap, setModuleInflowLimit, setDefaultModule, and unpauseModule; GUARDIAN can pause modules immediately.",
     nextStep:
-      "Define minimum test matrix and pass thresholds, then enforce in CI for release branches.",
+      "Prepare proposal payload templates for staged module activation and cap increases.",
     tasks: [
-      "Promote core test suites into CI pass/fail release criteria.",
-      "Add invariant/fuzz tests around queue accounting and share conversions.",
-      "Add fork tests that replay real operator/reward patterns.",
+      "Queue setMintCap and setModuleInflowLimit before unpauseModule.",
+      "Keep setDefaultModule separate from module deployment unless default traffic should start immediately.",
+      "Use guardian pause drills before enabling mainnet user flow.",
+    ],
+  },
+];
+
+export const architectureDiagrams = [
+  {
+    title: "Router-First Component Map",
+    summary:
+      "Users enter through StakingRouter; modules execute asset-specific flows; StToken/WstToken and WithdrawalQueueV2 hold user accounting.",
+    groups: [
+      {
+        label: "User Surface",
+        nodes: ["Stake UI", "Wrap UI", "Withdraw UI", "Governance UI"],
+      },
+      {
+        label: "Router Plane",
+        nodes: [
+          "StakingRouter",
+          "FeeController",
+          "InstitutionalPolicyRegistry",
+        ],
+      },
+      {
+        label: "Modules",
+        nodes: ["ValidatorModule", "DVTModule", "LSTWrapModule"],
+      },
+      {
+        label: "Accounting",
+        nodes: ["StToken", "WstToken", "WithdrawalQueueV2"],
+      },
+      {
+        label: "Operations",
+        nodes: [
+          "OracleAdapter",
+          "QuorumOracleAdapter",
+          "OperatorRegistry",
+          "Keepers",
+        ],
+      },
+    ],
+    flows: [
+      "Submit ETH -> StakingRouter -> selected validator/DVT module -> StToken shares",
+      "Wrap LST -> LSTWrapModule -> StakingRouter callback -> StToken shares",
+      "Request exit -> WithdrawalQueueV2 burns shares -> guardian finalizes ETH -> user claims",
+      "Oracle report -> module validates -> router updates pooled ETH and fee shares",
     ],
   },
   {
-    status: "todo",
-    title: "Security review pipeline",
-    goal: "Treat audits as a stage in a broader secure release pipeline.",
-    currentState:
-      "Audit intent is documented in core README, but issue triage workflow and regression policy are not yet codified in this workspace.",
-    nextStep:
-      "Create findings tracker template and mandatory test-per-fix policy.",
-    tasks: [
-      "Run static analysis and linting with zero-high-severity policy.",
-      "Prepare external audit scope focused on v2/core and custom libs.",
-      "Track all findings in a remediation log with regression tests per fix.",
+    title: "Deposit, Report, Rebase Flow",
+    summary:
+      "Deposits mint shares immediately; beacon/LST reports later update pooled value and route protocol/operator/referral fees.",
+    groups: [
+      { label: "Deposit", nodes: ["User", "submitToModule", "receiveDeposit"] },
+      {
+        label: "Mint",
+        nodes: ["StakingRouter", "StToken.mintShares", "User shares"],
+      },
+      {
+        label: "Report",
+        nodes: [
+          "OracleAdapter",
+          "ValidatorModule.reportBeacon",
+          "Router pooled update",
+        ],
+      },
+      {
+        label: "Fees",
+        nodes: ["FeeController", "Treasury shares", "Operator shares"],
+      },
+    ],
+    flows: [
+      "User ETH is routed to the selected module and priced into shares.",
+      "Module reports cannot exceed configured drift/slash sanity bounds.",
+      "Fee accounting changes share ownership, not direct user ETH balances.",
     ],
   },
   {
-    status: "todo",
-    title: "Deployment reproducibility",
-    goal: "Make deployment deterministic and easy to verify for third parties.",
-    currentState:
-      "Deployment scripts and artifacts exist, but deterministic release manifests and bytecode attestations are not packaged as a single public checklist.",
-    nextStep:
-      "Create per-network release manifest with addresses, constructor args, commit hash, and verification links.",
-    tasks: [
-      "Pin compiler/config, deployment scripts, and expected bytecode hashes.",
-      "Document per-network params and governance addresses.",
-      "Publish verification checklist for explorers and downstream integrators.",
+    title: "Dark Launch Governance Path",
+    summary:
+      "Modules can be deployed and registered before user traffic, then activated later through timelocked governance actions.",
+    groups: [
+      {
+        label: "Deploy",
+        nodes: ["Deploy module", "Allowlist code hash", "Register module"],
+      },
+      {
+        label: "Keep Off",
+        nodes: ["pauseModule", "bounded cap", "not default route"],
+      },
+      {
+        label: "Vote",
+        nodes: ["Governor propose", "Timelock delay", "Execute"],
+      },
+      {
+        label: "Enable",
+        nodes: [
+          "setMintCap",
+          "setModuleInflowLimit",
+          "unpauseModule",
+          "setDefaultModule",
+        ],
+      },
+    ],
+    flows: [
+      "GUARDIAN can pause immediately; GOV must unpause through the governed path.",
+      "GOV can raise caps and make a module default only after proposal execution.",
+      "Each module can be activated independently after monitoring and audit gates clear.",
+    ],
+  },
+];
+
+export const governedRollout = [
+  {
+    stage: "Deploy Off",
+    owner: "Deployer + governance signer",
+    controls: [
+      "Deploy modules and verify bytecode.",
+      "Allowlist runtime code hashes before registration.",
+      "Register modules with conservative mint caps; do not use cap 0 as an off switch because cap 0 means unlimited.",
+      "Pause modules immediately when they should remain dark after deployment.",
     ],
   },
   {
-    status: "todo",
-    title: "Operational runbooks",
-    goal: "Define runtime actions for normal operations and incidents.",
-    currentState:
-      "Operational controls are present in contracts (pause/flip state/withdraw queue), but operator-facing playbooks are not yet written in one place.",
-    nextStep:
-      "Write incident runbooks and rehearse drills before mainnet promotion.",
-    tasks: [
-      "Create runbooks for pause/unpause, slash handling, and queue incident response.",
-      "Define SLOs for reward sync cadence and withdrawal processing.",
-      "Set on-call and escalation paths for governance/operators.",
+    stage: "Observe",
+    owner: "Ops + guardian",
+    controls: [
+      "Confirm withdrawal credentials and keeper env are set.",
+      "Confirm oracle submitters, quorum, and monitoring are live.",
+      "Keep default routing pointed only at the approved launch module.",
+    ],
+  },
+  {
+    stage: "Govern On",
+    owner: "Governor/Timelock",
+    controls: [
+      "Execute setMintCap and setModuleInflowLimit with bounded risk budgets.",
+      "Execute unpauseModule for the target module.",
+      "Execute setDefaultModule only after the module is intended to receive default submit() flow.",
     ],
   },
 ];
 
 export const releaseTracks = [
   {
-    milestone: "Internal Alpha",
+    milestone: "PR 379 Code Complete",
     criteria: [
-      "All core flows pass local + fork tests.",
-      "Invariant suite green for at least 1k randomized runs per scenario.",
-      "Spec and role matrix reviewed by protocol + frontend teams.",
+      "No tracked submodule contract sources or duplicate production Solidity copies.",
+      "Root CI and Contract Audit workflow are green on the PR head.",
+      "Architecture docs and frontend ArchitectureHub point at the same router-first model.",
     ],
   },
   {
-    milestone: "Public Testnet Beta",
+    milestone: "Testnet Dark Launch",
     criteria: [
-      "External testers can complete deposit/stake/withdrawal loops reliably.",
-      "Monitoring dashboards and alerting in place for key metrics.",
-      "Known-issue list published with mitigation guidance.",
+      "Contracts deployed, verified, and addresses populated in src/contracts/addresses/.",
+      "Modules deployed with risk caps, pause/default state intentionally documented, and keepers configured.",
+      "Governance handover to timelock is verified by deployment script and manifest checks.",
     ],
   },
   {
-    milestone: "Mainnet V1",
+    milestone: "Governed Activation",
     criteria: [
-      "Audit findings resolved or explicitly accepted with governance sign-off.",
-      "Deployment reproducibility and verification checklist completed.",
-      "Emergency response drills completed before launch.",
+      "Governor proposal enables each module only after monitoring and audit gates clear.",
+      "Initial caps and inflow windows are low enough for rollback through GUARDIAN pause.",
+      "External audit findings are closed or explicitly accepted before mainnet activation.",
     ],
   },
 ];

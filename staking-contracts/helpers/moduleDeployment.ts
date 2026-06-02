@@ -72,6 +72,34 @@ export function readMintCapWei(
   return 0n;
 }
 
+function readFirstBooleanEnv(keys: string[]): boolean | undefined {
+  for (const key of keys) {
+    const raw = process.env[key]?.trim().toLowerCase();
+    if (!raw) continue;
+    if (["1", "true", "yes", "y", "on"].includes(raw)) return true;
+    if (["0", "false", "no", "n", "off"].includes(raw)) return false;
+    throw new Error(`Invalid ${key}="${process.env[key]}". Expected true/false.`);
+  }
+  return undefined;
+}
+
+/**
+ * Resolve whether a module should be paused immediately after registration.
+ * Non-local deployments default to dark-launch mode; local/hardhat deployments
+ * default to enabled so local integration tests keep working.
+ */
+export function readPauseAfterRegistration(hre: HardhatRuntimeEnvironment, envKeys: string[], label: string): boolean {
+  const configured = readFirstBooleanEnv(envKeys);
+  if (configured !== undefined) return configured;
+
+  const pauseByDefault = !isLocalNetwork(hre);
+  console.log(
+    `  [${label}] No module pause override configured (${envKeys.join(", ")}); ` +
+      `defaulting pauseAfterRegistration=${pauseByDefault}`,
+  );
+  return pauseByDefault;
+}
+
 // ── StakingRouter helpers ──────────────────────────────────────────────────────
 
 /**
@@ -119,7 +147,12 @@ export async function registerOrUpdateModule(
   moduleAddr: string,
   mintCapWei: bigint,
   name: string,
-  opts: {setDefault?: boolean; verify?: boolean} = {},
+  opts: {
+    setDefault?: boolean;
+    verify?: boolean;
+    pauseAfterRegistration?: boolean;
+    guardianSigner?: SignerWithAddress;
+  } = {},
 ): Promise<void> {
   // Check if already registered.
   const [existingAddr] = await router.modules(moduleId);
@@ -134,6 +167,16 @@ export async function registerOrUpdateModule(
   } else {
     console.log(`  [${name}] Registering with StakingRouter...`);
     await router.connect(govSigner).registerModule(moduleId, moduleAddr, mintCapWei);
+  }
+
+  if (opts.pauseAfterRegistration) {
+    await pauseModuleAfterRegistrationIfRequested(
+      router,
+      opts.guardianSigner ?? govSigner,
+      moduleId,
+      name,
+      opts.pauseAfterRegistration,
+    );
   }
 
   if (opts.setDefault) {
@@ -153,6 +196,34 @@ export async function registerOrUpdateModule(
     }
     console.log(`  [${name}] Registration verified ✓`);
   }
+}
+
+export async function pauseModuleAfterRegistrationIfRequested(
+  router: any,
+  guardianSigner: SignerWithAddress,
+  moduleId: string,
+  name: string,
+  shouldPause: boolean,
+): Promise<void> {
+  if (!shouldPause) return;
+
+  const moduleInfo = await router.modules(moduleId);
+  const paused = moduleInfo.paused ?? moduleInfo[4];
+  if (paused) {
+    console.log(`  [${name}] Module already paused after registration`);
+    return;
+  }
+
+  const guardianRole: string = await router.GUARDIAN();
+  const hasGuardian: boolean = await router.hasRole(guardianRole, guardianSigner.address);
+  if (!hasGuardian) {
+    throw new Error(
+      `[${name}] pauseAfterRegistration requested, but signer ${guardianSigner.address} lacks StakingRouter GUARDIAN role.`,
+    );
+  }
+
+  console.log(`  [${name}] Pausing module after registration for dark launch...`);
+  await router.connect(guardianSigner).pauseModule(moduleId);
 }
 
 // ── Beacon deposit ─────────────────────────────────────────────────────────────

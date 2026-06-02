@@ -7,6 +7,7 @@ import {
   getGovernanceSigner,
   grantNodeOperatorRole,
   readMintCapWei,
+  readPauseAfterRegistration,
   registerOrUpdateModule,
   resolveBeaconDeposit,
   wireWithdrawalCredentials,
@@ -14,6 +15,7 @@ import {
 import {resolveGovernanceAddress, resolveNodeOperatorAddress} from "../helpers/governance";
 
 const DVT_MINT_CAP_ENV_KEYS = ["V2_DVT_MINT_CAP_ETH"];
+const DVT_PAUSED_ENV_KEYS = ["V2_DVT_MODULE_PAUSED", "V2_MODULES_DARK_LAUNCH"];
 
 /**
  * Deploys the DVTModule (Distributed Validator Technology variant).
@@ -38,6 +40,7 @@ const func: DeployFunction = async hre => {
   const nodeOperator = resolveNodeOperatorAddress(gov);
   const mintCapWei = readMintCapWei(hre, DVT_MINT_CAP_ENV_KEYS, isLocal, "DVT");
   const beaconDeposit = await resolveBeaconDeposit(hre, ship);
+  const pauseAfterRegistration = readPauseAfterRegistration(hre, DVT_PAUSED_ENV_KEYS, "DVTModule");
 
   const moduleId = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("DVT_VALIDATOR_1"));
 
@@ -54,7 +57,10 @@ const func: DeployFunction = async hre => {
   const moduleRuntimeCode = await hre.ethers.provider.getCode(dvtModule.target as string);
   const moduleCodeHash = hre.ethers.keccak256(moduleRuntimeCode);
   await allowlistModuleCodeHash(router, moduleType, moduleCodeHash, govSigner, "DVTModule");
-  await registerOrUpdateModule(router, govSigner, moduleId, dvtModule.target as string, mintCapWei, "DVTModule");
+  await registerOrUpdateModule(router, govSigner, moduleId, dvtModule.target as string, mintCapWei, "DVTModule", {
+    pauseAfterRegistration,
+    guardianSigner: govSigner,
+  });
 
   const withdrawalQueueAddress = await address(WithdrawalQueueV2__factory);
   if (!withdrawalQueueAddress) throw new Error("WithdrawalQueueV2 not deployed");

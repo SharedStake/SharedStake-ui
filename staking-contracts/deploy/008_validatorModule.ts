@@ -8,6 +8,7 @@ import {
   getGovernanceSigner,
   grantNodeOperatorRole,
   readMintCapWei,
+  readPauseAfterRegistration,
   registerOrUpdateModule,
   resolveBeaconDeposit,
   wireWithdrawalCredentials,
@@ -15,6 +16,7 @@ import {
 import {resolveGovernanceAddress, resolveNodeOperatorAddress} from "../helpers/governance";
 
 const VALIDATOR_MINT_CAP_ENV_KEYS = ["V2_VALIDATOR_MINT_CAP_ETH"];
+const VALIDATOR_PAUSED_ENV_KEYS = ["V2_VALIDATOR_MODULE_PAUSED", "V2_MODULES_DARK_LAUNCH"];
 
 /**
  * Deploys the solo-validator ValidatorModule, registers it with the StakingRouter,
@@ -40,6 +42,7 @@ const func: DeployFunction = async hre => {
   const nodeOperator = resolveNodeOperatorAddress(gov);
   const mintCapWei = readMintCapWei(hre, VALIDATOR_MINT_CAP_ENV_KEYS, isLocal, "validator");
   const beaconDeposit = await resolveBeaconDeposit(hre, ship);
+  const pauseAfterRegistration = readPauseAfterRegistration(hre, VALIDATOR_PAUSED_ENV_KEYS, "ValidatorModule");
 
   // Use a deterministic moduleId derived from a human-readable label so off-chain
   // tooling can compute it without needing a deployment artifact.
@@ -68,7 +71,7 @@ const func: DeployFunction = async hre => {
     validatorModule.target as string,
     mintCapWei,
     "ValidatorModule",
-    {setDefault: true, verify: true},
+    {setDefault: true, verify: true, pauseAfterRegistration, guardianSigner: govSigner},
   );
 
   const withdrawalQueueAddress = await address(WithdrawalQueueV2__factory);

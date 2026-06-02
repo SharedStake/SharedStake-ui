@@ -5,6 +5,7 @@
     "@metamask/foundryup": "^1.0.1",
     "@nomicfoundation/hardhat-chai-matchers": "^2.1.2",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
+    "@nomicfoundation/hardhat-network-helpers": "^1.1.2",
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@nomiclabs/hardhat-solhint": "^3.0.1",
     "@openzeppelin/merkle-tree": "^1.0.8",
@@ -44,7 +45,6 @@
   },
   "dependencies": {
     "@fei-protocol/erc4626": "^0.0.0",
-    "@nomicfoundation/hardhat-network-helpers": "^1.0.11",
     "@openzeppelin/contracts": "^4.8.0",
     "@openzeppelin/contracts-upgradeable": "^4.3.1",
     "ethers": "^6.13.1",

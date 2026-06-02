@@ -11,7 +11,7 @@ const func: DeployFunction = async hre => {
   const treasury = gov; // governance recipient (multisig when configured)
   const operator = resolveOperatorAddress(hre, gov);
   const referralRegistry = hre.ethers.ZeroAddress; // no referral registry on local
-  const debtPool = hre.ethers.ZeroAddress; // placeholder; set after DebtPool deployment
+  const debtPool = hre.ethers.ZeroAddress; // bootstrapped here; deploy/018_debtPool rewires after DebtPool deployment
   const feeBps = 1000; // 10% total protocol fee
   const treasurySplitBps = 5000; // 50% to treasury
   const operatorSplitBps = 5000; // 50% to operator

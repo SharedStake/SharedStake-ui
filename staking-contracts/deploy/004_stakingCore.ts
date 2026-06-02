@@ -38,7 +38,7 @@ const func: DeployFunction = async hre => {
     await stakingCore.connect(govSigner).setFeeController(feeControllerAddress);
   }
 
-  // Grant ORACLE role to OracleAdapter if it exists, otherwise to gov as placeholder.
+  // Grant ORACLE role to OracleAdapter if it exists, otherwise bootstrap gov until oracle deployment grants/revokes roles.
   // Use govSigner (holds DEFAULT_ADMIN_ROLE) for all role grants.
   const ORACLE = await stakingCore.ORACLE();
   const oracleAdapterAddress = await address(OracleAdapter__factory);
@@ -46,7 +46,7 @@ const func: DeployFunction = async hre => {
     console.log("  Granting ORACLE role to OracleAdapter on StakingCore...");
     await stakingCore.connect(govSigner).grantRole(ORACLE, oracleAdapterAddress);
   } else {
-    console.log("  Granting ORACLE role to gov (placeholder) on StakingCore...");
+    console.log("  Granting bootstrap ORACLE role to gov on StakingCore...");
     await stakingCore.connect(govSigner).grantRole(ORACLE, gov);
   }
 
