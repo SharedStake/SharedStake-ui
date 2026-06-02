@@ -27,6 +27,7 @@ npm audit --audit-level=moderate
 npm run lint:sol
 npx hardhat compile
 npx hardhat test test/v2/modular-staking/*.spec.ts
+npm run setup:foundry
 npm run test:invariants
 ```
 
