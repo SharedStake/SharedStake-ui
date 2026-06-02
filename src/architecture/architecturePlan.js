@@ -19,6 +19,9 @@ export const architectureMeta = {
     "staking-contracts/contracts/v2/modular-staking/modules/ValidatorModule.sol",
     "staking-contracts/contracts/v2/modular-staking/modules/DVTModule.sol",
     "staking-contracts/contracts/v2/modular-staking/modules/LSTWrapModule.sol",
+    "staking-contracts/contracts/v2/governance/VoteEscrowV2.sol",
+    "staking-contracts/contracts/v2/governance/SharedStakeGovernor.sol",
+    "staking-contracts/contracts/v2/governance/GovernanceTimelock.sol",
   ],
 };
 
@@ -42,9 +45,10 @@ export const coreArchitecture = [
   {
     title: "Control Plane",
     points: [
-      "GOV owns registration, caps, default routing, policy assignment, and unpause actions.",
-      "GUARDIAN can pause globally or per-module for fast incident response.",
-      "Code-hash allowlisting, inflow windows, mint caps, and policy registries bound module risk.",
+      "VoteEscrowV2 turns locked SGT into non-transferable veSGT with four-year max locks and linear decay.",
+      "SharedStakeGovernor and GovernanceTimelock own registration, caps, default routing, policy assignment, and unpause actions through GOV roles.",
+      "GUARDIAN can pause globally or per-module for fast incident response while GOV-only unpause preserves reviewability.",
+      "Code-hash allowlisting, inflow windows, mint caps, policy registries, and veSGT lock metrics bound module risk.",
     ],
   },
 ];
@@ -72,7 +76,7 @@ export const phaseRoadmap = [
     phase: "Phase 2",
     name: "Governed Activation",
     additions: [
-      "Use Governor/Timelock proposals to raise caps, unpause modules, and set default routing.",
+      "Use veSGT-backed Governor/Timelock proposals to raise caps, unpause modules, and set default routing.",
       "Roll out validator, DVT, and LST modules independently with telemetry-based risk budgets.",
       "Keep GUARDIAN-only pause and GOV-only unpause separation intact.",
     ],
@@ -138,7 +142,7 @@ export const contractV1Readiness = [
     currentState:
       "StakingRouter exposes GOV-only setMintCap, setModuleInflowLimit, setDefaultModule, and unpauseModule; GUARDIAN can pause modules immediately.",
     nextStep:
-      "Prepare proposal payload templates for staged module activation and cap increases.",
+      "Prepare proposal payload templates for staged module activation and cap increases, and require checkpointed veSGT before snapshots.",
     tasks: [
       "Queue setMintCap and setModuleInflowLimit before unpauseModule.",
       "Keep setDefaultModule separate from module deployment unless default traffic should start immediately.",
@@ -217,6 +221,43 @@ export const architectureDiagrams = [
       "User ETH is routed to the selected module and priced into shares.",
       "Module reports cannot exceed configured drift/slash sanity bounds.",
       "Fee accounting changes share ownership, not direct user ETH balances.",
+    ],
+  },
+  {
+    title: "Vote-Escrow Governance Stack",
+    summary:
+      "SGT lockers receive non-transferable veSGT that decays over a four-year max lock; Governor snapshots checkpointed veSGT and executes through Timelock.",
+    groups: [
+      {
+        label: "Lock",
+        nodes: ["SGT", "VoteEscrowV2", "veSGT"],
+      },
+      {
+        label: "Measure",
+        nodes: ["getLockStats", "globalLockStats", "checkpointMany"],
+      },
+      {
+        label: "Govern",
+        nodes: [
+          "SharedStakeGovernor",
+          "GovernanceTimelock",
+          "Protocol GOV roles",
+        ],
+      },
+      {
+        label: "Modules",
+        nodes: [
+          "setMintCap",
+          "setModuleInflowLimit",
+          "unpauseModule",
+          "setDefaultModule",
+        ],
+      },
+    ],
+    flows: [
+      "Longer SGT locks create more initial veSGT; voting power decays linearly until lock expiry.",
+      "Users or keepers checkpoint locks before proposal snapshots to align ERC20Votes checkpoints with projected ve power.",
+      "Executed proposals move through Timelock before touching router caps, inflow windows, pause state, or default routing.",
     ],
   },
   {

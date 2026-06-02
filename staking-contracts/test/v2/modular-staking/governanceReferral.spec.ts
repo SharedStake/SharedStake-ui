@@ -330,6 +330,125 @@ describe("Governance + Referral hardening", () => {
       expect(await voteEscrow.mintedForLock(holder.address)).to.equal(0n);
     });
 
+    it("uses four-year max locks and rounds duration locks to whole weeks", async () => {
+      const [holder, timelockAdmin] = await ethers.getSigners();
+
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      const sgt = await MockERC20.deploy("SharedStake Governance Token", "SGT");
+
+      const VoteEscrowV2 = await ethers.getContractFactory("VoteEscrowV2");
+      const voteEscrow = await VoteEscrowV2.deploy(
+        "Vote Escrow SGT",
+        "veSGT",
+        sgt.target,
+        parseEther("1"),
+        timelockAdmin.address,
+      );
+
+      const lockAmount = parseEther("100");
+      expect(await voteEscrow.MAXDAYS()).to.equal(1460n);
+      expect(await voteEscrow.voting_power_locked_days(lockAmount, 1460)).to.equal(lockAmount);
+      expect(await voteEscrow.normalized_lock_days(30)).to.equal(35n);
+
+      await sgt.mint(holder.address, lockAmount);
+      await sgt.connect(holder).approve(voteEscrow.target, lockAmount);
+      await voteEscrow.connect(holder).create_lock(lockAmount, 30);
+
+      const lock = await voteEscrow.locked(holder.address);
+      expect(lock.end - lock.start).to.equal(35n * 24n * 60n * 60n);
+
+      const stats = await voteEscrow.getLockStats(holder.address);
+      expect(stats.amount).to.equal(lockAmount);
+      expect(stats.lockDuration).to.equal(35n * 24n * 60n * 60n);
+      expect(stats.maxVotingPower).to.equal(lockAmount);
+    });
+
+    it("tracks aggregate locked supply and weighted lock duration", async () => {
+      const [holder, timelockAdmin] = await ethers.getSigners();
+
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      const sgt = await MockERC20.deploy("SharedStake Governance Token", "SGT");
+
+      const VoteEscrowV2 = await ethers.getContractFactory("VoteEscrowV2");
+      const voteEscrow = await VoteEscrowV2.deploy(
+        "Vote Escrow SGT",
+        "veSGT",
+        sgt.target,
+        parseEther("1"),
+        timelockAdmin.address,
+      );
+
+      const initialAmount = parseEther("100");
+      const addedAmount = parseEther("50");
+      await sgt.mint(holder.address, initialAmount + addedAmount);
+      await sgt.connect(holder).approve(voteEscrow.target, initialAmount + addedAmount);
+
+      await voteEscrow.connect(holder).create_lock(initialAmount, 28);
+      let globalStats = await voteEscrow.globalLockStats();
+      expect(globalStats.lockedAmount).to.equal(initialAmount);
+      expect(globalStats.openLocks).to.equal(1n);
+      expect(globalStats.locksCreated).to.equal(1n);
+      expect(globalStats.averageDuration).to.equal(28n * 24n * 60n * 60n);
+
+      await voteEscrow.connect(holder).increase_amount(addedAmount);
+      globalStats = await voteEscrow.globalLockStats();
+      expect(globalStats.lockedAmount).to.equal(initialAmount + addedAmount);
+      expect(globalStats.openLocks).to.equal(1n);
+      expect(globalStats.locksCreated).to.equal(1n);
+      expect(globalStats.averageDuration).to.equal(28n * 24n * 60n * 60n);
+
+      await voteEscrow.connect(holder).increase_unlock_time(14);
+      globalStats = await voteEscrow.globalLockStats();
+      expect(globalStats.lockedAmount).to.equal(initialAmount + addedAmount);
+      expect(globalStats.averageDuration).to.equal(42n * 24n * 60n * 60n);
+
+      await ethers.provider.send("evm_increaseTime", [43 * 24 * 60 * 60]);
+      await ethers.provider.send("evm_mine", []);
+      await voteEscrow.connect(holder).withdraw();
+
+      globalStats = await voteEscrow.globalLockStats();
+      expect(globalStats.lockedAmount).to.equal(0n);
+      expect(globalStats.openLocks).to.equal(0n);
+      expect(globalStats.averageDuration).to.equal(0n);
+    });
+
+    it("supports absolute unlock timestamps rounded down to weekly epochs", async () => {
+      const [holder, timelockAdmin] = await ethers.getSigners();
+
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      const sgt = await MockERC20.deploy("SharedStake Governance Token", "SGT");
+
+      const VoteEscrowV2 = await ethers.getContractFactory("VoteEscrowV2");
+      const voteEscrow = await VoteEscrowV2.deploy(
+        "Vote Escrow SGT",
+        "veSGT",
+        sgt.target,
+        parseEther("1"),
+        timelockAdmin.address,
+      );
+
+      const latest = await ethers.provider.getBlock("latest");
+      const nextTimestamp = Number(latest!.timestamp) + 100;
+      const requestedUnlock = BigInt(nextTimestamp + 45 * 24 * 60 * 60 + 12345);
+      const expectedUnlock = (requestedUnlock / (7n * 24n * 60n * 60n)) * (7n * 24n * 60n * 60n);
+
+      const lockAmount = parseEther("100");
+      await sgt.mint(holder.address, lockAmount);
+      await sgt.connect(holder).approve(voteEscrow.target, lockAmount);
+      await ethers.provider.send("evm_setNextBlockTimestamp", [nextTimestamp]);
+      await voteEscrow.connect(holder).create_lock_until(lockAmount, requestedUnlock);
+
+      let lock = await voteEscrow.locked(holder.address);
+      expect(lock.end).to.equal(expectedUnlock);
+
+      const extendedUnlock = BigInt(nextTimestamp + 90 * 24 * 60 * 60 + 6789);
+      const expectedExtended = (extendedUnlock / (7n * 24n * 60n * 60n)) * (7n * 24n * 60n * 60n);
+      await voteEscrow.connect(holder).increase_unlock_time_to(extendedUnlock);
+
+      lock = await voteEscrow.locked(holder.address);
+      expect(lock.end).to.equal(expectedExtended);
+    });
+
     it("rejects transfers of veSGT", async () => {
       const [holder, receiver, timelockAdmin] = await ethers.getSigners();
 
@@ -413,7 +532,7 @@ describe("Governance + Referral hardening", () => {
       const lockAmount = parseEther("2000");
       await sgt.mint(proposer.address, lockAmount);
       await sgt.connect(proposer).approve(voteEscrow.target, lockAmount);
-      await voteEscrow.connect(proposer).create_lock(lockAmount, 1095);
+      await voteEscrow.connect(proposer).create_lock(lockAmount, 1460);
       await voteEscrow.connect(proposer).delegate(proposer.address);
       await mineBlocks(2);
 
@@ -428,7 +547,7 @@ describe("Governance + Referral hardening", () => {
       const lockAmount = parseEther("2000");
       await sgt.mint(proposer.address, lockAmount);
       await sgt.connect(proposer).approve(voteEscrow.target, lockAmount);
-      await voteEscrow.connect(proposer).create_lock(lockAmount, 1095);
+      await voteEscrow.connect(proposer).create_lock(lockAmount, 1460);
       await voteEscrow.connect(proposer).delegate(proposer.address);
       await mineBlocks(2);
 

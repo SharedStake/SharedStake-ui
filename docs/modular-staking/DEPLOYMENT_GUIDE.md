@@ -122,6 +122,21 @@ VoteEscrowV2 veSgt = new VoteEscrowV2(
 );
 ```
 
+#### Vote Escrow Operating Model
+
+VoteEscrowV2 follows the Curve-inspired vote-escrow pattern:
+
+- SGT locks mint non-transferable veSGT voting power.
+- The maximum lock is four years (`MAXDAYS = 1460`).
+- Duration locks round up to whole-week increments; absolute unlock timestamps round down to whole-week epochs.
+- Voting power decays linearly from `locked SGT * remaining lock time / 4 years` to zero.
+- Users can add SGT with `increase_amount`, extend duration with `increase_unlock_time`, or extend to an absolute epoch with `increase_unlock_time_to`.
+- `getLockStats(account)` exposes personal lock amount, start, end, remaining time, projected voting power, checkpointed voting power, and max power.
+- `globalLockStats()` exposes total locked SGT, open lock count, total locks created, aggregate lock commitment, weighted average lock duration, checkpointed voting supply, and max voting supply.
+- Keepers or users should call `checkpoint(account)` or `checkpointMany(accounts)` before governance snapshots so checkpointed ERC20Votes power matches projected lock power.
+
+Governance activation proposals for staking modules should be submitted only by sufficiently locked veSGT holders and should execute through Governor -> GovernanceTimelock -> protocol GOV roles.
+
 #### Step 4: Deploy SharedStakeGovernor
 
 ```solidity
