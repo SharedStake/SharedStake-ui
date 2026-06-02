@@ -194,6 +194,7 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     ///         Updates totalPooledEther and distributes fee shares on positive rewards.
     /// @param newBeaconValidators Number of validators being reported.
     /// @param newBeaconBalance    Sum of all validator balances (in wei).
+    // solhint-disable-next-line code-complexity
     function reportBeacon(
         uint256 newBeaconValidators,
         uint256 newBeaconBalance

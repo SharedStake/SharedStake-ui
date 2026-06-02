@@ -19,12 +19,7 @@
     "not-rely-on-time": "warn",
     "avoid-suicide": "error",
     "avoid-sha3": "warn",
-    "prettier/prettier": [
-      "warm",
-      {
-        "endOfLine": "auto"
-      }
-    ],
+    "prettier/prettier": "off",
     "reason-string": ["warn", {"maxLength": 128}]
   }
 }

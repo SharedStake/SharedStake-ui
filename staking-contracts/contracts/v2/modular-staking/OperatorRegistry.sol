@@ -207,6 +207,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     }
 
     /// @notice Exit bond and return funds (only if no active validators)
+    // solhint-disable-next-line code-complexity
     function exitBond() external nonReentrant {
         Operator storage op = operators[msg.sender];
         if (block.timestamp < slashLockUntil[msg.sender]) revert SlashLockActive(slashLockUntil[msg.sender]);

@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import {ERC4626, xERC4626} from "../lib/xERC4626.sol";
-import {ERC20} from "solmate/src/mixins/ERC4626.sol";
+import {ERC20} from "solmate/src/tokens/ERC4626.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /// @title ssgETH - Vault token for staked sgETH. ERC20 + ERC4626

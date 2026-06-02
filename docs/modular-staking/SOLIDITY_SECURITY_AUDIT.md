@@ -7,6 +7,10 @@
 
 ---
 
+## Latest PR 379 Validation Note
+
+As of 2026-06-02, modular staking sources are expected to live locally under `staking-contracts/`, with no SharedDeposit or infra submodule gitlinks. Current repeatable gates are documented in `AUDIT_WORKFLOW.md` and mirrored by `.github/workflows/audit.yml`. The historical findings below remain useful context, but landing checks should use the current workflow gates and the latest branch commit under review.
+
 ## Executive Summary
 
 The V2 modular staking contracts are **well-architected with strong security fundamentals**. The design follows defense-in-depth: granular pause controls, role-based access control, reentrancy guards, and explicit sanity bounds on oracle reports. No critical or high-severity vulnerabilities were found. Several low-severity issues and code-quality items are documented below.

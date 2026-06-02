@@ -5,7 +5,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {IStakingRouter} from "../interfaces/IStakingRouter.sol";
 import {IStakingModule} from "../interfaces/IStakingModule.sol";
-import {IDepositContract} from "../interfaces/IDepositContract.sol";
+import {IDepositContract} from "../../interfaces/IDepositContract.sol";
 import {IOperatorRegistry} from "../interfaces/IOperatorRegistry.sol";
 import {GranularPause} from "../../lib/GranularPause.sol";
 import {Errors} from "../../lib/Errors.sol";
