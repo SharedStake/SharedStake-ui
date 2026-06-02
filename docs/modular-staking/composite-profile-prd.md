@@ -1,6 +1,6 @@
 # SharedStake V2 Modular Staking Composite Profile
 
-Status: synthesized from the historical PR #376 design thread, current PR #378 parent diff surface, and `staking-contracts` local contract continuation through `7b6af27`.
+Status: synthesized from the historical PR #376 design thread, the PR #378/PR #379 modular staking workstream, and the current local `staking-contracts/` contract tree.
 
 ## 1. Naming History (What We Called It Before)
 
@@ -11,7 +11,7 @@ Observed names across the workstream:
 - Focused on stETH/wstETH parity-style economics and withdrawal lifecycle.
 
 2. `modular-staking`
-- Explicit rename in submodule commit `acc8801` (`refactor(modular-staking): complete lido-parity -> modular-staking rename...`).
+- Explicit rename in the historical contract-side commit `acc8801` (`refactor(modular-staking): complete lido-parity -> modular-staking rename...`).
 - Reflected in contract paths: `contracts/v2/modular-staking/**`.
 
 3. `V2 Staking (Beta)`
@@ -73,7 +73,7 @@ Modular architecture path:
 - Route/nav integration for V2 staking entry.
 - Shared tx button support (`DappTxBtn`).
 
-## 3.3 Ops and readiness features (in submodule)
+## 3.3 Ops and readiness features (local under `staking-contracts/`)
 
 - Deployment scripts for modular staking stack.
 - Keeper scripts (`depositSweep`, `oracleReporter`, `withdrawalFinalizer`).
@@ -83,7 +83,7 @@ Modular architecture path:
 
 ## 3.4 Test profile expansion
 
-Submodule added broad test surface across:
+`staking-contracts/` added broad test surface across:
 - Unit and e2e staking flows.
 - Router/module behavior.
 - Role-access and negative tests.
@@ -134,7 +134,7 @@ Interpretation:
 ## 6. Noise vs Core Signal in Old PR
 
 Core signal:
-- Submodule pointer advancement carrying the real protocol/system buildout.
+- Local `staking-contracts/` tree advancement carrying the real protocol/system buildout.
 - Modular staking frontend integration.
 - Contract ABIs, stores, routes, and staking panels.
 - Test and operational harness improvements.
