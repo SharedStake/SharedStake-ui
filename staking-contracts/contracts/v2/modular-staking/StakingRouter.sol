@@ -517,11 +517,28 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     }
 
     function _distributeFees(bytes32 moduleId, uint256 rewards, uint256 newTotalPooled) internal {
-        (, , , , address treasury, address operator, address referralRegistry, address debtPool) = feeController
-            .getFeeConfig();
-
-        (uint256 treasuryAmount, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount) = feeController
-            .computeFees(rewards);
+        // getFeeConfig / computeFees are external calls. If FeeController is misconfigured
+        // or reverted, we must NOT propagate the revert — the pool update already landed and
+        // oracle liveness is more critical than fee distribution. Fees are skipped for this
+        // report cycle; they resume automatically on the next successful report.
+        uint256 treasuryAmount;
+        uint256 operatorAmount;
+        uint256 debtPoolAmount;
+        uint256 referralAmount;
+        address treasury;
+        address operator;
+        address referralRegistry;
+        address debtPool;
+        try feeController.getFeeConfig() returns (
+            uint16, uint16, uint16, uint16, address t, address o, address rr, address dp
+        ) {
+            treasury = t; operator = o; referralRegistry = rr; debtPool = dp;
+        } catch { return; }
+        try feeController.computeFees(rewards) returns (
+            uint256 ta, uint256 oa, uint256 dpa, uint256 ra
+        ) {
+            treasuryAmount = ta; operatorAmount = oa; debtPoolAmount = dpa; referralAmount = ra;
+        } catch { return; }
         if (referralRegistry == address(0)) {
             referralAmount = 0;
         }

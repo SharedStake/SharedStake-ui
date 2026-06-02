@@ -49,7 +49,10 @@ contract SharedStakeGovernor is
         GovernorVotes(_veToken)
         GovernorVotesQuorumFraction(4)
         GovernorTimelockControl(_timelock)
-    {}
+    {
+        if (address(_veToken) == address(0)) revert("veToken zero");
+        if (address(_timelock) == address(0)) revert("timelock zero");
+    }
 
     // ── Required overrides ────────────────────────────────────────────────────
 
