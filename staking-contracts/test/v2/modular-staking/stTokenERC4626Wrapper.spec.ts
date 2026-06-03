@@ -141,8 +141,9 @@ describe("StTokenERC4626Wrapper", () => {
     // Alice's vault shares should now be worth 110 stToken
     const aliceShares = await wrapper.balanceOf(alice.address);
     const redeemable = await wrapper.convertToAssets(aliceShares);
-    // OZ virtual-offset denominator (+1) causes at most 1 wei rounding difference
-    expect(redeemable).to.be.closeTo(deposit + reward, 1n);
+    // Share math may floor-round by 1 wei; chai closeTo does not support BigInt
+    expect(redeemable <= deposit + reward).to.equal(true);
+    expect(redeemable >= deposit + reward - 1n).to.equal(true);
   });
 
   it("two depositors split rewards proportionally", async () => {
@@ -183,7 +184,9 @@ describe("StTokenERC4626Wrapper", () => {
 
     await realStToken.setTotalPooledEther(parseEther("110"));
     expect(await realWrapper.totalAssets()).to.equal(parseEther("44"));
-    expect(await realWrapper.convertToAssets(parseEther("40"))).to.be.closeTo(parseEther("44"), 1n);
+    const converted = await realWrapper.convertToAssets(parseEther("40"));
+    expect(converted <= parseEther("44")).to.equal(true);
+    expect(converted >= parseEther("44") - 1n).to.equal(true);
 
     await realWrapper.connect(alice).redeem(parseEther("40"), alice.address, alice.address);
     // Virtual-offset denominator leaves ≤1 wei dust in vault; alice recovers within 1 wei of full balance
@@ -221,8 +224,10 @@ describe("StTokenERC4626Wrapper", () => {
 
     await wrapper.connect(alice).redeem(shares, alice.address, alice.address);
 
-    // Redeem returns floor(assets) due to virtual-offset denominator; at most 1 wei less
-    expect(await mockStToken.balanceOf(alice.address)).to.be.closeTo(aliceStBefore + deposit + reward, 1n);
+    // Redeem returns floor(assets) due to share math; at most 1 wei less than expected
+    const aliceFinal = await mockStToken.balanceOf(alice.address);
+    expect(aliceFinal <= aliceStBefore + deposit + reward).to.equal(true);
+    expect(aliceFinal >= aliceStBefore + deposit + reward - 1n).to.equal(true);
   });
 
   // ── Preview round-trip consistency ───────────────────────────────────────
