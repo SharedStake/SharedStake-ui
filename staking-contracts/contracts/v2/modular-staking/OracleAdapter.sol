@@ -34,6 +34,7 @@ contract OracleAdapter is AccessControl {
     uint256 public minReportIntervalSeconds = 1 hours;
 
     // ── State ─────────────────────────────────────────────────────────────────
+    uint256 public submitterCount;
     uint256 public lastReportTime;
     uint256 public lastReportTimestamp;
     uint256 public lastBeaconBalance;
@@ -54,6 +55,7 @@ contract OracleAdapter is AccessControl {
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error BelowMinimum(uint256 value, uint256 minimum);
+    error CannotRemoveLastSubmitter();
 
     // Re-exported from OracleValidation library so these appear in the ABI and
     // off-chain tools (ethers.js / viem) can decode oracle revert reasons.
@@ -129,10 +131,16 @@ contract OracleAdapter is AccessControl {
 
     function addSubmitter(address submitter) external onlyRole(GOV) {
         if (submitter == address(0)) revert Errors.ZeroAddress();
-        grantRole(SUBMITTER, submitter);
+        if (!hasRole(SUBMITTER, submitter)) {
+            grantRole(SUBMITTER, submitter);
+            submitterCount += 1;
+        }
     }
 
     function removeSubmitter(address submitter) external onlyRole(GOV) {
+        if (!hasRole(SUBMITTER, submitter)) return;
+        if (submitterCount == 1) revert CannotRemoveLastSubmitter();
         revokeRole(SUBMITTER, submitter);
+        submitterCount -= 1;
     }
 }
