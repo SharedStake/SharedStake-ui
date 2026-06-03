@@ -11,6 +11,7 @@ These contracts implement the complete modular staking system including:
 - **StToken**: Rebasing staking token
 - **WstToken**: Wrapped non-rebasing token
 - **WithdrawalQueueV2**: Improved withdrawal queue
+- **OldVeth2WithdrawalQueue**: FIFO legacy vEth2-to-ETH redemption queue
 - **FeeController**: Fee distribution controller
 - **DebtPool**: Merkle tree-based debt distribution pool
 - **OracleAdapter**: Oracle interface adapter

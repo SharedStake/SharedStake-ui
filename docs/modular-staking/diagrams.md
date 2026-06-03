@@ -11,6 +11,7 @@ graph TD
     ST[StToken]
     WST[WstToken]
     WQ[WithdrawalQueueV2]
+    OWQ[OldVeth2WithdrawalQueue]
 
     VM[ValidatorModule]
     DM[DVTModule]
@@ -40,6 +41,7 @@ graph TD
 
     U -->|request/claim| WQ
     WQ -->|burn/settle via token state| ST
+    U -->|legacy vEth2 request/claim| OWQ
 ```
 
 ## 2. Deposit and Rebase (Router Path)
@@ -82,7 +84,27 @@ sequenceDiagram
     WQ-->>U: transfer finalized ETH
 ```
 
-## 4. Oracle Validation Flow
+## 4. Legacy vEth2 Exit Queue
+
+```mermaid
+sequenceDiagram
+    participant U as Legacy vEth2 Holder
+    participant V as vEth2
+    participant OWQ as OldVeth2WithdrawalQueue
+    participant G as Guardian/Governance
+
+    U->>OWQ: requestWithdrawal(amount, owner)
+    OWQ->>V: transferFrom(user, queue, amount)
+    Note over OWQ: ethAmount = amount * redemptionRate / 1e18
+
+    G->>OWQ: finalize(lastRequestId) + ETH
+    Note over OWQ: finalization advances FIFO request IDs only
+
+    U->>OWQ: claimWithdrawal(requestId, recipient)
+    OWQ-->>U: transfer locked ETH
+```
+
+## 5. Oracle Validation Flow
 
 ```mermaid
 flowchart TD
@@ -97,7 +119,7 @@ flowchart TD
     G --> H[router fee + pooled update]
 ```
 
-## 5. Future Upgradeability Boundary (Deferred)
+## 6. Future Upgradeability Boundary (Deferred)
 
 ```mermaid
 flowchart LR

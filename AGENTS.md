@@ -100,6 +100,16 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - Push completed changes back to PR 379 and verify remote `CI` and `Contract Audit` before claiming completion.
 <!-- sharedstake-pr379-workflow:end -->
 
+<!-- sharedstake-legacy-veth2:begin -->
+## SharedStake Legacy vEth2 Withdrawal Work
+
+- For separate legacy-vEth2 work derived from PR 379, branch from the latest PR 379 head but open a separate PR, normally stacked on `feat/protocol-v3-fresh`.
+- Do not reuse `RedemptionsBase` / `Withdrawals` for new old-vEth2 redemption work; the legacy cancellation path used `transferFrom(address(this), user, amount)` and is not a safe pattern to copy.
+- Preserve old-vEth2 semantics through an explicit redemption rate, but use the V2 request/finalize/claim lifecycle with strict request-ID FIFO finalization, pull refunds, and locked-asset recovery guards. Legacy old-vEth2 queues should be owner-only: `msg.sender` owns requests, and cancel/claim proceeds return to `msg.sender`; do not add delegated owner or arbitrary recipient redirection unless governance explicitly asks for it.
+- Do not assume the legacy `vEth2` minter can be moved to a new queue. Escrow old vEth2 unless governance explicitly designs a burn/retirement step.
+- Non-local old-vEth2 queue deployment must require an explicit legacy token address and 1e18-scaled redemption rate; local deploys may use a mock token fallback.
+<!-- sharedstake-legacy-veth2:end -->
+
 <!-- gbrain-workflow:begin -->
 ## Central Agent Memory (gBrain) — MANDATORY
 
