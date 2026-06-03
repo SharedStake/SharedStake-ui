@@ -2,7 +2,9 @@
   <div class="flex flex-col items-center min-h-screen py-12 px-4">
     <!-- Header -->
     <div class="mb-8 text-center">
-      <h1 class="text-3xl font-bold text-foreground">Governance & veSGT</h1>
+      <h1 class="text-3xl font-bold text-foreground">
+        Governance & veSGT
+      </h1>
       <p class="mt-2 text-muted-foreground text-sm max-w-lg">
         Lock SGT into non-transferable veSGT for timelocked governance. Longer
         locks create more voting power, up to the four-year max.

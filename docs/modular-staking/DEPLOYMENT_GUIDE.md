@@ -34,6 +34,16 @@ Deployment scripts now fail closed on non-local networks when these are missing 
 5. `FeeController`
 6. `ValidatorModule` / `LSTWrapModule` / `DVTModule`
 7. `OracleAdapter` / `QuorumOracleAdapter`
+8. `StTokenERC4626Wrapper`
+
+
+### Phase 1.1: ERC-4626 Wrapper (included in modular-staking deploy)
+
+`011_stTokenERC4626Wrapper.ts` deploys `StTokenERC4626Wrapper`, a permissionless ERC-4626 vault over `StToken`. It requires no role grants and does not mint, burn, route, or custody ETH on behalf of the protocol. It only wraps user-provided `stToken` into a non-rebasing vault share and unwraps back to `stToken`. ETH exits remain the `WithdrawalQueueV2` request/finalize/claim flow.
+
+The wrapper is shipped as the standards-composable surface for DeFi integrations that expect ERC-4626. It advertises ERC-165 support for `IERC4626` so integrators can detect the vault interface without changing router or withdrawal-queue safety semantics.
+
+ERC-7540 is intentionally not implemented in core V2. `WithdrawalQueueV2` is ERC-7540-inspired but keeps SharedStake-specific request-time value locking, guardian-backed finalization, TURBO/BUNKER modes, and batch claim behavior. If a future integration requires ERC-7540, add a separate adapter/facade over the existing queue instead of rewriting the queue itself.
 
 ### Phase 1.5: Router Module Admission Hardening (required)
 

@@ -2,18 +2,24 @@
   <div class="container">
     <div class="architecture-content">
       <header class="mb-8">
-        <p class="kicker">Protocol Workspace</p>
+        <p class="kicker">
+          Protocol Workspace
+        </p>
         <h1 class="title">
           {{ architectureMeta.title }}
         </h1>
         <p class="subtitle">
           {{ architectureMeta.subtitle }}
         </p>
-        <p class="updated-at">Last updated: {{ architectureMeta.updatedAt }}</p>
+        <p class="updated-at">
+          Last updated: {{ architectureMeta.updatedAt }}
+        </p>
       </header>
 
       <section class="section">
-        <h2 class="section-title">Source Of Truth</h2>
+        <h2 class="section-title">
+          Source Of Truth
+        </h2>
         <div class="panel">
           <p class="panel-copy">
             Keep the editable architecture draft in
@@ -32,9 +38,14 @@
               {{ source }}
             </a>
           </div>
-          <p class="panel-copy mt-12">Local planning docs:</p>
+          <p class="panel-copy mt-12">
+            Local planning docs:
+          </p>
           <div class="local-docs">
-            <code v-for="doc in architectureMeta.localDocs" :key="doc">{{
+            <code
+              v-for="doc in architectureMeta.localDocs"
+              :key="doc"
+            >{{
               doc
             }}</code>
           </div>
@@ -42,7 +53,9 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">Core Architecture Snapshot</h2>
+        <h2 class="section-title">
+          Core Architecture Snapshot
+        </h2>
         <div class="grid">
           <article
             v-for="item in coreArchitecture"
@@ -53,7 +66,10 @@
               {{ item.title }}
             </h3>
             <ul class="bullet-list">
-              <li v-for="point in item.points" :key="point">
+              <li
+                v-for="point in item.points"
+                :key="point"
+              >
                 {{ point }}
               </li>
             </ul>
@@ -62,7 +78,9 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">Protocol Diagrams</h2>
+        <h2 class="section-title">
+          Protocol Diagrams
+        </h2>
         <div class="diagram-stack">
           <article
             v-for="diagram in architectureDiagrams"
@@ -88,12 +106,14 @@
                   v-for="node in group.nodes"
                   :key="node"
                   class="diagram-node"
-                  >{{ node }}</span
-                >
+                >{{ node }}</span>
               </div>
             </div>
             <ol class="flow-list">
-              <li v-for="flow in diagram.flows" :key="flow">
+              <li
+                v-for="flow in diagram.flows"
+                :key="flow"
+              >
                 {{ flow }}
               </li>
             </ol>
@@ -102,7 +122,9 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">Governed Module Rollout</h2>
+        <h2 class="section-title">
+          Governed Module Rollout
+        </h2>
         <div class="grid rollout-grid">
           <article
             v-for="stage in governedRollout"
@@ -116,7 +138,10 @@
               {{ stage.stage }}
             </h3>
             <ul class="bullet-list">
-              <li v-for="control in stage.controls" :key="control">
+              <li
+                v-for="control in stage.controls"
+                :key="control"
+              >
                 {{ control }}
               </li>
             </ul>
@@ -125,7 +150,9 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">Phased Evolution Roadmap</h2>
+        <h2 class="section-title">
+          Phased Evolution Roadmap
+        </h2>
         <div class="roadmap">
           <article
             v-for="phase in phaseRoadmap"
@@ -139,7 +166,10 @@
               </h3>
             </div>
             <ul class="bullet-list">
-              <li v-for="item in phase.additions" :key="item">
+              <li
+                v-for="item in phase.additions"
+                :key="item"
+              >
                 {{ item }}
               </li>
             </ul>
@@ -148,7 +178,9 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">PR 379 Release Readiness</h2>
+        <h2 class="section-title">
+          PR 379 Release Readiness
+        </h2>
         <div class="checklist">
           <article
             v-for="item in contractV1Readiness"
@@ -156,7 +188,10 @@
             class="checklist-item"
           >
             <div class="checklist-header">
-              <span class="status-pill" :class="statusClass(item.status)">{{
+              <span
+                class="status-pill"
+                :class="statusClass(item.status)"
+              >{{
                 statusLabel(item.status)
               }}</span>
               <h3 class="checklist-title">
@@ -173,7 +208,10 @@
               <strong>Next step:</strong> {{ item.nextStep }}
             </p>
             <ul class="bullet-list">
-              <li v-for="task in item.tasks" :key="task">
+              <li
+                v-for="task in item.tasks"
+                :key="task"
+              >
                 {{ task }}
               </li>
             </ul>
@@ -182,7 +220,9 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">Release Tracks</h2>
+        <h2 class="section-title">
+          Release Tracks
+        </h2>
         <div class="grid">
           <article
             v-for="track in releaseTracks"
@@ -193,7 +233,10 @@
               {{ track.milestone }}
             </h3>
             <ul class="bullet-list">
-              <li v-for="criterion in track.criteria" :key="criterion">
+              <li
+                v-for="criterion in track.criteria"
+                :key="criterion"
+              >
                 {{ criterion }}
               </li>
             </ul>

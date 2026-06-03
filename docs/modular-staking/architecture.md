@@ -26,6 +26,7 @@ Deliver a production-oriented router-based staking system with:
 - `ShareMath.sol`: deterministic share/ETH conversion helpers.
 - `StToken.sol`: share accounting, rebasing supply (`totalPooledEther`), MINTER-gated mint/burn.
 - `WstToken.sol`: wrap/unwrap around `StToken` shares.
+- `StTokenERC4626Wrapper.sol`: ERC-4626 vault wrapper for non-rebasing DeFi integrations that want a standard tokenized-vault surface.
 
 ### Router and module layer
 - `StakingRouter.sol`: module registry, deposit routing, module caps/limits, policy checks, pooled accounting.
@@ -64,6 +65,7 @@ Deliver a production-oriented router-based staking system with:
 | `MigrationHelper` | Timelocked migration announcement and activation state for frontends/integrators. |
 | `StToken` | Global share ledger and rebasing supply source of truth. |
 | `WstToken` | Non-rebasing wrapper over `StToken` shares. |
+| `StTokenERC4626Wrapper` | ERC-4626 compatibility wrapper over `StToken`; synchronous redeem returns `stToken`, while ETH exits still use `WithdrawalQueueV2`. |
 | `FeeController` | Protocol fee config and split policy (treasury/operator/referral/DebtPool). |
 | `OracleAdapter` | Single-submitter report validation and forwarding. |
 | `QuorumOracleAdapter` | Consensus report validation and forwarding. |
@@ -95,7 +97,19 @@ Deliver a production-oriented router-based staking system with:
 - `finalize` requires guardian-provided ETH backing.
 - `claimWithdrawal` / `claimWithdrawals` enforce ownership and one-time claim rules.
 
-## 6. Roles and Trust Model
+
+## 6. Standards Surface
+
+| Surface | Standard posture | Notes |
+|---|---|---|
+| `StakingRouter` | Custom native-ETH staking entry | ERC-4626 is not a fit because deposits are native ETH and routing includes module caps, policy checks, referrals, source attribution, and module custody. |
+| `StToken` | ERC-20-compatible rebasing token, custom share ledger | `StToken` is the pooled accounting source of truth and remains intentionally minimal around MINTER-gated share mint/burn. |
+| `WstToken` | ERC-20 + ERC-2612-style permit wrapper | Lido-style non-rebasing share wrapper for users who want fixed balances. |
+| `StTokenERC4626Wrapper` | ERC-4626 wrapper with ERC-165 detection for `IERC4626` | Permissionless integration wrapper. `withdraw`/`redeem` return `stToken` synchronously; conversion from `stToken` to ETH remains the queue flow. |
+| `WithdrawalQueueV2` | Custom async exit queue, ERC-7540-inspired but not ERC-7540-compliant | Preserves request-time value locking, guardian finalization, TURBO/BUNKER modes, and batch claims. ERC-7540 should be added only as an adapter/facade if an integration needs it. |
+| `VoteEscrowV2` / `SharedStakeGovernor` | OpenZeppelin `ERC20Votes` / `GovernorVotes` using `IERC5805` and `IERC6372` surfaces from OZ 4.9.6 | veSGT is non-transferable and decays by lock time; keepers/users should checkpoint before proposal snapshots. |
+
+## 7. Roles and Trust Model
 
 | Role | Primary authority | Typical holder |
 |---|---|---|
@@ -114,7 +128,7 @@ Trust notes:
 - Oracle parameter quality directly affects dilution/slash handling safety.
 - Guardian liveness affects user exit timing during stress events.
 
-## 7. Built-In Risk Controls
+## 8. Built-In Risk Controls
 
 - Pausing surface via guardian/governance roles.
 - Oracle sanity bounds (drift, slash, staleness) in adapters.
@@ -125,7 +139,7 @@ Trust notes:
 - MigrationHelper's fixed notice period before router migration activation.
 - Explicit beacon baseline notifications to avoid principal/reward misclassification.
 
-## 8. Confirmed Test Surface
+## 9. Confirmed Test Surface
 
 `staking-contracts/test/v2/modular-staking/` contains targeted suites for:
 - E2E and router E2E flows
@@ -138,7 +152,7 @@ Trust notes:
 
 This doc does not claim all tests are currently green in this branch; it describes coverage targets and existing suites.
 
-## 9. Deferred to Next Phase (After Core Stabilization)
+## 10. Deferred to Next Phase (After Core Stabilization)
 
 - Safe upgradability design and operational guardrails.
 - Backward compatibility and migration paths.

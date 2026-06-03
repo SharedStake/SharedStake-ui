@@ -43,11 +43,11 @@ The V2 modular staking contracts are **well-architected with strong security fun
 **Impact:** Low — admin turnover could leave stale MINTER privileges.
 **Fix:** Add `revokeRole(MINTER, msg.sender)` in `transferAdmin()` if caller has MINTER.
 
-#### LOW-02: `FeeController.recordDistribution()` has no meaningful access control value
+#### LOW-02 (fixed): `FeeController.recordDistribution()` had no meaningful access control value
 **File:** `FeeController.sol`
-**Finding:** `recordDistribution()` is `onlyRole(GOV)` but only emits an event. It doesn't affect state. GOV can call it but it's purely ceremonial.
-**Impact:** Low — unnecessary function. Could be called by StakingCore/Router directly after minting.
-**Fix:** Remove or make callable by any MINTER-contract.
+**Finding:** `recordDistribution()` was `onlyRole(GOV)` but only emitted an event. It did not affect state.
+**Impact:** Low — unnecessary function.
+**Status:** Fixed — the function has been removed from `FeeController.sol`; fee distribution happens in `StakingCore._distributeFees()` and `StakingRouter._distributeFees()`.
 
 #### LOW-03: `StakingCore` and `StakingRouter` both have `receive()` with no role check
 **File:** `StakingCore.sol`, `StakingRouter.sol`
@@ -177,17 +177,17 @@ This caps `reportAge` at 0 for future timestamps. So a future timestamp passes w
 
 ### 5.1 Frontend-only artifacts in contracts
 
-#### INFO-01: `FeeController.recordDistribution()` is dead code
+#### INFO-01 (fixed): `FeeController.recordDistribution()` was dead code
 **File:** `FeeController.sol`
-**Finding:** This function only emits an event and is `onlyRole(GOV)`. The actual fee distribution happens in `StakingCore._distributeFees()` and `StakingRouter._distributeFees()`, which mint shares directly. No one calls `recordDistribution()`.
-**Fix:** Remove or repurpose as a callback from MINTER.
+**Finding:** This function only emitted an event and was `onlyRole(GOV)`. The actual fee distribution happens in `StakingCore._distributeFees()` and `StakingRouter._distributeFees()`, which mint shares directly.
+**Status:** Fixed — the function has been removed.
 
 ### 5.2 Unused imports
 
-#### INFO-02: `StToken.sol` imports `IERC20Metadata` but never uses it
+#### INFO-02 (fixed): `StToken.sol` imported `IERC20Metadata` but never used it
 **File:** `StToken.sol`
-**Finding:** `import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";` is unused.
-**Fix:** Remove import.
+**Finding:** `import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";` was unused.
+**Status:** Fixed — the unused import has been removed.
 
 #### INFO-03: `ValidatorModule.sol` imports `IDepositContract` but it's only used in a cast
 **File:** `ValidatorModule.sol`

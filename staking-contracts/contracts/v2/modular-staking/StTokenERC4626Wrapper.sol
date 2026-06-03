@@ -3,8 +3,10 @@ pragma solidity 0.8.20;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 /**
@@ -33,6 +35,10 @@ contract StTokenERC4626Wrapper is ERC4626 {
     constructor(address stToken) ERC20("SharedStake Wrapped StToken", "wstToken-4626") ERC4626(IERC20(stToken)) {
         require(stToken != address(0), "StTokenERC4626Wrapper: zero address");
         ST_TOKEN = IERC20(stToken);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public pure returns (bool) {
+        return interfaceId == type(IERC165).interfaceId || interfaceId == type(IERC4626).interfaceId;
     }
 
     // ─── ERC-4626 overrides ──────────────────────────────────────────────────

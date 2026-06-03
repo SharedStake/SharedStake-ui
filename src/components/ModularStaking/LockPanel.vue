@@ -2,7 +2,9 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-start justify-between gap-3">
       <div>
-        <div class="text-lg font-semibold">veSGT Governance Lock</div>
+        <div class="text-lg font-semibold">
+          veSGT Governance Lock
+        </div>
         <div class="text-xs text-muted-foreground">
           Four-year max vote escrow with linearly decaying governance power.
         </div>
@@ -20,31 +22,48 @@
 
     <div class="grid grid-cols-2 gap-3 text-sm">
       <div class="rounded-lg bg-muted p-3">
-        <div class="text-muted-foreground">SGT Balance</div>
-        <div class="font-semibold">{{ store.formattedSGT }} SGT</div>
+        <div class="text-muted-foreground">
+          SGT Balance
+        </div>
+        <div class="font-semibold">
+          {{ store.formattedSGT }} SGT
+        </div>
       </div>
       <div class="rounded-lg bg-muted p-3">
-        <div class="text-muted-foreground">Projected veSGT</div>
+        <div class="text-muted-foreground">
+          Projected veSGT
+        </div>
         <div class="font-semibold">
           {{ store.formattedProjectedVeSGT }} veSGT
         </div>
       </div>
       <div class="rounded-lg bg-muted p-3">
-        <div class="text-muted-foreground">Total Locked</div>
-        <div class="font-semibold">{{ store.formattedTotalLocked }} SGT</div>
+        <div class="text-muted-foreground">
+          Total Locked
+        </div>
+        <div class="font-semibold">
+          {{ store.formattedTotalLocked }} SGT
+        </div>
       </div>
       <div class="rounded-lg bg-muted p-3">
-        <div class="text-muted-foreground">Avg Lock</div>
+        <div class="text-muted-foreground">
+          Avg Lock
+        </div>
         <div class="font-semibold">
           {{ formattedAverageLockDuration }}
         </div>
       </div>
     </div>
 
-    <div v-if="hasLock" class="rounded-lg border border-border bg-card p-4">
+    <div
+      v-if="hasLock"
+      class="rounded-lg border border-border bg-card p-4"
+    >
       <div class="mb-3 flex items-start justify-between gap-3">
         <div>
-          <div class="text-sm font-medium">Current Lock</div>
+          <div class="text-sm font-medium">
+            Current Lock
+          </div>
           <div class="text-xs text-muted-foreground">
             {{ store.lockExpired ? "Expired" : "Active" }} lock,
             {{ formattedRemaining }} remaining
@@ -58,19 +77,33 @@
 
       <div class="grid grid-cols-2 gap-3 text-sm">
         <div>
-          <div class="text-muted-foreground">Locked</div>
-          <div class="font-semibold">{{ store.formattedLocked }} SGT</div>
+          <div class="text-muted-foreground">
+            Locked
+          </div>
+          <div class="font-semibold">
+            {{ store.formattedLocked }} SGT
+          </div>
         </div>
         <div>
-          <div class="text-muted-foreground">Expires</div>
-          <div class="font-semibold">{{ lockExpiryDate }}</div>
+          <div class="text-muted-foreground">
+            Expires
+          </div>
+          <div class="font-semibold">
+            {{ lockExpiryDate }}
+          </div>
         </div>
         <div>
-          <div class="text-muted-foreground">Duration</div>
-          <div class="font-semibold">{{ formattedLockDuration }}</div>
+          <div class="text-muted-foreground">
+            Duration
+          </div>
+          <div class="font-semibold">
+            {{ formattedLockDuration }}
+          </div>
         </div>
         <div>
-          <div class="text-muted-foreground">Checkpointed</div>
+          <div class="text-muted-foreground">
+            Checkpointed
+          </div>
           <div class="font-semibold">
             {{ formattedCheckpointedPower }} veSGT
           </div>
@@ -84,11 +117,12 @@
         />
       </div>
 
-      <div v-if="!store.lockExpired" class="mt-4 grid gap-3 md:grid-cols-2">
+      <div
+        v-if="!store.lockExpired"
+        class="mt-4 grid gap-3 md:grid-cols-2"
+      >
         <div>
-          <label class="mb-1 block text-xs text-muted-foreground"
-            >Add SGT</label
-          >
+          <label class="mb-1 block text-xs text-muted-foreground">Add SGT</label>
           <input
             v-model="addAmount"
             type="number"
@@ -96,7 +130,7 @@
             step="0.1"
             placeholder="0.0"
             class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-          />
+          >
           <button
             class="mt-2 w-full rounded-lg bg-muted py-2 text-sm font-medium text-foreground hover:bg-muted/80 disabled:cursor-not-allowed disabled:text-muted-foreground"
             :disabled="!canIncreaseAmount || store.loading"
@@ -107,9 +141,7 @@
         </div>
 
         <div>
-          <label class="mb-1 block text-xs text-muted-foreground"
-            >Extend By</label
-          >
+          <label class="mb-1 block text-xs text-muted-foreground">Extend By</label>
           <select
             v-model="extendDays"
             class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
@@ -154,13 +186,16 @@
       </button>
     </div>
 
-    <div v-else class="rounded-lg border border-border bg-card p-4">
-      <div class="mb-3 text-sm font-medium">Create New Lock</div>
+    <div
+      v-else
+      class="rounded-lg border border-border bg-card p-4"
+    >
+      <div class="mb-3 text-sm font-medium">
+        Create New Lock
+      </div>
 
       <div class="mb-3">
-        <label class="mb-1 block text-xs text-muted-foreground"
-          >Amount (SGT)</label
-        >
+        <label class="mb-1 block text-xs text-muted-foreground">Amount (SGT)</label>
         <input
           v-model="lockAmount"
           type="number"
@@ -168,13 +203,11 @@
           step="0.1"
           placeholder="0.0"
           class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-        />
+        >
       </div>
 
       <div class="mb-3">
-        <label class="mb-1 block text-xs text-muted-foreground"
-          >Lock Duration</label
-        >
+        <label class="mb-1 block text-xs text-muted-foreground">Lock Duration</label>
         <div class="grid grid-cols-3 gap-2">
           <button
             v-for="option in durationOptions"
@@ -198,7 +231,7 @@
           :max="maxLockDays"
           step="7"
           class="mt-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-        />
+        >
         <div class="mt-1 text-xs text-muted-foreground">
           Min {{ minLockDays }} days. Max {{ maxLockDays }} days. Durations
           round up to whole weeks.
@@ -207,9 +240,7 @@
 
       <div class="mb-3 rounded-md bg-muted p-3 text-xs text-muted-foreground">
         Estimated initial power:
-        <span class="font-medium text-foreground"
-          >{{ estimatedPower }} veSGT</span
-        >
+        <span class="font-medium text-foreground">{{ estimatedPower }} veSGT</span>
       </div>
 
       <button

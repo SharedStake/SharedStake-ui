@@ -51,6 +51,12 @@ describe("StTokenERC4626Wrapper", () => {
     expect(await wrapper.symbol()).to.equal("wstToken-4626");
   });
 
+  it("advertises ERC-165 and ERC-4626 support", async () => {
+    expect(await wrapper.supportsInterface("0x01ffc9a7")).to.equal(true);
+    expect(await wrapper.supportsInterface("0x87dfe5a0")).to.equal(true);
+    expect(await wrapper.supportsInterface("0xffffffff")).to.equal(false);
+  });
+
   // ── Initial state ────────────────────────────────────────────────────────
 
   it("totalAssets is zero before any deposits", async () => {

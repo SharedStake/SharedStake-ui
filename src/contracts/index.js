@@ -23,6 +23,7 @@ import sgETHABI from './abis/sgETH.json'
 import wsgETHABI from './abis/wsgETH.json'
 import stTokenABI from './abis/stToken.json'
 import wstTokenABI from './abis/wstToken.json'
+import stTokenERC4626WrapperABI from './abis/stTokenERC4626Wrapper.json'
 import stakingRouterABI from './abis/stakingRouter.json'
 import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
 import validatorModuleABI from './abis/validatorModule.json'
@@ -128,6 +129,7 @@ let _ABIs = {
     wsgETH: wsgETHABI,
     stToken: stTokenABI,
     wstToken: wstTokenABI,
+    stTokenERC4626Wrapper: stTokenERC4626WrapperABI,
     stakingRouter: stakingRouterABI,
     withdrawalQueueV2: withdrawalQueueV2ABI,
     validatorModule: validatorModuleABI,
@@ -330,6 +332,7 @@ export const SGT = (useSigner = false) => createContractDefault('SGT', useSigner
 export const SGT_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_uniswap", useSigner);
 export const SGT_vEth2_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_vEth2_uniswap", useSigner);
 export const vEth2_saddle = (useSigner = false) => createContract("erc20", "vEth2_saddle", useSigner);
+export const stTokenERC4626Wrapper = (useSigner = false) => createContractDefault('stTokenERC4626Wrapper', useSigner);
 // Geyser contracts
 export const geyser_vEth2 = (useSigner = false) => createContract("geyser", "geyser_vEth2", useSigner);
 export const geyser_SGT = (useSigner = false) => createContract("geyser", "geyser_SGT", useSigner);
