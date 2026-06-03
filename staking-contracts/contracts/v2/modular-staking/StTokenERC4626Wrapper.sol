@@ -6,8 +6,8 @@ import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.so
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 /**
  * @title StTokenERC4626Wrapper
@@ -23,10 +23,12 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
  *
  * Withdrawal note: withdraw()/redeem() return stToken synchronously.
  * To convert stToken back to ETH, use the WithdrawalQueueV2 two-step flow.
+ *
+ * First-depositor inflation protection: share math is delegated entirely to the OZ ERC-4626
+ * base, which uses virtual assets/shares (+1 denominator) to make donation-inflation attacks
+ * economically unviable — an attacker spends more than they capture.
  */
-contract StTokenERC4626Wrapper is ERC4626 {
-    using Math for uint256;
-
+contract StTokenERC4626Wrapper is ERC4626, ReentrancyGuard {
     error ZeroSharesDeposit(uint256 assets);
 
     // Cached to avoid repeated asset() calls; same address as ERC4626._asset.
@@ -52,53 +54,10 @@ contract StTokenERC4626Wrapper is ERC4626 {
         return ST_TOKEN.balanceOf(address(this));
     }
 
-    /**
-     * @notice Convert vault shares to stToken amount at the current exchange rate.
-     *         Uses Floor rounding (favours the vault, protects against dust attacks).
-     */
-    function convertToAssets(uint256 shares) public view override returns (uint256) {
-        uint256 supply = totalSupply();
-        if (supply == 0) return shares;
-        return shares.mulDiv(totalAssets(), supply, Math.Rounding.Down);
-    }
-
-    /**
-     * @notice Convert stToken amount to vault shares at the current exchange rate.
-     *         Uses Floor rounding (user gets slightly fewer shares on deposit).
-     */
-    function convertToShares(uint256 assets) public view override returns (uint256) {
-        uint256 supply = totalSupply();
-        uint256 held = totalAssets();
-        if (supply == 0 || held == 0) return assets;
-        return assets.mulDiv(supply, held, Math.Rounding.Down);
-    }
-
-    function previewDeposit(uint256 assets) public view override returns (uint256) {
-        return convertToShares(assets);
-    }
-
-    function previewMint(uint256 shares) public view override returns (uint256) {
-        uint256 supply = totalSupply();
-        uint256 held = totalAssets();
-        if (supply == 0 || held == 0) return shares;
-        return shares.mulDiv(held, supply, Math.Rounding.Up);
-    }
-
-    function previewWithdraw(uint256 assets) public view override returns (uint256) {
-        uint256 supply = totalSupply();
-        uint256 held = totalAssets();
-        if (supply == 0 || held == 0) return assets;
-        return assets.mulDiv(supply, held, Math.Rounding.Up);
-    }
-
-    function previewRedeem(uint256 shares) public view override returns (uint256) {
-        return convertToAssets(shares);
-    }
-
     // ─── Internal deposit/withdraw (OZ ERC4626 hooks) ────────────────────────
 
-    function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal override {
-        // Prevent zero-share deposits (donation inflation attack vector).
+    function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal override nonReentrant {
+        // Prevent zero-share deposits (residual guard; OZ virtual +1 offset makes this rare).
         if (assets > 0 && shares == 0) revert ZeroSharesDeposit(assets);
         SafeERC20.safeTransferFrom(ST_TOKEN, caller, address(this), assets);
         _mint(receiver, shares);
@@ -111,7 +70,7 @@ contract StTokenERC4626Wrapper is ERC4626 {
         address owner,
         uint256 assets,
         uint256 shares
-    ) internal override {
+    ) internal override nonReentrant {
         if (caller != owner) {
             _spendAllowance(owner, caller, shares);
         }

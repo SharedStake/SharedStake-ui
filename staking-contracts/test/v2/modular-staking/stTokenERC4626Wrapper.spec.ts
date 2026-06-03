@@ -141,7 +141,8 @@ describe("StTokenERC4626Wrapper", () => {
     // Alice's vault shares should now be worth 110 stToken
     const aliceShares = await wrapper.balanceOf(alice.address);
     const redeemable = await wrapper.convertToAssets(aliceShares);
-    expect(redeemable).to.equal(deposit + reward);
+    // OZ virtual-offset denominator (+1) causes at most 1 wei rounding difference
+    expect(redeemable).to.be.closeTo(deposit + reward, 1n);
   });
 
   it("two depositors split rewards proportionally", async () => {
@@ -182,11 +183,13 @@ describe("StTokenERC4626Wrapper", () => {
 
     await realStToken.setTotalPooledEther(parseEther("110"));
     expect(await realWrapper.totalAssets()).to.equal(parseEther("44"));
-    expect(await realWrapper.convertToAssets(parseEther("40"))).to.equal(parseEther("44"));
+    expect(await realWrapper.convertToAssets(parseEther("40"))).to.be.closeTo(parseEther("44"), 1n);
 
     await realWrapper.connect(alice).redeem(parseEther("40"), alice.address, alice.address);
-    expect(await realWrapper.totalAssets()).to.equal(0n);
-    expect(await realStToken.balanceOf(alice.address)).to.equal(parseEther("110"));
+    // Virtual-offset denominator leaves ≤1 wei dust in vault; alice recovers within 1 wei of full balance
+    expect(await realWrapper.totalAssets()).to.be.closeTo(0n, 1n);
+    // Two rounding steps (vault shares → ETH, then ETH-equiv → stToken shares) can each lose 1 wei
+    expect(await realStToken.balanceOf(alice.address)).to.be.closeTo(parseEther("110"), 2n);
   });
 
   // ── Redeem ───────────────────────────────────────────────────────────────
@@ -218,7 +221,8 @@ describe("StTokenERC4626Wrapper", () => {
 
     await wrapper.connect(alice).redeem(shares, alice.address, alice.address);
 
-    expect(await mockStToken.balanceOf(alice.address)).to.equal(aliceStBefore + deposit + reward);
+    // Redeem returns floor(assets) due to virtual-offset denominator; at most 1 wei less
+    expect(await mockStToken.balanceOf(alice.address)).to.be.closeTo(aliceStBefore + deposit + reward, 1n);
   });
 
   // ── Preview round-trip consistency ───────────────────────────────────────

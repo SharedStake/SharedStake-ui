@@ -122,6 +122,31 @@ const func: DeployFunction = async hre => {
     }
   }
 
+  // DebtPool has a separate ADMIN role (for createDistribution) that the main loop doesn't cover.
+  // Migrate it explicitly so the deployer doesn't retain distribution rights post-handover.
+  const debtPoolDeployment = await hre.deployments.getOrNull("DebtPool");
+  if (debtPoolDeployment) {
+    const debtPool = await hre.ethers.getContractAt(
+      [...ACCESS_CONTROL_ABI, "function ADMIN() view returns (bytes32)"],
+      debtPoolDeployment.address,
+      govSigner,
+    );
+    try {
+      const adminRole = await debtPool.ADMIN();
+      const defaultAdminRole = await debtPool.DEFAULT_ADMIN_ROLE();
+      const timelockIsAdmin = await debtPool.hasRole(defaultAdminRole, timelock);
+      if (timelockIsAdmin) {
+        await grantRoleIfNeeded(debtPool, adminRole, timelock, "DebtPool.ADMIN");
+        if (gov.toLowerCase() !== timelock.toLowerCase()) {
+          await revokeRoleIfPresent(debtPool, adminRole, gov, "DebtPool.ADMIN");
+        }
+        console.log("  DebtPool ADMIN role migrated to timelock.");
+      }
+    } catch {
+      console.log("  DebtPool ADMIN role not migrated (role unavailable or no access).");
+    }
+  }
+
   console.log("  Governance handover pass complete.");
 };
 
