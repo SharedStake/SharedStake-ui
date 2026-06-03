@@ -163,6 +163,32 @@ describe("StTokenERC4626Wrapper", () => {
     expect(bobRedeemable).to.be.closeTo(parseEther("110"), parseEther("0.001"));
   });
 
+  it("tracks the real StToken share ledger across a reward rebase", async () => {
+    const StToken = await ethers.getContractFactory("StToken");
+    const realStToken = await StToken.deploy();
+    await realStToken.addMinter(deployer.address);
+
+    await realStToken.setTotalPooledEther(parseEther("100"));
+    await realStToken.mintShares(alice.address, parseEther("100"));
+
+    const Wrapper = await ethers.getContractFactory("StTokenERC4626Wrapper");
+    const realWrapper = await Wrapper.deploy(realStToken.target);
+
+    await realStToken.connect(alice).approve(realWrapper.target, parseEther("40"));
+    await realWrapper.connect(alice).deposit(parseEther("40"), alice.address);
+
+    expect(await realWrapper.totalAssets()).to.equal(parseEther("40"));
+    expect(await realWrapper.balanceOf(alice.address)).to.equal(parseEther("40"));
+
+    await realStToken.setTotalPooledEther(parseEther("110"));
+    expect(await realWrapper.totalAssets()).to.equal(parseEther("44"));
+    expect(await realWrapper.convertToAssets(parseEther("40"))).to.equal(parseEther("44"));
+
+    await realWrapper.connect(alice).redeem(parseEther("40"), alice.address, alice.address);
+    expect(await realWrapper.totalAssets()).to.equal(0n);
+    expect(await realStToken.balanceOf(alice.address)).to.equal(parseEther("110"));
+  });
+
   // ── Redeem ───────────────────────────────────────────────────────────────
 
   it("redeem burns vault shares and returns stToken", async () => {
