@@ -1,6 +1,6 @@
 import {ethers} from "hardhat";
 import {expect} from "chai";
-import {parseEther, ZeroAddress} from "ethers";
+import {parseEther} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
 
 describe("OldVeth2WithdrawalQueue", () => {
@@ -8,8 +8,7 @@ describe("OldVeth2WithdrawalQueue", () => {
     gov: SignerWithAddress,
     guardian: SignerWithAddress,
     alice: SignerWithAddress,
-    bob: SignerWithAddress,
-    recipient: SignerWithAddress;
+    bob: SignerWithAddress;
 
   let vEth2: any, queue: any;
 
@@ -17,7 +16,7 @@ describe("OldVeth2WithdrawalQueue", () => {
   const GUARDIAN_ROLE = ethers.keccak256(ethers.toUtf8Bytes("GUARDIAN"));
 
   async function deployFresh() {
-    [deployer, gov, guardian, alice, bob, recipient] = await ethers.getSigners();
+    [deployer, gov, guardian, alice, bob] = await ethers.getSigners();
 
     const MockERC20 = await ethers.getContractFactory("MockERC20");
     vEth2 = await MockERC20.deploy("Mock old vEth2", "mvETH2");
@@ -36,7 +35,7 @@ describe("OldVeth2WithdrawalQueue", () => {
 
   describe("requestWithdrawals()", () => {
     it("escrows vEth2, quotes ETH at the current redemption rate, and assigns FIFO IDs", async () => {
-      const tx = await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      const tx = await queue.connect(alice).requestWithdrawal(parseEther("1"));
 
       await expect(tx)
         .to.emit(queue, "WithdrawalRequested")
@@ -52,38 +51,28 @@ describe("OldVeth2WithdrawalQueue", () => {
     });
 
     it("supports batch requests with sequential IDs", async () => {
-      const ids = await queue
-        .connect(alice)
-        .requestWithdrawals.staticCall([parseEther("1"), parseEther("2")], alice.address);
+      const ids = await queue.connect(alice).requestWithdrawals.staticCall([parseEther("1"), parseEther("2")]);
       expect(ids).to.deep.equal([1n, 2n]);
 
-      await queue.connect(alice).requestWithdrawals([parseEther("1"), parseEther("2")], alice.address);
+      await queue.connect(alice).requestWithdrawals([parseEther("1"), parseEther("2")]);
       expect(await queue.nextRequestId()).to.equal(3n);
       expect(await queue.pendingVeth2()).to.equal(parseEther("3"));
     });
 
-    it("reverts for zero owner, empty batches, and out-of-bounds amounts", async () => {
-      await expect(queue.connect(alice).requestWithdrawal(parseEther("1"), ZeroAddress)).to.be.revertedWithCustomError(
-        queue,
-        "ZeroAddress",
-      );
+    it("reverts for empty batches and out-of-bounds amounts", async () => {
+      await expect(queue.connect(alice).requestWithdrawals([])).to.be.revertedWithCustomError(queue, "InvalidAmount");
 
-      await expect(queue.connect(alice).requestWithdrawals([], alice.address)).to.be.revertedWithCustomError(
-        queue,
-        "InvalidAmount",
-      );
-
-      await expect(queue.connect(alice).requestWithdrawal(parseEther("0.001"), alice.address))
+      await expect(queue.connect(alice).requestWithdrawal(parseEther("0.001")))
         .to.be.revertedWithCustomError(queue, "AmountOutOfBounds")
         .withArgs(parseEther("0.001"));
     });
 
     it("locks each request price at request time even if governance updates the rate later", async () => {
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
       await expect(queue.connect(gov).setRedemptionRate(parseEther("0.9")))
         .to.emit(queue, "RedemptionRateUpdated")
         .withArgs(parseEther("1.1"), parseEther("0.9"));
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
 
       expect((await queue.getRequest(1)).ethAmount).to.equal(parseEther("1.1"));
       expect((await queue.getRequest(2)).ethAmount).to.equal(parseEther("0.9"));
@@ -92,8 +81,8 @@ describe("OldVeth2WithdrawalQueue", () => {
 
   describe("finalize()", () => {
     beforeEach(async () => {
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
-      await queue.connect(bob).requestWithdrawal(parseEther("2"), bob.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
+      await queue.connect(bob).requestWithdrawal(parseEther("2"));
     });
 
     it("only GUARDIAN finalizes and finalizes strictly from the FIFO head", async () => {
@@ -154,34 +143,31 @@ describe("OldVeth2WithdrawalQueue", () => {
 
   describe("cancelWithdrawal()", () => {
     it("lets the request owner cancel before finalization and allows finalization to advance over canceled IDs", async () => {
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
 
-      await expect(queue.connect(bob).cancelWithdrawal(1, bob.address))
+      await expect(queue.connect(bob).cancelWithdrawal(1))
         .to.be.revertedWithCustomError(queue, "NotRequestOwner")
         .withArgs(1, bob.address);
 
-      await expect(queue.connect(alice).cancelWithdrawal(1, recipient.address))
+      await expect(queue.connect(alice).cancelWithdrawal(1))
         .to.emit(queue, "WithdrawalCanceled")
-        .withArgs(alice.address, recipient.address, 1, parseEther("1"));
+        .withArgs(alice.address, alice.address, 1, parseEther("1"));
 
       expect(await queue.pendingVeth2()).to.equal(0n);
-      expect(await vEth2.balanceOf(recipient.address)).to.equal(parseEther("1"));
+      expect(await vEth2.balanceOf(alice.address)).to.equal(parseEther("20"));
 
       await expect(queue.connect(guardian).finalize(1, {value: 0}))
         .to.emit(queue, "BatchFinalized")
         .withArgs(1, 1, 0);
 
-      await expect(queue.connect(alice).claimWithdrawal(1, alice.address)).to.be.revertedWithCustomError(
-        queue,
-        "RequestCanceled",
-      );
+      await expect(queue.connect(alice).claimWithdrawal(1)).to.be.revertedWithCustomError(queue, "RequestCanceled");
     });
 
     it("does not allow canceling finalized requests", async () => {
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
       await queue.connect(guardian).finalize(1, {value: parseEther("1.1")});
 
-      await expect(queue.connect(alice).cancelWithdrawal(1, alice.address)).to.be.revertedWithCustomError(
+      await expect(queue.connect(alice).cancelWithdrawal(1)).to.be.revertedWithCustomError(
         queue,
         "RequestAlreadyFinalized",
       );
@@ -190,46 +176,43 @@ describe("OldVeth2WithdrawalQueue", () => {
 
   describe("claimWithdrawal()", () => {
     beforeEach(async () => {
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
       await queue.connect(guardian).finalize(1, {value: parseEther("1.1")});
     });
 
-    it("claims finalized ETH to the requested recipient and prevents double-claims", async () => {
-      await expect(queue.connect(alice).claimWithdrawal(1, recipient.address))
+    it("claims finalized ETH only to the request owner and prevents double-claims", async () => {
+      await expect(queue.connect(alice).claimWithdrawal(1))
         .to.emit(queue, "WithdrawalClaimed")
-        .withArgs(alice.address, recipient.address, 1, parseEther("1.1"));
+        .withArgs(alice.address, alice.address, 1, parseEther("1.1"));
 
       expect(await queue.lockedEther()).to.equal(0n);
       expect((await queue.getRequest(1)).claimed).to.equal(true);
 
-      await expect(queue.connect(alice).claimWithdrawal(1, alice.address)).to.be.revertedWithCustomError(
+      await expect(queue.connect(alice).claimWithdrawal(1)).to.be.revertedWithCustomError(
         queue,
         "RequestAlreadyClaimed",
       );
     });
 
     it("reverts for non-owner claims and claims before finalization", async () => {
-      await expect(queue.connect(bob).claimWithdrawal(1, bob.address))
+      await expect(queue.connect(bob).claimWithdrawal(1))
         .to.be.revertedWithCustomError(queue, "NotRequestOwner")
         .withArgs(1, bob.address);
 
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
-      await expect(queue.connect(alice).claimWithdrawal(2, alice.address)).to.be.revertedWithCustomError(
-        queue,
-        "RequestNotFinalized",
-      );
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
+      await expect(queue.connect(alice).claimWithdrawal(2)).to.be.revertedWithCustomError(queue, "RequestNotFinalized");
     });
 
     it("batch-claims atomically and reverts duplicate request IDs", async () => {
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
       await queue.connect(guardian).finalize(2, {value: parseEther("1.1")});
 
-      await expect(queue.connect(alice).claimWithdrawals([1, 1], alice.address)).to.be.revertedWithCustomError(
+      await expect(queue.connect(alice).claimWithdrawals([1, 1])).to.be.revertedWithCustomError(
         queue,
         "RequestAlreadyClaimed",
       );
 
-      await queue.connect(alice).claimWithdrawals([1, 2], recipient.address);
+      await queue.connect(alice).claimWithdrawals([1, 2]);
       expect(await queue.lockedEther()).to.equal(0n);
     });
   });
@@ -244,13 +227,14 @@ describe("OldVeth2WithdrawalQueue", () => {
 
       const pauseRequests = await queue.PAUSE_REQUESTS();
       await queue.connect(gov).togglePause(pauseRequests);
-      await expect(
-        queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address),
-      ).to.be.revertedWithCustomError(queue, "IsPaused");
+      await expect(queue.connect(alice).requestWithdrawal(parseEther("1"))).to.be.revertedWithCustomError(
+        queue,
+        "IsPaused",
+      );
     });
 
     it("protects locked ETH and unfinalized vEth2 from recovery", async () => {
-      await queue.connect(alice).requestWithdrawal(parseEther("1"), alice.address);
+      await queue.connect(alice).requestWithdrawal(parseEther("1"));
 
       await expect(queue.connect(gov).recoverRedeemedVeth2(gov.address, parseEther("1"))).to.be.revertedWithCustomError(
         queue,

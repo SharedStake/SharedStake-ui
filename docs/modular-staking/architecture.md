@@ -111,7 +111,7 @@ Deliver a production-oriented router-based staking system with:
 - `requestWithdrawals` locks request value at request time.
 - `finalize` requires guardian-provided ETH backing.
 - `claimWithdrawal` / `claimWithdrawals` enforce ownership and one-time claim rules.
-- Legacy vEth2 exits use `OldVeth2WithdrawalQueue`: request transfers old vEth2 into escrow, finalize advances sequential request IDs with ETH funding, and claim pays only finalized locked ETH.
+- Legacy vEth2 exits use `OldVeth2WithdrawalQueue`: request transfers the caller's old vEth2 into escrow, finalize advances sequential request IDs with ETH funding, and claim pays only finalized locked ETH back to the request owner. Delegated request ownership and recipient redirection are intentionally unsupported for this legacy queue.
 
 ## 6. Standards Surface
 

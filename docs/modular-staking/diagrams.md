@@ -93,14 +93,14 @@ sequenceDiagram
     participant OWQ as OldVeth2WithdrawalQueue
     participant G as Guardian/Governance
 
-    U->>OWQ: requestWithdrawal(amount, owner)
+    U->>OWQ: requestWithdrawal(amount)
     OWQ->>V: transferFrom(user, queue, amount)
     Note over OWQ: ethAmount = amount * redemptionRate / 1e18
 
     G->>OWQ: finalize(lastRequestId) + ETH
     Note over OWQ: finalization advances FIFO request IDs only
 
-    U->>OWQ: claimWithdrawal(requestId, recipient)
+    U->>OWQ: claimWithdrawal(requestId)
     OWQ-->>U: transfer locked ETH
 ```
 

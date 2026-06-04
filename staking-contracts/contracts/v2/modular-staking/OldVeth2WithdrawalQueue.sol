@@ -16,7 +16,8 @@ import {GranularPause} from "../lib/GranularPause.sol";
 /// @dev The queue preserves legacy virtual-price redemption semantics while
 ///      using the V2 request/finalize/claim lifecycle. Redeemed vEth2 is
 ///      escrowed here; the contract does not assume it can become the vEth2
-///      minter and burn legacy supply.
+///      minter and burn legacy supply. Request ownership is always the
+///      caller, and claim/cancel proceeds always return to that owner.
 contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause {
     using Address for address payable;
     using SafeERC20 for IERC20;
@@ -126,31 +127,26 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
 
     /// @notice Enqueue one legacy vEth2 redemption request.
     /// @param amount Amount of vEth2 transferred from the caller.
-    /// @param owner Address that owns the request and can claim or cancel it.
     function requestWithdrawal(
-        uint256 amount,
-        address owner
+        uint256 amount
     ) external nonReentrant whenNotPaused(PAUSE_REQUESTS) returns (uint256 requestId) {
-        requestId = _enqueueRequest(amount, owner);
+        requestId = _enqueueRequest(amount);
     }
 
     /// @notice Enqueue multiple legacy vEth2 redemption requests.
     /// @param amounts vEth2 amounts; each amount creates one FIFO request.
-    /// @param owner Address that owns all created requests.
     function requestWithdrawals(
-        uint256[] calldata amounts,
-        address owner
+        uint256[] calldata amounts
     ) external nonReentrant whenNotPaused(PAUSE_REQUESTS) returns (uint256[] memory requestIds) {
         if (amounts.length == 0) revert Errors.InvalidAmount();
 
         requestIds = new uint256[](amounts.length);
         for (uint256 i; i < amounts.length; ++i) {
-            requestIds[i] = _enqueueRequest(amounts[i], owner);
+            requestIds[i] = _enqueueRequest(amounts[i]);
         }
     }
 
-    function _enqueueRequest(uint256 amount, address owner) internal returns (uint256 requestId) {
-        if (owner == address(0)) revert Errors.ZeroAddress();
+    function _enqueueRequest(uint256 amount) internal returns (uint256 requestId) {
         if (amount < minWithdrawal || amount > maxWithdrawal) revert AmountOutOfBounds(amount);
 
         uint256 ethAmount = quoteEth(amount);
@@ -160,7 +156,7 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
 
         requestId = nextRequestId++;
         requests[requestId] = WithdrawalRequest({
-            owner: owner,
+            owner: msg.sender,
             vEth2Amount: amount,
             ethAmount: ethAmount,
             requestedAt: block.timestamp,
@@ -172,7 +168,7 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
         pendingVeth2 += amount;
         totalRequestedVeth2 += amount;
 
-        emit WithdrawalRequested(msg.sender, owner, requestId, amount, ethAmount);
+        emit WithdrawalRequested(msg.sender, msg.sender, requestId, amount, ethAmount);
     }
 
     // -- Finalize --------------------------------------------------------------
@@ -236,10 +232,8 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
 
     // -- Cancel ----------------------------------------------------------------
 
-    /// @notice Cancel an unfinalized request and return escrowed vEth2.
-    function cancelWithdrawal(uint256 requestId, address recipient) external nonReentrant whenNotPaused(PAUSE_CANCEL) {
-        if (recipient == address(0)) revert Errors.ZeroAddress();
-
+    /// @notice Cancel an unfinalized request and return escrowed vEth2 to the request owner.
+    function cancelWithdrawal(uint256 requestId) external nonReentrant whenNotPaused(PAUSE_CANCEL) {
         WithdrawalRequest storage req = requests[requestId];
         if (req.owner != msg.sender) revert NotRequestOwner(requestId, msg.sender);
         if (req.finalized) revert RequestAlreadyFinalized(requestId);
@@ -249,33 +243,31 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
         pendingVeth2 -= req.vEth2Amount;
         totalCanceledVeth2 += req.vEth2Amount;
 
-        VETH2.safeTransfer(recipient, req.vEth2Amount);
-        emit WithdrawalCanceled(msg.sender, recipient, requestId, req.vEth2Amount);
+        VETH2.safeTransfer(msg.sender, req.vEth2Amount);
+        emit WithdrawalCanceled(msg.sender, msg.sender, requestId, req.vEth2Amount);
     }
 
     // -- Claim -----------------------------------------------------------------
 
-    /// @notice Claim ETH for one finalized withdrawal request.
-    function claimWithdrawal(uint256 requestId, address payable recipient) external nonReentrant {
-        if (recipient == address(0)) revert Errors.ZeroAddress();
-        uint256 ethAmount = _markClaimed(requestId, recipient);
-        recipient.sendValue(ethAmount);
+    /// @notice Claim ETH for one finalized withdrawal request to the request owner.
+    function claimWithdrawal(uint256 requestId) external nonReentrant {
+        uint256 ethAmount = _markClaimed(requestId);
+        payable(msg.sender).sendValue(ethAmount);
     }
 
-    /// @notice Claim ETH for multiple finalized withdrawal requests.
-    function claimWithdrawals(uint256[] calldata requestIds, address payable recipient) external nonReentrant {
-        if (recipient == address(0)) revert Errors.ZeroAddress();
+    /// @notice Claim ETH for multiple finalized withdrawal requests to the request owner.
+    function claimWithdrawals(uint256[] calldata requestIds) external nonReentrant {
         if (requestIds.length == 0) revert Errors.InvalidAmount();
 
         uint256 totalEth = 0;
         for (uint256 i; i < requestIds.length; ++i) {
-            totalEth += _markClaimed(requestIds[i], recipient);
+            totalEth += _markClaimed(requestIds[i]);
         }
 
-        recipient.sendValue(totalEth);
+        payable(msg.sender).sendValue(totalEth);
     }
 
-    function _markClaimed(uint256 requestId, address recipient) internal returns (uint256 ethAmount) {
+    function _markClaimed(uint256 requestId) internal returns (uint256 ethAmount) {
         WithdrawalRequest storage req = requests[requestId];
 
         if (req.owner != msg.sender) revert NotRequestOwner(requestId, msg.sender);
@@ -288,7 +280,7 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
         lockedEther -= ethAmount;
         totalClaimedEth += ethAmount;
 
-        emit WithdrawalClaimed(msg.sender, recipient, requestId, ethAmount);
+        emit WithdrawalClaimed(msg.sender, msg.sender, requestId, ethAmount);
     }
 
     // -- Gov setters -----------------------------------------------------------
