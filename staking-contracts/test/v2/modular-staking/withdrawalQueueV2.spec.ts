@@ -167,10 +167,21 @@ describe("WithdrawalQueueV2", () => {
       const receipt = await tx.wait();
       const gasUsed1 = receipt!.gasUsed * receipt!.gasPrice;
 
-      // Excess ETH stored in pendingRefunds — gov must withdraw it
+      // Excess ETH is reserved as a refund and must not be governable recovery ETH.
+      expect(await queue.pendingRefunds(gov.address)).to.equal(parseEther("1"));
+      expect(await queue.totalPendingRefunds()).to.equal(parseEther("1"));
+      expect(await queue.availableEther()).to.equal(0n);
+      await expect(queue.connect(gov).recoverEth(gov.address, 1n)).to.be.revertedWithCustomError(
+        queue,
+        "InsufficientBalance",
+      );
+
       const tx2 = await queue.connect(gov).withdrawRefund();
       const receipt2 = await tx2.wait();
       const gasUsed2 = receipt2!.gasUsed * receipt2!.gasPrice;
+      expect(await queue.pendingRefunds(gov.address)).to.equal(0n);
+      expect(await queue.totalPendingRefunds()).to.equal(0n);
+      expect(await queue.availableEther()).to.equal(0n);
 
       const govAfter = await ethers.provider.getBalance(gov.address);
       // Gov paid ~1 ETH (finalized) + gas on both txs, got ~1 ETH back via withdrawRefund.

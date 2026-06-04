@@ -78,6 +78,8 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - Use x-ray for Solidity audit loops: inventory contracts, classify entry points and roles, derive invariants, check duplicate sources/gitlinks/conflict markers, run static analysis, then do manual adversarial review.
 - For smart-contract review passes, keep Pashov Audit Group skills available from `https://github.com/pashov/skills` through repo-local links in `skills/`: run x-ray, `solidity-auditor`, and `fizz` together when the work touches protocol contracts or fuzz/invariant coverage.
 - Run `fizz` against `staking-contracts/` in automatic mode for fuzz-suite setup. Required local tools are Foundry `forge`, Medusa, and Echidna; if any are missing, install them or record the tool gap before claiming fuzzing coverage.
+- For withdrawal/redeem queues, treat claim ownership as a hard invariant: asset owner and request controller must not diverge, and operators may initiate only without reassigning claim ownership.
+- Recovery functions must subtract every reserved balance, including locked claims, pending refunds, and pending escrowed tokens/shares, before sending assets to governance or arbitrary recipients.
 - Use Devin and Kimi only through their delegate wrappers, with an envelope first, scoped tasks, acceptance criteria, and concrete output requirements.
 - Fix only concrete bugs, vulnerabilities, broken gates, stale docs, duplicate/dead code, or low-risk coverage gaps. Do not broaden PR 379 into speculative redesign.
 - After each fix, rerun the narrow relevant tests first, then the broader gates needed for confidence.

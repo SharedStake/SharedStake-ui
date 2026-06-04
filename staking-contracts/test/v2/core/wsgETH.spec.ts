@@ -132,6 +132,22 @@ describe("WsgETH.sol", () => {
       .withArgs(ZeroAddress, alice.address, parseEther("1"));
   });
 
+  it("Withdrawals returns escrowed underlying on cancel", async () => {
+    const Withdrawals = await ethers.getContractFactory("Withdrawals");
+    const withdrawals = await Withdrawals.deploy(sgEth.target, parseEther("1"));
+    await withdrawals.waitForDeployment();
+
+    await sgEth.transfer(alice.address, parseEther("2"));
+    await sgEth.connect(alice).approve(withdrawals.target, parseEther("1"));
+    await withdrawals.connect(alice).deposit(parseEther("1"));
+
+    const aliceBefore = await sgEth.balanceOf(alice.address);
+    await withdrawals.connect(alice).withdraw();
+
+    expect(await sgEth.balanceOf(alice.address)).to.equal(aliceBefore + parseEther("1"));
+    expect(await sgEth.balanceOf(withdrawals.target)).to.equal(0n);
+  });
+
   it("price per share", async () => {
     const splitterAddresses = [deployer.address, multiSig.address, wsgEth.target];
     const splitterValues = [6, 3, 31];

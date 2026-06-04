@@ -86,7 +86,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     /// @dev This function must be called by either the owner or an operator of the vault, and is only allowed when the contract is not paused.
 
     /// @param shares The number of shares to redeem.
-    /// @param requester The address requesting the redemption.
+    /// @param requester The request controller. Must equal owner; operators may initiate but not reassign claims.
     /// @param owner The owner of the vault being redeemed from.
 
     /// @return requestId The unique ID assigned to this redemption request.
@@ -97,6 +97,9 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     ) external onlyOwnerOrOperator(owner) nonReentrant whenNotPaused(uint16(1)) returns (uint256 requestId) {
         if (shares == 0) {
             revert Errors.InvalidAmount();
+        }
+        if (requester != owner) {
+            revert Errors.PermissionDenied();
         }
         IERC20(WSGETH).safeTransferFrom(owner, address(this), shares); // asset here is the Vault underlying asset
 
@@ -113,11 +116,10 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     }
 
     /// @notice Allows a user to redeem their vault shares.
-    /// @dev This function must be called by either the owner or an operator of the requester's vault, and is only allowed when the contract is not paused.
-
+    /// @dev This function must be called by either the requester or an operator of the requester.
     /// @param shares The number of shares to redeem.
     /// @param receiver The address that will receive the redeemed assets.
-    /// @param requester The address requesting the redemption.
+    /// @param requester The address that owns the redeem request.
 
     /// @return assets The amount of assets that were successfully redeemed.
     function redeem(
