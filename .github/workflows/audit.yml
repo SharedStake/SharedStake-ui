@@ -50,5 +50,7 @@ jobs:
       - name: Slither static analysis
         continue-on-error: true
         run: |
+          export PATH="$HOME/.foundry/bin:$PATH"
+          forge --version
           python3 -m pip install --user slither-analyzer
           python3 -m slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|test'

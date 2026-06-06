@@ -320,9 +320,6 @@ contract OperatorRegistry is Initializable, UUPSUpgradeable, AccessControlUpgrad
         if (sgtAmount > op.sgtBonded) revert InsufficientBond(op.sgtBonded, sgtAmount);
         op.sgtBonded -= sgtAmount;
 
-        // Burn slashed SGT or send to treasury - for now burn
-        sgtToken.safeTransfer(address(0xdEaD), sgtAmount);
-
         // Reduce totalSlots to match justified slots based on remaining SGT bond
         BondConfig storage cfg = bondConfigs[op.configName];
         uint256 collateral = op.sgtBonded + _nftCreditOf(operator);
@@ -334,6 +331,9 @@ contract OperatorRegistry is Initializable, UUPSUpgradeable, AccessControlUpgrad
 
         // Set 7-day slash lock on exitBond
         slashLockUntil[operator] = block.timestamp + 7 days;
+
+        // Burn slashed SGT or send to treasury - for now burn
+        sgtToken.safeTransfer(address(0xdEaD), sgtAmount);
 
         emit OperatorSlashed(operator, sgtAmount);
     }

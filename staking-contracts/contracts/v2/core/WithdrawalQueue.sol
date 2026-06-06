@@ -73,7 +73,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
 
         uint256 maxUint256 = 2 ** 256 - 1;
 
-        IERC20(WSGETH).approve(_minter, maxUint256);
+        IERC20(WSGETH).safeApprove(_minter, maxUint256);
 
         _grantRole(GOV, _governance);
     }
