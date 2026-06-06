@@ -180,13 +180,33 @@ describe("WithdrawalQueue", () => {
     await expect(withdrawalQueue.connect(alice).redeem(parseEther("5"), bob.address, bob.address))
       .to.be.revertedWithCustomError(withdrawalQueue, "PermissionDenied")
       .withArgs();
-    await withdrawalQueue.connect(bob).redeem(parseEther("5"), bob.address, alice.address);
+    await expect(withdrawalQueue.connect(bob).redeem(parseEther("5"), bob.address, alice.address))
+      .to.be.revertedWithCustomError(withdrawalQueue, "PermissionDenied")
+      .withArgs();
+    await withdrawalQueue.connect(bob).redeem(parseEther("5"), alice.address, alice.address);
     await withdrawalQueue.connect(bob).redeem(parseEther("5"), alice.address, alice.address);
 
     await advanceTimeAndBlock(epoch);
 
     expect(await withdrawalQueue.claimableRedeemRequest(alice.address)).to.eq(parseEther("0"));
     expect(await withdrawalQueue.pendingRedeemRequest(alice.address)).to.eq(parseEther("0"));
+  });
+
+  it("operator cannot redirect redeem or cancel proceeds", async () => {
+    await withdrawalQueue.connect(alice).requestRedeem(parseEther("10"), alice.address, alice.address);
+    await withdrawalQueue.connect(alice).setOperator(bob.address, true);
+    await advanceTimeAndBlock(epoch);
+
+    await expect(withdrawalQueue.connect(bob).redeem(parseEther("5"), bob.address, alice.address))
+      .to.be.revertedWithCustomError(withdrawalQueue, "PermissionDenied")
+      .withArgs();
+    await expect(withdrawalQueue.connect(bob).cancelRedeem(bob.address, alice.address))
+      .to.be.revertedWithCustomError(withdrawalQueue, "PermissionDenied")
+      .withArgs();
+
+    await expect(withdrawalQueue.connect(bob).cancelRedeem(alice.address, alice.address))
+      .to.emit(withdrawalQueue, "CancelRedeem")
+      .withArgs(alice.address, alice.address, parseEther("10"), parseEther("10"));
   });
 
   it("request redeem(flow with secondary operator with own holdings)", async () => {

@@ -128,15 +128,15 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
 
     /// @notice Burn stTokens and enqueue withdrawal requests.
     /// @param amounts  Array of stToken amounts to withdraw (each entry = one request).
-    /// @param owner    Address that will own the requests and can claim ETH. May differ
-    ///                 from msg.sender — the caller burns their own shares and assigns
-    ///                 the ETH claim to owner. Useful for vault/proxy integrations.
+    /// @param owner    Address that will own the requests and can claim ETH. Must be msg.sender.
     /// @return requestIds Assigned request IDs.
     function requestWithdrawals(
         uint256[] calldata amounts,
         address owner
     ) external nonReentrant returns (uint256[] memory requestIds) {
+        if (amounts.length == 0) revert Errors.InvalidAmount();
         if (owner == address(0)) revert Errors.ZeroAddress();
+        if (owner != msg.sender) revert Errors.PermissionDenied();
         // slither-disable-start reentrancy-benign
         // Sync happens before request state is written and the nonReentrant guard
         // prevents callback entry into queue mutators.
@@ -317,6 +317,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
 
     /// @notice Batch claim multiple finalized requests in one transaction.
     function claimWithdrawals(uint256[] calldata requestIds, address payable recipient) external nonReentrant {
+        if (requestIds.length == 0) revert Errors.InvalidAmount();
         if (recipient == address(0)) revert Errors.ZeroAddress();
         uint256 totalEth = 0;
         for (uint256 i; i < requestIds.length; ++i) {

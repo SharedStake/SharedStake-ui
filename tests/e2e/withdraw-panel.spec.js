@@ -9,10 +9,10 @@ import {
   localAddressQuery
 } from './helpers/local-address-query.js';
 
-const DEFAULT_IMPERSONATOR_ADDRESS = '0x1111111111111111111111111111111111111111';
+const DEFAULT_IMPERSONATOR_ADDRESS = '0x2222222222222222222222222222222222222222';
 const RPC_URL = process.env.E2E_IMPERSONATOR_RPC_URL || 'http://127.0.0.1:8545';
 const IMPERSONATOR_ADDRESS =
-  process.env.E2E_IMPERSONATOR_ADDRESS || DEFAULT_IMPERSONATOR_ADDRESS;
+  process.env.E2E_WITHDRAW_PANEL_ADDRESS || DEFAULT_IMPERSONATOR_ADDRESS;
 
 test.describe('WithdrawPanel — UI rendering', () => {
   let chainIdHex;
@@ -56,7 +56,7 @@ test.describe('WithdrawPanel — UI rendering', () => {
 
     // Sub-tab navigation
     await expect(page.getByRole('button', { name: 'Request', exact: true })).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByRole('button', { name: 'My Requests' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('button', { name: 'My Requests', exact: true })).toBeVisible({ timeout: 10_000 });
 
     // Amount input
     await expect(page.locator('input[placeholder="0.0"]')).toBeVisible({ timeout: 10_000 });

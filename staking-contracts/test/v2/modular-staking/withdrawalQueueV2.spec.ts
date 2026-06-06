@@ -106,11 +106,24 @@ describe("WithdrawalQueueV2", () => {
       await expect(queue.connect(alice).requestWithdrawals([parseEther("1")], ZeroAddress)).to.be.reverted;
     });
 
+    it("reverts when caller tries to assign claim ownership to another account", async () => {
+      await expect(
+        queue.connect(alice).requestWithdrawals([parseEther("1")], bob.address),
+      ).to.be.revertedWithCustomError(queue, "PermissionDenied");
+    });
+
     it("batch request: multiple amounts in one call", async () => {
       const ids = await queue
         .connect(alice)
         .requestWithdrawals.staticCall([parseEther("1"), parseEther("2")], alice.address);
       expect(ids.length).to.equal(2);
+    });
+
+    it("reverts for empty request batches", async () => {
+      await expect(queue.connect(alice).requestWithdrawals([], alice.address)).to.be.revertedWithCustomError(
+        queue,
+        "InvalidAmount",
+      );
     });
   });
 
@@ -356,6 +369,13 @@ describe("WithdrawalQueueV2", () => {
 
       // Alice receives ~2 ETH (minus gas).
       expect(aliceAfter).to.be.gt(aliceBefore);
+    });
+
+    it("reverts for empty claim batches", async () => {
+      await expect(queue.connect(alice).claimWithdrawals([], alice.address)).to.be.revertedWithCustomError(
+        queue,
+        "InvalidAmount",
+      );
     });
   });
 

@@ -231,12 +231,17 @@ contract DebtPool is AccessControl, Pausable, ReentrancyGuard {
         bytes32[] calldata _proof
     ) external view returns (bool) {
         if (claimed[_distributionId][_leafIndex]) return false;
-        if (!distributions[_distributionId].finalized) return false;
+        if (_amount == 0) return false;
+        Distribution storage dist = distributions[_distributionId];
+        if (!dist.finalized) return false;
+        if (dist.swept) return false;
         if (paused()) return false;
+        uint256 remaining = dist.totalAmount - dist.claimedAmount;
+        if (_amount > remaining) return false;
 
         // Use same double-hash leaf encoding as claim()
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(_distributionId, _leafIndex, _recipient, _amount))));
-        return MerkleProof.verify(_proof, distributions[_distributionId].merkleRoot, leaf);
+        return MerkleProof.verify(_proof, dist.merkleRoot, leaf);
     }
 
     /// @notice Check if a specific leaf has been claimed

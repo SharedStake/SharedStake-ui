@@ -109,6 +109,7 @@ Deliver a production-oriented router-based staking system with:
 ### 5.4 Exit semantics
 
 - `requestWithdrawals` locks request value at request time.
+- `requestWithdrawals` requires the request owner to be the caller, so burning shares cannot assign claim ownership to another account.
 - `finalize` requires guardian-provided ETH backing.
 - `claimWithdrawal` / `claimWithdrawals` enforce ownership and one-time claim rules.
 - Legacy vEth2 exits use `OldVeth2WithdrawalQueue`: request transfers the caller's old vEth2 into escrow, finalize advances sequential request IDs with ETH funding, and claim pays only finalized locked ETH back to the request owner. Delegated request ownership and recipient redirection are intentionally unsupported for this legacy queue.

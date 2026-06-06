@@ -39,10 +39,6 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     using Address for address payable;
     using SafeERC20 for IERC20;
 
-    struct Request {
-        address requester;
-        uint256 shares;
-    }
     // SharedDepositMinterV2 public immutable MINTER;
     address public immutable MINTER;
     address public immutable WSGETH;
@@ -54,7 +50,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
 
     bytes32 public constant GOV = keccak256("GOV"); // Governance for settings - normally timelock controlled by multisig
 
-    mapping(uint256 => Request) internal requests;
+    mapping(address => uint256) public redeemRequestShares;
     mapping(address => uint256) public redeemRequests;
 
     event RedeemRequest(
@@ -104,12 +100,12 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         IERC20(WSGETH).safeTransferFrom(owner, address(this), shares); // asset here is the Vault underlying asset
 
         requestId = requestsCreated++;
-        requests[requestId] = Request({requester: requester, shares: shares});
         // use assets for tracking
         uint256 assets = IERC4626(WSGETH).previewRedeem(shares);
 
         _stakeForWithdrawal(owner, assets);
         totalPendingRequest += assets;
+        redeemRequestShares[requester] += shares;
         redeemRequests[requester] += assets; // underflow would revert if not enough claimable shares
 
         emit RedeemRequest(requester, owner, requestId, msg.sender, shares);
@@ -130,6 +126,12 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         if (shares == 0) {
             revert Errors.InvalidAmount();
         }
+        if (msg.sender != requester && receiver != requester) {
+            revert Errors.PermissionDenied();
+        }
+        if (redeemRequestShares[requester] < shares) {
+            revert Errors.InvalidAmount();
+        }
 
         assets = IERC4626(WSGETH).previewRedeem(shares);
 
@@ -141,6 +143,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
 
         _withdraw(requester, assets);
         // Treat everything as claimableRedeemRequest and validate here if there's adequate funds
+        redeemRequestShares[requester] -= shares;
         redeemRequests[requester] -= assets; // underflow would revert if not enough claimable shares
         totalPendingRequest -= assets;
         // Track total returned
@@ -167,11 +170,15 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         address requester
     ) external onlyOwnerOrOperator(requester) nonReentrant whenNotPaused(uint16(3)) returns (uint256 assets) {
         uint256 shares = pendingRedeemRequest(requester);
-        assets = IERC4626(WSGETH).previewRedeem(shares);
 
         if (shares == 0) {
             revert Errors.InvalidAmount();
         }
+        if (msg.sender != requester && receiver != requester) {
+            revert Errors.PermissionDenied();
+        }
+
+        assets = redeemRequests[requester];
 
         _verifyEpochHasElapsed(requester);
 
@@ -182,7 +189,8 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         }
 
         // Treat everything as claimableRedeemRequest and validate here if there's adequate funds
-        redeemRequests[requester] -= assets; // underflow would revert if not enough claimable shares
+        redeemRequestShares[requester] = 0;
+        redeemRequests[requester] = 0;
         totalPendingRequest -= assets;
         _withdraw(requester, assets);
         IERC20(WSGETH).safeTransfer(receiver, shares); // asset here is the Vault underlying asset
@@ -204,7 +212,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     }
 
     function pendingRedeemRequest(address owner) public view returns (uint256 shares) {
-        return redeemRequests[owner];
+        return redeemRequestShares[owner];
     }
 
     // claimableRedeemRequest - returns owners shares in claimable state,
