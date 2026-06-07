@@ -253,8 +253,8 @@
             class="exp Info"
           >
             vEth2 is designed for DeFi compatibility. It is a yield bearing
-            token with a 1:1 price ratio with Ether. vEth2 staking is also
-            incentivized further with SGT, the SharedStake Governance Token.
+            token for legacy SharedStake staking exposure. vEth2 staking is
+            also incentivized further with SGT, the SharedStake Governance Token.
           </div>
           <a
             class="LearnButton"
@@ -293,9 +293,8 @@
           </div>
           <div class="exp Info mb30">
             SharedStake optimizes Eth2 staking profits by creating an off-chain
-            yield bearing stable token (vEth2 has a 1:1 price ratio with Ether).
-            Ethereum2 profit distribution will start with the Eth2 launch so
-            until then, track your Eth2 profits in the SharedStake Dashboard.
+            yield bearing token for legacy staking exposure. Legacy vEth2 exits
+            use protocol liquidity or the governed old-vEth2 withdrawal queue.
           </div>
           <ImageVue
             :src="'discount.svg'"
@@ -312,8 +311,8 @@
             gain an extra 8-9% yearly growth with off-chain profit distribution.
             <br>
             Since vEth2 doesn't contain any 'imaginary' staking rewards, its
-            stability is derived from its peg to Ether's value, practically
-            eliminating concerns with Impermanent Loss.
+            value is intended to track the protocol's underlying staking
+            position and available legacy redemption paths.
           </div>
           <ImageVue
             :src="'diamond.svg'"
@@ -344,8 +343,8 @@
           <div class="exp Info mb30">
             10% of all staked Ether remains in the staking contract, creating a
             liquidity bridge between all users, old and new. <br>
-            SharedStakers can un-stake their Ether at anytime by burning their
-            vEth2 through the staking contract, subject to the pooled amount.
+            Legacy vEth2 exits depend on available protocol liquidity or FIFO
+            withdrawal queue finalization at the configured redemption rate.
           </div>
           <ImageVue
             :src="'balance.svg'"

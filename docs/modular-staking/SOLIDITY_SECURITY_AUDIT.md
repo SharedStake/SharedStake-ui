@@ -1,7 +1,7 @@
 # Solidity Security Audit — SharedStake V2 Modular Staking
 
 **Date:** 2026-05-08
-**Auditor:** Codex GPT-5
+**Auditor:** Internal protocol security review
 **Scope:** `contracts/v2/modular-staking/*.sol` + `contracts/v2/modular-staking/modules/*.sol`
 **Commit:** `721a055` (pre-migration internal audit baseline; sources now live in `staking-contracts/`)
 
@@ -302,8 +302,3 @@ From the prior security review, 2 medium findings remain:
 
 9. Add a "Risk Acceptance" section to the operational runbook for the 2 Slither medium findings
 10. Document the exact GOV → timelock migration path in deployment scripts
-
----
-
-**Agent:** Codex GPT-5
-**Co-authored-by:** Chimera <chimera_defi@protonmail.com>

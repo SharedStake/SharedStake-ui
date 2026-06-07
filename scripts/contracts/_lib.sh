@@ -78,6 +78,7 @@ normalized_addresses_json() {
   local st_token
   local wst_token
   local withdrawal_queue_v2
+  local old_veth2_withdrawal_queue
   local staking_router
   local validator_module
   local dvt_module
@@ -107,6 +108,7 @@ normalized_addresses_json() {
   st_token="$(read_address_or_empty "$network" "StToken")"
   wst_token="$(read_address_or_empty "$network" "WstToken")"
   withdrawal_queue_v2="$(read_address_or_empty "$network" "WithdrawalQueueV2")"
+  old_veth2_withdrawal_queue="$(read_address_or_empty "$network" "OldVeth2WithdrawalQueue")"
   staking_router="$(read_address_or_empty "$network" "StakingRouter")"
   validator_module="$(read_address_or_empty "$network" "ValidatorModule")"
   dvt_module="$(read_address_or_empty "$network" "DVTModule")"
@@ -137,6 +139,7 @@ normalized_addresses_json() {
     --arg st_token "$st_token" \
     --arg wst_token "$wst_token" \
     --arg withdrawal_queue_v2 "$withdrawal_queue_v2" \
+    --arg old_veth2_withdrawal_queue "$old_veth2_withdrawal_queue" \
     --arg staking_router "$staking_router" \
     --arg validator_module "$validator_module" \
     --arg dvt_module "$dvt_module" \
@@ -166,6 +169,7 @@ normalized_addresses_json() {
       stToken: $st_token,
       wstToken: $wst_token,
       withdrawalQueueV2: $withdrawal_queue_v2,
+      oldVeth2WithdrawalQueue: $old_veth2_withdrawal_queue,
       stakingRouter: $staking_router,
       validatorModule: $validator_module,
       dvtModule: $dvt_module,

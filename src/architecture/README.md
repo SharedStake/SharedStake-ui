@@ -27,7 +27,8 @@ This folder is the frontend-facing architecture workspace for iterative planning
    - `staking-contracts/contracts/v2/core/README.md`
    - `staking-contracts/contracts/v2/modular-staking/`
    - `src/architecture/LIDO_PARITY_ARCHITECTURE.md`
-   - `llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md`
+   - `docs/modular-staking/architecture.md`
+   - `docs/modular-staking/diagrams.md`
 4. Keep source links current when GitBook pages change.
 
 ## Goal

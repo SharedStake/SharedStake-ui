@@ -24,7 +24,8 @@
           <p class="panel-copy">
             Keep the editable architecture draft in
             <code>src/architecture/architecturePlan.js</code>. Keep long-form
-            context in <code>llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md</code>.
+            protocol references in <code>docs/modular-staking/architecture.md</code>
+            and <code>docs/modular-staking/diagrams.md</code>.
           </p>
           <div class="links">
             <a
