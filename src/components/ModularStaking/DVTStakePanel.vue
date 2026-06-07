@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Section A: Module Stats -->
-    <div class="rounded-xl border border-border bg-card p-4">
+    <section class="rounded-xl border border-border bg-card p-4">
       <div class="text-sm font-semibold text-foreground mb-3">
         DVT Module
       </div>
@@ -31,10 +31,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <hr class="border-border">
 
     <!-- Section B: My Clusters -->
-    <div class="rounded-xl border border-border bg-card p-4">
+    <section class="rounded-xl border border-border bg-card p-4">
       <div class="text-sm font-semibold text-foreground mb-3">
         My Clusters
       </div>
@@ -176,10 +178,15 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <hr
+      v-if="hasActiveCluster"
+      class="border-border"
+    >
 
     <!-- Section C: Propose New Deposit -->
-    <div
+    <section
       v-if="hasActiveCluster"
       class="rounded-xl border border-border bg-card p-4"
     >
@@ -259,7 +266,7 @@
       <div class="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
         The DVT module buffers ETH from the protocol. Your cluster submits deposit data to activate validators. Ensure withdrawal credentials match the module's expectedWithdrawalCredentials before proposing.
       </div>
-    </div>
+    </section>
 
     <!-- Error messages -->
     <div
@@ -362,22 +369,49 @@ export default {
     },
   },
 
+  watch: {
+    'walletStore.address': 'refreshDVTData',
+    'store.chainId': 'refreshForNetwork',
+  },
+
   async mounted() {
     await this.checkContractDeployment()
-    if (this.walletStore.isAuth) {
-      await this.fetchModuleStats()
-      await this.fetchUserClusters()
-    }
+    await this.refreshDVTData()
   },
 
   methods: {
+    async refreshForNetwork() {
+      this.contractsDeployed = false
+      this.userClusters = []
+      this.form.clusterId = ''
+      await this.checkContractDeployment()
+      await this.refreshDVTData()
+    },
+
+    async refreshDVTData() {
+      await this.fetchModuleStats()
+
+      if (this.walletStore.isAuth) {
+        await this.fetchUserClusters()
+      } else {
+        this.userClusters = []
+        this.form.clusterId = ''
+      }
+    },
+
     async checkContractDeployment() {
       try {
         const chainId = this.store.chainId
-        if (!chainId) return
+        if (!chainId) {
+          this.contractsDeployed = false
+          return
+        }
         
         const addresses = this.getAddresses(chainId)
-        if (!addresses) return
+        if (!addresses) {
+          this.contractsDeployed = false
+          return
+        }
         
         this.contractsDeployed = addresses.dvtModule !== '0x0000000000000000000000000000000000000000'
       } catch (e) {
@@ -434,7 +468,7 @@ export default {
         const userAddress = this.walletStore.address
         if (!userAddress) return
         
-        const clusterCount = await contract.clusterCount()
+        const clusterCount = Number(await contract.clusterCount())
         const clusters = []
         
         for (let i = 0; i < clusterCount; i++) {
@@ -448,7 +482,7 @@ export default {
             const depositCount = await contract.clusterDepositCount(clusterId)
             
             // Fetch proposals
-            const proposalCount = await contract.clusterProposalCount(clusterId)
+            const proposalCount = Number(await contract.clusterProposalCount(clusterId))
             const proposals = []
             
             for (let j = 0; j < proposalCount; j++) {

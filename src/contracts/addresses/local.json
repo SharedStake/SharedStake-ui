@@ -18,5 +18,6 @@
   "validatorModule": "0x525C7063E7C20997BaaE9bDa922159152D0e8417",
   "voteEscrowV2": "0x02b0B4EFd909240FCB2Eb5FAe060dC60D112E3a4",
   "withdrawalQueueV2": "0xfaAddC93baf78e89DCf37bA67943E1bE8F37Bb8c",
+  "oldVeth2WithdrawalQueue": "",
   "wstToken": "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75"
 }

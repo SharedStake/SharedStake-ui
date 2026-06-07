@@ -26,6 +26,7 @@ import wstTokenABI from './abis/wstToken.json'
 import stTokenERC4626WrapperABI from './abis/stTokenERC4626Wrapper.json'
 import stakingRouterABI from './abis/stakingRouter.json'
 import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
+import oldVeth2WithdrawalQueueABI from './abis/oldVeth2WithdrawalQueue.json'
 import validatorModuleABI from './abis/validatorModule.json'
 import dvtModuleABI from './abis/dvtModule.json'
 import operatorRegistryABI from './abis/operatorRegistry.json'
@@ -132,6 +133,7 @@ let _ABIs = {
     stTokenERC4626Wrapper: stTokenERC4626WrapperABI,
     stakingRouter: stakingRouterABI,
     withdrawalQueueV2: withdrawalQueueV2ABI,
+    oldVeth2WithdrawalQueue: oldVeth2WithdrawalQueueABI,
     validatorModule: validatorModuleABI,
     dvtModule: dvtModuleABI,
     operatorRegistry: operatorRegistryABI
@@ -398,6 +400,7 @@ export const vETH2_CRV = (useSigner = false) => createContract('erc20', 'vETH2_C
 
 export const withdrawals = (useSigner = false) => createContractDefault('withdrawals', useSigner);
 export const rollovers = (useSigner = false) => createContractDefault("rollovers", useSigner);
+export const oldVeth2WithdrawalQueue = (useSigner = false) => createContractDefault('oldVeth2WithdrawalQueue', useSigner);
 export const sgETH = (useSigner = false) => createContractDefault('sgETH', useSigner);
 export const wsgETH = (useSigner = false) => createContractDefault("wsgETH", useSigner);
 
