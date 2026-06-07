@@ -13,7 +13,7 @@
             Withdraw from Deprecated Contracts
           </h1>
           <p class="text-sm text-gray-300 mt-2">
-            Withdraw your vETH2 from deprecated contracts to use in the new withdrawal contract
+            Withdraw old deposits, then redeem returned vETH2 through the governed FIFO queue
           </p>
         </header>
 
@@ -28,7 +28,7 @@
           </p>
           <p class="mt-2 text-sm text-gray-200">
             <strong>When you click "Withdraw vETH2":</strong> The contract will return your deposited vETH2 tokens to your wallet. 
-            After withdrawal, you can deposit these tokens into the new withdrawal contract (coming soon) to redeem them for ETH once it's launched.
+            After withdrawal, request a redemption in the old-vETH2 FIFO queue below once governance has configured the queue address for this network.
           </p>
         </div>
 
@@ -82,7 +82,7 @@
                     </span>
                   </p>
                   <p class="text-xs text-gray-400 mt-1">
-                    You can withdraw this vETH2 now. Once the new withdrawal contract is launched, you can deposit it there to redeem for ETH.
+                    You can withdraw this vETH2 now. Once it is in your wallet, use the queue below to request a governed FIFO redemption.
                   </p>
                 </div>
               </div>
@@ -98,7 +98,7 @@
                   <span>Withdraw {{ parseBN(contract.userDeposited) }} vETH2</span>
                 </dapp-tx-btn>
                 <p class="text-xs text-gray-400 text-center mt-1">
-                  After withdrawal, you can deposit this vETH2 into the new withdrawal contract once it's launched
+                  After withdrawal, request redemption in the old-vETH2 FIFO queue below.
                 </p>
               </div>
             </div>
@@ -126,6 +126,181 @@
           </p>
         </div>
 
+        <!-- Old vETH2 FIFO queue -->
+        <section class="w-full p-4 mt-6 border border-gray-700 rounded-lg bg-gray-900">
+          <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div>
+              <h2 class="text-xl font-semibold text-gray-100">
+                Old vETH2 FIFO Redemption Queue
+              </h2>
+              <p class="mt-1 text-sm text-gray-400">
+                Escrow returned vETH2, wait for guardian FIFO finalization, then claim ETH to your wallet.
+              </p>
+            </div>
+            <div
+              class="self-start rounded-full px-3 py-1 text-xs font-semibold"
+              :class="oldQueue.deployed ? 'bg-green-900 text-green-200' : 'bg-yellow-900 text-yellow-200'"
+            >
+              {{ oldQueue.deployed ? 'Configured' : 'Awaiting governance config' }}
+            </div>
+          </div>
+
+          <div
+            v-if="oldQueue.loading"
+            class="mt-4 text-sm text-gray-400"
+          >
+            Loading queue state...
+          </div>
+
+          <div
+            v-else-if="!oldQueue.deployed"
+            class="mt-4 rounded-lg border border-yellow-800 bg-yellow-950/40 p-3 text-sm text-yellow-100"
+          >
+            The old-vETH2 queue contract is included in this release. Mainnet requests become available here after governance deploys it, sets the redemption rate, funds finalization, and publishes the configured address.
+          </div>
+
+          <div
+            v-else
+            class="mt-4 flex flex-col gap-4"
+          >
+            <div class="grid gap-3 md:grid-cols-3">
+              <div class="rounded-lg border border-gray-700 bg-gray-800 p-3">
+                <div class="text-xs uppercase text-gray-500">
+                  Your vETH2
+                </div>
+                <div class="mt-1 font-mono text-sm text-gray-100">
+                  {{ formatWei(oldQueue.veth2Balance) }}
+                </div>
+              </div>
+              <div class="rounded-lg border border-gray-700 bg-gray-800 p-3">
+                <div class="text-xs uppercase text-gray-500">
+                  Redemption rate
+                </div>
+                <div class="mt-1 font-mono text-sm text-gray-100">
+                  {{ formatWei(oldQueue.redemptionRate) }} ETH / vETH2
+                </div>
+              </div>
+              <div class="rounded-lg border border-gray-700 bg-gray-800 p-3">
+                <div class="text-xs uppercase text-gray-500">
+                  Queue
+                </div>
+                <div class="mt-1 font-mono text-sm text-gray-100">
+                  Next #{{ oldQueue.nextRequestId }} · Finalized #{{ oldQueue.lastFinalizedRequestId }}
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-lg border border-gray-700 bg-gray-800 p-3">
+              <label
+                for="old-veth2-amount"
+                class="mb-2 block text-sm font-semibold text-gray-200"
+              >
+                Request redemption
+              </label>
+              <div class="flex flex-col gap-3 md:flex-row md:items-center">
+                <input
+                  id="old-veth2-amount"
+                  v-model="oldQueue.amount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.0"
+                  class="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-gray-100 outline-none focus:border-pink-500"
+                  @input="refreshOldVeth2Quote"
+                >
+                <button
+                  type="button"
+                  class="rounded-lg border border-gray-600 px-3 py-2 text-sm text-gray-200 hover:border-gray-400"
+                  @click="setMaxOldVeth2"
+                >
+                  Max
+                </button>
+                <dapp-tx-btn
+                  :click="handleRequestOldVeth2"
+                  :disabled="!canRequestOldVeth2"
+                >
+                  <span>Request Redemption</span>
+                </dapp-tx-btn>
+              </div>
+              <p class="mt-2 text-xs text-gray-400">
+                Estimated ETH after finalization: {{ formatWei(oldQueue.quoteEth) }}
+              </p>
+              <p
+                v-if="oldQueue.amountError"
+                class="mt-2 text-xs text-red-300"
+              >
+                {{ oldQueue.amountError }}
+              </p>
+            </div>
+
+            <div class="rounded-lg border border-gray-700 bg-gray-800 p-3">
+              <div class="mb-3 flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-gray-200">
+                  My queue requests
+                </h3>
+                <button
+                  type="button"
+                  class="text-xs text-blue-300 underline hover:text-blue-200"
+                  @click="refreshOldVeth2Queue"
+                >
+                  Refresh
+                </button>
+              </div>
+
+              <div
+                v-if="oldQueue.requests.length === 0"
+                class="text-sm text-gray-400"
+              >
+                No old-vETH2 queue requests found for this wallet.
+              </div>
+
+              <div
+                v-for="req in oldQueue.requests"
+                :key="req.id"
+                class="mb-3 rounded-lg border border-gray-700 bg-gray-900 p-3 last:mb-0"
+              >
+                <div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <div class="text-sm font-semibold text-gray-100">
+                      Request #{{ req.id }}
+                    </div>
+                    <div class="mt-1 text-xs text-gray-400">
+                      {{ formatWei(req.vEth2Amount) }} vETH2 → {{ formatWei(req.ethAmount) }} ETH
+                    </div>
+                  </div>
+                  <div
+                    class="text-xs font-semibold"
+                    :class="requestStatusClass(req)"
+                  >
+                    {{ requestStatus(req) }}
+                  </div>
+                </div>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <dapp-tx-btn
+                    v-if="!req.finalized && !req.claimed && !req.canceled"
+                    :click="() => handleCancelOldVeth2(req.id)"
+                  >
+                    <span>Cancel</span>
+                  </dapp-tx-btn>
+                  <dapp-tx-btn
+                    v-if="req.finalized && !req.claimed && !req.canceled"
+                    :click="() => handleClaimOldVeth2(req.id)"
+                  >
+                    <span>Claim ETH</span>
+                  </dapp-tx-btn>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p
+            v-if="oldQueue.error"
+            class="mt-3 rounded-lg border border-red-800 bg-red-950/40 p-3 text-sm text-red-200"
+          >
+            {{ oldQueue.error }}
+          </p>
+        </section>
+
         <!-- FAQ Section -->
         <DeprecatedWithdrawalsFAQ
           :user-total-deposited="userTotalDeposited"
@@ -144,6 +319,7 @@
 
 <script>
 import BN from "bignumber.js";
+import { ethers } from "ethers";
 import { useWalletStore } from "@/stores/wallet";
 import ConnectButton from "@/components/Common/ConnectButton.vue";
 import DappTxBtn from "@/components/Common/DappTxBtn.vue";
@@ -153,6 +329,7 @@ import { parseBN } from "@/utils/bignumber";
 import {
   getDeprecatedWithdrawalsAddresses,
   createDeprecatedWithdrawalsContract,
+  oldVeth2WithdrawalQueue,
   vEth2,
   rollovers,
   sgETH,
@@ -193,6 +370,22 @@ export default {
       rolloverVeth2Input: BN(0),
       rolloverEthRedeemed: BN(0),
       contractDetails: [],
+      oldQueue: {
+        loading: false,
+        deployed: false,
+        error: null,
+        address: null,
+        amount: "",
+        amountError: null,
+        quoteEth: "0",
+        veth2Balance: "0",
+        minWithdrawal: "0",
+        maxWithdrawal: "0",
+        redemptionRate: "0",
+        nextRequestId: "1",
+        lastFinalizedRequestId: "0",
+        requests: [],
+      },
     };
   },
   computed: {
@@ -210,6 +403,19 @@ export default {
         return total.plus(deposited);
       }, BN(0));
     },
+    canRequestOldVeth2() {
+      try {
+        if (!this.userConnectedWalletAddress || !this.oldQueue.deployed || this.oldQueue.loading) return false;
+        const amount = this.parseOldQueueAmount();
+        if (amount <= 0n) return false;
+        const min = BigInt(this.oldQueue.minWithdrawal || "0");
+        const max = BigInt(this.oldQueue.maxWithdrawal || "0");
+        const balance = BigInt(this.oldQueue.veth2Balance || "0");
+        return amount >= min && amount <= max && amount <= balance && !this.oldQueue.amountError;
+      } catch {
+        return false;
+      }
+    },
   },
   watch: {
     userConnectedWalletAddress: {
@@ -224,8 +430,11 @@ export default {
           await this.scanDeprecatedContracts();
           // Recalculate totals when wallet connects (provider should be ready now)
           await this.calculateTotals();
+          await this.refreshOldVeth2Queue();
         } else {
           this.deprecatedContracts = [];
+          this.oldQueue.requests = [];
+          this.oldQueue.veth2Balance = "0";
         }
       },
     },
@@ -234,11 +443,224 @@ export default {
     // Calculate totals on mount (works even if user isn't connected)
     // Wait a bit for provider to initialize, then retry if needed
     await this.waitForProviderAndCalculateTotals();
+    await this.refreshOldVeth2Queue();
   },
   methods: {
     parseBN,
+    formatWei(value, decimals = 6) {
+      try {
+        return BN(ethers.formatEther(BigInt(value || "0"))).decimalPlaces(decimals).toString();
+      } catch {
+        return "0";
+      }
+    },
+    parseOldQueueAmount() {
+      const raw = String(this.oldQueue.amount || "").trim();
+      if (!raw) return 0n;
+      return ethers.parseEther(raw);
+    },
+    requestStatus(req) {
+      if (req.claimed) return "Claimed";
+      if (req.canceled) return "Canceled";
+      if (req.finalized) return "Ready to claim";
+      return "Pending finalization";
+    },
+    requestStatusClass(req) {
+      if (req.claimed) return "text-gray-400";
+      if (req.canceled) return "text-red-300";
+      if (req.finalized) return "text-green-300";
+      return "text-yellow-300";
+    },
     hasDeposits(contract) {
       return contract?.userDeposited && BN.isBigNumber(contract.userDeposited) && contract.userDeposited.gt(0);
+    },
+    setMaxOldVeth2() {
+      this.oldQueue.amount = ethers.formatEther(BigInt(this.oldQueue.veth2Balance || "0"));
+      this.refreshOldVeth2Quote();
+    },
+
+    async refreshOldVeth2Quote() {
+      this.oldQueue.amountError = null;
+      this.oldQueue.quoteEth = "0";
+
+      let amount;
+      try {
+        amount = this.parseOldQueueAmount();
+      } catch {
+        this.oldQueue.amountError = "Enter a valid vETH2 amount.";
+        return;
+      }
+
+      if (amount === 0n) return;
+
+      try {
+        const min = BigInt(this.oldQueue.minWithdrawal || "0");
+        const max = BigInt(this.oldQueue.maxWithdrawal || "0");
+        const balance = BigInt(this.oldQueue.veth2Balance || "0");
+        if (min > 0n && amount < min) this.oldQueue.amountError = `Minimum request is ${this.formatWei(min)} vETH2.`;
+        else if (max > 0n && amount > max) this.oldQueue.amountError = `Maximum request is ${this.formatWei(max)} vETH2.`;
+        else if (amount > balance) this.oldQueue.amountError = "Amount exceeds your vETH2 balance.";
+
+        const queue = oldVeth2WithdrawalQueue(false);
+        if (queue) {
+          this.oldQueue.quoteEth = (await queue.quoteEth(amount)).toString();
+        }
+      } catch (error) {
+        console.warn("Old vETH2 quote failed:", error);
+        this.oldQueue.amountError = "Unable to quote this request on the connected network.";
+      }
+    },
+
+    async refreshOldVeth2Queue() {
+      this.oldQueue.loading = true;
+      this.oldQueue.error = null;
+
+      try {
+        const queue = oldVeth2WithdrawalQueue(false);
+        const token = vEth2(false);
+        if (!queue) {
+          this.oldQueue.deployed = false;
+          this.oldQueue.address = null;
+          this.oldQueue.requests = [];
+          return;
+        }
+
+        this.oldQueue.deployed = true;
+        this.oldQueue.address = await queue.getAddress();
+
+        const [
+          minWithdrawal,
+          maxWithdrawal,
+          redemptionRate,
+          nextRequestId,
+          lastFinalizedRequestId,
+        ] = await Promise.all([
+          queue.minWithdrawal().catch(() => 0n),
+          queue.maxWithdrawal().catch(() => 0n),
+          queue.redemptionRate().catch(() => 0n),
+          queue.nextRequestId().catch(() => 1n),
+          queue.lastFinalizedRequestId().catch(() => 0n),
+        ]);
+
+        this.oldQueue.minWithdrawal = minWithdrawal.toString();
+        this.oldQueue.maxWithdrawal = maxWithdrawal.toString();
+        this.oldQueue.redemptionRate = redemptionRate.toString();
+        this.oldQueue.nextRequestId = nextRequestId.toString();
+        this.oldQueue.lastFinalizedRequestId = lastFinalizedRequestId.toString();
+
+        if (token && this.userConnectedWalletAddress) {
+          this.oldQueue.veth2Balance = (await token.balanceOf(this.userConnectedWalletAddress)).toString();
+          this.oldQueue.requests = await this.fetchOldVeth2Requests(queue, this.userConnectedWalletAddress);
+        } else {
+          this.oldQueue.veth2Balance = "0";
+          this.oldQueue.requests = [];
+        }
+
+        await this.refreshOldVeth2Quote();
+      } catch (error) {
+        console.error("Old vETH2 queue refresh failed:", error);
+        this.oldQueue.error = "Failed to load the old-vETH2 queue on this network.";
+      } finally {
+        this.oldQueue.loading = false;
+      }
+    },
+
+    async fetchOldVeth2Requests(queue, owner) {
+      const ids = new Set();
+
+      try {
+        const filter = queue.filters.WithdrawalRequested(null, owner);
+        const events = await queue.queryFilter(filter);
+        for (const event of events) {
+          const id = event.args?.requestId ?? event.args?.[2];
+          if (id != null) ids.add(Number(id));
+        }
+      } catch (error) {
+        console.warn("Old vETH2 event lookup failed; falling back to bounded request scan:", error);
+      }
+
+      if (ids.size === 0) {
+        const next = Number(this.oldQueue.nextRequestId || "1");
+        const from = Math.max(1, next - 500);
+        for (let id = from; id < next; id++) ids.add(id);
+      }
+
+      const requests = [];
+      const ownerLower = owner.toLowerCase();
+      for (const id of Array.from(ids).sort((a, b) => a - b)) {
+        try {
+          const req = await queue.getRequest(id);
+          if (req.owner && req.owner.toLowerCase() === ownerLower) {
+            requests.push({
+              id,
+              owner: req.owner,
+              vEth2Amount: req.vEth2Amount.toString(),
+              ethAmount: req.ethAmount.toString(),
+              requestedAt: req.requestedAt.toString(),
+              finalized: req.finalized,
+              claimed: req.claimed,
+              canceled: req.canceled,
+            });
+          }
+        } catch {
+          /* ignore missing/reverted request reads */
+        }
+      }
+      return requests;
+    },
+
+    handleRequestOldVeth2() {
+      return {
+        abiCall: async (txOptions = {}) => {
+          const queue = oldVeth2WithdrawalQueue(true);
+          const token = vEth2(true);
+          if (!queue || !token) throw new Error("Old vETH2 queue or vETH2 token is not available");
+
+          const amount = this.parseOldQueueAmount();
+          const queueAddress = await queue.getAddress();
+          const allowance = await token.allowance(this.userConnectedWalletAddress, queueAddress);
+          if (allowance < amount) {
+            const approveTx = await token.approve(queueAddress, amount, txOptions);
+            await approveTx.wait();
+          }
+
+          return queue.requestWithdrawal(amount, txOptions);
+        },
+        argsArr: [],
+        cb: async () => {
+          this.oldQueue.amount = "";
+          await this.refreshOldVeth2Queue();
+          await this.calculateTotals();
+        },
+      };
+    },
+
+    handleCancelOldVeth2(requestId) {
+      return {
+        abiCall: async (txOptions = {}) => {
+          const queue = oldVeth2WithdrawalQueue(true);
+          if (!queue) throw new Error("Old vETH2 queue is not available");
+          return queue.cancelWithdrawal(requestId, txOptions);
+        },
+        argsArr: [],
+        cb: async () => {
+          await this.refreshOldVeth2Queue();
+        },
+      };
+    },
+
+    handleClaimOldVeth2(requestId) {
+      return {
+        abiCall: async (txOptions = {}) => {
+          const queue = oldVeth2WithdrawalQueue(true);
+          if (!queue) throw new Error("Old vETH2 queue is not available");
+          return queue.claimWithdrawal(requestId, txOptions);
+        },
+        argsArr: [],
+        cb: async () => {
+          await this.refreshOldVeth2Queue();
+        },
+      };
     },
 
     async waitForProviderAndCalculateTotals(retries = 5, delay = 500) {

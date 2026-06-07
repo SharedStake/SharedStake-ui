@@ -41,9 +41,9 @@
       <p
         class="text-xs pt-0.5 border-t border-brand-primary-light font-normal mt-0.5"
       >
-        Get ready for V2!
+        SharedStake V2 beta and legacy vETH2 withdrawals are available in the app.
         <br>
-        Over 90% of veth2 already redeemed! New v2 withdrawawls contracts with better UX coming soon for remaining users! 
+        Over 90% of vETH2 has already been redeemed. Remaining users can withdraw legacy deposits and use the governed old-vETH2 FIFO queue once configured.
         <br>
         version: {{ appVersion }}
       </p>
@@ -116,12 +116,13 @@
         <div class="sidebar-section-header">
           Core Actions
         </div>
-        <div class="link disabled-link flex flex-col items-start">
-          <span>Stake</span>
-          <div class="coming-soon">
-            Coming Soon
-          </div>
-        </div>
+        <router-link
+          class="link"
+          to="/v2"
+          @click.native="showSidebar = false"
+        >
+          Stake
+        </router-link>
         <router-link
           class="link"
           to="/wrap"
@@ -143,12 +144,13 @@
         >
           Rollover
         </router-link>
-        <div class="link disabled-link flex flex-col items-start">
-          <span>Withdraw</span>
-          <div class="coming-soon">
-            Coming Soon
-          </div>
-        </div>
+        <router-link
+          class="link"
+          to="/withdraw"
+          @click.native="showSidebar = false"
+        >
+          Withdraw
+        </router-link>
         <router-link
           class="link"
           to="/withdraw-from-deprecated"
@@ -259,12 +261,6 @@
           >Twitter
           </a>
         </span>
-        <div class="link disabled-link flex flex-col items-start">
-          <span>Telegram</span>
-          <div class="coming-soon">
-            Coming Soon
-          </div>
-        </div>
         <span class="link">
           <a
             href="mailto:admin@sharedstake.org"
@@ -797,19 +793,6 @@ export default {
 .icebear {
   padding: 0 10px;
 }
-.disabled-link {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
-  font-weight: normal;
-}
-
 .sidebar-section {
   margin-bottom: 1.5rem;
   width: 100%;
