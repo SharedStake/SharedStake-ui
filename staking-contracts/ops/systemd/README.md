@@ -1,11 +1,12 @@
 # SharedStake Keeper systemd Units
 
-This directory contains production service units for all four keepers:
+This directory contains production service units for all five keepers:
 
 - `sharedstake-keeper-deposit-sweep.service`
 - `sharedstake-keeper-oracle-reporter.service`
 - `sharedstake-keeper-withdrawal-finalizer.service`
 - `sharedstake-keeper-balance-monitor.service`
+- `sharedstake-keeper-vesgt-checkpointer.service`
 
 ## Prerequisites
 
@@ -33,7 +34,8 @@ sudo systemctl start \
   sharedstake-keeper-deposit-sweep.service \
   sharedstake-keeper-oracle-reporter.service \
   sharedstake-keeper-withdrawal-finalizer.service \
-  sharedstake-keeper-balance-monitor.service
+  sharedstake-keeper-balance-monitor.service \
+  sharedstake-keeper-vesgt-checkpointer.service
 
 sudo systemctl status sharedstake-keeper-deposit-sweep.service --no-pager
 sudo journalctl -u sharedstake-keeper-balance-monitor.service -f

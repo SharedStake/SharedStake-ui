@@ -20,6 +20,7 @@ Before running `deploy/v2-modular-staking/*` on non-local networks, set:
 - Optional NFT operator bond credit: `V2_OPERATOR_NFT_ADDRESS` or `NFT_CONTRACT_ADDRESS`, plus `V2_OPERATOR_NFT_SGT_CREDIT`
 - Optional operator bond overrides: `V2_OPERATOR_ETH_BOND_PER_SLOT`, `V2_OPERATOR_SGT_BOND_PER_SLOT`, `V2_OPERATOR_MAX_SLOTS`
 - Optional dark-launch controls: `V2_MODULES_DARK_LAUNCH`, `V2_VALIDATOR_MODULE_PAUSED`, `V2_DVT_MODULE_PAUSED`, `V2_LST_WRAP_MODULE_PAUSED`
+- Optional ERC-4626 wrapper seed override: `V2_WRAPPER_SEED_AMOUNT` in stToken units, default `0.001` on non-local networks. Set to `0` only for an intentionally unseeded wrapper deployment.
 
 Deployment scripts now fail closed on non-local networks when these are missing or inconsistent. Non-local module deployments default to `pauseAfterRegistration=true` unless overridden, so modules can be deployed and verified before governance enables user inflow.
 
@@ -42,6 +43,8 @@ Deployment scripts now fail closed on non-local networks when these are missing 
 `011_stTokenERC4626Wrapper.ts` deploys `StTokenERC4626Wrapper`, a permissionless ERC-4626 vault over `StToken`. It requires no role grants and does not mint, burn, route, or custody ETH on behalf of the protocol. It only wraps user-provided `stToken` into a non-rebasing vault share and unwraps back to `stToken`. ETH exits remain the `WithdrawalQueueV2` request/finalize/claim flow.
 
 The wrapper is shipped as the standards-composable surface for DeFi integrations that expect ERC-4626. It advertises ERC-165 support for `IERC4626` so integrators can detect the vault interface without changing router or withdrawal-queue safety semantics.
+
+On non-local networks the deploy script seeds the wrapper with `V2_WRAPPER_SEED_AMOUNT` stToken, defaulting to `0.001`. The wrapper already inherits OpenZeppelin ERC-4626 virtual assets/shares, which makes donation-inflation attacks non-profitable; the seed further raises the cost of griefing small deposits into zero-share reverts. The deployer must hold at least the seed amount of stToken, or the deploy fails with an explicit funding error. Local hardhat/localhost deploys skip this seed.
 
 ERC-7540 is intentionally not implemented in core V2. `WithdrawalQueueV2` is ERC-7540-inspired but keeps SharedStake-specific request-time value locking, guardian-backed finalization, TURBO/BUNKER modes, and batch claim behavior. If a future integration requires ERC-7540, add a separate adapter/facade over the existing queue instead of rewriting the queue itself.
 

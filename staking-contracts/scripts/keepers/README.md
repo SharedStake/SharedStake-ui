@@ -1,6 +1,6 @@
 # Keeper Scripts
 
-Four keepers maintain the SharedStake V2 protocol in production. Run all four concurrently on a dedicated server or via systemd/Docker.
+Five keepers maintain the SharedStake V2 protocol in production. Run all five concurrently on a dedicated server or via systemd/Docker.
 
 Committed runtime artifacts:
 
@@ -11,12 +11,13 @@ Committed runtime artifacts:
 
 ## Required Roles
 
-| Keeper              | Role                               | Notes                        |
-| ------------------- | ---------------------------------- | ---------------------------- |
-| depositSweep        | `NODE_OPERATOR` on ValidatorModule | Submits beacon deposits      |
-| oracleReporter      | `SUBMITTER` on OracleAdapter       | Reports beacon balances      |
-| withdrawalFinalizer | `GUARDIAN` on WithdrawalQueueV2    | Finalizes withdrawal batches |
-| balanceMonitor      | `GUARDIAN` on StakingRouter        | Emergency pauses on anomaly  |
+| Keeper              | Role                               | Notes                                                            |
+| ------------------- | ---------------------------------- | ---------------------------------------------------------------- |
+| depositSweep        | `NODE_OPERATOR` on ValidatorModule | Submits beacon deposits                                          |
+| oracleReporter      | `SUBMITTER` on OracleAdapter       | Reports beacon balances                                          |
+| withdrawalFinalizer | `GUARDIAN` on WithdrawalQueueV2    | Finalizes withdrawal batches                                     |
+| balanceMonitor      | `GUARDIAN` on StakingRouter        | Emergency pauses on anomaly                                      |
+| veSGTCheckpointer   | None; funded EOA                   | Refreshes decaying veSGT checkpoints before governance snapshots |
 
 > GUARDIAN and NODE_OPERATOR should be **separate hot wallets** — not the governance multisig. GUARDIAN needs enough ETH to finalize withdrawal batches.
 
@@ -35,6 +36,7 @@ npx ts-node scripts/keepers/depositSweep.ts --watch --interval=60
 npx ts-node scripts/keepers/oracleReporter.ts --watch --interval=900
 npx ts-node scripts/keepers/withdrawalFinalizer.ts --watch --interval=120
 npx ts-node scripts/keepers/balanceMonitor.ts --watch --interval=60
+npx ts-node scripts/keepers/veSGTCheckpointer.ts --watch --interval=300
 ```
 
 ## Environment Variables
@@ -70,6 +72,13 @@ ORACLE_ADAPTER_ADDRESS=0x...OracleAdapter   # optional but recommended
 ALERT_THRESHOLD_BPS=500     # 5% drop triggers pause
 MAX_ORACLE_AGE_SEC=3600     # stale oracle reports also trigger pause
 WEBHOOK_URL=https://...      # optional: Slack/PagerDuty webhook
+
+# veSGTCheckpointer
+VOTE_ESCROW_ADDRESS=0x...VoteEscrowV2
+FROM_BLOCK=0                 # ideally the VoteEscrowV2 deployment block
+BATCH_SIZE=50
+VESGT_KEEPER_PRIVATE_KEY=0x...fundedCheckpointKeeperKey
+# VESGT_KEEPER_PRIVATE_KEY can be any funded EOA; checkpointMany() is permissionless
 ```
 
 ## Dry-Run Testing
@@ -83,6 +92,9 @@ anvil --fork-url $RPC_URL --chain-id 1
 # Override RPC to local
 RPC_URL=http://localhost:8545 \
   npx ts-node scripts/keepers/balanceMonitor.ts --dry-run
+RPC_URL=http://localhost:8545 \
+  VOTE_ESCROW_ADDRESS=0x...VoteEscrowV2 \
+  npx ts-node scripts/keepers/veSGTCheckpointer.ts --dry-run
 ```
 
 ## Docker Compose
@@ -126,9 +138,10 @@ Wire this to a Slack incoming webhook or PagerDuty Events API v2 endpoint.
 
 ## Recommended Poll Intervals
 
-| Keeper              | Interval | Rationale                                       |
-| ------------------- | -------- | ----------------------------------------------- |
-| depositSweep        | 60s      | Check buffer before next slot                   |
-| oracleReporter      | 900s     | Beacon state settles every ~15min               |
-| withdrawalFinalizer | 120s     | Finalize promptly; users waiting                |
-| balanceMonitor      | 60s      | Catch anomalies or stale oracle reports quickly |
+| Keeper              | Interval | Rationale                                        |
+| ------------------- | -------- | ------------------------------------------------ |
+| depositSweep        | 60s      | Check buffer before next slot                    |
+| oracleReporter      | 900s     | Beacon state settles every ~15min                |
+| withdrawalFinalizer | 120s     | Finalize promptly; users waiting                 |
+| balanceMonitor      | 60s      | Catch anomalies or stale oracle reports quickly  |
+| veSGTCheckpointer   | 300s     | Keep governance snapshots close to decayed power |

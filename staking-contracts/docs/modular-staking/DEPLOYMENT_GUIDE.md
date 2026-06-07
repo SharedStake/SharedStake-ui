@@ -16,7 +16,7 @@ This guide documents the deployment sequence for the SharedStake V2 modular stak
 | 8   | 008_validatorModule.ts            | ValidatorModule      | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
 | 9   | 009_oracleAdapter.ts              | OracleAdapter        | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
 | 10  | 010_lstWrapModule.ts              | LSTWrapModule        | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 11  | 011_stTokenERC4626Wrapper.ts      | StTokenERC4626Wrapper | V2_GOVERNANCE_ADDRESS                     | N/A                                                                                                               |
+| 11  | 011_stTokenERC4626Wrapper.ts      | StTokenERC4626Wrapper | V2_GOVERNANCE_ADDRESS, optional V2_WRAPPER_SEED_AMOUNT | Seeds the wrapper on non-local networks when configured                                                                                                               |
 | 12  | 012_dvtModule.ts                  | DVTModule            | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
 | 13  | 013_quorumOracleAdapter.ts        | QuorumOracleAdapter  | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
 | 14  | 014_governance.ts                 | GovernanceTimelock   | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
@@ -38,6 +38,7 @@ This guide documents the deployment sequence for the SharedStake V2 modular stak
 - `V2_OPERATOR_ETH_BOND_PER_SLOT`, `V2_OPERATOR_SGT_BOND_PER_SLOT`, `V2_OPERATOR_MAX_SLOTS`: optional OperatorRegistry bond tier overrides
 - `V2_OPERATOR_NFT_ADDRESS` or `NFT_CONTRACT_ADDRESS`: optional ERC-721 contract for operator NFT bond credit
 - `V2_OPERATOR_NFT_SGT_CREDIT`: optional SGT-denominated credit per locked NFT
+- `V2_WRAPPER_SEED_AMOUNT`: optional stToken seed for `StTokenERC4626Wrapper`, default `0.001` on non-local networks. Set to `0` only for an intentionally unseeded wrapper deployment.
 
 ## Deployment Commands
 
@@ -117,6 +118,7 @@ After deployment, verify the following:
 7. Optional NFT credit is configured only on approved chains
 8. MigrationHelper references the active StakingRouter and governance
 9. All DEFAULT_ADMIN_ROLE and GOV roles are transferred to Timelock
+10. StTokenERC4626Wrapper is seeded on non-local deployments unless governance explicitly set `V2_WRAPPER_SEED_AMOUNT=0`; the deployer must hold enough stToken to complete that seed deposit
 
 ## Troubleshooting
 
@@ -131,3 +133,7 @@ If you see "Missing oracle submitter configuration" error, set the `V2_ORACLE_SU
 ### Role Granting Failures
 
 If role granting fails, ensure the deployer account has sufficient permissions or use the multi-sig signer for governance operations.
+
+### Wrapper Seed Funding Missing
+
+If `011_stTokenERC4626Wrapper.ts` fails with an insufficient stToken seed balance, fund the deployer with at least `V2_WRAPPER_SEED_AMOUNT` stToken and rerun the deploy. OpenZeppelin ERC-4626 virtual shares make donation attacks non-profitable; the deploy seed is defense-in-depth against griefing small deposits into zero-share reverts. Set `V2_WRAPPER_SEED_AMOUNT=0` only when governance intentionally accepts an unseeded wrapper.

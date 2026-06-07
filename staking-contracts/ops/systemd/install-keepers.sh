@@ -13,13 +13,15 @@ install -m 0644 "${SCRIPT_DIR}/sharedstake-keeper-deposit-sweep.service" "${SYST
 install -m 0644 "${SCRIPT_DIR}/sharedstake-keeper-oracle-reporter.service" "${SYSTEMD_DIR}/sharedstake-keeper-oracle-reporter.service"
 install -m 0644 "${SCRIPT_DIR}/sharedstake-keeper-withdrawal-finalizer.service" "${SYSTEMD_DIR}/sharedstake-keeper-withdrawal-finalizer.service"
 install -m 0644 "${SCRIPT_DIR}/sharedstake-keeper-balance-monitor.service" "${SYSTEMD_DIR}/sharedstake-keeper-balance-monitor.service"
+install -m 0644 "${SCRIPT_DIR}/sharedstake-keeper-vesgt-checkpointer.service" "${SYSTEMD_DIR}/sharedstake-keeper-vesgt-checkpointer.service"
 
 systemctl daemon-reload
 systemctl enable sharedstake-keeper-deposit-sweep.service
 systemctl enable sharedstake-keeper-oracle-reporter.service
 systemctl enable sharedstake-keeper-withdrawal-finalizer.service
 systemctl enable sharedstake-keeper-balance-monitor.service
+systemctl enable sharedstake-keeper-vesgt-checkpointer.service
 
 echo "Installed and enabled SharedStake keeper services."
 echo "Start them with:"
-echo "  systemctl start sharedstake-keeper-deposit-sweep.service sharedstake-keeper-oracle-reporter.service sharedstake-keeper-withdrawal-finalizer.service sharedstake-keeper-balance-monitor.service"
+echo "  systemctl start sharedstake-keeper-deposit-sweep.service sharedstake-keeper-oracle-reporter.service sharedstake-keeper-withdrawal-finalizer.service sharedstake-keeper-balance-monitor.service sharedstake-keeper-vesgt-checkpointer.service"
