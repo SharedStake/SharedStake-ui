@@ -71,6 +71,7 @@ normalized_addresses_json() {
   local validator
   local sg_eth
   local wsg_eth
+  local v_eth2
   local withdrawals
   local payment_splitter
   local rewards_receiver
@@ -101,6 +102,10 @@ normalized_addresses_json() {
   validator="$(resolve_validator_address "$network")"
   sg_eth="$(read_address_or_empty "$network" "SgETH")"
   wsg_eth="$(read_address_or_empty "$network" "WSGETH")"
+  v_eth2="$(read_address_or_empty "$network" "vEth2")"
+  if [[ -z "$v_eth2" ]]; then
+    v_eth2="$(read_address_or_empty "$network" "OldVeth2Mock")"
+  fi
   withdrawals="$(read_address_or_empty "$network" "WithdrawalQueue")"
   payment_splitter="$(read_address_or_empty "$network" "PaymentSplitter")"
   rewards_receiver="$(read_address_or_empty "$network" "RewardsReceiver")"
@@ -132,6 +137,7 @@ normalized_addresses_json() {
     --arg validator "$validator" \
     --arg sg_eth "$sg_eth" \
     --arg wsg_eth "$wsg_eth" \
+    --arg v_eth2 "$v_eth2" \
     --arg withdrawals "$withdrawals" \
     --arg payment_splitter "$payment_splitter" \
     --arg rewards_receiver "$rewards_receiver" \
@@ -162,6 +168,7 @@ normalized_addresses_json() {
       validator: $validator,
       sgETH: $sg_eth,
       wsgETH: $wsg_eth,
+      vEth2: $v_eth2,
       withdrawals: $withdrawals,
       PaymentSplitter: $payment_splitter,
       RewardsReceiver: $rewards_receiver,
