@@ -261,7 +261,8 @@ bun run test:e2e -- \
   tests/e2e/solo-stake.spec.js \
   tests/e2e/wrap-panel.spec.js \
   tests/e2e/withdraw-panel.spec.js \
-  tests/e2e/lock-gov.spec.js
+  tests/e2e/lock-gov.spec.js \
+  tests/e2e/old-veth2-queue.spec.js
 
 if [[ "$RUN_WALLET" -eq 1 ]]; then
   if [[ -z "${PW_WALLET_EXTENSION_PATH:-}" || -z "${PW_WALLET_EXTENSION_ID:-}" || -z "${PW_WALLET_TEST_ADDRESS:-}" ]]; then
