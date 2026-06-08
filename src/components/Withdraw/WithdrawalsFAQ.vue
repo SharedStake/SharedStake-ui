@@ -327,7 +327,9 @@ export default {
       // ── V2: current withdrawals contract (use factory → reads live _addresses) ──
       const v2Contract = withdrawalsFactory(false);
       let v2Addr = null;
-      try { if (v2Contract) v2Addr = await v2Contract.getAddress(); } catch {}
+      try { if (v2Contract) v2Addr = await v2Contract.getAddress(); } catch {
+        // Optional history row; ignore unavailable deployments.
+      }
       if (v2Addr) {
         const v2Veth2 = BN.isBigNumber(this.veth2Bal) ? this.veth2Bal : BN(0);
         const v2Redeemed = BN.isBigNumber(this.totalRedeemed) ? this.totalRedeemed : BN(0);
@@ -340,15 +342,21 @@ export default {
       for (const [i, addr] of deprecatedAddrs.entries()) {
         const c = createDeprecatedWithdrawalsContract(addr, false);
         let veth2Bal = BN(0), paidOut = BN(0);
-        try { if (veth2) veth2Bal = bnFrom(await veth2.balanceOf(addr)); } catch {}
-        try { if (c) paidOut = bnFrom(await c.totalOut()); } catch {}
+        try { if (veth2) veth2Bal = bnFrom(await veth2.balanceOf(addr)); } catch {
+          // Deprecated contracts may be absent on local/fork chains.
+        }
+        try { if (c) paidOut = bnFrom(await c.totalOut()); } catch {
+          // Deprecated contracts may be absent on local/fork chains.
+        }
         rows.push({ name: `Withdrawals V1${deprecatedAddrs.length > 1 ? ` (${i + 1})` : ''}`, address: addr, veth2: veth2Bal, paidOut, pending: null });
       }
 
       // ── V3: OldVeth2WithdrawalQueue (factory reads live _addresses) ───────
       const v3Contract = oldVeth2QueueFactory(false);
       let v3Addr = null;
-      try { if (v3Contract) v3Addr = await v3Contract.getAddress(); } catch {}
+      try { if (v3Contract) v3Addr = await v3Contract.getAddress(); } catch {
+        // Optional V3 queue; keep FAQ usable when not deployed.
+      }
       if (v3Addr && v3Contract) {
         let requested = BN(0), canceled = BN(0), finalized = BN(0), claimed = BN(0);
         try {
@@ -358,7 +366,9 @@ export default {
             v3Contract.totalFinalizedEth().then(bnFrom).catch(() => BN(0)),
             v3Contract.totalClaimedEth().then(bnFrom).catch(() => BN(0)),
           ]);
-        } catch {}
+        } catch {
+          // Keep the FAQ usable if one optional aggregate getter is unavailable.
+        }
         rows.push({
           name: 'Old vETH2 Queue V3',
           address: v3Addr,

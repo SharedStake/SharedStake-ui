@@ -4,6 +4,7 @@ import {
   rpcRequest,
   seedAndImpersonate,
 } from './helpers/impersonator.js';
+import { localAddressQuery } from './helpers/local-address-query.js';
 
 const DEFAULT_IMPERSONATOR_ADDRESS = '0x1111111111111111111111111111111111111111';
 const RPC_URL = process.env.E2E_IMPERSONATOR_RPC_URL || 'http://127.0.0.1:8545';
@@ -26,7 +27,7 @@ test.describe('Lock/Gov panels — UI rendering', () => {
       chainIdHex,
     });
 
-    await page.goto(`/v2?e2eAddress=${IMPERSONATOR_ADDRESS}`, {
+    await page.goto(`/v2?${localAddressQuery(IMPERSONATOR_ADDRESS)}`, {
       waitUntil: 'networkidle',
     });
 
@@ -40,32 +41,29 @@ test.describe('Lock/Gov panels — UI rendering', () => {
 
   test('Lock tab is present in the nav bar', async ({ page }) => {
     const tabs = page.locator('div.border-b.border-border > button');
-    await expect(tabs).toHaveCount(5); // Stake, Wrap, Withdraw, Lock, Gov
-    await expect(tabs.nth(3)).toContainText('Lock');
+    await expect(tabs).toHaveCount(5); // Stake, Wrap, Withdraw, Governance, Lock
+    await expect(page.getByRole('button', { name: 'Lock', exact: true })).toBeVisible();
   });
 
   test('LockPanel renders veSGT lock form', async ({ page }) => {
-    const tabs = page.locator('div.border-b.border-border > button');
-    await tabs.nth(3).click();
+    await page.getByRole('button', { name: 'Lock', exact: true }).click();
 
     await expect(page.getByText('veSGT Governance Lock')).toBeVisible({ timeout: 10_000 });
 
     // Stat cards
-    await expect(page.getByText('SGT Balance', { exact: true })).toBeVisible();
-    await expect(page.getByText('veSGT Balance', { exact: true })).toBeVisible();
+    await expect(page.getByText('Projected veSGT', { exact: true })).toBeVisible();
+    await expect(page.getByText('Total Locked', { exact: true })).toBeVisible();
 
     // Create lock form (shown when no active lock)
     await expect(page.getByText('Create New Lock')).toBeVisible();
     await expect(page.locator('input[placeholder="0.0"]')).toBeVisible();
-    await expect(page.locator('input[placeholder="365"]')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Lock SGT → veSGT' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Lock SGT for veSGT' })).toBeVisible();
   });
 
   test('Lock SGT button is disabled when wallet not connected or no balance', async ({ page }) => {
-    const tabs = page.locator('div.border-b.border-border > button');
-    await tabs.nth(3).click();
+    await page.getByRole('button', { name: 'Lock', exact: true }).click();
 
-    const lockBtn = page.getByRole('button', { name: 'Lock SGT → veSGT' });
+    const lockBtn = page.getByRole('button', { name: 'Lock SGT for veSGT' });
     await expect(lockBtn).toBeVisible({ timeout: 10_000 });
     // Button should be disabled: contractsDeployed is false (governance addresses are zero on local)
     // OR wallet not connected yet; either way it must not be enabled without a valid amount.
@@ -73,27 +71,26 @@ test.describe('Lock/Gov panels — UI rendering', () => {
   });
 
   test('LockPanel shows governance lock info text', async ({ page }) => {
-    const tabs = page.locator('div.border-b.border-border > button');
-    await tabs.nth(3).click();
+    await page.getByRole('button', { name: 'Lock', exact: true }).click();
 
     await expect(
-      page.getByText('veSGT is vote-escrowed SGT used for governance voting.'),
+      page.getByText('veSGT is non-transferable governance power.'),
     ).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText(/Longer locks = more voting power/)).toBeVisible();
+    await expect(page.getByText(/Checkpoint before proposal snapshots/)).toBeVisible();
   });
 
   // ── Gov tab ─────────────────────────────────────────────────────────────────
 
   test('Gov tab is present in the nav bar', async ({ page }) => {
-    const tabs = page.locator('div.border-b.border-border > button');
-    await expect(tabs.nth(4)).toContainText('Gov');
+    await expect(page.getByRole('button', { name: 'Governance', exact: true })).toBeVisible();
   });
 
   test('GovernancePanel renders protocol parameter cards', async ({ page }) => {
-    const tabs = page.locator('div.border-b.border-border > button');
-    await tabs.nth(4).click();
+    await page.getByRole('button', { name: 'Governance', exact: true }).click();
 
-    await expect(page.getByText('Governance', { exact: true })).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('.text-lg.font-semibold').filter({ hasText: 'Governance' })).toBeVisible({
+      timeout: 10_000
+    });
     await expect(page.getByText('Voting Delay')).toBeVisible();
     await expect(page.getByText('Voting Period')).toBeVisible();
     await expect(page.getByText('Proposal Threshold')).toBeVisible();
@@ -104,22 +101,20 @@ test.describe('Lock/Gov panels — UI rendering', () => {
   });
 
   test('GovernancePanel shows Active Proposals section', async ({ page }) => {
-    const tabs = page.locator('div.border-b.border-border > button');
-    await tabs.nth(4).click();
+    await page.getByRole('button', { name: 'Governance', exact: true }).click();
 
     await expect(page.getByText('Active Proposals')).toBeVisible({ timeout: 10_000 });
     await expect(
-      page.getByText('Proposals will appear here once governance is live.'),
+      page.getByText('No governance proposals found in the recent event window.'),
     ).toBeVisible({ timeout: 10_000 });
   });
 
-  test('GovernancePanel Create Proposal button is disabled (Coming Soon)', async ({ page }) => {
-    const tabs = page.locator('div.border-b.border-border > button');
-    await tabs.nth(4).click();
+  test('GovernancePanel Create Proposal button is disabled without a proposal', async ({ page }) => {
+    await page.getByRole('button', { name: 'Governance', exact: true }).click();
 
     await expect(page.getByText('Create Proposal', { exact: true })).toBeVisible({ timeout: 10_000 });
-    const comingSoonBtn = page.getByRole('button', { name: 'Coming Soon' });
-    await expect(comingSoonBtn).toBeVisible();
-    await expect(comingSoonBtn).toBeDisabled();
+    const proposeBtn = page.getByRole('button', { name: 'Propose' });
+    await expect(proposeBtn).toBeVisible();
+    await expect(proposeBtn).toBeDisabled();
   });
 });

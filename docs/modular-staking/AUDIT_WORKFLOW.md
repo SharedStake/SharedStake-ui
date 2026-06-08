@@ -31,6 +31,32 @@ npm run setup:foundry
 npm run test:invariants
 ```
 
+## Mainnet Fork E2E
+
+Use a real mainnet RPC and force a fresh Anvil process so an existing localhost
+chain cannot be mistaken for a fork:
+
+```bash
+MAINNET_RPC_URL=https://... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174
+```
+
+Alchemy can be provided as a key instead of a full URL:
+
+```bash
+ALCHEMY_KEY=... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174
+```
+
+`--skip-deploy` is acceptable only as a local harness smoke against an already
+running node. Do not record it as mainnet-fork production validation unless that
+node is known to be an Anvil mainnet fork.
+
+The fork runner forces a fresh Vite/Playwright web server so bundled contract
+addresses match the just-synced `local.json`. Use `--web-port` when a long-lived
+local Vite process already occupies the default Playwright port.
+
+When `--port` is not `8545`, the runner exports `LOCALHOST_RPC_URL` for Hardhat
+deploys so contracts are deployed to the same fork RPC that Playwright uses.
+
 ## Optional Static Analysis
 
 If Slither is available:

@@ -136,6 +136,7 @@ const config: HardhatUserConfig = {
       ...(MAINNET_RPC_URL ? {forking: {url: MAINNET_RPC_URL}} : {}),
     },
     localhost: {
+      url: process.env.LOCALHOST_RPC_URL ?? "http://127.0.0.1:8545",
       accounts: [`0x${GOERLIPK}`],
     },
     ...(MAINNET_RPC_URL

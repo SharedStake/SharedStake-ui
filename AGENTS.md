@@ -79,6 +79,8 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - Use Devin and Kimi only through their delegate wrappers, with an envelope first, scoped tasks, acceptance criteria, and concrete output requirements.
 - Fix only concrete bugs, vulnerabilities, broken gates, stale docs, duplicate/dead code, or low-risk coverage gaps. Do not broaden PR 379 into speculative redesign.
 - After each fix, rerun the narrow relevant tests first, then the broader gates needed for confidence.
+- Fork E2E must use a fresh Vite/Playwright server with a free `--web-port`; stale reused Vite servers can serve old bundled `local.json` contract addresses and make fork validation meaningless.
+- Fork E2E deploys must set Hardhat `LOCALHOST_RPC_URL` to the same `http://<host>:<port>` that Playwright uses; otherwise `--port 8546` can deploy to Hardhat's default `8545` while the browser tests `8546`.
 - Standard PR 379 gates:
   - `bun audit --level moderate`
   - `bun run type-check`
@@ -111,4 +113,3 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - At the start of a new session on in-progress work, run `/context-restore` first.
 - Pair with `gstack-sync-gbrain` so both gBrain and local memory stay aligned.
 <!-- context-save-restore:end -->
-

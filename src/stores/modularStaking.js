@@ -58,6 +58,10 @@ const ADDRESS_MAPS_BY_CHAIN = {
   '0x539': localAddresses,
 }
 
+const LOCAL_CHAIN_IDS = new Set(['0x7a69', '0x539'])
+const ADDRESS_OVERRIDES_QUERY_KEY = 'e2eContracts'
+const ADDRESS_OVERRIDES_STORAGE_KEY = 'e2eContractAddresses'
+
 function normalizeChainId(id) {
   if (!id && id !== 0) return ''
   if (typeof id === 'bigint') return '0x' + id.toString(16)
@@ -71,9 +75,33 @@ function pickAddress(source, key, fallbackKey = null) {
   return source[key] || (fallbackKey ? source[fallbackKey] : null) || ZERO_ADDR
 }
 
+function parseAddressOverrides(rawValue) {
+  if (!rawValue) return null
+  try {
+    const parsed = JSON.parse(rawValue)
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed
+    }
+  } catch (error) {
+    console.warn('Failed to parse modular staking address overrides:', error)
+  }
+  return null
+}
+
+function getLocalAddressOverrides(chainId) {
+  if (!LOCAL_CHAIN_IDS.has(chainId)) return null
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  const queryOverride = parseAddressOverrides(params.get(ADDRESS_OVERRIDES_QUERY_KEY))
+  if (queryOverride) return queryOverride
+  return parseAddressOverrides(window.localStorage?.getItem(ADDRESS_OVERRIDES_STORAGE_KEY))
+}
+
 function getAddresses(chainId) {
   const cid = normalizeChainId(chainId)
-  const source = ADDRESS_MAPS_BY_CHAIN[cid]
+  const baseSource = ADDRESS_MAPS_BY_CHAIN[cid]
+  const overrides = getLocalAddressOverrides(cid)
+  const source = overrides ? { ...baseSource, ...overrides } : baseSource
   if (!source) return null
 
   return {
@@ -190,7 +218,11 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
     _getContracts() {
       const walletStore = useWalletStore()
-      const provider = walletStore.ethersProvider
+      let provider = walletStore.ethersProvider
+      if (!provider && typeof window !== 'undefined' && window.ethereum) {
+        provider = new ethers.BrowserProvider(window.ethereum)
+        walletStore.setEthersProvider(provider)
+      }
       if (!provider) return null
 
       const chainId = this.chainId
@@ -377,7 +409,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const stakingRouter = await makeSigned(stakingRouterABI, addresses.stakingRouter)
         if (!stakingRouter) throw new Error('StakingRouter not deployed')
 
-        const amount = ethers.parseEther(ethAmountStr)
+        const amount = ethers.parseEther(String(ethAmountStr))
         const tx = await stakingRouter.submit(referral, { value: amount })
         await tx.wait()
 
@@ -404,7 +436,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const stToken = await makeSigned(stTokenABI, addresses.stToken)
         if (!wstToken || !stToken) throw new Error('Contracts not deployed')
 
-        const amount = ethers.parseEther(stAmountStr)
+        const amount = ethers.parseEther(String(stAmountStr))
         const walletStore = useWalletStore()
 
         // Skip approve when existing allowance already covers the amount.
@@ -437,7 +469,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const wstToken = await makeSigned(wstTokenABI, addresses.wstToken)
         if (!wstToken) throw new Error('WstToken not deployed')
 
-        const amount = ethers.parseEther(wstAmountStr)
+        const amount = ethers.parseEther(String(wstAmountStr))
         const tx = await wstToken.unwrap(amount)
         await tx.wait()
 
@@ -464,7 +496,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
 
         const walletStore = useWalletStore()
-        const amount = ethers.parseEther(stAmountStr)
+        const amount = ethers.parseEther(String(stAmountStr))
         const tx = await queue.requestWithdrawals([amount], walletStore.address)
         await tx.wait()
 
@@ -589,7 +621,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const router = await makeSigned(stakingRouterABI, addresses.stakingRouter)
         if (!router) throw new Error('StakingRouter not deployed')
 
-        const amount = ethers.parseEther(ethAmountStr)
+        const amount = ethers.parseEther(String(ethAmountStr))
         if (amount < ethers.parseEther('32')) throw new Error('Minimum 32 ETH for solo staking')
 
         const tx = await router.submitToModule(SOLO_VALIDATOR_MODULE_ID, referral, { value: amount })

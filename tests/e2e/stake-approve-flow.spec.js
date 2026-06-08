@@ -1,7 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { ethers } from 'ethers';
 import {
   installInjectedImpersonatorProvider,
@@ -10,6 +7,7 @@ import {
   seedAndImpersonate,
   waitForReceipt
 } from './helpers/impersonator.js';
+import { LOCAL_ADDRESSES, localAddressQuery } from './helpers/local-address-query.js';
 
 const DEFAULT_IMPERSONATOR_ADDRESS = '0x1111111111111111111111111111111111111111';
 const RPC_URL = process.env.E2E_IMPERSONATOR_RPC_URL || 'http://127.0.0.1:8545';
@@ -18,15 +16,14 @@ const IMPERSONATOR_ADDRESS =
 const IMPERSONATOR_SEED_ETH = process.env.E2E_IMPERSONATOR_SEED_ETH || '5';
 const STAKE_AMOUNT_ETH = process.env.E2E_STAKE_AMOUNT_ETH || '0.10';
 const UNSTAKE_AMOUNT_WSGETH = process.env.E2E_UNSTAKE_AMOUNT_WSGETH || '0.05';
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const localAddressPath = path.resolve(__dirname, '../../src/contracts/addresses/local.json');
-const localAddressMap = JSON.parse(readFileSync(localAddressPath, 'utf-8'));
 const VALIDATOR_ADDRESS =
-  process.env.E2E_VALIDATOR_ADDRESS || localAddressMap.validator;
+  process.env.E2E_VALIDATOR_ADDRESS || LOCAL_ADDRESSES.validator;
 
 const isHexChainId = (value) => /^0x[0-9a-f]+$/i.test(value || '');
 
 test.describe('impersonator wallet stake + approve/unstake flow', () => {
+  test.skip(!VALIDATOR_ADDRESS, 'Legacy validator contract is not deployed in the local address map');
+
   test('runs real tx execution with deterministic funding and gas settings', async ({ page }) => {
     test.setTimeout(180_000);
 
@@ -60,7 +57,7 @@ test.describe('impersonator wallet stake + approve/unstake flow', () => {
       chainIdHex
     });
 
-    await page.goto(`/stake?e2eAddress=${IMPERSONATOR_ADDRESS}`, {
+    await page.goto(`/stake?${localAddressQuery(IMPERSONATOR_ADDRESS)}`, {
       waitUntil: 'networkidle'
     });
 

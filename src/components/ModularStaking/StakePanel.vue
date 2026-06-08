@@ -163,7 +163,7 @@ export default {
         return
       }
       try {
-        const amountWei = ethers.parseEther(this.inputAmount)
+        const amountWei = ethers.parseEther(String(this.inputAmount))
         const totalShares = BigInt(this.store.totalShares)
         const totalPooled = BigInt(this.store.totalPooledEther)
 

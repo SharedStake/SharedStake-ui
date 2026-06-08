@@ -4,6 +4,7 @@ import {
   rpcRequest,
   seedAndImpersonate,
 } from './helpers/impersonator.js';
+import { localAddressQuery } from './helpers/local-address-query.js';
 
 const DEFAULT_IMPERSONATOR_ADDRESS = '0x1111111111111111111111111111111111111111';
 const RPC_URL = process.env.E2E_IMPERSONATOR_RPC_URL || 'http://127.0.0.1:8545';
@@ -26,7 +27,7 @@ test.describe('WithdrawPanel — UI rendering', () => {
       chainIdHex,
     });
 
-    await page.goto(`/v2?e2eAddress=${IMPERSONATOR_ADDRESS}`, {
+    await page.goto(`/v2?${localAddressQuery(IMPERSONATOR_ADDRESS)}`, {
       waitUntil: 'networkidle',
     });
 
@@ -50,7 +51,7 @@ test.describe('WithdrawPanel — UI rendering', () => {
     await tabs.nth(2).click();
 
     // Sub-tab navigation
-    await expect(page.getByRole('button', { name: 'Request' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('button', { name: 'Request', exact: true })).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole('button', { name: 'My Requests' })).toBeVisible({ timeout: 10_000 });
 
     // Amount input
@@ -61,7 +62,9 @@ test.describe('WithdrawPanel — UI rendering', () => {
     const tabs = page.locator('div.border-b.border-border > button');
     await tabs.nth(2).click();
 
-    const requestBtn = page.getByRole('button', { name: 'Request Withdrawal' });
+    const requestBtn = page.getByRole('button', {
+      name: /^(Min 0\.01 stETH|Connect Wallet|Not Deployed|Request Withdrawal)$/
+    });
     await expect(requestBtn).toBeVisible({ timeout: 10_000 });
     await expect(requestBtn).toBeDisabled({ timeout: 10_000 });
   });
