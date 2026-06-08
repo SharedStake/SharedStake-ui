@@ -9,32 +9,146 @@ import {
   waitForReceipt
 } from './helpers/impersonator.js';
 
-const DEFAULT_IMPERSONATOR_ADDRESS = '0x3333333333333333333333333333333333333333';
-const FUNDED_IMPERSONATOR_ADDRESS = '0x4444444444444444444444444444444444444444';
 const RPC_URL = process.env.E2E_IMPERSONATOR_RPC_URL || 'http://127.0.0.1:8545';
 const IMPERSONATOR_ADDRESS =
-  process.env.E2E_OLD_VETH2_QUEUE_ADDRESS || DEFAULT_IMPERSONATOR_ADDRESS;
+  process.env.E2E_OLD_VETH2_EMPTY_ADDRESS || ethers.Wallet.createRandom().address;
+const FUNDED_IMPERSONATOR_ADDRESS =
+  process.env.E2E_OLD_VETH2_FUNDED_ADDRESS || ethers.Wallet.createRandom().address;
 const LOCAL_ADDRESSES = JSON.parse(
   readFileSync(new URL('../../src/contracts/addresses/local.json', import.meta.url), 'utf8')
 );
+const OLD_VETH2_QUEUE_ADDRESS =
+  process.env.E2E_OLD_VETH2_QUEUE_ADDRESS || LOCAL_ADDRESSES.oldVeth2WithdrawalQueue;
 const OLD_VETH2_TOKEN_ADDRESS =
   process.env.E2E_OLD_VETH2_TOKEN_ADDRESS || LOCAL_ADDRESSES.vEth2;
-const MINT_IFACE = new ethers.Interface(['function mint(address to, uint256 amount)']);
+const OLD_VETH2_SOURCE_ADDRESS = process.env.E2E_OLD_VETH2_SOURCE_ADDRESS;
+const TOKEN_IFACE = new ethers.Interface([
+  'function mint(address to, uint256 amount)',
+  'function transfer(address to, uint256 amount) returns (bool)'
+]);
+const QUEUE_IFACE = new ethers.Interface([
+  'event WithdrawalRequested(address indexed requester,address indexed owner,uint256 indexed requestId,uint256 vEth2Amount,uint256 ethAmount)',
+  'function GUARDIAN() view returns (bytes32)',
+  'function hasRole(bytes32 role,address account) view returns (bool)',
+  'function finalize(uint256 lastRequestId) payable',
+  'function lastFinalizedRequestId() view returns (uint256)',
+  'function getRequest(uint256 requestId) view returns (address owner,uint256 vEth2Amount,uint256 ethAmount,uint256 requestedAt,bool finalized,bool claimed,bool canceled)'
+]);
 
-const mintOldVeth2 = async (address, amountEth) => {
+const getOldVeth2Queue = () => {
+  if (!OLD_VETH2_QUEUE_ADDRESS) {
+    throw new Error('Missing local old-vETH2 queue address for old-vETH2 E2E');
+  }
+  return new ethers.Contract(
+    OLD_VETH2_QUEUE_ADDRESS,
+    QUEUE_IFACE,
+    new ethers.JsonRpcProvider(RPC_URL)
+  );
+};
+
+const fundOldVeth2 = async (address, amountEth) => {
   if (!OLD_VETH2_TOKEN_ADDRESS) {
     throw new Error('Missing local vEth2 address for old-vETH2 E2E');
   }
 
-  const data = MINT_IFACE.encodeFunctionData('mint', [address, parseEther(amountEth)]);
+  const amount = parseEther(amountEth);
+  let from = address;
+  let data = TOKEN_IFACE.encodeFunctionData('mint', [address, amount]);
+
+  if (OLD_VETH2_SOURCE_ADDRESS) {
+    from = OLD_VETH2_SOURCE_ADDRESS;
+    await seedAndImpersonate(RPC_URL, from, '1');
+    data = TOKEN_IFACE.encodeFunctionData('transfer', [address, amount]);
+  }
+
   const hash = await rpcRequest(RPC_URL, 'eth_sendTransaction', [
     {
-      from: address,
+      from,
       to: OLD_VETH2_TOKEN_ADDRESS,
       data
     }
   ]);
   await waitForReceipt(RPC_URL, hash, 45_000);
+};
+
+const extractRequestId = (receipts) => {
+  const queueAddress = OLD_VETH2_QUEUE_ADDRESS.toLowerCase();
+  for (const receipt of Array.isArray(receipts) ? receipts : [receipts]) {
+    for (const log of receipt.logs || []) {
+      if (log.address?.toLowerCase() !== queueAddress) continue;
+      try {
+        const parsed = QUEUE_IFACE.parseLog(log);
+        if (parsed?.name === 'WithdrawalRequested') {
+          return Number(parsed.args.requestId);
+        }
+      } catch {
+        /* ignore non-queue logs */
+      }
+    }
+  }
+  throw new Error('WithdrawalRequested event not found in request receipt');
+};
+
+const findGuardianAccount = async () => {
+  const queue = getOldVeth2Queue();
+  const guardianRole = await queue.GUARDIAN();
+  const accounts = await rpcRequest(RPC_URL, 'eth_accounts');
+  for (const account of accounts) {
+    if (await queue.hasRole(guardianRole, account)) {
+      return account;
+    }
+  }
+  throw new Error('No unlocked local account has the old-vETH2 queue GUARDIAN role');
+};
+
+const finalizeOldVeth2Request = async (requestId) => {
+  const queue = getOldVeth2Queue();
+  const lastFinalized = Number(await queue.lastFinalizedRequestId());
+  let totalRequired = 0n;
+  for (let id = lastFinalized + 1; id <= requestId; id += 1) {
+    const request = await queue.getRequest(id);
+    if (!request.canceled) {
+      totalRequired += request.ethAmount;
+    }
+  }
+  const guardian = await findGuardianAccount();
+
+  await seedAndImpersonate(RPC_URL, guardian, ethers.formatEther(totalRequired + parseEther('1')));
+  const hash = await rpcRequest(RPC_URL, 'eth_sendTransaction', [
+    {
+      from: guardian,
+      to: OLD_VETH2_QUEUE_ADDRESS,
+      data: QUEUE_IFACE.encodeFunctionData('finalize', [requestId]),
+      value: ethers.toBeHex(totalRequired)
+    }
+  ]);
+  const receipt = await waitForReceipt(RPC_URL, hash, 60_000);
+  expect(receipt.status).toBe('0x1');
+};
+
+const pollTxTo = async (page, startIndex, targetAddress, timeoutMs = 60_000) => {
+  const target = targetAddress.toLowerCase();
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(
+          ({ fromIndex, to }) =>
+            (window.__e2eTxLog || [])
+              .slice(fromIndex)
+              .find((tx) => tx.payload?.to?.toLowerCase() === to) || null,
+          { fromIndex: startIndex, to: target }
+        ),
+      { timeout: timeoutMs }
+    )
+    .not.toBeNull();
+
+  return page.evaluate(
+    ({ fromIndex, to }) =>
+      (window.__e2eTxLog || [])
+        .slice(fromIndex)
+        .find((tx) => tx.payload?.to?.toLowerCase() === to),
+    { fromIndex: startIndex, to: target }
+  );
 };
 
 test.describe('old-vETH2 FIFO queue UI', () => {
@@ -106,11 +220,13 @@ test.describe('old-vETH2 FIFO queue UI', () => {
     await expect(queuePanel.getByRole('button', { name: 'Request Redemption' })).toBeDisabled();
   });
 
-  test('requests a redemption with local mock vETH2 through the UI', async ({ page }) => {
+  test('requests, finalizes, and claims a redemption with local mock vETH2 through the UI', async ({
+    page
+  }) => {
     test.setTimeout(120_000);
 
     await seedAndImpersonate(RPC_URL, FUNDED_IMPERSONATOR_ADDRESS, '5');
-    await mintOldVeth2(FUNDED_IMPERSONATOR_ADDRESS, '2');
+    await fundOldVeth2(FUNDED_IMPERSONATOR_ADDRESS, '2');
     await openQueuePage(page, FUNDED_IMPERSONATOR_ADDRESS);
 
     const queuePanel = getQueuePanel(page);
@@ -127,14 +243,31 @@ test.describe('old-vETH2 FIFO queue UI', () => {
     const txStartIndex = await page.evaluate(() => window.__e2eTxLog?.length || 0);
     await requestButton.click();
 
-    const approveTx = await pollTxRecordAt(page, txStartIndex, 60_000);
-    const requestTx = await pollTxRecordAt(page, txStartIndex + 1, 60_000);
-    const approveReceipt = await waitForReceipt(RPC_URL, approveTx.hash, 60_000);
+    await pollTxRecordAt(page, txStartIndex, 60_000);
+    const requestTx = await pollTxTo(page, txStartIndex, OLD_VETH2_QUEUE_ADDRESS, 60_000);
     const requestReceipt = await waitForReceipt(RPC_URL, requestTx.hash, 60_000);
-    expect(approveReceipt.status).toBe('0x1');
     expect(requestReceipt.status).toBe('0x1');
 
-    await expect(queuePanel.getByText('Request #').first()).toBeVisible({ timeout: 20_000 });
+    const requestId = extractRequestId(requestReceipt);
+    await expect(queuePanel.getByText(`Request #${requestId}`, { exact: true })).toBeVisible({
+      timeout: 20_000
+    });
     await expect(queuePanel.getByText('Pending finalization').first()).toBeVisible();
+
+    await finalizeOldVeth2Request(requestId);
+    await queuePanel.getByRole('button', { name: 'Refresh' }).click();
+    await expect(queuePanel.getByText('Ready to claim').first()).toBeVisible({
+      timeout: 20_000
+    });
+
+    const claimStartIndex = await page.evaluate(() => window.__e2eTxLog?.length || 0);
+    await queuePanel.getByRole('button', { name: 'Claim ETH' }).first().click();
+
+    const claimTx = await pollTxTo(page, claimStartIndex, OLD_VETH2_QUEUE_ADDRESS, 60_000);
+    const claimReceipt = await waitForReceipt(RPC_URL, claimTx.hash, 60_000);
+    expect(claimReceipt.status).toBe('0x1');
+
+    await queuePanel.getByRole('button', { name: 'Refresh' }).click();
+    await expect(queuePanel.getByText('Claimed').first()).toBeVisible({ timeout: 20_000 });
   });
 });

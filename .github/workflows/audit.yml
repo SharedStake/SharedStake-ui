@@ -50,6 +50,11 @@ jobs:
       - name: Foundry invariants
         run: npm run test:invariants
 
+      - name: Foundry fuzz suites
+        run: |
+          ./scripts/run-forge.sh test --match-path test/foundry/DebtPoolFuzz.t.sol
+          ./scripts/run-forge.sh test --match-path test/foundry/MigrationHelperFuzz.t.sol
+
       - name: Slither static analysis
         continue-on-error: true
         run: |

@@ -266,7 +266,7 @@ If GUARDIAN key is compromised:
 
 ## 8. Slither / Static Analysis Residuals
 
-From the prior security review, 2 medium findings remain:
+Known residual classes from Slither/static analysis:
 
 ### 8.1 `divide-before-multiply` in `FeeController.computeFees()`
 **File:** `FeeController.sol`
@@ -278,6 +278,30 @@ From the prior security review, 2 medium findings remain:
 **File:** `StakingCore.sol`
 **Finding:** Contract holds ETH but has no function to withdraw arbitrary ETH.
 **Impact:** Low — ETH is accounted for in `_bufferedEther` and exits through `WithdrawalQueueV2`.
+**Status:** Accepted by design.
+
+### 8.3 `arbitrary-send-eth` in `OldVeth2WithdrawalQueue.recoverEth()`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** `recoverEth(address payable to, uint256 amount)` can send ETH to an arbitrary recipient.
+**Impact:** Low — the function is `onlyRole(GOV)`, `nonReentrant`, rejects zero recipients, and computes recoverable ETH as `address(this).balance - lockedEther - totalPendingRefunds`, so finalized claims and pull refunds remain reserved.
+**Status:** Accepted as governance-controlled recovery. Re-check whenever new ETH liabilities are added.
+
+### 8.4 `calls-loop` in `OldVeth2WithdrawalQueue.claimWithdrawals()`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** Batch claims aggregate request amounts in a loop and perform one ETH send to `msg.sender` after state changes.
+**Impact:** Low — request ownership is checked for every ID, duplicate IDs revert atomically after the first `_markClaimed`, and the external call happens after all claim state is updated under `nonReentrant`.
+**Status:** Accepted by design. Large batches remain bounded by gas and are optional because users can call `claimWithdrawal()` per request.
+
+### 8.5 `reentrancy-benign` in `OldVeth2WithdrawalQueue._enqueueRequest()`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** Slither flags the ERC20 `safeTransferFrom()` before request state is written.
+**Impact:** Low — external entry points that call `_enqueueRequest()` are `nonReentrant`, the transferred token is the configured legacy vEth2 token, and no ETH is sent during request creation.
+**Status:** Accepted with existing `nonReentrant` coverage. Re-check if delegated request ownership or arbitrary token support is added.
+
+### 8.6 `timestamp` and loop-cost residuals in `OldVeth2WithdrawalQueue`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** Slither flags `block.timestamp` in finalization age checks and state writes inside bounded request/finalize/claim loops.
+**Impact:** Low — `minRequestAge` is governance-configured operational delay, not a randomness or price source; `maxRequestsPerFinalize` bounds guardian finalization work, and user batch requests/claims are optional convenience paths.
 **Status:** Accepted by design.
 
 ---

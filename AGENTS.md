@@ -98,7 +98,10 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
   - `cd staking-contracts && npx hardhat compile`
   - `cd staking-contracts && npx hardhat test test/v2/modular-staking/*.spec.ts`
   - `cd staking-contracts && npm run test:invariants`
-  - Slither when available; if unavailable, record it as residual tooling risk.
+  - `cd staking-contracts && ./scripts/run-forge.sh test --match-path test/foundry/DebtPoolFuzz.t.sol`
+  - `cd staking-contracts && ./scripts/run-forge.sh test --match-path test/foundry/MigrationHelperFuzz.t.sol`
+  - Slither with local report review; CI may continue-on-error only to preserve analyzer output.
+- Production recommendations that touch deployment, frontend contract wiring, wallet transactions, staking flows, or old-vEth2 redemptions must be validated with `bun run test:e2e:fork -- --fresh-fork --port <free-port>` and `MAINNET_RPC_URL` or `ALCHEMY_KEY`. For real old-vEth2 fork validation, pass `--old-veth2-address`, `--old-veth2-redemption-rate`, and `--old-veth2-source-address`; otherwise localhost uses the mock-token lifecycle. `--skip-deploy` is only a local harness smoke unless the reused RPC is known to be an Anvil mainnet fork.
 - Push completed changes back to PR 379 and verify remote `CI` and `Contract Audit` before claiming completion.
 <!-- sharedstake-pr379-workflow:end -->
 

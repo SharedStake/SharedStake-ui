@@ -49,6 +49,20 @@ read_address_or_empty() {
   fi
 }
 
+read_deployment_arg_or_empty() {
+  local network="$1"
+  local contract_name="$2"
+  local arg_index="$3"
+  local file
+
+  file="$(deployment_file "$network" "$contract_name")"
+  if [[ -f "$file" ]]; then
+    jq -r --argjson idx "$arg_index" '.args[$idx] // empty' "$file"
+  else
+    printf ''
+  fi
+}
+
 resolve_validator_address() {
   local network="$1"
   local minter_address
@@ -102,7 +116,10 @@ normalized_addresses_json() {
   validator="$(resolve_validator_address "$network")"
   sg_eth="$(read_address_or_empty "$network" "SgETH")"
   wsg_eth="$(read_address_or_empty "$network" "WSGETH")"
-  v_eth2="$(read_address_or_empty "$network" "vEth2")"
+  v_eth2="$(read_deployment_arg_or_empty "$network" "OldVeth2WithdrawalQueue" 0)"
+  if [[ -z "$v_eth2" ]]; then
+    v_eth2="$(read_address_or_empty "$network" "vEth2")"
+  fi
   if [[ -z "$v_eth2" ]]; then
     v_eth2="$(read_address_or_empty "$network" "OldVeth2Mock")"
   fi
