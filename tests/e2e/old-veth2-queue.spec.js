@@ -17,11 +17,17 @@ const FUNDED_IMPERSONATOR_ADDRESS =
 const LOCAL_ADDRESSES = JSON.parse(
   readFileSync(new URL('../../src/contracts/addresses/local.json', import.meta.url), 'utf8')
 );
+const localAddressQuery = (address) =>
+  new URLSearchParams({
+    e2eAddress: address,
+    e2eContracts: JSON.stringify(LOCAL_ADDRESSES)
+  }).toString();
 const OLD_VETH2_QUEUE_ADDRESS =
   process.env.E2E_OLD_VETH2_QUEUE_ADDRESS || LOCAL_ADDRESSES.oldVeth2WithdrawalQueue;
 const OLD_VETH2_TOKEN_ADDRESS =
   process.env.E2E_OLD_VETH2_TOKEN_ADDRESS || LOCAL_ADDRESSES.vEth2;
 const OLD_VETH2_SOURCE_ADDRESS = process.env.E2E_OLD_VETH2_SOURCE_ADDRESS;
+const OLD_VETH2_FUND_AMOUNT_ETH = process.env.E2E_OLD_VETH2_FUND_AMOUNT_ETH || '1.25';
 const TOKEN_IFACE = new ethers.Interface([
   'function mint(address to, uint256 amount)',
   'function transfer(address to, uint256 amount) returns (bool)'
@@ -68,7 +74,8 @@ const fundOldVeth2 = async (address, amountEth) => {
       data
     }
   ]);
-  await waitForReceipt(RPC_URL, hash, 45_000);
+  const receipt = await waitForReceipt(RPC_URL, hash, 45_000);
+  expect(receipt.status).toBe('0x1');
 };
 
 const extractRequestId = (receipts) => {
@@ -167,7 +174,7 @@ test.describe('old-vETH2 FIFO queue UI', () => {
       chainIdHex
     });
 
-    await page.goto(`/withdraw-from-deprecated?e2eAddress=${address}`, {
+    await page.goto(`/withdraw-from-deprecated?${localAddressQuery(address)}`, {
       waitUntil: 'networkidle'
     });
 
@@ -220,13 +227,13 @@ test.describe('old-vETH2 FIFO queue UI', () => {
     await expect(queuePanel.getByRole('button', { name: 'Request Redemption' })).toBeDisabled();
   });
 
-  test('requests, finalizes, and claims a redemption with local mock vETH2 through the UI', async ({
+  test('requests, finalizes, and claims a redemption through the UI', async ({
     page
   }) => {
     test.setTimeout(120_000);
 
     await seedAndImpersonate(RPC_URL, FUNDED_IMPERSONATOR_ADDRESS, '5');
-    await fundOldVeth2(FUNDED_IMPERSONATOR_ADDRESS, '2');
+    await fundOldVeth2(FUNDED_IMPERSONATOR_ADDRESS, OLD_VETH2_FUND_AMOUNT_ETH);
     await openQueuePage(page, FUNDED_IMPERSONATOR_ADDRESS);
 
     const queuePanel = getQueuePanel(page);

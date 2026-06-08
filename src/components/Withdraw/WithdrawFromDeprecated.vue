@@ -570,7 +570,10 @@ export default {
 
       try {
         const filter = queue.filters.WithdrawalRequested(null, owner);
-        const events = await queue.queryFilter(filter);
+        const latestBlock = await queue.runner?.provider?.getBlockNumber?.();
+        const fromBlock =
+          typeof latestBlock === "number" ? Math.max(0, latestBlock - 50_000) : undefined;
+        const events = await queue.queryFilter(filter, fromBlock, latestBlock);
         for (const event of events) {
           const id = event.args?.requestId ?? event.args?.[2];
           if (id != null) ids.add(Number(id));
@@ -579,11 +582,9 @@ export default {
         console.warn("Old vETH2 event lookup failed; falling back to bounded request scan:", error);
       }
 
-      if (ids.size === 0) {
-        const next = Number(this.oldQueue.nextRequestId || "1");
-        const from = Math.max(1, next - 500);
-        for (let id = from; id < next; id++) ids.add(id);
-      }
+      const next = Number(this.oldQueue.nextRequestId || "1");
+      const from = Math.max(1, next - 500);
+      for (let id = from; id < next; id++) ids.add(id);
 
       const requests = [];
       const ownerLower = owner.toLowerCase();

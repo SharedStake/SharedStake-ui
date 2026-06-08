@@ -103,6 +103,8 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
   - Slither with local report review; CI may continue-on-error only to preserve analyzer output.
 - Foundry setup must go through `cd staking-contracts && npm run setup:foundry`; that wrapper retries transient release-download failures so CI audit status reflects contract quality instead of one-off network flakes.
 - Production recommendations that touch deployment, frontend contract wiring, wallet transactions, staking flows, or old-vEth2 redemptions must be validated with `bun run test:e2e:fork -- --fresh-fork --port <free-port>` and `MAINNET_RPC_URL` or `ALCHEMY_KEY`. For real old-vEth2 fork validation, pass `--old-veth2-address`, `--old-veth2-redemption-rate`, and `--old-veth2-source-address`; otherwise localhost uses the mock-token lifecycle. `--skip-deploy` is only a local harness smoke unless the reused RPC is known to be an Anvil mainnet fork.
+- Fork E2E must use a fresh Vite/Playwright server with a free `--web-port`; stale reused Vite servers can serve old bundled `local.json` contract addresses and make fork validation meaningless.
+- Fork E2E deploys must set Hardhat `LOCALHOST_RPC_URL` to the same `http://<host>:<port>` that Playwright uses; otherwise `--port 8546` can deploy to Hardhat's default `8545` while the browser tests `8546`.
 - Push completed changes back to PR 379 and verify remote `CI` and `Contract Audit` before claiming completion.
 <!-- sharedstake-pr379-workflow:end -->
 

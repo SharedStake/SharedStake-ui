@@ -104,6 +104,28 @@ function getLocalAddressOverrides(chainId) {
   return parseAddressOverrides(window.localStorage?.getItem(ADDRESS_OVERRIDES_STORAGE_KEY))
 }
 
+function parseAddressOverrides(rawValue) {
+  if (!rawValue) return null
+  try {
+    const parsed = JSON.parse(rawValue)
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed
+    }
+  } catch (error) {
+    console.warn('Failed to parse modular staking address overrides:', error)
+  }
+  return null
+}
+
+function getLocalAddressOverrides(chainId) {
+  if (!LOCAL_CHAIN_IDS.has(chainId)) return null
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  const queryOverride = parseAddressOverrides(params.get(ADDRESS_OVERRIDES_QUERY_KEY))
+  if (queryOverride) return queryOverride
+  return parseAddressOverrides(window.localStorage?.getItem(ADDRESS_OVERRIDES_STORAGE_KEY))
+}
+
 function getAddresses(chainId) {
   const cid = normalizeChainId(chainId)
   const baseSource = ADDRESS_MAPS_BY_CHAIN[cid]

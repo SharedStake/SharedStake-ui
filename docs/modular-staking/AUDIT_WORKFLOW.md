@@ -62,7 +62,7 @@ the local `OldVeth2Mock` and validates only the queue/UI lifecycle:
 
 ```bash
 MAINNET_RPC_URL=https://... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174 \
-  --old-veth2-address 0x898bAD2774EB97cF6B94605677F43b41871410B1 \
+  --old-veth2-address 0x898bad2774eb97cf6b94605677f43b41871410b1 \
   --old-veth2-redemption-rate 1000000000000000000 \
   --old-veth2-source-address 0x...
 ```
@@ -71,7 +71,7 @@ Wallet-extension E2E requires `PW_WALLET_EXTENSION_PATH`,
 `PW_WALLET_EXTENSION_ID`, and `PW_WALLET_TEST_ADDRESS`, then:
 
 ```bash
-MAINNET_RPC_URL=https://... bun run test:e2e:fork:wallet -- --fresh-fork --port 8546
+MAINNET_RPC_URL=https://... bun run test:e2e:fork:wallet -- --fresh-fork --port 8546 --web-port 4174
 ```
 
 `--skip-deploy` is acceptable only as a local harness smoke against an already

@@ -39,7 +39,7 @@ Examples:
   MAINNET_RPC_URL=https://... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174
   ALCHEMY_KEY=... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174
   MAINNET_RPC_URL=https://... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174 \\
-    --old-veth2-address 0x898bAD2774EB97cF6B94605677F43b41871410B1 \\
+    --old-veth2-address 0x898bad2774eb97cf6b94605677f43b41871410b1 \\
     --old-veth2-redemption-rate 1000000000000000000 \\
     --old-veth2-source-address 0x...
 
@@ -169,6 +169,13 @@ require_cmd bun
 
 [[ "$WEB_PORT" =~ ^[0-9]+$ ]] || die "Invalid web port: $WEB_PORT"
 
+normalize_address_arg() {
+  local value="$1"
+  local label="$2"
+  [[ "$value" =~ ^0x[0-9a-fA-F]{40}$ ]] || die "Invalid $label address: $value"
+  printf '%s\n' "${value,,}"
+}
+
 if [[ -n "$OLD_VETH2_ADDRESS" && -z "$OLD_VETH2_REDEMPTION_RATE" ]]; then
   die "Explicit old-vETH2 token deploy requires --old-veth2-redemption-rate or V2_OLD_VETH2_REDEMPTION_RATE."
 fi
@@ -178,6 +185,7 @@ if [[ -n "$OLD_VETH2_SOURCE_ADDRESS" && -z "$OLD_VETH2_ADDRESS" ]]; then
 fi
 
 if [[ -n "$OLD_VETH2_ADDRESS" ]]; then
+  OLD_VETH2_ADDRESS="$(normalize_address_arg "$OLD_VETH2_ADDRESS" "old-vETH2 token")"
   export V2_OLD_VETH2_ADDRESS="$OLD_VETH2_ADDRESS"
   export E2E_OLD_VETH2_TOKEN_ADDRESS="$OLD_VETH2_ADDRESS"
 fi
@@ -187,6 +195,7 @@ if [[ -n "$OLD_VETH2_REDEMPTION_RATE" ]]; then
 fi
 
 if [[ -n "$OLD_VETH2_SOURCE_ADDRESS" ]]; then
+  OLD_VETH2_SOURCE_ADDRESS="$(normalize_address_arg "$OLD_VETH2_SOURCE_ADDRESS" "old-vETH2 source")"
   export E2E_OLD_VETH2_SOURCE_ADDRESS="$OLD_VETH2_SOURCE_ADDRESS"
 fi
 
