@@ -280,25 +280,31 @@ Known residual classes from Slither/static analysis:
 **Impact:** Low — ETH is accounted for in `_bufferedEther` and exits through `WithdrawalQueueV2`.
 **Status:** Accepted by design.
 
-### 8.3 `arbitrary-send-eth` in `OldVeth2WithdrawalQueue.recoverEth()`
+### 8.3 `arbitrary-send-erc20` in `WithdrawalQueue.requestRedeem()`
+**File:** `WithdrawalQueue.sol`
+**Finding:** `requestRedeem(uint256 shares, address owner, address controller)` transfers `WSGETH` from `owner` into the queue.
+**Impact:** Low — this is the ERC-7540-style delegated request flow. The queue escrows shares from `owner`, assigns request control to `controller`, and still requires token allowance from `owner`; callers cannot pull assets without approval.
+**Status:** Accepted by design. Do not copy this pattern into owner-only queues such as old-vEth2 withdrawals unless delegated ownership is explicitly required and separately audited.
+
+### 8.4 `arbitrary-send-eth` in `OldVeth2WithdrawalQueue.recoverEth()`
 **File:** `OldVeth2WithdrawalQueue.sol`
 **Finding:** `recoverEth(address payable to, uint256 amount)` can send ETH to an arbitrary recipient.
 **Impact:** Low — the function is `onlyRole(GOV)`, `nonReentrant`, rejects zero recipients, and computes recoverable ETH as `address(this).balance - lockedEther - totalPendingRefunds`, so finalized claims and pull refunds remain reserved.
 **Status:** Accepted as governance-controlled recovery. Re-check whenever new ETH liabilities are added.
 
-### 8.4 `calls-loop` in `OldVeth2WithdrawalQueue.claimWithdrawals()`
+### 8.5 `calls-loop` in `OldVeth2WithdrawalQueue.claimWithdrawals()`
 **File:** `OldVeth2WithdrawalQueue.sol`
 **Finding:** Batch claims aggregate request amounts in a loop and perform one ETH send to `msg.sender` after state changes.
 **Impact:** Low — request ownership is checked for every ID, duplicate IDs revert atomically after the first `_markClaimed`, and the external call happens after all claim state is updated under `nonReentrant`.
 **Status:** Accepted by design. Large batches remain bounded by gas and are optional because users can call `claimWithdrawal()` per request.
 
-### 8.5 `reentrancy-benign` in `OldVeth2WithdrawalQueue._enqueueRequest()`
+### 8.6 `reentrancy-benign` in `OldVeth2WithdrawalQueue._enqueueRequest()`
 **File:** `OldVeth2WithdrawalQueue.sol`
 **Finding:** Slither flags the ERC20 `safeTransferFrom()` before request state is written.
 **Impact:** Low — external entry points that call `_enqueueRequest()` are `nonReentrant`, the transferred token is the configured legacy vEth2 token, and no ETH is sent during request creation.
 **Status:** Accepted with existing `nonReentrant` coverage. Re-check if delegated request ownership or arbitrary token support is added.
 
-### 8.6 `timestamp` and loop-cost residuals in `OldVeth2WithdrawalQueue`
+### 8.7 `timestamp` and loop-cost residuals in `OldVeth2WithdrawalQueue`
 **File:** `OldVeth2WithdrawalQueue.sol`
 **Finding:** Slither flags `block.timestamp` in finalization age checks and state writes inside bounded request/finalize/claim loops.
 **Impact:** Low — `minRequestAge` is governance-configured operational delay, not a randomness or price source; `maxRequestsPerFinalize` bounds guardian finalization work, and user batch requests/claims are optional convenience paths.
@@ -324,5 +330,5 @@ Known residual classes from Slither/static analysis:
 
 ### Documentation
 
-9. Add a "Risk Acceptance" section to the operational runbook for the 2 Slither medium findings
+9. Keep the Slither risk-acceptance section synced with each analyzer pass
 10. Document the exact GOV → timelock migration path in deployment scripts
