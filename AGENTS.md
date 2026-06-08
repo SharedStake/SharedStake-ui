@@ -92,3 +92,23 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - Push completed changes back to PR 379 and verify remote `CI` and `Contract Audit` before claiming completion.
 <!-- sharedstake-pr379-workflow:end -->
 
+<!-- gbrain-workflow:begin -->
+## Central Agent Memory (gBrain) — MANDATORY
+
+- Central root: `/home/agents/agent-memory`
+- Writer namespace: `agents/claude/`
+- Durable private memory → `agents/claude/private/`; shareable facts → `agents/claude/public/`
+- Do NOT read other agents private sources without explicit human instruction.
+- Never store plaintext secrets; use pointers to secret managers only.
+- Retrieval: search first, then cite as `brain:agent-claude-private:<slug>`.
+- Sync after any session that changes durable facts: run the `gstack-sync-gbrain` skill.
+<!-- gbrain-workflow:end -->
+
+<!-- context-save-restore:begin -->
+## Context Save / Restore
+
+- Before ending a long-running work session, run `/context-save` so the next session can resume without context loss.
+- At the start of a new session on in-progress work, run `/context-restore` first.
+- Pair with `gstack-sync-gbrain` so both gBrain and local memory stay aligned.
+<!-- context-save-restore:end -->
+
