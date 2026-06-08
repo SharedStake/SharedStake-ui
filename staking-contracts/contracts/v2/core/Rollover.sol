@@ -9,10 +9,10 @@ import {SafeERC20, SafeMath, IERC20, RedemptionsBase} from "../lib/RedemptionsBa
 /** @dev Deployer chooses static virtual price at launch in 1e18 and the underlying ERC20 token
     Users call deposit(amt) to stake their ERC20 and signal intent to exit
     When the contract has enough ETH to service the users debt
-    Users call redeem() to redem for ERC20 = deposited shares * virtualPrice
+    Users call redeem() to redeem for ERC20 = deposited shares * virtualPrice
     The user can further call withdraw() if they change their mind about redeeming for ETH
-    TODO Docs
-    Test on goerli deployed at https://goerli.etherscan.io/address/0x4db116ad5cca33ba5d2956dba80d56f27b6b2455
+    This is retained as a legacy fixed-rate rollover helper; new V2 withdrawal work should use the
+    request/finalize/claim lifecycle instead of extending this contract.
 **/
 contract Rollover is RedemptionsBase {
     using SafeMath for uint256;
@@ -34,6 +34,6 @@ contract Rollover is RedemptionsBase {
             revert ContractBalanceTooLow();
         }
 
-        NEW_TOKEN.transfer(msg.sender, amountToReturn);
+        NEW_TOKEN.safeTransfer(msg.sender, amountToReturn);
     }
 }

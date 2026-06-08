@@ -6,7 +6,10 @@ import {
   seedAndImpersonate,
   waitForReceipt
 } from './helpers/impersonator.js';
-import { localAddressQuery } from './helpers/local-address-query.js';
+import {
+  assertLocalContractsDeployed,
+  localAddressQuery
+} from './helpers/local-address-query.js';
 
 const DEFAULT_IMPERSONATOR_ADDRESS = '0x1111111111111111111111111111111111111111';
 const RPC_URL = process.env.E2E_IMPERSONATOR_RPC_URL || 'http://127.0.0.1:8545';
@@ -15,12 +18,30 @@ const IMPERSONATOR_ADDRESS =
 const IMPERSONATOR_SEED_ETH = process.env.E2E_IMPERSONATOR_SEED_ETH || '5';
 const STAKE_AMOUNT_ETH = process.env.E2E_V2_STAKE_AMOUNT_ETH || '0.05';
 const WRAP_AMOUNT_STETH = process.env.E2E_V2_WRAP_AMOUNT_STETH || '0.02';
+const UNWRAP_AMOUNT_WSTETH = process.env.E2E_V2_UNWRAP_AMOUNT_WSTETH || '0.005';
 const WITHDRAW_REQUEST_AMOUNT_STETH =
   process.env.E2E_V2_WITHDRAW_REQUEST_AMOUNT_STETH || '0.01';
 
 const isHexChainId = (value) => /^0x[0-9a-f]+$/i.test(value || '');
 
+async function waitForModularStoreIdle(page) {
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(async () => {
+          const { useModularStakingStore } = await import('/src/stores/modularStaking.js');
+          return useModularStakingStore().loading;
+        }),
+      { timeout: 30_000 }
+    )
+    .toBeFalsy();
+}
+
 test.describe('modular staking v2 flow', () => {
+  test.beforeAll(async () => {
+    await assertLocalContractsDeployed(RPC_URL);
+  });
+
   test('stake, wrap, and request withdrawal on /v2', async ({ page }) => {
     test.setTimeout(240_000);
 
@@ -105,6 +126,22 @@ test.describe('modular staking v2 flow', () => {
     const wrapReceipt = await waitForReceipt(RPC_URL, wrapTx.hash, 90_000);
     expect(approveReceipt.status).toBe('0x1');
     expect(wrapReceipt.status).toBe('0x1');
+    await waitForModularStoreIdle(page);
+
+    await page.getByRole('button', { name: 'Unwrap' }).click();
+    const unwrapInput = page.locator('input[type="number"]').first();
+    await expect(unwrapInput).toBeVisible({ timeout: 20_000 });
+    await unwrapInput.fill(UNWRAP_AMOUNT_WSTETH);
+    await expect(unwrapInput).toHaveValue(UNWRAP_AMOUNT_WSTETH);
+
+    const unwrapButton = page.getByRole('button', { name: 'Unwrap wstETH' });
+    await expect(unwrapButton).toBeVisible({ timeout: 20_000 });
+    const unwrapTxIndex = await page.evaluate(() => window.__e2eTxLog?.length || 0);
+    await unwrapButton.click();
+
+    const unwrapTx = await pollTxRecordAt(page, unwrapTxIndex, 60_000);
+    const unwrapReceipt = await waitForReceipt(RPC_URL, unwrapTx.hash, 90_000);
+    expect(unwrapReceipt.status).toBe('0x1');
 
     // Withdraw tab (request path)
     await topTabs.nth(2).click();

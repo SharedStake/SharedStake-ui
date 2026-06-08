@@ -171,7 +171,7 @@ contract DVTModule is ValidatorModule {
             if (!operatorRegistry.canDeposit(msg.sender)) revert OperatorNotEligible(msg.sender);
         }
 
-        bytes32 proposalId = keccak256(abi.encodePacked(clusterId, pubkey, withdrawal_credentials, signature, deposit_data_root));
+        bytes32 proposalId = keccak256(abi.encode(clusterId, pubkey, withdrawal_credentials, signature, deposit_data_root));
         if (depositProposals[proposalId].approvalCount > 0) revert ProposalAlreadyExists(proposalId);
 
         depositProposals[proposalId] = DepositProposal({

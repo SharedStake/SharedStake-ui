@@ -36,17 +36,15 @@ contract RedemptionsBase is ReentrancyGuard {
   }
 
   function deposit(uint256 amount) external nonReentrant {
-    // vEth2 transfer from returns true otherwise reverts
-    if (vEth2Token.transferFrom(msg.sender, address(this), amount)) {
-      _stakeForWithdrawal(msg.sender, amount);
-    }
+    vEth2Token.safeTransferFrom(msg.sender, address(this), amount);
+    _stakeForWithdrawal(msg.sender, amount);
   }
 
   function withdraw() external nonReentrant {
     uint256 amt = userEntries[msg.sender].amount;
     delete userEntries[msg.sender];
 
-    vEth2Token.transferFrom(address(this), msg.sender, amt);
+    vEth2Token.safeTransfer(msg.sender, amt);
   }
 
   function redeem() external nonReentrant {

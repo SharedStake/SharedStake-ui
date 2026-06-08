@@ -81,6 +81,7 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - After each fix, rerun the narrow relevant tests first, then the broader gates needed for confidence.
 - Fork E2E must use a fresh Vite/Playwright server with a free `--web-port`; stale reused Vite servers can serve old bundled `local.json` contract addresses and make fork validation meaningless.
 - Fork E2E deploys must set Hardhat `LOCALHOST_RPC_URL` to the same `http://<host>:<port>` that Playwright uses; otherwise `--port 8546` can deploy to Hardhat's default `8545` while the browser tests `8546`.
+- V2 Playwright suites should preflight `eth_getCode` for required local contract addresses; a zero-code address is a stale-address or wrong-RPC failure, not a valid UI pass.
 - Standard PR 379 gates:
   - `bun audit --level moderate`
   - `bun run type-check`

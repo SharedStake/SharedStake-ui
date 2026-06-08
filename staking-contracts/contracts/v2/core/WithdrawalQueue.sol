@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
-import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -37,6 +37,7 @@ import {SharedDepositMinterV2} from "./SharedDepositMinterV2.sol";
  */
 contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQueue, OperatorSettable {
     using Address for address payable;
+    using SafeERC20 for IERC20;
 
     struct Request {
         address requester;
@@ -97,7 +98,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         if (shares == 0) {
             revert Errors.InvalidAmount();
         }
-        IERC20(WSGETH).transferFrom(owner, address(this), shares); // asset here is the Vault underlying asset
+        IERC20(WSGETH).safeTransferFrom(owner, address(this), shares); // asset here is the Vault underlying asset
 
         requestId = requestsCreated++;
         requests[requestId] = Request({requester: requester, shares: shares});
@@ -182,7 +183,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         redeemRequests[requester] -= assets; // underflow would revert if not enough claimable shares
         totalPendingRequest -= assets;
         _withdraw(requester, assets);
-        IERC20(WSGETH).transfer(receiver, shares); // asset here is the Vault underlying asset
+        IERC20(WSGETH).safeTransfer(receiver, shares); // asset here is the Vault underlying asset
 
         emit CancelRedeem(requester, receiver, shares, assets);
     }

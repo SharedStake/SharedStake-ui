@@ -70,9 +70,17 @@ function normalizeChainId(id) {
   return id.toLowerCase()
 }
 
+function validAddress(value) {
+  return typeof value === 'string' && ethers.isAddress(value) ? value : null
+}
+
 function pickAddress(source, key, fallbackKey = null) {
   if (!source) return ZERO_ADDR
-  return source[key] || (fallbackKey ? source[fallbackKey] : null) || ZERO_ADDR
+  return validAddress(source[key]) || (fallbackKey ? validAddress(source[fallbackKey]) : null) || ZERO_ADDR
+}
+
+function pickFirstAddress(values) {
+  return values.map(validAddress).find(Boolean) || ZERO_ADDR
 }
 
 function parseAddressOverrides(rawValue) {
@@ -113,8 +121,8 @@ function getAddresses(chainId) {
     validatorModule: pickAddress(source, 'validatorModule'),
     dvtModule: pickAddress(source, 'dvtModule'),
     operatorRegistry: pickAddress(source, 'operatorRegistry'),
-    sgtToken: source.sgtToken || source.sgtV2 || SGT_TOKEN_BY_CHAIN[cid] || ZERO_ADDR,
-    nftContract: source.nftContract || ZERO_ADDR,
+    sgtToken: pickFirstAddress([source.sgtToken, source.sgtV2, SGT_TOKEN_BY_CHAIN[cid]]),
+    nftContract: pickAddress(source, 'nftContract'),
   }
 }
 

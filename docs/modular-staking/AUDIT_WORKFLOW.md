@@ -57,6 +57,12 @@ local Vite process already occupies the default Playwright port.
 When `--port` is not `8545`, the runner exports `LOCALHOST_RPC_URL` for Hardhat
 deploys so contracts are deployed to the same fork RPC that Playwright uses.
 
+The V2 Playwright suites also preflight `eth_getCode` for the required local
+contracts before opening the app. A failure such as `No contract code at local
+stakingRouter address ...` means the browser is pointed at a different RPC than
+the deploy step, `local.json` is stale, or an old Vite server is serving a stale
+bundle. Rerun with `--fresh-fork`, a free `--port`, and a free `--web-port`.
+
 ## Optional Static Analysis
 
 If Slither is available:
