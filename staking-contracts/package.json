@@ -76,7 +76,7 @@
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "prettier": "prettier --config ./.prettierrc.yaml --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:check": "prettier --check --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts}\"",
-    "setup:foundry": "mm-foundryup --version v1.7.1",
+    "setup:foundry": "bash scripts/setup-foundry.sh",
     "test": "hardhat test",
     "test:invariants": "./scripts/run-forge.sh test --match-path test/foundry/ModularStakingInvariants.t.sol",
     "test:invariants:gas": "./scripts/run-forge.sh test --match-path test/foundry/ModularStakingInvariants.t.sol --gas-report",

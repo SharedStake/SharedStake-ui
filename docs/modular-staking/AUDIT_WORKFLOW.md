@@ -33,6 +33,10 @@ npm run test:invariants
 ./scripts/run-forge.sh test --match-path test/foundry/MigrationHelperFuzz.t.sol
 ```
 
+`npm run setup:foundry` wraps `mm-foundryup` with retries. Use the wrapper in
+CI and local audit runs so transient GitHub release download failures do not
+obscure contract test results.
+
 ## Mainnet Fork E2E
 
 Any production recommendation that depends on deployment ordering, local address
