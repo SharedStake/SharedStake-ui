@@ -5,7 +5,6 @@ marked.setOptions({
   breaks: true,
   gfm: true,
   headerIds: true,
-  sanitize: false,
   smartLists: true,
   smartypants: true
 });

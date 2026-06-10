@@ -56,7 +56,7 @@ export interface Config {
 function loadConfig(): Config {
   const args = process.argv.slice(2);
   const dryRun = args.includes("--dry-run");
-  const watch = args.includes("--watch") || !args.includes("--once");
+  const watch = args.includes("--watch");
   const intervalArg = args.find(a => a.startsWith("--interval="));
   const pollIntervalSec = intervalArg
     ? parseInt(intervalArg.split("=")[1], 10)
@@ -107,11 +107,16 @@ async function postWebhook(url: string, payload: object) {
           port: u.port || 443,
           path: u.pathname + u.search,
           method: "POST",
+          timeout: 5000,
           headers: {"Content-Type": "application/json", "Content-Length": Buffer.byteLength(body)},
         },
         () => resolve(),
       );
       req.on("error", () => resolve());
+      req.on("timeout", () => {
+        req.destroy();
+        resolve();
+      });
       req.write(body);
       req.end();
     });

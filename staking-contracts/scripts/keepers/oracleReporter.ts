@@ -130,7 +130,7 @@ function isActiveStatus(status: string): boolean {
 
 async function fetchValidatorInfo(beaconApi: string, pubkey: string): Promise<ValidatorInfo | null> {
   // /eth/v1/beacon/states/head/validators?id=<pubkey> returns array of validators.
-  const url = `${beaconApi}/eth/v1/beacon/states/head/validators?id=${pubkey}`;
+  const url = `${beaconApi}/eth/v1/beacon/states/head/validators?id=${encodeURIComponent(pubkey)}`;
   const res = await fetchWithTimeout(url, BEACON_API_TIMEOUT_MS);
   if (!res.ok) {
     if (res.status === 404) return null;
@@ -142,9 +142,14 @@ async function fetchValidatorInfo(beaconApi: string, pubkey: string): Promise<Va
   if (!json.data || json.data.length === 0) return null;
 
   const entry = json.data[0];
+  const balanceGwei = BigInt(entry.balance);
+  const MAX_VALIDATOR_BALANCE_GWEI = 2_048_000_000_000n; // 2048 ETH (max effective balance)
+  if (balanceGwei > MAX_VALIDATOR_BALANCE_GWEI) {
+    throw new Error(`Beacon API returned implausible balance ${balanceGwei} Gwei for validator ${pubkey}`);
+  }
   return {
     pubkey: entry.validator.pubkey,
-    balanceGwei: BigInt(entry.balance),
+    balanceGwei,
     status: entry.status,
   };
 }
