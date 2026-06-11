@@ -303,6 +303,7 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
 
     function setFinalizeLimits(uint256 newMaxRequestsPerFinalize, uint256 newMinRequestAge) external onlyRole(GOV) {
         if (newMaxRequestsPerFinalize == 0) revert Errors.InvalidAmount();
+        if (newMinRequestAge > 365 days) revert InvalidRequestLimits(0, newMinRequestAge);
         maxRequestsPerFinalize = newMaxRequestsPerFinalize;
         minRequestAge = newMinRequestAge;
         emit FinalizeLimitsUpdated(newMaxRequestsPerFinalize, newMinRequestAge);
