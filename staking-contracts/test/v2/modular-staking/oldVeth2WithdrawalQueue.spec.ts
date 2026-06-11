@@ -217,6 +217,74 @@ describe("OldVeth2WithdrawalQueue", () => {
     });
   });
 
+  describe("guardian role guard (last-GUARDIAN protection)", () => {
+    it("guardianCount is 1 right after construction and 2 after a second grant", async () => {
+      const OldVeth2WithdrawalQueue = await ethers.getContractFactory("OldVeth2WithdrawalQueue");
+      const freshQueue = await OldVeth2WithdrawalQueue.deploy(vEth2.target, REDEMPTION_RATE, gov.address);
+      expect(await freshQueue.guardianCount()).to.equal(1n);
+
+      await freshQueue.connect(gov).grantRole(GUARDIAN_ROLE, guardian.address);
+      expect(await freshQueue.guardianCount()).to.equal(2n);
+    });
+
+    it("re-granting GUARDIAN to an existing holder does not double-increment guardianCount", async () => {
+      // deployFresh grants GUARDIAN to both gov (constructor) and guardian, so count == 2
+      expect(await queue.guardianCount()).to.equal(2n);
+      await queue.connect(gov).grantRole(GUARDIAN_ROLE, guardian.address);
+      expect(await queue.guardianCount()).to.equal(2n);
+    });
+
+    it("revokeRole on the last GUARDIAN reverts with CannotRemoveLastGuardian", async () => {
+      // Bring count down to 1
+      await queue.connect(gov).revokeRole(GUARDIAN_ROLE, guardian.address);
+      expect(await queue.guardianCount()).to.equal(1n);
+
+      await expect(queue.connect(gov).revokeRole(GUARDIAN_ROLE, gov.address)).to.be.revertedWithCustomError(
+        queue,
+        "CannotRemoveLastGuardian",
+      );
+    });
+
+    it("renounceRole on the last GUARDIAN reverts with CannotRemoveLastGuardian", async () => {
+      await queue.connect(gov).revokeRole(GUARDIAN_ROLE, guardian.address);
+      expect(await queue.guardianCount()).to.equal(1n);
+
+      await expect(queue.connect(gov).renounceRole(GUARDIAN_ROLE, gov.address)).to.be.revertedWithCustomError(
+        queue,
+        "CannotRemoveLastGuardian",
+      );
+    });
+
+    it("allows revoking one of two guardians but blocks removing the last", async () => {
+      await queue.connect(gov).revokeRole(GUARDIAN_ROLE, guardian.address);
+      expect(await queue.guardianCount()).to.equal(1n);
+      expect(await queue.hasRole(GUARDIAN_ROLE, guardian.address)).to.equal(false);
+      expect(await queue.hasRole(GUARDIAN_ROLE, gov.address)).to.equal(true);
+
+      await expect(queue.connect(gov).revokeRole(GUARDIAN_ROLE, gov.address)).to.be.revertedWithCustomError(
+        queue,
+        "CannotRemoveLastGuardian",
+      );
+    });
+
+    it("allows revoking a non-GUARDIAN role even with guardianCount == 1", async () => {
+      const GOV_ROLE = ethers.keccak256(ethers.toUtf8Bytes("GOV"));
+      await queue.connect(gov).revokeRole(GUARDIAN_ROLE, guardian.address);
+      // GOV revoke should succeed regardless of guardian count
+      await expect(queue.connect(gov).revokeRole(GOV_ROLE, gov.address)).to.not.be.reverted;
+    });
+
+    it("guardianCount stays accurate across a full grant-revoke cycle", async () => {
+      expect(await queue.guardianCount()).to.equal(2n);
+      await queue.connect(gov).revokeRole(GUARDIAN_ROLE, guardian.address);
+      expect(await queue.guardianCount()).to.equal(1n);
+      await queue.connect(gov).grantRole(GUARDIAN_ROLE, alice.address);
+      expect(await queue.guardianCount()).to.equal(2n);
+      await queue.connect(gov).revokeRole(GUARDIAN_ROLE, alice.address);
+      expect(await queue.guardianCount()).to.equal(1n);
+    });
+  });
+
   describe("governance controls and recoveries", () => {
     it("gates settings and pause controls behind GOV", async () => {
       await expect(queue.connect(alice).setRequestLimits(parseEther("1"), parseEther("2"))).to.be.reverted;
