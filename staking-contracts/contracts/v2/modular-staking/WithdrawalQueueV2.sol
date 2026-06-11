@@ -53,6 +53,10 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     // ETH locked for finalized-but-unclaimed requests.
     uint256 public lockedEther;
 
+    // ETH committed to requested-but-not-yet-finalized requests. Together with
+    // lockedEther this is the total ETH owed to unclaimed withdrawals.
+    uint256 public pendingEther;
+
     // Pull-based refunds for excess ETH sent during finalize.
     mapping(address => uint256) public pendingRefunds;
 
@@ -159,6 +163,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
             claimed: false
         });
 
+        pendingEther += ethValue;
         emit WithdrawalRequested(owner, requestId, shares, stTokenAmount);
     }
 
@@ -197,6 +202,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         }
 
         lockedEther += totalEthRequired;
+        pendingEther -= totalEthRequired;
         lastFinalizedRequestId = lastRequestId;
 
         // Accrue any excess ETH for pull-based withdrawal instead of push refund.
@@ -313,6 +319,11 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     /// @notice ETH available in this contract (total balance minus locked-for-claims).
     function availableEther() external view returns (uint256) {
         return address(this).balance - lockedEther;
+    }
+
+    /// @notice Total ETH owed across all outstanding withdrawal requests (pending + finalized-unclaimed).
+    function totalUnclaimedEther() external view returns (uint256) {
+        return pendingEther + lockedEther;
     }
 
     /// @notice Accept plain ETH deposits (e.g., from StakingCore funding withdrawal queue).

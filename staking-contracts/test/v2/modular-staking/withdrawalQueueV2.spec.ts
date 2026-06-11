@@ -68,6 +68,17 @@ describe("WithdrawalQueueV2", () => {
       await expect(tx).to.emit(queue, "WithdrawalRequested");
     });
 
+    it("increments pendingEther by request ETH value", async () => {
+      const pendingBefore = await queue.pendingEther();
+
+      await queue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
+
+      const pendingAfter = await queue.pendingEther();
+      expect(pendingAfter).to.be.gt(pendingBefore);
+      const req = await queue.getRequest(1);
+      expect(pendingAfter - pendingBefore).to.be.closeTo(req.ethAmount, parseEther("0.001"));
+    });
+
     it("assigns sequential request IDs starting at 1", async () => {
       await queue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
       await queue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
@@ -112,6 +123,19 @@ describe("WithdrawalQueueV2", () => {
 
     it("only GUARDIAN can finalize", async () => {
       await expect(queue.connect(alice).finalize(1, {value: parseEther("1")})).to.be.reverted;
+    });
+
+    it("decrements pendingEther by finalized ETH amount", async () => {
+      const pendingBefore = await queue.pendingEther();
+
+      await queue.connect(gov).finalize(2, {value: parseEther("3")});
+
+      const pendingAfter = await queue.pendingEther();
+      expect(pendingAfter).to.be.lt(pendingBefore);
+      const req1 = await queue.getRequest(1);
+      const req2 = await queue.getRequest(2);
+      const totalEth = req1.ethAmount + req2.ethAmount;
+      expect(pendingBefore - pendingAfter).to.be.closeTo(totalEth, parseEther("0.001"));
     });
 
     it("GUARDIAN (gov) can finalize a batch", async () => {
@@ -321,6 +345,32 @@ describe("WithdrawalQueueV2", () => {
 
       // Alice receives ~2 ETH (minus gas).
       expect(aliceAfter).to.be.gt(aliceBefore);
+    });
+  });
+
+  // ── Views ────────────────────────────────────────────────────────────────────
+
+  describe("totalUnclaimedEther()", () => {
+    it("returns sum of pending and locked Ether", async () => {
+      // Create pending requests
+      await queue.connect(alice).requestWithdrawals([parseEther("1"), parseEther("2")], alice.address);
+
+      const pending = await queue.pendingEther();
+      const locked = await queue.lockedEther();
+      const totalUnclaimed = await queue.totalUnclaimedEther();
+
+      expect(totalUnclaimed).to.equal(pending + locked);
+    });
+
+    it("decreases after claims", async () => {
+      await queue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
+      await queue.connect(gov).finalize(1, {value: parseEther("1")});
+
+      const beforeClaim = await queue.totalUnclaimedEther();
+      await queue.connect(alice).claimWithdrawal(1, alice.address);
+      const afterClaim = await queue.totalUnclaimedEther();
+
+      expect(afterClaim).to.be.lt(beforeClaim);
     });
   });
 });
