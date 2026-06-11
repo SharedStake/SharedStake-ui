@@ -67,6 +67,9 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
     uint256 public totalClaimedEth;
     uint256 public totalCanceledVeth2;
 
+    // Tracks number of distinct GUARDIAN role holders; guards against removing the last guardian.
+    uint256 public guardianCount;
+
     // Pull-based refunds for excess ETH sent during finalize.
     mapping(address => uint256) public pendingRefunds;
     uint256 public totalPendingRefunds;
@@ -110,6 +113,7 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
     error RequestCanceled(uint256 requestId);
     error NotRequestOwner(uint256 requestId, address caller);
     error InvalidRequestLimits(uint256 min, uint256 max);
+    error CannotRemoveLastGuardian();
 
     constructor(address vEth2, uint256 initialRedemptionRate, address gov) {
         if (vEth2 == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -352,6 +356,25 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
 
     function recoverableVeth2() external view returns (uint256) {
         return VETH2.balanceOf(address(this)) - pendingVeth2;
+    }
+
+    // -- Internal role overrides -----------------------------------------------
+
+    function _grantRole(bytes32 role, address account) internal override {
+        if (role == GUARDIAN && !hasRole(GUARDIAN, account)) {
+            ++guardianCount;
+        }
+        super._grantRole(role, account);
+    }
+
+    function _revokeRole(bytes32 role, address account) internal override {
+        if (role == GUARDIAN && hasRole(GUARDIAN, account)) {
+            if (guardianCount <= 1) revert CannotRemoveLastGuardian();
+            super._revokeRole(role, account);
+            --guardianCount;
+        } else {
+            super._revokeRole(role, account);
+        }
     }
 
     receive() external payable {}
