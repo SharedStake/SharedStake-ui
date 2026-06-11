@@ -256,6 +256,8 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     }
 
     /// @notice Recover accidentally sent ETH that is not locked for claims.
+    ///         Note: pendingEther obligations are not backed by held ETH until finalize() is called.
+    ///         ETH pre-deposited via receive() for future finalize batches is NOT protected by this guard.
     function recoverEth(address payable to, uint256 amount) external onlyRole(GOV) {
         uint256 available = address(this).balance - lockedEther;
         if (amount > available) revert Errors.InsufficientBalance();
@@ -321,7 +323,8 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         return address(this).balance - lockedEther;
     }
 
-    /// @notice Total ETH owed across all outstanding withdrawal requests (pending + finalized-unclaimed).
+    /// @notice ETH owed to withdrawal requestors: unfinalized (pendingEther) + finalized-but-unclaimed (lockedEther).
+    ///         Does not include excess ETH from over-funded finalize() calls pending guardian withdrawal (see pendingRefunds).
     function totalUnclaimedEther() external view returns (uint256) {
         return pendingEther + lockedEther;
     }
