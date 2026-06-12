@@ -1,6 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
-import {DVTModule__factory, OracleAdapter__factory, ValidatorModule__factory} from "../types";
+import {OracleAdapter__factory, ValidatorModule__factory} from "../types";
 import {resolveGovernanceAddress, resolveOracleSubmitterAddresses} from "../helpers/governance";
 
 /**
@@ -52,11 +52,7 @@ const func: DeployFunction = async hre => {
   const validatorModule = await connect(ValidatorModule__factory);
   await grantOracleRole(validatorModule, "ValidatorModule");
 
-  const dvtAddress = await address(DVTModule__factory);
-  if (dvtAddress) {
-    const dvtModule = await connect(DVTModule__factory);
-    await grantOracleRole(dvtModule, "DVTModule");
-  }
+  // DVTModule oracle wiring deferred to feat/dvt-module (PR 381)
 
   // Submitter bootstrap: local defaults to deployer; non-local requires explicit env configuration.
   const submitters = resolveOracleSubmitterAddresses(hre, ship);

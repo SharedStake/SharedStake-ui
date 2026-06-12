@@ -25,11 +25,11 @@ function readConfiguredNftAddress(): string | undefined {
 }
 
 /**
- * Deploys OperatorRegistry and wires it to ValidatorModule + DVTModule.
+ * Deploys OperatorRegistry and wires it to ValidatorModule.
  *
  * The registry is optional — modules fall back to role-based access when no
  * registry is set. This script is safe to run after 008_validatorModule and
- * 012_dvtModule have already been deployed.
+ * 008_validatorModule has already been deployed.
  *
  * Default bond config (env-overridable):
  *   V2_OPERATOR_ETH_BOND_PER_SLOT  — ETH per slot (default: 1 ETH)

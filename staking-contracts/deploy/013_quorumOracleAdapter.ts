@@ -1,7 +1,6 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {
-  DVTModule__factory,
   QuorumOracleAdapter__factory,
   ValidatorModule__factory,
   OracleAdapter__factory,
@@ -78,11 +77,7 @@ const func: DeployFunction = async hre => {
   const validatorModule = await connect(ValidatorModule__factory);
   await grantOracleRole(validatorModule, "ValidatorModule");
 
-  const dvtAddress = await address(DVTModule__factory);
-  if (dvtAddress) {
-    const dvtModule = await connect(DVTModule__factory);
-    await grantOracleRole(dvtModule, "DVTModule");
-  }
+  // DVTModule oracle wiring deferred to feat/dvt-module (PR 381)
 
   // Revoke single-submitter OracleAdapter ORACLE role to enforce quorum
   // This ensures only QuorumOracleAdapter can submit oracle reports
@@ -96,15 +91,6 @@ const func: DeployFunction = async hre => {
     if (await validatorModule.hasRole(ORACLE, oracleAdapterAddress)) {
       console.log("  Revoking ORACLE from OracleAdapter on ValidatorModule...");
       await validatorModule.connect(govSigner).revokeRole(ORACLE, oracleAdapterAddress);
-    }
-
-    // Revoke from DVTModule if it exists
-    if (dvtAddress) {
-      const dvtModule = await connect(DVTModule__factory);
-      if (await dvtModule.hasRole(ORACLE, oracleAdapterAddress)) {
-        console.log("  Revoking ORACLE from OracleAdapter on DVTModule...");
-        await dvtModule.connect(govSigner).revokeRole(ORACLE, oracleAdapterAddress);
-      }
     }
 
     console.log("  QuorumOracleAdapter is now the sole oracle (quorum enforced)");
