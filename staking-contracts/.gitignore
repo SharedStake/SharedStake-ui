@@ -1,5 +1,8 @@
 node_modules
-.openzeppelin
+# Ignore OZ upgrades metadata for ephemeral/unknown networks only.
+# Real-network files (mainnet.json, sepolia.json) MUST be tracked in git —
+# losing them breaks storage-layout validation for future upgradeProxy() calls.
+.openzeppelin/unknown-*.json
 
 #Hardhat files
 cache

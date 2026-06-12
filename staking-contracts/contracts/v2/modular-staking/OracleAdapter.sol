@@ -100,7 +100,13 @@ contract OracleAdapter is AccessControl {
         if (block.timestamp - reportTimestamp < MIN_REPORT_TIMESTAMP_AGE) {
             revert ReportTimestampTooFresh(reportTimestamp, block.timestamp, MIN_REPORT_TIMESTAMP_AGE);
         }
-        OracleValidation.validateDrift(beaconValidators, beaconBalance, lastBeaconValidators, lastBeaconBalance, maxDriftBps);
+        OracleValidation.validateDrift(
+            beaconValidators,
+            beaconBalance,
+            lastBeaconValidators,
+            lastBeaconBalance,
+            maxDriftBps
+        );
         OracleValidation.validateSlashGuard(beaconBalance, lastBeaconBalance, maxSlashBps);
 
         // All checks pass — update state and forward to report target.

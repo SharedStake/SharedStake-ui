@@ -362,7 +362,9 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
 
       // Register nodeOp with 1 slot, 1 ETH bond + 1000 SGT
       await mockSgt.connect(nodeOp).approve(operatorRegistry.target, parseEther("1000"));
-      await operatorRegistry.connect(nodeOp).registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("1000"), {value: parseEther("1")});
+      await operatorRegistry
+        .connect(nodeOp)
+        .registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("1000"), {value: parseEther("1")});
 
       // Deposit 32 ETH to buffer
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
@@ -443,7 +445,9 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       // Register nodeOp again for slash test
       await mockSgt.mint(nodeOp.address, parseEther("1000"));
       await mockSgt.connect(nodeOp).approve(operatorRegistry.target, parseEther("1000"));
-      await operatorRegistry.connect(nodeOp).registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("1000"), {value: parseEther("1")});
+      await operatorRegistry
+        .connect(nodeOp)
+        .registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("1000"), {value: parseEther("1")});
 
       const sgtBondedBefore = (await operatorRegistry.getOperator(nodeOp.address)).sgtBonded;
 
@@ -473,5 +477,4 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       await validatorModule.connect(gov).setOperatorRegistry(operatorRegistry.target);
     });
   });
-
 });

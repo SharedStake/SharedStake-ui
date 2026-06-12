@@ -11,12 +11,12 @@ Committed runtime artifacts:
 
 ## Required Roles
 
-| Keeper              | Role                               | Notes                        |
-| ------------------- | ---------------------------------- | ---------------------------- |
-| depositSweep        | `NODE_OPERATOR` on ValidatorModule | Submits beacon deposits      |
-| oracleReporter      | `SUBMITTER` on OracleAdapter       | Reports beacon balances      |
-| withdrawalFinalizer | `GUARDIAN` on WithdrawalQueueV2    | Finalizes withdrawal batches |
-| balanceMonitor      | `GUARDIAN` on StakingRouter        | Emergency pauses on anomaly  |
+| Keeper              | Role                               | Notes                                             |
+| ------------------- | ---------------------------------- | ------------------------------------------------- |
+| depositSweep        | `NODE_OPERATOR` on ValidatorModule | Submits beacon deposits                           |
+| oracleReporter      | `SUBMITTER` on OracleAdapter       | Reports beacon balances                           |
+| withdrawalFinalizer | `GUARDIAN` on WithdrawalQueueV2    | Finalizes withdrawal batches                      |
+| balanceMonitor      | `GUARDIAN` on StakingRouter        | Emergency pauses on anomaly                       |
 | veSGTCheckpointer   | None (permissionless)              | Refreshes veSGT decay before governance snapshots |
 
 > GUARDIAN and NODE_OPERATOR should be **separate hot wallets** — not the governance multisig. GUARDIAN needs enough ETH to finalize withdrawal batches.

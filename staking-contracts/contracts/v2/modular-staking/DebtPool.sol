@@ -245,7 +245,14 @@ contract DebtPool is AccessControl, Pausable {
     )
         external
         view
-        returns (bytes32 root, uint256 totalAmount, uint256 claimedAmount, uint256 timestamp, bool finalized, bool swept)
+        returns (
+            bytes32 root,
+            uint256 totalAmount,
+            uint256 claimedAmount,
+            uint256 timestamp,
+            bool finalized,
+            bool swept
+        )
     {
         Distribution storage dist = distributions[_distributionId];
         return (dist.merkleRoot, dist.totalAmount, dist.claimedAmount, dist.timestamp, dist.finalized, dist.swept);

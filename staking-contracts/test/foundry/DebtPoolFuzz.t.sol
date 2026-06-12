@@ -105,7 +105,7 @@ contract DebtPoolFuzz is Test {
     debtPool.claim(1, 1, rcpt1, amount1, proof1);
 
     // Invariant: claimedAmount == totalAmount after all claims
-    (, uint256 totalAmount, uint256 claimedAmount, , ,) = debtPool.getDistribution(1);
+    (, uint256 totalAmount, uint256 claimedAmount, , , ) = debtPool.getDistribution(1);
     assertEq(claimedAmount, totalAmount, "claimedAmount must equal totalAmount after full distribution");
     assertEq(claimedAmount, TOTAL, "must equal declared TOTAL");
   }

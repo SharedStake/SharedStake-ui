@@ -144,7 +144,13 @@ contract QuorumOracleAdapter is AccessControl {
             revert ReportTimestampTooFresh(reportTimestamp, block.timestamp, MIN_REPORT_TIMESTAMP_AGE);
         }
         OracleValidation.validateStaleness(reportTimestamp, maxStalenessSeconds);
-        OracleValidation.validateDrift(beaconValidators, beaconBalance, lastBeaconValidators, lastBeaconBalance, maxDriftBps);
+        OracleValidation.validateDrift(
+            beaconValidators,
+            beaconBalance,
+            lastBeaconValidators,
+            lastBeaconBalance,
+            maxDriftBps
+        );
         OracleValidation.validateSlashGuard(beaconBalance, lastBeaconBalance, maxSlashBps);
     }
 

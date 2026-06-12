@@ -1,5 +1,7 @@
 # SharedStake Modular Staking V2 — Architecture
 
+> **PR 379 (feat/protocol-v3-fresh)**: StakingRouter, ValidatorModule, LSTWrapModule, and OperatorRegistry are now **UUPS proxies** (ERC-1967). DVTModule has been extracted to `feat/dvt-module` (PR 381) for independent security review. See [`staking-contracts/docs/modular-staking/architecture.md`](../../staking-contracts/docs/modular-staking/architecture.md) for the upgraded architecture details.
+
 ## Contract Interaction Diagram
 
 ```mermaid
@@ -28,10 +30,10 @@ graph TB
         WQ[WithdrawalQueueV2]
     end
 
-    subgraph Modules["Staking Modules"]
-        VM[ValidatorModule\n─ solo validators ─]
-        DVT[DVTModule\n─ DVT clusters ─\n⚠ paused by default]
-        LST[LSTWrapModule\n─ stETH / rETH ─]
+    subgraph Modules["Staking Modules (PR 379)"]
+        VM[ValidatorModule\n─ solo validators ─\n🔷 UUPS Proxy]
+        LST[LSTWrapModule\n─ stETH / rETH ─\n🔷 UUPS Proxy]
+        DVT["DVTModule\n─ DVT clusters ─\n⏳ deferred to PR 381"]
     end
 
     subgraph External["External Infrastructure"]
@@ -55,7 +57,7 @@ graph TB
 
     %% Router → modules
     SR -->|receiveDeposit| VM
-    SR -->|receiveDeposit| DVT
+    SR -.->|receiveDeposit — PR 381| DVT
     SR -->|receiveDeposit| LST
 
     %% Router → token
@@ -96,7 +98,7 @@ graph TB
 
     %% Operator registry
     OR -->|canDeposit check| VM
-    OR -->|canDeposit check| DVT
+    OR -.->|canDeposit check — PR 381| DVT
     NO -->|registerOperator / bond| OR
 
     %% Referral
@@ -221,7 +223,7 @@ After oracle report:
 3. `beaconBalance` changes per oracle report are bounded by `maxDriftBps` and `maxSlashBps`.
 4. First oracle report is bounded by `MAX_BEACON_BALANCE_PER_VALIDATOR = 2048 ETH` (C2 fix).
 5. Oracle reports with `reportTimestamp ≥ block.timestamp - MIN_REPORT_TIMESTAMP_AGE` (12s) are rejected.
-6. DVT module is paused by default on non-local deployments; requires explicit GOV unpausing.
+6. DVTModule is deferred to `feat/dvt-module` (PR 381) and is **not part of PR 379**. After PR 381 merges it will be registered via `StakingRouter.registerModule()` with no core contract changes.
 7. Last GUARDIAN on WithdrawalQueueV2 cannot be removed (S1 fix).
 8. `minRequestAge` for finalization capped at 365 days (S2 fix).
 
@@ -236,7 +238,7 @@ After oracle report:
 | OperatorRegistry.sol | ~451 | Operator bond management |
 | WithdrawalQueueV2.sol | ~340 | Exit queue |
 | DebtPool.sol | ~324 | Merkle fee distribution |
-| DVTModule.sol | ~329 | DVT cluster validator |
+| DVTModule.sol | ~329 | DVT cluster validator — *deferred to PR 381* |
 | ValidatorModule.sol | ~314 | Solo validator |
 | QuorumOracleAdapter.sol | ~236 | M-of-N consensus oracle |
 | ReferralRegistry.sol | ~238 | Referral rewards |

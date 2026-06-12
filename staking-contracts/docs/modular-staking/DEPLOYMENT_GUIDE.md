@@ -4,29 +4,29 @@ This guide documents the deployment sequence for the SharedStake V2 modular stak
 
 ## Deployment Sequence
 
-| #   | Script                            | Contract             | Env Vars                                   | Role Wiring                                                                                                       |
-| --- | --------------------------------- | -------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| 1   | 001_stToken.ts                    | StToken              | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 2   | 002_wstToken.ts                   | WstToken             | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 3   | 003_feeController.ts              | FeeController        | V2_GOVERNANCE_ADDRESS, V2_OPERATOR_ADDRESS | N/A                                                                                                               |
-| 4   | 004_stakingCore.ts                | StakingCore          | V2_GOVERNANCE_ADDRESS                      | Grants MINTER on StToken, ORACLE to OracleAdapter/gov, sets FeeController and ReferralCodeRegistry                |
-| 5   | 005_withdrawalQueue.ts            | WithdrawalQueueV2    | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 6   | 006_referralCodeRegistry.ts       | ReferralCodeRegistry | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 7   | 007_stakingRouter.ts              | StakingRouter        | V2_GOVERNANCE_ADDRESS                      | Grants MINTER on StToken, sets FeeController and ReferralCodeRegistry                                             |
-| 8   | 008_validatorModule.ts            | ValidatorModule      | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 9   | 009_oracleAdapter.ts              | OracleAdapter        | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 10  | 010_lstWrapModule.ts              | LSTWrapModule        | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 11  | 011_stTokenERC4626Wrapper.ts      | StTokenERC4626Wrapper | V2_GOVERNANCE_ADDRESS, optional V2_WRAPPER_SEED_AMOUNT | Seeds the wrapper on non-local networks when configured                                                                                                               |
-| 12  | 012_dvtModule.ts                  | DVTModule            | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 13  | 013_quorumOracleAdapter.ts        | QuorumOracleAdapter  | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 14  | 014_governance.ts                 | GovernanceTimelock   | V2_GOVERNANCE_ADDRESS                      | N/A                                                                                                               |
-| 15  | 015_governanceHandover.ts         | N/A                  | V2_GOVERNANCE_ADDRESS                      | Transfers DEFAULT_ADMIN_ROLE and GOV to Timelock for all governed contracts                                       |
-| 16  | 016_referralCodeRegistryWiring.ts | N/A                  | V2_GOVERNANCE_ADDRESS                      | Additional role wiring for referral system                                                                        |
-| 17  | 017_referralRegistry.ts           | ReferralRegistry     | V2_GOVERNANCE_ADDRESS                      | Grants ROUTER to StakingCore/StakingRouter, FEE_CTRL to FeeController, sets registry on StakingCore/StakingRouter |
-| 18  | 018_debtPool.ts                   | DebtPool             | V2_GOVERNANCE_ADDRESS                      | Updates FeeController.setRecipients() to include DebtPool address                                                 |
-| 19  | 019_institutionalPolicyRegistry.ts | InstitutionalPolicyRegistry | V2_GOVERNANCE_ADDRESS                | Optional module policy gates                                                                                      |
-| 20  | 020_operatorRegistry.ts           | OperatorRegistry     | V2_GOVERNANCE_ADDRESS, V2_SGT_ADDRESS      | Sets default bond config, optional NFT credit, grants CALLER to ValidatorModule/DVTModule                         |
-| 21  | 021_migrationHelper.ts            | MigrationHelper      | V2_GOVERNANCE_ADDRESS                      | Deploys non-custodial migration signal helper for router replacement notices                                      |
+| #   | Script                             | Contract                    | Env Vars                                               | Role Wiring                                                                                                       |
+| --- | ---------------------------------- | --------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| 1   | 001_stToken.ts                     | StToken                     | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 2   | 002_wstToken.ts                    | WstToken                    | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 3   | 003_feeController.ts               | FeeController               | V2_GOVERNANCE_ADDRESS, V2_OPERATOR_ADDRESS             | N/A                                                                                                               |
+| 4   | 004_stakingCore.ts                 | StakingCore                 | V2_GOVERNANCE_ADDRESS                                  | Grants MINTER on StToken, ORACLE to OracleAdapter/gov, sets FeeController and ReferralCodeRegistry                |
+| 5   | 005_withdrawalQueue.ts             | WithdrawalQueueV2           | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 6   | 006_referralCodeRegistry.ts        | ReferralCodeRegistry        | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 7   | 007_stakingRouter.ts               | StakingRouter               | V2_GOVERNANCE_ADDRESS                                  | Grants MINTER on StToken, sets FeeController and ReferralCodeRegistry                                             |
+| 8   | 008_validatorModule.ts             | ValidatorModule             | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 9   | 009_oracleAdapter.ts               | OracleAdapter               | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 10  | 010_lstWrapModule.ts               | LSTWrapModule               | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 11  | 011_stTokenERC4626Wrapper.ts       | StTokenERC4626Wrapper       | V2_GOVERNANCE_ADDRESS, optional V2_WRAPPER_SEED_AMOUNT | Seeds the wrapper on non-local networks when configured                                                           |
+| 12  | *(012_dvtModule.ts — deferred)*    | DVTModule                   | *Not part of PR 379. Deploy separately via feat/dvt-module (PR 381) after audit.* | N/A                                               |
+| 13  | 013_quorumOracleAdapter.ts         | QuorumOracleAdapter         | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 14  | 014_governance.ts                  | GovernanceTimelock          | V2_GOVERNANCE_ADDRESS                                  | N/A                                                                                                               |
+| 15  | 015_governanceHandover.ts          | N/A                         | V2_GOVERNANCE_ADDRESS                                  | Transfers DEFAULT_ADMIN_ROLE and GOV to Timelock for all governed contracts                                       |
+| 16  | 016_referralCodeRegistryWiring.ts  | N/A                         | V2_GOVERNANCE_ADDRESS                                  | Additional role wiring for referral system                                                                        |
+| 17  | 017_referralRegistry.ts            | ReferralRegistry            | V2_GOVERNANCE_ADDRESS                                  | Grants ROUTER to StakingCore/StakingRouter, FEE_CTRL to FeeController, sets registry on StakingCore/StakingRouter |
+| 18  | 018_debtPool.ts                    | DebtPool                    | V2_GOVERNANCE_ADDRESS                                  | Updates FeeController.setRecipients() to include DebtPool address                                                 |
+| 19  | 019_institutionalPolicyRegistry.ts | InstitutionalPolicyRegistry | V2_GOVERNANCE_ADDRESS                                  | Optional module policy gates                                                                                      |
+| 20  | 020_operatorRegistry.ts            | OperatorRegistry            | V2_GOVERNANCE_ADDRESS, V2_SGT_ADDRESS                  | Sets default bond config, optional NFT credit, grants CALLER to ValidatorModule                                   |
+| 21  | 021_migrationHelper.ts             | MigrationHelper             | V2_GOVERNANCE_ADDRESS                                  | Deploys non-custodial migration signal helper for router replacement notices                                      |
 
 ## Environment Variables
 
@@ -96,7 +96,7 @@ npx hardhat deploy --network mainnet --tags modular-staking
 ### OperatorRegistry Roles
 
 - **GOV**: GovernanceTimelock or configured governance signer
-- **CALLER**: ValidatorModule and DVTModule after wiring
+- **CALLER**: ValidatorModule (DVTModule will be granted CALLER when PR 381 ships)
 - **DEFAULT_ADMIN_ROLE**: Governance
 - **Optional NFT credit**: enabled only when NFT env vars are set; credit cannot be changed while NFTs are escrowed
 
@@ -114,11 +114,32 @@ After deployment, verify the following:
 3. FeeController recipients include all four addresses
 4. ReferralRegistry is properly wired to StakingCore and StakingRouter
 5. StakingCore ORACLE role is granted to OracleAdapter
-6. OperatorRegistry is wired to ValidatorModule and DVTModule when those modules are deployed
+6. OperatorRegistry is wired to ValidatorModule (DVTModule wiring happens in PR 381)
 7. Optional NFT credit is configured only on approved chains
 8. MigrationHelper references the active StakingRouter and governance
 9. All DEFAULT_ADMIN_ROLE and GOV roles are transferred to Timelock
 10. StTokenERC4626Wrapper is seeded on non-local deployments unless governance explicitly set `V2_WRAPPER_SEED_AMOUNT=0`; the deployer must hold enough stToken to complete that seed deposit
+
+## UUPS Proxy Upgrade Operational Requirements
+
+### `.openzeppelin/` network metadata files
+
+When `deployProxy()` runs against a real network (mainnet, sepolia), the `@openzeppelin/hardhat-upgrades` plugin writes proxy + implementation metadata to:
+
+```
+staking-contracts/.openzeppelin/mainnet.json
+staking-contracts/.openzeppelin/sepolia.json
+```
+
+**These files are tracked in git** (only `unknown-*.json` ephemeral dev files are gitignored). This is intentional and required:
+
+- `upgrades.upgradeProxy(proxy, NewFactory)` uses this file to validate that the new implementation's storage layout is compatible with the proxy's current storage layout.
+- If this file is lost (machine failure, gitignore accident), `upgradeProxy()` will refuse to run without `--unsafeSkipStorageCheck`, which bypasses the safety validation.
+
+**Deployment runbook:**
+1. After every production `deployProxy()` run, commit the updated `.openzeppelin/<network>.json`.
+2. Before every production `upgradeProxy()` run, verify the `.openzeppelin/<network>.json` in the repo matches the live proxy addresses on-chain.
+3. If the file is missing, re-generate it by running `npx hardhat run scripts/sync-oz-manifest.ts --network mainnet` (or manually reconstruct using on-chain ERC-1967 slot reads).
 
 ## Troubleshooting
 

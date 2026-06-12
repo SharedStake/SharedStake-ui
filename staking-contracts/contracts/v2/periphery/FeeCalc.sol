@@ -50,14 +50,14 @@ contract FeeCalc is Ownable2Step {
     }
 
     function processDeposit(uint256 value, address) external view returns (uint256 amt, uint256 fee) {
-                if (config.chargeOnDeposit) {
+        if (config.chargeOnDeposit) {
             fee = (value * adminFee) / BIPS;
             amt = value - fee;
         }
     }
 
     function processWithdraw(uint256 value, address) external view returns (uint256 amt, uint256 fee) {
-                if (config.refundFeesOnWithdraw) {
+        if (config.refundFeesOnWithdraw) {
             fee = (value * adminFee) / BIPS;
             amt = value + fee;
         } else if (config.chargeOnExit) {

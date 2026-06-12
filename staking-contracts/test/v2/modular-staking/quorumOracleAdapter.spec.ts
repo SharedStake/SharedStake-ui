@@ -22,7 +22,9 @@ describe("QuorumOracleAdapter", () => {
 
   async function reportHash(validators: bigint, balance: bigint, reportTimestamp: bigint): Promise<string> {
     const nonce: bigint = await quorumAdapter.voteNonce();
-    return ethers.keccak256(abi.encode(["uint256", "uint256", "uint256", "uint256"], [nonce, validators, balance, reportTimestamp]));
+    return ethers.keccak256(
+      abi.encode(["uint256", "uint256", "uint256", "uint256"], [nonce, validators, balance, reportTimestamp]),
+    );
   }
 
   async function latestTimestamp(): Promise<bigint> {
