@@ -61,6 +61,7 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     // ── Events ────────────────────────────────────────────────────────────────
     event DepositReceived(uint256 amount, uint256 newBufferedEther);
     event BeaconReported(uint256 beaconValidators, uint256 beaconBalance);
+    event ExitedEthSwept(uint256 amount, uint256 newBufferedEther);
     event BeaconChainDeposit(bytes pubkey, uint256 amount, uint256 newBufferedEther);
     event ExpectedWithdrawalCredentialsSet(bytes32 indexed expected);
     event OperatorRegistrySet(address indexed registry);
@@ -294,5 +295,20 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     ///      Router accounting invariant (totalPooledEther == sum module.totalEth()).
     receive() external payable virtual {
         emit DepositReceived(msg.value, _bufferedEther);
+    }
+
+    /// @notice Sweep ETH that arrived outside normal accounting (e.g., validator exits)
+    ///         into the buffered pool so it becomes visible in totalEth().
+    /// @dev Call this AFTER the oracle has reported the reduced beacon balance for
+    ///      the exited validator(s). The sweep restores total ETH accounting without
+    ///      double-counting: the oracle lowers _beaconBalance, this raises _bufferedEther
+    ///      by the exit proceeds, leaving totalEth() unchanged net.
+    ///      If called before the oracle update, totalEth() temporarily rises; the oracle
+    ///      update will then neutralise the difference.
+    function sweepExitedEth() external onlyRole(GOV) {
+        uint256 unaccounted = address(this).balance - _bufferedEther;
+        if (unaccounted == 0) return;
+        _bufferedEther += unaccounted;
+        emit ExitedEthSwept(unaccounted, _bufferedEther);
     }
 }

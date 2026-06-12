@@ -63,16 +63,22 @@ const func: DeployFunction = async hre => {
   console.log(`  Current privileged signer: ${gov}`);
 
   // StToken uses transferAdmin() instead of constructor-assigned GOV role.
+  // When accounts.multiSig is set, govSigner = multiSig, but the StToken DEFAULT_ADMIN_ROLE
+  // was granted to the deployer at construction time. Check both addresses.
   const stTokenAddress = await address(StToken__factory);
   if (stTokenAddress) {
     const stToken = await ship.connect(StToken__factory, stTokenAddress);
     const defaultAdmin = await stToken.DEFAULT_ADMIN_ROLE();
+    const deployerAddress = accounts.deployer.address;
     const signerIsAdmin = await stToken.hasRole(defaultAdmin, gov);
+    const deployerIsAdmin = deployerAddress !== gov && (await stToken.hasRole(defaultAdmin, deployerAddress));
     const timelockIsAdmin = await stToken.hasRole(defaultAdmin, timelock);
 
-    if (signerIsAdmin && !timelockIsAdmin) {
+    if ((signerIsAdmin || deployerIsAdmin) && !timelockIsAdmin) {
+      // Use whichever account currently holds DEFAULT_ADMIN_ROLE to perform the transfer.
+      const adminSigner = signerIsAdmin ? govSigner : accounts.deployer;
       console.log("  Transferring StToken admin to GovernanceTimelock...");
-      await stToken.connect(govSigner).transferAdmin(timelock);
+      await stToken.connect(adminSigner).transferAdmin(timelock);
       if (!(await stToken.hasRole(defaultAdmin, timelock))) {
         throw new Error("StToken admin handover failed");
       }
@@ -144,6 +150,31 @@ const func: DeployFunction = async hre => {
       }
     } catch {
       console.log("  DebtPool ADMIN role not migrated (role unavailable or no access).");
+    }
+  }
+
+  // M5: Revoke bootstrap ORACLE from deployer/gov on StakingCore once OracleAdapter is wired.
+  // The bootstrap role was granted by 004_stakingCore.ts for pre-adapter testing and must be
+  // revoked before mainnet launch so gov cannot bypass OracleAdapter sanity checks.
+  const stakingCoreDeployment = await hre.deployments.getOrNull("StakingCore");
+  const oracleAdapterDeployment = await hre.deployments.getOrNull("OracleAdapterValidator");
+  if (stakingCoreDeployment && oracleAdapterDeployment) {
+    const stakingCoreAbi = [...ACCESS_CONTROL_ABI, "function ORACLE() view returns (bytes32)"];
+    const stakingCoreContract = await hre.ethers.getContractAt(
+      stakingCoreAbi,
+      stakingCoreDeployment.address,
+      govSigner,
+    );
+    const ORACLE = await (stakingCoreContract as any).ORACLE();
+    // Revoke from both govSigner and deployer in case either holds the bootstrap role.
+    await revokeRoleIfPresent(stakingCoreContract, ORACLE, gov, "StakingCore.ORACLE (bootstrap)");
+    if (accounts.deployer.address !== gov) {
+      await revokeRoleIfPresent(
+        stakingCoreContract,
+        ORACLE,
+        accounts.deployer.address,
+        "StakingCore.ORACLE (bootstrap deployer)",
+      );
     }
   }
 

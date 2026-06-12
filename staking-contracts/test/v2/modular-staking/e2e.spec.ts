@@ -82,8 +82,9 @@ describe("SharedStake V2 E2E", () => {
 
   it("Step 2: Oracle reports 10.5 ETH beacon balance (0.5 ETH reward)", async () => {
     // Use chain time so this test remains stable even if prior suites advanced EVM time.
+    // Subtract 30s: beacon slot timestamps are always in the past (MIN_REPORT_TIMESTAMP_AGE = 12s).
     const blk = await ethers.provider.getBlock("latest");
-    const now = blk!.timestamp;
+    const now = blk!.timestamp - 30;
 
     // Seed baseline: move principal accounting from buffered -> beacon side.
     await stakingCore.connect(gov).notifyBeaconDeposit(parseEther("10"));
@@ -91,7 +92,7 @@ describe("SharedStake V2 E2E", () => {
     await oracleAdapter.connect(oracleSigner).submitReport(
       1, // 1 validator
       parseEther("10.5"), // beacon balance
-      now, // fresh timestamp
+      now, // beacon slot timestamp (30s in the past)
     );
 
     // Pool = 10.5 ETH before fees (10 ETH principal + 0.5 ETH rewards).

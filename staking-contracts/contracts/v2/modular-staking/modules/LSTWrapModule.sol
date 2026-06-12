@@ -48,15 +48,26 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     ///         `wrapLST` reverts with `StaleOracle`. Default 3600 (1 hour).
     uint256 public maxOracleAgeSecs = 3600;
 
+    /// @notice Max cross-block ETH/LST price change (basis points). 0 disables the guard.
+    ///         Protects against flash-loan oracle inflation: flash loans are single-tx,
+    ///         so the stored price reflects the pre-attack state from the previous block.
+    uint256 public maxWrapPriceDriftBps = 1000; // 10%
+
+    // Per-block price observation for the wrap-side drift guard.
+    uint256 private _lastWrapPrice;      // ETH per LST unit scaled by 1e18
+    uint256 private _lastWrapPriceBlock;
+
     // ── Events ────────────────────────────────────────────────────────────────
     event PriceOracleSet(address indexed oracle);
     event LstWrapped(address indexed account, address indexed recipient, uint256 lstAmount, uint256 ethEquiv);
     event LstUnwrapped(address indexed account, address indexed recipient, uint256 stTokenAmount, uint256 lstAmount);
     event MaxOracleAgeSet(uint256 newValue);
+    event MaxWrapPriceDriftSet(uint256 bps);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error PriceOracleNotSet();
     error InsufficientLstHeld(uint256 requested, uint256 held);
+    error WrapPriceDriftTooHigh(uint256 currentPrice, uint256 lastPrice, uint256 driftBps, uint256 maxDriftBps);
 
     constructor(address router, bytes32 moduleId, address lstToken, address gov) {
         if (router == address(0) || lstToken == address(0) || gov == address(0)) {
@@ -93,6 +104,12 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
         }
         ethEquiv = priceOracle.getEthValue(lstAmount);
         if (ethEquiv == 0) revert Errors.InvalidAmount();
+
+        // Per-block price drift guard (H5 fix): compare current unit price against the
+        // price observed in the most recent block that recorded a wrap. Flash loans are
+        // single-transaction, so the stored price reflects the pre-manipulation state.
+        uint256 unitPrice = (ethEquiv * 1e18) / lstAmount;
+        _enforceWrapPriceDrift(unitPrice);
 
         // Pull LST in first so the router's totalEth() / mint-cap check sees the new balance.
         LST_TOKEN.safeTransferFrom(msg.sender, address(this), lstAmount);
@@ -152,6 +169,25 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
         return keccak256("LST_WRAP");
     }
 
+    // ── Internal ─────────────────────────────────────────────────────────────
+
+    function _enforceWrapPriceDrift(uint256 unitPrice) private {
+        uint256 cap = maxWrapPriceDriftBps;
+        if (cap > 0 && _lastWrapPrice > 0) {
+            uint256 prev = _lastWrapPrice;
+            uint256 driftBps = unitPrice > prev
+                ? ((unitPrice - prev) * 10000) / prev
+                : ((prev - unitPrice) * 10000) / prev;
+            if (driftBps > cap) {
+                revert WrapPriceDriftTooHigh(unitPrice, prev, driftBps, cap);
+            }
+        }
+        if (block.number > _lastWrapPriceBlock) {
+            _lastWrapPrice = unitPrice;
+            _lastWrapPriceBlock = block.number;
+        }
+    }
+
     // ── Admin ────────────────────────────────────────────────────────────────
 
     function setPriceOracle(address oracle) external onlyRole(GOV) {
@@ -166,6 +202,11 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     function setMaxOracleAge(uint256 secs) external onlyRole(GOV) {
         maxOracleAgeSecs = secs;
         emit MaxOracleAgeSet(secs);
+    }
+
+    function setMaxWrapPriceDrift(uint256 bps) external onlyRole(GOV) {
+        maxWrapPriceDriftBps = bps;
+        emit MaxWrapPriceDriftSet(bps);
     }
 
     function pause(uint16 fnId) external onlyRole(GUARDIAN) {

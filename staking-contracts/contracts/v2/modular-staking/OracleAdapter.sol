@@ -27,6 +27,9 @@ contract OracleAdapter is AccessControl {
 
     uint256 public constant MIN_DRIFT_BPS = 100; // 1% minimum drift cap (cannot be disabled)
     uint256 public constant MIN_SLASH_BPS = 50; // 0.5% minimum slash cap (cannot be disabled)
+    // One beacon slot minimum age prevents a submitter setting reportTimestamp = block.timestamp
+    // to bypass validateStaleness (which would compute reportAge = 0, passing any staleness cap).
+    uint256 public constant MIN_REPORT_TIMESTAMP_AGE = 12; // 1 Ethereum beacon slot = 12 s
 
     uint256 public maxStalenessSeconds = 6 hours;
     uint256 public maxDriftBps = 1000; // 10% per-validator balance change cap
@@ -56,6 +59,7 @@ contract OracleAdapter is AccessControl {
     // ── Errors ────────────────────────────────────────────────────────────────
     error BelowMinimum(uint256 value, uint256 minimum);
     error CannotRemoveLastSubmitter();
+    error ReportTimestampTooFresh(uint256 reportTimestamp, uint256 blockTimestamp, uint256 minAge);
 
     // Re-exported from OracleValidation library so these appear in the ABI and
     // off-chain tools (ethers.js / viem) can decode oracle revert reasons.
@@ -90,6 +94,12 @@ contract OracleAdapter is AccessControl {
         OracleValidation.validateTimestamp(reportTimestamp, lastReportTimestamp);
         OracleValidation.validateReportInterval(lastReportTime, minReportIntervalSeconds);
         OracleValidation.validateStaleness(reportTimestamp, maxStalenessSeconds);
+        // Minimum age gate (C1 fix): reportTimestamp must be at least one beacon slot old.
+        // Prevents a submitter setting reportTimestamp = block.timestamp to make stale beacon
+        // data appear fresh (reportAge = 0 would bypass the staleness check above).
+        if (block.timestamp - reportTimestamp < MIN_REPORT_TIMESTAMP_AGE) {
+            revert ReportTimestampTooFresh(reportTimestamp, block.timestamp, MIN_REPORT_TIMESTAMP_AGE);
+        }
         OracleValidation.validateDrift(beaconValidators, beaconBalance, lastBeaconValidators, lastBeaconBalance, maxDriftBps);
         OracleValidation.validateSlashGuard(beaconBalance, lastBeaconBalance, maxSlashBps);
 
@@ -131,16 +141,32 @@ contract OracleAdapter is AccessControl {
 
     function addSubmitter(address submitter) external onlyRole(GOV) {
         if (submitter == address(0)) revert Errors.ZeroAddress();
-        if (!hasRole(SUBMITTER, submitter)) {
-            grantRole(SUBMITTER, submitter);
-            submitterCount += 1;
-        }
+        grantRole(SUBMITTER, submitter); // _grantRole override maintains submitterCount
     }
 
     function removeSubmitter(address submitter) external onlyRole(GOV) {
         if (!hasRole(SUBMITTER, submitter)) return;
-        if (submitterCount == 1) revert CannotRemoveLastSubmitter();
-        revokeRole(SUBMITTER, submitter);
-        submitterCount -= 1;
+        revokeRole(SUBMITTER, submitter); // _revokeRole override enforces CannotRemoveLastSubmitter
+    }
+
+    // ── Internal role overrides ───────────────────────────────────────────────
+    // Maintains submitterCount at the OZ AccessControl level so that direct
+    // revokeRole calls (e.g., by DEFAULT_ADMIN_ROLE) cannot desync the counter.
+
+    function _grantRole(bytes32 role, address account) internal override {
+        if (role == SUBMITTER && !hasRole(SUBMITTER, account)) {
+            ++submitterCount;
+        }
+        super._grantRole(role, account);
+    }
+
+    function _revokeRole(bytes32 role, address account) internal override {
+        if (role == SUBMITTER && hasRole(SUBMITTER, account)) {
+            if (submitterCount <= 1) revert CannotRemoveLastSubmitter();
+            super._revokeRole(role, account);
+            --submitterCount;
+        } else {
+            super._revokeRole(role, account);
+        }
     }
 }

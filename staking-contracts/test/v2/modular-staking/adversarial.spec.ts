@@ -382,7 +382,7 @@ describe("SharedStake V2 adversarial", () => {
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       const blk = await ethers.provider.getBlock("latest");
-      const ts = blk!.timestamp;
+      const ts = blk!.timestamp - 30; // beacon slot timestamps are always in the past (MIN_REPORT_TIMESTAMP_AGE = 12s)
       await oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), ts);
 
       await expect(oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), ts)).to.be.revertedWithCustomError(
@@ -405,7 +405,7 @@ describe("SharedStake V2 adversarial", () => {
       await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
 
       const firstBlk = await ethers.provider.getBlock("latest");
-      const firstTs = firstBlk!.timestamp;
+      const firstTs = firstBlk!.timestamp - 30; // beacon slot timestamps are always in the past
       await oracleAdapter.connect(oracle).submitReport(1, parseEther("32"), firstTs);
 
       await expect(

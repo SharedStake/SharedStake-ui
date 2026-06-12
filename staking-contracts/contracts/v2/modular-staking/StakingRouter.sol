@@ -345,15 +345,15 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         sharesAmount = ShareMath.getSharesByPooledEth(amount, currentShares, currentPooled);
         if (sharesAmount == 0) revert Errors.InvalidAmount();
 
-        // Send ETH to the module first (Checks-Effects-Interactions-friendly: nonReentrant
-        // and we mutate StToken state after this call. The module is trusted (registered
-        // by GOV), and `receiveDeposit()` updates its internal buffer only.)
-        IStakingModule(m.addr).receiveDeposit{value: amount}();
-
-        // Increase totalPooledEther by deposit amount (the ETH is in the module).
+        // Effects before external call (CEI): cap enforcement and share minting happen
+        // before ETH is forwarded to the module. Combined with nonReentrant this ensures
+        // state is consistent even if the module's receiveDeposit makes a re-entrant call.
         _enforceGlobalCap(currentPooled + amount);
         ST_TOKEN.mintShares(user, sharesAmount);
         _recordReferral(user, referral, amount, sharesAmount);
+
+        // Interaction last: forward ETH to the module after all state changes are committed.
+        IStakingModule(m.addr).receiveDeposit{value: amount}();
 
         emit Deposited(moduleId, user, amount, sharesAmount, referral);
         if (emitAttribution) {
@@ -428,12 +428,17 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         if (caller == address(0)) revert Errors.ZeroAddress();
         if (stTokenAmount == 0) revert Errors.InvalidAmount();
 
-        // Security note: `caller` is trusted to be the actual initiating user, supplied by
-        // the registered module. Registered modules MUST NOT pass arbitrary addresses —
-        // they should transfer stToken from the user to themselves first, then pass
-        // address(this) as caller, to prevent a malicious module from burning any staker's
-        // shares without consent. This is enforced by convention + module code review, not
-        // by a runtime allowance check (which would require an extra user approval step).
+        // H8 — TRUST BOUNDARY: `caller` is supplied by the registered LST_WRAP module.
+        // The router cannot verify this is the genuine originating user. A compromised or
+        // malicious module could pass an arbitrary address, burning that account's shares.
+        //
+        // Required module convention (enforced by module code review at registration time):
+        //   1. Transfer stToken from the end-user to address(this) via safeTransferFrom.
+        //   2. Call unwrapToModule(..., address(this), amount) so `caller` == module.
+        //   3. This limits the worst-case to the module's own holdings.
+        //
+        // A future hardening path: verify module code-hash at call-time (stored in ModuleInfo
+        // at registration) so an upgradeable-proxy swap cannot retroactively change the convention.
 
         // Compute shares from token amount at current exchange rate.
         uint256 shares = ST_TOKEN.getSharesByPooledEth(stTokenAmount);

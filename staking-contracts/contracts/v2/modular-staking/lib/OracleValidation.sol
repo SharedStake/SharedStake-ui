@@ -20,10 +20,20 @@ library OracleValidation {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
+    // Maximum plausible ETH balance per validator (EIP-7251 max effective balance + headroom).
+    // Prevents bootstrap inflation attacks on the first report, where prior-state guards are no-ops.
+    uint256 internal constant MAX_BEACON_BALANCE_PER_VALIDATOR = 2048 ether;
+
     /// @notice Validate beacon report tuple integrity:
-    ///         validators == 0 implies balance must also be 0.
+    ///         validators == 0 implies balance must also be 0;
+    ///         per-validator average must not exceed the protocol absolute cap.
     function validateBeaconTuple(uint256 beaconValidators, uint256 beaconBalance) internal pure {
         if (beaconValidators == 0 && beaconBalance != 0) {
+            revert InvalidBeaconReportTuple(beaconValidators, beaconBalance);
+        }
+        // Absolute cap enforced unconditionally — including on the first report where
+        // validateDrift and validateSlashGuard are no-ops (lastBeaconValidators_ == 0).
+        if (beaconValidators > 0 && beaconBalance / beaconValidators > MAX_BEACON_BALANCE_PER_VALIDATOR) {
             revert InvalidBeaconReportTuple(beaconValidators, beaconBalance);
         }
     }

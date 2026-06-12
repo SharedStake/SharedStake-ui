@@ -59,6 +59,9 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
 
     // Pull-based refunds for excess ETH sent during finalize.
     mapping(address => uint256) public pendingRefunds;
+    // Aggregate of all pending per-guardian refunds; used by recoverEth and availableEther
+    // to prevent governance from draining ETH that belongs to guardian refund recipients.
+    uint256 public totalPendingRefunds;
 
     // Queue finalization mode is oracle-controlled.
     WithdrawalMode public withdrawalMode;
@@ -209,7 +212,9 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         // Push refund (sendValue) can revert if caller is a contract without receive(),
         // and enables griefing via front-run dust sends.
         if (msg.value > totalEthRequired) {
-            pendingRefunds[msg.sender] += msg.value - totalEthRequired;
+            uint256 refund = msg.value - totalEthRequired;
+            pendingRefunds[msg.sender] += refund;
+            totalPendingRefunds += refund;
         }
 
         emit BatchFinalized(fromId, lastRequestId, totalEthRequired);
@@ -221,6 +226,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         uint256 amount = pendingRefunds[msg.sender];
         if (amount == 0) revert Errors.InvalidAmount();
         pendingRefunds[msg.sender] = 0;
+        totalPendingRefunds -= amount;
         payable(msg.sender).sendValue(amount);
     }
 
@@ -259,7 +265,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     ///         Note: pendingEther obligations are not backed by held ETH until finalize() is called.
     ///         ETH pre-deposited via receive() for future finalize batches is NOT protected by this guard.
     function recoverEth(address payable to, uint256 amount) external onlyRole(GOV) {
-        uint256 available = address(this).balance - lockedEther;
+        uint256 available = address(this).balance - lockedEther - totalPendingRefunds;
         if (amount > available) revert Errors.InsufficientBalance();
         to.sendValue(amount);
     }
@@ -318,9 +324,9 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         return (req.finalized, req.claimed, req.ethAmount);
     }
 
-    /// @notice ETH available in this contract (total balance minus locked-for-claims).
+    /// @notice ETH available in this contract (total balance minus locked-for-claims and pending guardian refunds).
     function availableEther() external view returns (uint256) {
-        return address(this).balance - lockedEther;
+        return address(this).balance - lockedEther - totalPendingRefunds;
     }
 
     /// @notice ETH owed to withdrawal requestors: unfinalized (pendingEther) + finalized-but-unclaimed (lockedEther).

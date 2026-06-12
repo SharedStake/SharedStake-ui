@@ -134,7 +134,7 @@ describe("StakingRouter E2E (SharedStake V2 modular)", () => {
     // Use chain timestamp (not Date.now()) so the staleness guard is robust to
     // tests in other suites that advance evm time via `evm_increaseTime`.
     const blk = await ethers.provider.getBlock("latest");
-    const now = blk!.timestamp;
+    const now = blk!.timestamp - 30; // beacon slot timestamps are always in the past (MIN_REPORT_TIMESTAMP_AGE = 12s)
     await oracleAdapter.connect(oracleSigner).submitReport(1, parseEther("32.5"), now);
 
     // Pool stays at 32.5 ETH because fees are captured via share dilution,

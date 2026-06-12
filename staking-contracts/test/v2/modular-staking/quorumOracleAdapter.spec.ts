@@ -20,8 +20,9 @@ describe("QuorumOracleAdapter", () => {
   const abi = ethers.AbiCoder.defaultAbiCoder();
   const BASELINE = parseEther("32");
 
-  function reportHash(validators: bigint, balance: bigint, reportTimestamp: bigint): string {
-    return ethers.keccak256(abi.encode(["uint256", "uint256", "uint256"], [validators, balance, reportTimestamp]));
+  async function reportHash(validators: bigint, balance: bigint, reportTimestamp: bigint): Promise<string> {
+    const nonce: bigint = await quorumAdapter.voteNonce();
+    return ethers.keccak256(abi.encode(["uint256", "uint256", "uint256", "uint256"], [nonce, validators, balance, reportTimestamp]));
   }
 
   async function latestTimestamp(): Promise<bigint> {
@@ -56,7 +57,7 @@ describe("QuorumOracleAdapter", () => {
     const ts = await latestTimestamp();
     const validators = 1n;
     const balance = parseEther("32");
-    const hash = reportHash(validators, balance, ts);
+    const hash = await reportHash(validators, balance, ts);
 
     await expect(quorumAdapter.connect(submitter1).submitReport(validators, balance, ts))
       .to.emit(quorumAdapter, "VoteSubmitted")
@@ -101,7 +102,7 @@ describe("QuorumOracleAdapter", () => {
     const ts = await latestTimestamp();
     const validators = 1n;
     const balance = parseEther("32");
-    const hash = reportHash(validators, balance, ts);
+    const hash = await reportHash(validators, balance, ts);
 
     await quorumAdapter.connect(submitter1).submitReport(validators, balance, ts);
     await quorumAdapter.connect(submitter2).submitReport(validators, balance, ts);
@@ -127,7 +128,7 @@ describe("QuorumOracleAdapter", () => {
     const nowTs = await latestTimestamp();
     const staleTimestamp = nowTs - BigInt(7 * 60 * 60);
     const balance = parseEther("32");
-    const hash = reportHash(1n, balance, staleTimestamp);
+    const hash = await reportHash(1n, balance, staleTimestamp);
 
     await expect(
       quorumAdapter.connect(submitter1).submitReport(1, balance, staleTimestamp),

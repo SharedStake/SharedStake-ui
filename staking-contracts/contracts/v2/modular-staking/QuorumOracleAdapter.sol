@@ -34,6 +34,10 @@ contract QuorumOracleAdapter is AccessControl {
     uint256 public lastBeaconBalance;
     uint256 public lastBeaconValidators;
 
+    // Incrementing nonce invalidates all in-flight votes. Allows GOV to clear fragmented
+    // vote state caused by a malicious or faulty submitter (M1 fix).
+    uint256 public voteNonce;
+
     mapping(bytes32 => uint256) public reportVotes;
     mapping(bytes32 => bool) public reportFinalized;
     mapping(bytes32 => mapping(address => bool)) public hasVoted;
@@ -63,6 +67,7 @@ contract QuorumOracleAdapter is AccessControl {
     event MaxDriftSet(uint256 bps);
     event MaxSlashSet(uint256 bps);
     event MinReportIntervalSet(uint256 seconds_);
+    event VotesCleared(uint256 indexed newNonce);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error InvalidQuorum(uint256 provided, uint256 submitterCount_);
@@ -101,7 +106,7 @@ contract QuorumOracleAdapter is AccessControl {
         uint256 beaconBalance,
         uint256 reportTimestamp
     ) external onlyRole(SUBMITTER) {
-        bytes32 reportHash = keccak256(abi.encode(beaconValidators, beaconBalance, reportTimestamp));
+        bytes32 reportHash = keccak256(abi.encode(voteNonce, beaconValidators, beaconBalance, reportTimestamp));
 
         if (reportFinalized[reportHash]) revert ReportAlreadyFinalized(reportHash);
         if (hasVoted[reportHash][msg.sender]) revert DuplicateVote(reportHash, msg.sender);
@@ -169,6 +174,15 @@ contract QuorumOracleAdapter is AccessControl {
     function setMinReportInterval(uint256 seconds_) external onlyRole(GOV) {
         minReportIntervalSeconds = seconds_;
         emit MinReportIntervalSet(seconds_);
+    }
+
+    /// @notice Invalidate all in-flight votes by incrementing the nonce.
+    /// @dev Use when a malicious or faulty submitter has fragmented vote state with
+    ///      unreachable hashes. All pending votes become orphaned; submitters must re-vote
+    ///      under the new nonce.
+    function clearVotes() external onlyRole(GOV) {
+        uint256 newNonce = ++voteNonce;
+        emit VotesCleared(newNonce);
     }
 
     function addSubmitter(address submitter) external onlyRole(GOV) {

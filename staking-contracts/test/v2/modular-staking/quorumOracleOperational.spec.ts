@@ -17,8 +17,9 @@ describe("QuorumOracleAdapter operational flows", () => {
   const abi = ethers.AbiCoder.defaultAbiCoder();
   const BASELINE = parseEther("32");
 
-  function hash(validators: bigint, balance: bigint, ts: bigint): string {
-    return ethers.keccak256(abi.encode(["uint256", "uint256", "uint256"], [validators, balance, ts]));
+  async function hash(validators: bigint, balance: bigint, ts: bigint): Promise<string> {
+    const nonce: bigint = await quorumAdapter.voteNonce();
+    return ethers.keccak256(abi.encode(["uint256", "uint256", "uint256", "uint256"], [nonce, validators, balance, ts]));
   }
 
   async function latestTs(): Promise<bigint> {
@@ -53,8 +54,8 @@ describe("QuorumOracleAdapter operational flows", () => {
     const ts = await latestTs();
     const a = parseEther("32");
     const b = parseEther("33");
-    const aHash = hash(1n, a, ts);
-    const bHash = hash(1n, b, ts);
+    const aHash = await hash(1n, a, ts);
+    const bHash = await hash(1n, b, ts);
 
     await quorumAdapter.connect(submitter1).submitReport(1, a, ts);
     await quorumAdapter.connect(submitter2).submitReport(1, b, ts);
@@ -75,7 +76,7 @@ describe("QuorumOracleAdapter operational flows", () => {
   it("rejects delayed quorum finalization after frame staleness", async () => {
     const ts = await latestTs();
     const balance = parseEther("32");
-    const reportHash = hash(1n, balance, ts);
+    const reportHash = await hash(1n, balance, ts);
 
     await quorumAdapter.connect(submitter1).submitReport(1, balance, ts);
     expect(await quorumAdapter.reportVotes(reportHash)).to.equal(1n);

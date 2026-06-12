@@ -292,9 +292,6 @@ contract DebtPool is AccessControl, Pausable {
         uint256 stEthAmount = IStETH(address(ST_TOKEN)).getPooledEthByShares(_amount);
         if (stEthAmount == 0) revert InvalidAmount();
 
-        totalStETHSharesReceived += _amount;
-        emit StETHReceived(_amount);
-
         // Approve WSTETH to spend the ETH-denominated stETH amount
         bool success = ST_TOKEN.approve(address(WSTETH), stEthAmount);
         if (!success) revert UnwrapFailed();
@@ -303,10 +300,11 @@ contract DebtPool is AccessControl, Pausable {
 
         (bool wrapSuccess, ) = address(WSTETH).call(abi.encodeWithSignature("wrap(uint256)", stEthAmount));
 
-        // If wrap fails, shares remain in DebtPool — approve zero to clean up
+        // If wrap fails, shares remain in DebtPool — approve zero to clean up.
+        // Counter is NOT incremented on failure to avoid permanent accounting inconsistency (M9 fix).
         if (!wrapSuccess) {
             ST_TOKEN.approve(address(WSTETH), 0);
-            emit WrapFailed(_amount, stEthAmount); // NEW: operators can monitor this
+            emit WrapFailed(_amount, stEthAmount);
             return;
         }
 
@@ -318,6 +316,9 @@ contract DebtPool is AccessControl, Pausable {
         // numerically less than stEthAmount. Just verify the wrap produced non-zero output.
         if (wstETHReceived == 0) revert InsufficientWstETHReceived();
 
+        // Increment counter only after confirmed successful wrap (CEI fix).
+        totalStETHSharesReceived += _amount;
+        emit StETHReceived(_amount);
         emit WstETHUnwrapped(stEthAmount, wstETHReceived);
     }
 }

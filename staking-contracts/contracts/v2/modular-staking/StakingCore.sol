@@ -88,6 +88,7 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         uint256 operatorShares
     );
     event FeeControllerSet(address indexed feeController);
+    event FeeDistributionFailed(uint256 rewards);
     event ReferralCodeRegistrySet(address indexed registry);
     event WithdrawalQueueSet(address indexed queue);
     event RouterModeEnabled(address indexed gov);
@@ -339,11 +340,49 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     }
 
     function _distributeFees(uint256 rewards, uint256 newTotalPooled) internal {
-        (, , , , address treasury, address operator, address referralRegistry, address debtPool) = feeController
-            .getFeeConfig();
+        // Wrap FeeController calls in try/catch: a buggy or governance-upgraded FeeController
+        // must not be able to DoS oracle updates by reverting here (H1 fix).
+        address treasury;
+        address operator;
+        address referralRegistry;
+        address debtPool;
+        try feeController.getFeeConfig() returns (
+            uint16,
+            uint16,
+            uint16,
+            uint16,
+            address _treasury,
+            address _operator,
+            address _referralRegistry,
+            address _debtPool
+        ) {
+            treasury = _treasury;
+            operator = _operator;
+            referralRegistry = _referralRegistry;
+            debtPool = _debtPool;
+        } catch {
+            emit FeeDistributionFailed(rewards);
+            return;
+        }
 
-        (uint256 treasuryAmount, uint256 operatorAmount, uint256 debtPoolAmount, uint256 referralAmount) = feeController
-            .computeFees(rewards);
+        uint256 treasuryAmount;
+        uint256 operatorAmount;
+        uint256 debtPoolAmount;
+        uint256 referralAmount;
+        try feeController.computeFees(rewards) returns (
+            uint256 _treasuryAmount,
+            uint256 _operatorAmount,
+            uint256 _debtPoolAmount,
+            uint256 _referralAmount
+        ) {
+            treasuryAmount = _treasuryAmount;
+            operatorAmount = _operatorAmount;
+            debtPoolAmount = _debtPoolAmount;
+            referralAmount = _referralAmount;
+        } catch {
+            emit FeeDistributionFailed(rewards);
+            return;
+        }
         if (referralRegistry == address(0)) {
             referralAmount = 0;
         }
