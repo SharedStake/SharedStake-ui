@@ -1,6 +1,7 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {StakingRouter__factory, ValidatorModule__factory, WithdrawalQueueV2__factory} from "../types";
+import type {ValidatorModule} from "../types";
 import {
   allowlistModuleCodeHash,
   assertGovernanceSigner,
@@ -29,7 +30,7 @@ const VALIDATOR_PAUSED_ENV_KEYS = ["V2_VALIDATOR_MODULE_PAUSED", "V2_MODULES_DAR
  */
 const func: DeployFunction = async hre => {
   const ship = await Ship.init(hre);
-  const {deploy, connect, accounts, address, hre: hardhat} = ship;
+  const {connect, accounts, address, hre: hardhat} = ship;
   const networkName = hardhat.network.name;
   const isLocal = hardhat.network.tags.hardhat || networkName === "localhost";
 
@@ -48,11 +49,32 @@ const func: DeployFunction = async hre => {
   // tooling can compute it without needing a deployment artifact.
   const moduleId = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("SOLO_VALIDATOR_1"));
 
-  const {contract: validatorModule} = await deploy(ValidatorModule__factory, {
-    from: accounts.deployer,
-    args: [routerAddress, moduleId, gov, beaconDeposit],
-    log: true,
-  });
+  // Deploy ValidatorModule as UUPS proxy (idempotent)
+  const existingVM = await hre.deployments.getOrNull("ValidatorModule");
+
+  let proxyAddress: string;
+  if (existingVM) {
+    console.log("  ValidatorModule already deployed at:", existingVM.address);
+    proxyAddress = existingVM.address;
+  } else {
+    const Factory = await hre.ethers.getContractFactory("ValidatorModule", accounts.deployer);
+    const proxy = await hre.upgrades.deployProxy(Factory, [routerAddress, moduleId, gov, beaconDeposit], {
+      kind: "uups",
+      initializer: "initialize",
+    });
+    await proxy.waitForDeployment();
+    proxyAddress = await proxy.getAddress();
+
+    const artifact = await hre.artifacts.readArtifact("ValidatorModule");
+    await hre.deployments.save("ValidatorModule", {
+      address: proxyAddress,
+      abi: artifact.abi,
+      transactionHash: proxy.deploymentTransaction()?.hash,
+    });
+    console.log("  ValidatorModule deployed (UUPS proxy) at:", proxyAddress);
+  }
+
+  const validatorModule: ValidatorModule = ValidatorModule__factory.connect(proxyAddress, accounts.deployer);
 
   await grantNodeOperatorRole(validatorModule, govSigner, nodeOperator, "ValidatorModule");
 
@@ -60,7 +82,7 @@ const func: DeployFunction = async hre => {
   // deployments should set a sane risk budget here.
   const router = await connect(StakingRouter__factory);
   const moduleType = await validatorModule.moduleType();
-  const moduleRuntimeCode = await hre.ethers.provider.getCode(validatorModule.target as string);
+  const moduleRuntimeCode = await hre.ethers.provider.getCode(proxyAddress);
   const moduleCodeHash = hre.ethers.keccak256(moduleRuntimeCode);
   await allowlistModuleCodeHash(router, moduleType, moduleCodeHash, govSigner, "ValidatorModule");
   await enableCodeHashAllowlistEnforcement(router, govSigner);
@@ -68,7 +90,7 @@ const func: DeployFunction = async hre => {
     router,
     govSigner,
     moduleId,
-    validatorModule.target as string,
+    proxyAddress,
     mintCapWei,
     "ValidatorModule",
     {setDefault: true, verify: true, pauseAfterRegistration, guardianSigner: govSigner},
