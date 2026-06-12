@@ -12,6 +12,7 @@ import "solidity-coverage";
 import "hardhat-abi-exporter";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
+import "@openzeppelin/hardhat-upgrades";
 import "hardhat-watcher";
 import "hardhat-storage-layout";
 import "dotenv/config";

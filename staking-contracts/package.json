@@ -8,6 +8,7 @@
     "@nomicfoundation/hardhat-network-helpers": "^1.1.2",
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@nomiclabs/hardhat-solhint": "^3.0.1",
+    "@openzeppelin/hardhat-upgrades": "^2.5.1",
     "@openzeppelin/merkle-tree": "^1.0.8",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
