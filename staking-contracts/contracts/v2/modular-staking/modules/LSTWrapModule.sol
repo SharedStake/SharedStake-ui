@@ -197,10 +197,11 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
         // protected. Without this, _lastWrapPrice == 0 bypasses the drift check
         // entirely on bootstrap, allowing oracle-manipulation on the first wrap.
         uint256 seedPrice = ILSTPriceOracle(oracle).getEthValue(1e18);
-        if (seedPrice > 0) {
-            _lastWrapPrice = seedPrice;
-            _lastWrapPriceBlock = block.number;
-        }
+        // Require a valid seed — a zero price means the oracle is broken/uninitialized,
+        // and would leave _lastWrapPrice == 0, bypassing all drift enforcement on first wrap.
+        if (seedPrice == 0) revert Errors.InvalidAmount();
+        _lastWrapPrice = seedPrice;
+        _lastWrapPriceBlock = block.number;
         emit PriceOracleSet(oracle);
     }
 

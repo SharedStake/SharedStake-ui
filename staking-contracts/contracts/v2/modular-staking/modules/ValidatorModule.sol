@@ -212,11 +212,9 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
 
         bytes32 pkHash = keccak256(pubkey);
         if (!approvedPubkeys[pkHash]) revert PubkeyNotApproved(pkHash);
-        // Clear approval after use — each pubkey can only be deposited once
+        // Clear approval before external call — each pubkey can only be deposited once
         delete approvedPubkeys[pkHash];
         if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
-        _depositedPubkeys[pkHash] = true;
-        _depositedValidatorCount += 1;
 
         _bufferedEther -= DEPOSIT_AMOUNT;
 
@@ -226,6 +224,12 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
             signature,
             deposit_data_root
         );
+
+        // Mark deposited only after confirmed success — prevents permanent blacklist if
+        // the beacon deposit reverts (e.g. malformed BLS data), which would brick the pubkey
+        // by setting _depositedPubkeys = true with no actual on-chain deposit.
+        _depositedPubkeys[pkHash] = true;
+        _depositedValidatorCount += 1;
 
         ROUTER.notifyBeaconDeposit(MODULE_ID, DEPOSIT_AMOUNT);
         emit BeaconChainDeposit(pubkey, DEPOSIT_AMOUNT, _bufferedEther);
