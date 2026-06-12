@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -16,7 +18,8 @@ import {Errors} from "../lib/Errors.sol";
 /// Roles:
 ///   GOV    - configure bond configs, slash operators, manage CALLER role
 ///   CALLER - modules (e.g., ValidatorModule) that query eligibility and update active counts
-contract OperatorRegistry is AccessControl, ReentrancyGuard {
+/// @custom:oz-upgrades-unsafe-allow constructor
+contract OperatorRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
     using SafeERC20 for IERC20;
 
     // ── Roles ─────────────────────────────────────────────────────────────────
@@ -27,35 +30,35 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
 
     /// @notice Bond configuration for a named tier
     struct BondConfig {
-        uint256 ethBondPerSlot;      // ETH required per validator slot
-        uint256 sgtBondPerSlot;      // SGT required per validator slot
-        uint256 maxSlots;            // Maximum slots per operator in this tier
+        uint256 ethBondPerSlot; // ETH required per validator slot
+        uint256 sgtBondPerSlot; // SGT required per validator slot
+        uint256 maxSlots; // Maximum slots per operator in this tier
     }
 
     /// @notice Operator state
     struct Operator {
-        uint256 ethBonded;           // ETH currently bonded
-        uint256 sgtBonded;           // SGT currently bonded
-        uint256 activeValidators;    // Currently active validators
-        uint256 totalSlots;          // Total slots earned (bond capacity)
-        bytes32 configName;          // Bond config used for registration
+        uint256 ethBonded; // ETH currently bonded
+        uint256 sgtBonded; // SGT currently bonded
+        uint256 activeValidators; // Currently active validators
+        uint256 totalSlots; // Total slots earned (bond capacity)
+        bytes32 configName; // Bond config used for registration
     }
 
     // ── State ─────────────────────────────────────────────────────────────────
-    IERC20 public immutable sgtToken;
+    IERC20 public sgtToken;
 
     /// @notice Optional SharedStake NFT contract whose escrowed tokens reduce SGT bond requirements.
     IERC721 public nftContract;
 
     /// @notice SGT-denominated credit applied per escrowed NFT.
     uint256 public nftSgtCredit;
-    
+
     /// @notice Named bond configurations (e.g., "default", "premium")
     mapping(bytes32 => BondConfig) public bondConfigs;
-    
+
     /// @notice Operator data by address
     mapping(address => Operator) public operators;
-    
+
     /// @notice Default config name for new registrations
     bytes32 public defaultConfigName;
 
@@ -102,7 +105,15 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     error NftNotOwned();
     error NftAlreadyEscrowed();
 
-    constructor(address _sgtToken, address gov) {
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address _sgtToken, address gov) public initializer {
+        __AccessControl_init();
+        __ReentrancyGuard_init();
+        __UUPSUpgradeable_init();
+
         if (_sgtToken == address(0) || gov == address(0)) revert Errors.ZeroAddress();
         sgtToken = IERC20(_sgtToken);
 
@@ -110,6 +121,8 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         _grantRole(GOV, gov);
         _grantRole(CALLER, gov); // Gov can call for testing
     }
+
+    function _authorizeUpgrade(address) internal override onlyRole(GOV) {}
 
     // ── Configuration ────────────────────────────────────────────────────────
 
@@ -185,11 +198,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     }
 
     /// @notice Register with ETH + SGT bond (only valid registration path)
-    function registerBondWithSgt(
-        bytes32 configName,
-        uint256 slots,
-        uint256 sgtAmount
-    ) external payable nonReentrant {
+    function registerBondWithSgt(bytes32 configName, uint256 slots, uint256 sgtAmount) external payable nonReentrant {
         _bond(configName, slots, msg.value, sgtAmount);
         sgtToken.safeTransferFrom(msg.sender, address(this), sgtAmount);
         emit BondRegistered(msg.sender, configName, msg.value, sgtAmount);
@@ -379,7 +388,6 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         return op.configName;
     }
 
-
     /// @notice Pull pending NFTs back to the caller after exitBond().
     /// @dev Separated from exitBond() to prevent a single reverting transferFrom from
     ///      bricking the entire bond exit (e.g. paused NFT contract, blacklisted token).
@@ -389,7 +397,9 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
         if (count == 0) revert Errors.InvalidAmount();
         IERC721 nft = nftContract;
         for (uint256 i = count; i > 0; ) {
-            unchecked { --i; }
+            unchecked {
+                --i;
+            }
             uint256 tokenId = pending[i];
             delete _nftEscrowOwner[tokenId];
             pending.pop();
@@ -421,13 +431,13 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     // ── Views ────────────────────────────────────────────────────────────────
 
     /// @notice Get operator details
-    function getOperator(address operator) external view returns (
-        uint256 ethBonded,
-        uint256 sgtBonded,
-        uint256 activeValidators,
-        uint256 totalSlots,
-        bytes32 configName
-    ) {
+    function getOperator(
+        address operator
+    )
+        external
+        view
+        returns (uint256 ethBonded, uint256 sgtBonded, uint256 activeValidators, uint256 totalSlots, bytes32 configName)
+    {
         Operator storage op = operators[operator];
         return (op.ethBonded, op.sgtBonded, op.activeValidators, op.totalSlots, op.configName);
     }
@@ -449,4 +459,7 @@ contract OperatorRegistry is AccessControl, ReentrancyGuard {
     receive() external payable {
         // Accept ETH for bond expansions
     }
+
+    // ── Storage gap ─────────────────────────────────────────────────────────────
+    uint256[50] private __gap;
 }
