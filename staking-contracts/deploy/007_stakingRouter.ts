@@ -1,6 +1,7 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {StakingRouter__factory, StToken__factory, FeeController__factory, StakingCore__factory} from "../types";
+import type {StakingRouter} from "../types";
 
 /**
  * Deploys the StakingRouter, the modular front-door for ETH staking.
@@ -8,7 +9,7 @@ import {StakingRouter__factory, StToken__factory, FeeController__factory, Stakin
  * and on rebase. The router is also wired to the FeeController if available.
  */
 const func: DeployFunction = async hre => {
-  const {deploy, connect, accounts, address} = await Ship.init(hre);
+  const {connect, accounts, address} = await Ship.init(hre);
 
   const stTokenAddress = await address(StToken__factory);
   if (!stTokenAddress) throw new Error("StToken not deployed");
@@ -16,11 +17,32 @@ const func: DeployFunction = async hre => {
   const govSigner = accounts.multiSig ?? accounts.deployer;
   const gov = govSigner.address;
 
-  const {contract: router} = await deploy(StakingRouter__factory, {
-    from: accounts.deployer,
-    args: [stTokenAddress, gov],
-    log: true,
-  });
+  // Deploy StakingRouter as UUPS proxy (idempotent)
+  const existingRouter = await hre.deployments.getOrNull("StakingRouter");
+
+  let proxyAddress: string;
+  if (existingRouter) {
+    console.log("  StakingRouter already deployed at:", existingRouter.address);
+    proxyAddress = existingRouter.address;
+  } else {
+    const Factory = await hre.ethers.getContractFactory("StakingRouter", accounts.deployer);
+    const proxy = await hre.upgrades.deployProxy(Factory, [stTokenAddress, gov], {
+      kind: "uups",
+      initializer: "initialize",
+    });
+    await proxy.waitForDeployment();
+    proxyAddress = await proxy.getAddress();
+
+    const artifact = await hre.artifacts.readArtifact("StakingRouter");
+    await hre.deployments.save("StakingRouter", {
+      address: proxyAddress,
+      abi: artifact.abi,
+      transactionHash: proxy.deploymentTransaction()?.hash,
+    });
+    console.log("  StakingRouter deployed (UUPS proxy) at:", proxyAddress);
+  }
+
+  const router: StakingRouter = StakingRouter__factory.connect(proxyAddress, accounts.deployer);
 
   // Grant StakingRouter MINTER on StToken so it can mint/burn shares.
   const stToken = await connect(StToken__factory);
