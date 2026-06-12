@@ -52,9 +52,15 @@ contract StEthPriceOracle is ILSTPriceOracle {
     }
 
     /// @inheritdoc ILSTPriceOracle
-    /// @dev Returns the timestamp of the last Chainlink price update for staleness checks.
-    ///      This allows consumers to implement proper staleness guards by comparing
-    ///      block.timestamp with the actual feed update time.
+    /// @dev Returns the Chainlink feed's updatedAt timestamp for staleness checks.
+    ///      NOTE: Chainlink is used here ONLY for its update cadence (staleness signal),
+    ///      NOT for its price answer. The actual ETH value is sourced entirely from Lido's
+    ///      own share-math (getPooledEthByShares). This asymmetric trust is intentional:
+    ///      Lido's oracle is the authoritative price source; Chainlink provides an
+    ///      independent heartbeat so consumers can detect if neither oracle has reported
+    ///      recently. A stale Chainlink timestamp with a fresh Lido oracle still reverts
+    ///      under LSTWrapModule's maxOracleAge guard — callers should set maxOracleAge
+    ///      to a value that accounts for both Chainlink's round interval and Lido's oracle cadence.
     function lastUpdated() external view override returns (uint256) {
         (, , , uint256 updatedAt, ) = CHAINLINK_FEED.latestRoundData();
         return updatedAt;

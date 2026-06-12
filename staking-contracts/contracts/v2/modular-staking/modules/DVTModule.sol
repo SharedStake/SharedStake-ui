@@ -69,6 +69,7 @@ contract DVTModule is ValidatorModule {
     error ProposalNotActive(bytes32 proposalId);
     error AlreadyApproved(bytes32 proposalId, address approver);
     error ProposalNotFound(bytes32 proposalId);
+    error NotProposerOrGov(bytes32 proposalId, address caller);
 
     constructor(
         address router,
@@ -218,9 +219,11 @@ contract DVTModule is ValidatorModule {
         DepositProposal storage p = depositProposals[proposalId];
         if (p.approvalCount == 0) revert ProposalNotFound(proposalId);
         if (p.executed) revert ProposalNotActive(proposalId);
-        bool isClusterOp = _clusterOperatorSet[p.clusterId][msg.sender];
-        bool isGov = hasRole(GOV, msg.sender);
-        if (!isClusterOp && !isGov) revert OperatorNotInCluster(p.clusterId, msg.sender);
+        // Restrict to proposer or GOV: any cluster operator having cancel power creates
+        // a grief path where one rogue/compromised member perpetually cancels peers' proposals.
+        // Other members who disagree with a proposal simply withhold approval — threshold
+        // not reached means deposit never executes, so cancel is unnecessary for them.
+        if (msg.sender != p.proposer && !hasRole(GOV, msg.sender)) revert NotProposerOrGov(proposalId, msg.sender);
         p.cancelled = true;
         // Reset approvalCount so the same pubkey+sig combo can be re-proposed after
         // cancellation. Without this, proposeDeposit's `approvalCount > 0` guard would

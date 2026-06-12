@@ -538,7 +538,8 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
     let op3: SignerWithAddress;
 
     before(async () => {
-      [op1, op2, op3] = await ethers.getSigners();
+      const allSigners = await ethers.getSigners();
+      [op1, op2, op3] = [allSigners[4], allSigners[5], allSigners[6]];
 
       // Grant NODE_OPERATOR role to all operators
       const NODE_OPERATOR_ROLE = ethers.keccak256(ethers.toUtf8Bytes("NODE_OPERATOR"));
@@ -664,12 +665,33 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       });
       const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
 
-      await dvtModule.connect(op2).cancelProposal(proposalId);
+      // Only the proposer (op1) or GOV can cancel — op2 cancel would revert NotProposerOrGov.
+      await dvtModule.connect(op1).cancelProposal(proposalId);
 
       // After cancellation approvalCount is reset to 0, so ProposalNotFound fires before ProposalNotActive.
       await expect(dvtModule.connect(op3).approveDeposit(proposalId)).to.be.revertedWithCustomError(
         dvtModule,
         "ProposalNotFound",
+      );
+    });
+
+    it("non-proposer cluster operator cannot cancel another member's proposal", async () => {
+      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-grief-test"));
+      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
+      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
+
+      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
+      const receipt = await tx.wait();
+      const event = receipt?.logs.find((log: any) => {
+        try { return dvtModule.interface.parseLog(log)?.name === "DepositProposed"; } catch { return false; }
+      });
+      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
+
+      // op2 is a cluster peer but NOT the proposer — should revert
+      await expect(dvtModule.connect(op2).cancelProposal(proposalId)).to.be.revertedWithCustomError(
+        dvtModule,
+        "NotProposerOrGov",
       );
     });
 
