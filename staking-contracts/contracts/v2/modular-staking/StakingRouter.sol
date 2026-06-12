@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {StToken} from "./StToken.sol";
 import {FeeController} from "./FeeController.sol";
 import {ShareMath} from "./ShareMath.sol";
@@ -11,7 +14,7 @@ import {IStakingRouter} from "./interfaces/IStakingRouter.sol";
 import {IInstitutionalPolicyRegistry} from "./interfaces/IInstitutionalPolicyRegistry.sol";
 import {IReferralRegistry} from "./interfaces/IReferralRegistry.sol";
 import {IReferralCodeRegistry} from "./interfaces/IReferralCodeRegistry.sol";
-import {GranularPause} from "../lib/GranularPause.sol";
+import {GranularPauseUpgradeable} from "../lib/GranularPauseUpgradeable.sol";
 import {Errors} from "../lib/Errors.sol";
 
 /// @title IDebtPool - Interface for DebtPool contract
@@ -39,7 +42,8 @@ interface IDebtPool {
 /// Role model:
 ///   GOV       — register/configure modules, set fee controller, unpause.
 ///   GUARDIAN  — emergency pause (no timelock).
-contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakingRouter {
+/// @custom:oz-upgrades-unsafe-allow constructor
+contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable, GranularPauseUpgradeable, IStakingRouter {
     using ShareMath for *;
 
     bytes32 private constant MODULE_TYPE_SOLO_VALIDATOR = keccak256("SOLO_VALIDATOR");
@@ -63,8 +67,8 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     // ── Pause IDs ─────────────────────────────────────────────────────────────
     uint16 public constant PAUSE_SUBMIT = 0;
 
-    // ── Immutables ────────────────────────────────────────────────────────────
-    StToken public immutable ST_TOKEN;
+    // ── State (was immutables) ────────────────────────────────────────────────
+    StToken public ST_TOKEN;
 
     // ── State ─────────────────────────────────────────────────────────────────
     FeeController public feeController;
@@ -201,13 +205,28 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     error ReferralCodeRegistryNotContract(address registry);
     error ReferralCodeRegistryInvalid(address registry);
 
-    constructor(address stToken, address gov) {
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address stToken, address gov) public initializer {
+        __AccessControl_init();
+        __ReentrancyGuard_init();
+        __UUPSUpgradeable_init();
+
         if (stToken == address(0) || gov == address(0)) revert Errors.ZeroAddress();
         ST_TOKEN = StToken(stToken);
         enforceModuleCodeHashAllowlist = false; // Start disabled for backward compatibility
         _grantRole(DEFAULT_ADMIN_ROLE, gov);
         _grantRole(GOV, gov);
         _grantRole(GUARDIAN, gov);
+    }
+
+    function _authorizeUpgrade(address) internal override onlyRole(GOV) {}
+
+    /// @dev Disambiguate _msgSender across ContextUpgradeable and GranularPauseUpgradeable.
+    function _msgSender() internal view override(ContextUpgradeable, GranularPauseUpgradeable) returns (address) {
+        return super._msgSender();
     }
 
     // ── External: deposit entry points ────────────────────────────────────────
@@ -524,15 +543,30 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         address referralRegistry;
         address debtPool;
         try feeController.getFeeConfig() returns (
-            uint16, uint16, uint16, uint16, address t, address o, address rr, address dp
+            uint16,
+            uint16,
+            uint16,
+            uint16,
+            address t,
+            address o,
+            address rr,
+            address dp
         ) {
-            treasury = t; operator = o; referralRegistry = rr; debtPool = dp;
-        } catch { return; }
-        try feeController.computeFees(rewards) returns (
-            uint256 ta, uint256 oa, uint256 dpa, uint256 ra
-        ) {
-            treasuryAmount = ta; operatorAmount = oa; debtPoolAmount = dpa; referralAmount = ra;
-        } catch { return; }
+            treasury = t;
+            operator = o;
+            referralRegistry = rr;
+            debtPool = dp;
+        } catch {
+            return;
+        }
+        try feeController.computeFees(rewards) returns (uint256 ta, uint256 oa, uint256 dpa, uint256 ra) {
+            treasuryAmount = ta;
+            operatorAmount = oa;
+            debtPoolAmount = dpa;
+            referralAmount = ra;
+        } catch {
+            return;
+        }
         if (referralRegistry == address(0)) {
             referralAmount = 0;
         }
@@ -979,4 +1013,7 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
             if (a != address(0)) sum += IStakingModule(a).totalEth();
         }
     }
+
+    // ── Storage gap ─────────────────────────────────────────────────────────────
+    uint256[50] private __gap;
 }
