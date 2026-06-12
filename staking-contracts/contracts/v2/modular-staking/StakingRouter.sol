@@ -46,17 +46,6 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
     bytes32 private constant MODULE_TYPE_DVT_VALIDATOR = keccak256("DVT_VALIDATOR");
     bytes32 private constant MODULE_TYPE_LST_WRAP = keccak256("LST_WRAP");
 
-    struct FeeRoutingData {
-        uint256 rewards;
-        uint256 treasuryAmount;
-        uint256 operatorAmount;
-        uint256 treasuryShares;
-        uint256 operatorShares;
-        uint256 totalFeeAmount;
-        uint256 totalPooledBeforeFees;
-        uint256 totalPooledAfterFees;
-    }
-
     struct InflowLimitConfig {
         uint256 windowSeconds;
         uint256 maxInflowEthPerWindow;
@@ -588,25 +577,17 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         _distributeToDebtPool(debtPool, debtPoolShares);
 
         emit FeeSharesMinted(treasury, treasuryShares, operator, operatorShares);
-        FeeRoutingData memory routing = FeeRoutingData({
-            rewards: 0,
-            treasuryAmount: 0,
-            operatorAmount: 0,
-            treasuryShares: 0,
-            operatorShares: 0,
-            totalFeeAmount: 0,
-            totalPooledBeforeFees: 0,
-            totalPooledAfterFees: 0
-        });
-        routing.rewards = rewards;
-        routing.treasuryAmount = treasuryAmount;
-        routing.operatorAmount = operatorAmount;
-        routing.treasuryShares = treasuryShares;
-        routing.operatorShares = operatorShares;
-        routing.totalFeeAmount = totalFee;
-        routing.totalPooledBeforeFees = newTotalPooled;
-        routing.totalPooledAfterFees = newTotalPooled; // pool stays at real backing
-        _emitFeeRoutingTelemetry(moduleId, routing);
+        emit FeeRoutingTelemetry(
+            moduleId,
+            rewards,
+            treasuryAmount,
+            operatorAmount,
+            treasuryShares,
+            operatorShares,
+            totalFee,
+            newTotalPooled,
+            newTotalPooled
+        );
     }
 
     function _recordReferral(address user, address referral, uint256 amount, uint256 sharesAmount) internal {
@@ -626,20 +607,6 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         } catch {
             return address(0);
         }
-    }
-
-    function _emitFeeRoutingTelemetry(bytes32 moduleId, FeeRoutingData memory routing) internal {
-        emit FeeRoutingTelemetry(
-            moduleId,
-            routing.rewards,
-            routing.treasuryAmount,
-            routing.operatorAmount,
-            routing.treasuryShares,
-            routing.operatorShares,
-            routing.totalFeeAmount,
-            routing.totalPooledBeforeFees,
-            routing.totalPooledAfterFees
-        );
     }
 
     function _consumeInflow(bytes32 moduleId, uint256 amount) internal {
