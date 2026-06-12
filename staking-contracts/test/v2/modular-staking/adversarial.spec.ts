@@ -19,7 +19,7 @@
  *  15. OracleAdapter cadence gate blocks rapid successive reports
  *  16. ValidatorModule rejects report validator counts above deposited validators
  */
-import {ethers} from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import {expect} from "chai";
 import {parseEther, ZeroAddress} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
@@ -63,13 +63,15 @@ describe("SharedStake V2 adversarial", () => {
     );
 
     const StakingRouter = await ethers.getContractFactory("StakingRouter");
-    router = await StakingRouter.deploy(stToken.target, gov.address);
+    router = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await router.waitForDeployment();
 
     const MockBeaconDeposit = await ethers.getContractFactory("MockBeaconDeposit");
     mockBeaconDeposit = await MockBeaconDeposit.deploy();
 
     const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-    mod1 = await ValidatorModule.deploy(router.target, SOLO, gov.address, mockBeaconDeposit.target);
+    mod1 = await upgrades.deployProxy(ValidatorModule, [router.target, SOLO, gov.address, mockBeaconDeposit.target], {kind: "uups", initializer: "initialize"});
+    await mod1.waitForDeployment();
 
     const WithdrawalQueueV2 = await ethers.getContractFactory("WithdrawalQueueV2");
     queue = await WithdrawalQueueV2.deploy(stToken.target, gov.address);
@@ -325,7 +327,8 @@ describe("SharedStake V2 adversarial", () => {
       const priceOracle = await MockLSTPriceOracle.deploy(parseEther("100"));
 
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      const lstMod = await LSTWrapModule.deploy(router.target, LST_MOD, lst.target, gov.address);
+      const lstMod = await upgrades.deployProxy(LSTWrapModule, [router.target, LST_MOD, lst.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await lstMod.waitForDeployment();
       await lstMod.connect(gov).setPriceOracle(priceOracle.target);
 
       // Register LST module with a small mint cap (10 ETH).

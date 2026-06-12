@@ -1,4 +1,4 @@
-import {ethers} from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import {expect} from "chai";
 import {parseEther, ZeroAddress} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
@@ -16,10 +16,12 @@ describe("StakingRouter Inflow Limiter", () => {
     stToken = await StToken.deploy();
 
     const StakingRouter = await ethers.getContractFactory("StakingRouter");
-    router = await StakingRouter.deploy(stToken.target, gov.address);
+    router = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await router.waitForDeployment();
 
     const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-    module = await ValidatorModule.deploy(router.target, MODULE_ID, gov.address, ZeroAddress);
+    module = await upgrades.deployProxy(ValidatorModule, [router.target, MODULE_ID, gov.address, ZeroAddress], {kind: "uups", initializer: "initialize"});
+    await module.waitForDeployment();
 
     await stToken.addMinter(router.target);
     await router.connect(gov).registerModule(MODULE_ID, module.target, 0);
@@ -89,7 +91,8 @@ describe("StakingRouter Inflow Limiter", () => {
 
     const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
     const lstId = ethers.keccak256(ethers.toUtf8Bytes("LST_MODULE"));
-    const lstModule = await LSTWrapModule.deploy(router.target, lstId, lstToken.target, gov.address);
+    const lstModule = await upgrades.deployProxy(LSTWrapModule, [router.target, lstId, lstToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await lstModule.waitForDeployment();
     await lstModule.connect(gov).setPriceOracle(priceOracle.target);
 
     await router.connect(gov).registerModule(lstId, lstModule.target, 0);

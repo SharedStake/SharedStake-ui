@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ethers} from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import {parseEther} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
 
@@ -21,7 +21,8 @@ describe("OperatorRegistry NFT bond credit", () => {
     mockSgt = await MockERC20.deploy("SharedStake Governance Token", "SGT");
 
     const OperatorRegistry = await ethers.getContractFactory("OperatorRegistry");
-    registry = await OperatorRegistry.deploy(mockSgt.target, gov.address);
+    registry = await upgrades.deployProxy(OperatorRegistry, [mockSgt.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await registry.waitForDeployment();
     await registry.connect(gov).setBondConfig(DEFAULT_CONFIG, parseEther("1"), parseEther("1000"), 10);
     await registry.connect(gov).setDefaultConfig(DEFAULT_CONFIG);
 
@@ -43,7 +44,9 @@ describe("OperatorRegistry NFT bond credit", () => {
 
     await mockSgt.mint(operator.address, parseEther("750"));
     await mockSgt.connect(operator).approve(registry.target, parseEther("750"));
-    await registry.connect(operator).registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("750"), {value: parseEther("1")});
+    await registry
+      .connect(operator)
+      .registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("750"), {value: parseEther("1")});
 
     const opData = await registry.getOperator(operator.address);
     expect(opData.sgtBonded).to.equal(parseEther("750"));
@@ -64,11 +67,13 @@ describe("OperatorRegistry NFT bond credit", () => {
 
     await mockSgt.mint(operator.address, parseEther("1750"));
     await mockSgt.connect(operator).approve(registry.target, parseEther("1750"));
-    await registry.connect(operator).registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("750"), {value: parseEther("1")});
+    await registry
+      .connect(operator)
+      .registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("750"), {value: parseEther("1")});
 
-    await expect(
-      registry.connect(operator).expandSlotsWithSgt(1, parseEther("750"), {value: parseEther("1")}),
-    ).to.be.revertedWithCustomError(registry, "InsufficientBond").withArgs(parseEther("1000"), parseEther("750"));
+    await expect(registry.connect(operator).expandSlotsWithSgt(1, parseEther("750"), {value: parseEther("1")}))
+      .to.be.revertedWithCustomError(registry, "InsufficientBond")
+      .withArgs(parseEther("1000"), parseEther("750"));
 
     await registry.connect(operator).expandSlotsWithSgt(1, parseEther("1000"), {value: parseEther("1")});
     const opData = await registry.getOperator(operator.address);
@@ -80,12 +85,14 @@ describe("OperatorRegistry NFT bond credit", () => {
     await nft.connect(operator).approve(registry.target, 5);
     await registry.connect(operator).lockNftForCredit(5);
 
-    await expect(
-      registry.connect(gov).setNftContract(nft.target, parseEther("300")),
-    ).to.be.revertedWithCustomError(registry, "InvalidConfig");
-    await expect(
-      registry.connect(gov).setNftContract(ethers.ZeroAddress, 0),
-    ).to.be.revertedWithCustomError(registry, "InvalidConfig");
+    await expect(registry.connect(gov).setNftContract(nft.target, parseEther("300"))).to.be.revertedWithCustomError(
+      registry,
+      "InvalidConfig",
+    );
+    await expect(registry.connect(gov).setNftContract(ethers.ZeroAddress, 0)).to.be.revertedWithCustomError(
+      registry,
+      "InvalidConfig",
+    );
 
     await registry.connect(operator).exitBond();
     await registry.connect(operator).withdrawEscrowedNfts();
@@ -100,7 +107,9 @@ describe("OperatorRegistry NFT bond credit", () => {
 
     await mockSgt.mint(operator.address, parseEther("1750"));
     await mockSgt.connect(operator).approve(registry.target, parseEther("1750"));
-    await registry.connect(operator).registerBondWithSgt(DEFAULT_CONFIG, 2, parseEther("1750"), {value: parseEther("2")});
+    await registry
+      .connect(operator)
+      .registerBondWithSgt(DEFAULT_CONFIG, 2, parseEther("1750"), {value: parseEther("2")});
 
     await expect(registry.connect(gov).slash(operator.address, parseEther("1000")))
       .to.emit(registry, "OperatorSlashed")
@@ -110,5 +119,4 @@ describe("OperatorRegistry NFT bond credit", () => {
     expect(opData.sgtBonded).to.equal(parseEther("750"));
     expect(opData.totalSlots).to.equal(1n);
   });
-
 });

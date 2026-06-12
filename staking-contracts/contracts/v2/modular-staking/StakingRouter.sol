@@ -120,7 +120,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     ///         Default 100 = 1% (safe for mainnet). Can be raised temporarily
     ///         via governance during high-reward periods (e.g. post-Merge).
     ///         Max absolute ceiling enforced at 1000 (10%) by setter.
-    uint256 public maxDeltaBps = 100;
+    uint256 public maxDeltaBps;
 
     /// @notice Global circuit breaker on total pooled ETH. Default 0 = unlimited.
     ///         When set to a non-zero value, any deposit or wrap that would push
@@ -216,6 +216,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
 
         if (stToken == address(0) || gov == address(0)) revert Errors.ZeroAddress();
         ST_TOKEN = StToken(stToken);
+        maxDeltaBps = 100;
         enforceModuleCodeHashAllowlist = false; // Start disabled for backward compatibility
         _grantRole(DEFAULT_ADMIN_ROLE, gov);
         _grantRole(GOV, gov);
@@ -226,7 +227,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
 
     /// @dev Disambiguate _msgSender across ContextUpgradeable and GranularPauseUpgradeable.
     function _msgSender() internal view override(ContextUpgradeable, GranularPauseUpgradeable) returns (address) {
-        return super._msgSender();
+        return ContextUpgradeable._msgSender();
     }
 
     // ── External: deposit entry points ────────────────────────────────────────

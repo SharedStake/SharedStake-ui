@@ -9,7 +9,7 @@
  *   - Default module switching
  *   - Access control matrix
  */
-import {ethers} from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import {expect} from "chai";
 import {parseEther, ZeroAddress} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
@@ -77,7 +77,8 @@ describe("StakingRouter", () => {
     );
 
     const StakingRouter = await ethers.getContractFactory("StakingRouter");
-    router = await StakingRouter.deploy(stToken.target, gov.address);
+    router = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await router.waitForDeployment();
 
     // Mock beacon deposit contract for hardhat tests — accepts ETH without
     // performing real validator processing.
@@ -85,8 +86,10 @@ describe("StakingRouter", () => {
     mockBeaconDeposit = await MockBeaconDeposit.deploy();
 
     const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-    mod1 = await ValidatorModule.deploy(router.target, SOLO, gov.address, mockBeaconDeposit.target);
-    mod2 = await ValidatorModule.deploy(router.target, SECONDARY, gov.address, mockBeaconDeposit.target);
+    mod1 = await upgrades.deployProxy(ValidatorModule, [router.target, SOLO, gov.address, mockBeaconDeposit.target], {kind: "uups", initializer: "initialize"});
+    await mod1.waitForDeployment();
+    mod2 = await upgrades.deployProxy(ValidatorModule, [router.target, SECONDARY, gov.address, mockBeaconDeposit.target], {kind: "uups", initializer: "initialize"});
+    await mod2.waitForDeployment();
 
     // Grant router MINTER on stToken.
     await stToken.addMinter(router.target);
@@ -152,15 +155,17 @@ describe("StakingRouter", () => {
 
     it("rejects registration when module is wired to a different router", async () => {
       const StakingRouter = await ethers.getContractFactory("StakingRouter");
-      const foreignRouter = await StakingRouter.deploy(stToken.target, gov.address);
+      const foreignRouter = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await foreignRouter.waitForDeployment();
 
       const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-      const foreignModule = await ValidatorModule.deploy(
+      const foreignModule = await upgrades.deployProxy(ValidatorModule, [
         foreignRouter.target,
         SECONDARY,
         gov.address,
         mockBeaconDeposit.target,
-      );
+      ], {kind: "uups", initializer: "initialize"});
+      await foreignModule.waitForDeployment();
 
       await expect(
         router.connect(gov).registerModule(SECONDARY, foreignModule.target, 0),
@@ -169,12 +174,13 @@ describe("StakingRouter", () => {
 
     it("rejects registration when module internal id does not match router id", async () => {
       const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-      const wrongIdModule = await ValidatorModule.deploy(
+      const wrongIdModule = await upgrades.deployProxy(ValidatorModule, [
         router.target,
         SECONDARY,
         gov.address,
         mockBeaconDeposit.target,
-      );
+      ], {kind: "uups", initializer: "initialize"});
+      await wrongIdModule.waitForDeployment();
 
       await expect(router.connect(gov).registerModule(WRONG_ID, wrongIdModule.target, 0)).to.be.revertedWithCustomError(
         router,
@@ -184,10 +190,12 @@ describe("StakingRouter", () => {
 
     it("enforced code-hash allowlist blocks unallowlisted module registration", async () => {
       const StakingRouter = await ethers.getContractFactory("StakingRouter");
-      const router2 = await StakingRouter.deploy(stToken.target, gov.address);
+      const router2 = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await router2.waitForDeployment();
 
       const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-      const mod = await ValidatorModule.deploy(router2.target, SECONDARY, gov.address, mockBeaconDeposit.target);
+      const mod = await upgrades.deployProxy(ValidatorModule, [router2.target, SECONDARY, gov.address, mockBeaconDeposit.target], {kind: "uups", initializer: "initialize"});
+      await mod.waitForDeployment();
 
       await router2.connect(gov).enableCodeHashEnforcement();
       await expect(router2.connect(gov).registerModule(SECONDARY, mod.target, 0)).to.be.revertedWithCustomError(
@@ -330,7 +338,8 @@ describe("StakingRouter", () => {
     it("reverts if defaultModuleId not set", async () => {
       // Deploy a fresh router with no default set.
       const StakingRouter = await ethers.getContractFactory("StakingRouter");
-      const router2 = await StakingRouter.deploy(stToken.target, gov.address);
+      const router2 = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await router2.waitForDeployment();
       await expect(router2.connect(alice).submit(ZeroAddress, {value: parseEther("1")})).to.be.revertedWithCustomError(
         router2,
         "DefaultModuleNotSet",
@@ -548,7 +557,8 @@ describe("StakingRouter", () => {
       const oracleContract = await MockLSTPriceOracle.deploy(parseEther("1"));
 
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      const lstModule = await LSTWrapModule.deploy(router.target, moduleId, lstToken.target, gov.address);
+      const lstModule = await upgrades.deployProxy(LSTWrapModule, [router.target, moduleId, lstToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await lstModule.waitForDeployment();
 
       await router.connect(gov).registerModule(moduleId, lstModule.target, parseEther("10"));
       await lstModule.connect(gov).setPriceOracle(oracleContract.target);
@@ -947,7 +957,8 @@ describe("StakingRouter", () => {
       oracleContract = await MockLSTPriceOracle.deploy(parseEther("1"));
 
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      lstModule = await LSTWrapModule.deploy(router.target, LST_GATED, lstToken.target, gov.address);
+      lstModule = await upgrades.deployProxy(LSTWrapModule, [router.target, LST_GATED, lstToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await lstModule.waitForDeployment();
       await lstModule.connect(gov).setPriceOracle(oracleContract.target);
       await router.connect(gov).registerModule(LST_GATED, lstModule.target, parseEther("10"));
     });
@@ -988,7 +999,8 @@ describe("StakingRouter", () => {
 
       // Deploy LST module wired to router with a 10 ETH cap.
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      lstModule = await LSTWrapModule.deploy(router.target, LST_MOD, lstToken.target, gov.address);
+      lstModule = await upgrades.deployProxy(LSTWrapModule, [router.target, LST_MOD, lstToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await lstModule.waitForDeployment();
 
       await router.connect(gov).registerModule(LST_MOD, lstModule.target, parseEther("10"));
       await lstModule.connect(gov).setPriceOracle(oracleContract.target);
@@ -1041,7 +1053,8 @@ describe("StakingRouter", () => {
       // moduleId since LST_MOD is already taken by beforeEach.
       const TIGHT = ethers.keccak256(ethers.toUtf8Bytes("LST_WRAP_TIGHT"));
       const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-      const tightModule = await LSTWrapModule.deploy(router.target, TIGHT, lstToken.target, gov.address);
+      const tightModule = await upgrades.deployProxy(LSTWrapModule, [router.target, TIGHT, lstToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await tightModule.waitForDeployment();
       await router.connect(gov).registerModule(TIGHT, tightModule.target, parseEther("0.5"));
       await tightModule.connect(gov).setPriceOracle(oracleContract.target);
 

@@ -17,7 +17,7 @@
  *  10. Guardian finalizes with 1 ETH → Alice claims → receives ETH.
  *  11. Invariant checks.
  */
-import {ethers} from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import {expect} from "chai";
 import {parseEther, ZeroAddress} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
@@ -68,13 +68,15 @@ describe("StakingRouter E2E (SharedStake V2 modular)", () => {
     );
 
     const StakingRouter = await ethers.getContractFactory("StakingRouter");
-    router = await StakingRouter.deploy(stToken.target, gov.address);
+    router = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await router.waitForDeployment();
 
     const MockBeaconDeposit = await ethers.getContractFactory("MockBeaconDeposit");
     mockBeaconDeposit = await MockBeaconDeposit.deploy();
 
     const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-    validatorModule = await ValidatorModule.deploy(router.target, SOLO, gov.address, mockBeaconDeposit.target);
+    validatorModule = await upgrades.deployProxy(ValidatorModule, [router.target, SOLO, gov.address, mockBeaconDeposit.target], {kind: "uups", initializer: "initialize"});
+    await validatorModule.waitForDeployment();
 
     const WithdrawalQueueV2 = await ethers.getContractFactory("WithdrawalQueueV2");
     withdrawalQueue = await WithdrawalQueueV2.deploy(stToken.target, gov.address);

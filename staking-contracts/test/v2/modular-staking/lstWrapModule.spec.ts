@@ -12,7 +12,7 @@
  *   4. Stale oracle: a price-oracle that hasn't ticked in > maxOracleAgeSecs
  *      makes wrapLST revert with `StaleOracle` (security regression guard).
  */
-import {ethers} from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import {expect} from "chai";
 import {parseEther} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
@@ -30,7 +30,8 @@ describe("LSTWrapModule (standalone)", () => {
     stToken = await StToken.deploy();
 
     const StakingRouter = await ethers.getContractFactory("StakingRouter");
-    router = await StakingRouter.deploy(stToken.target, gov.address);
+    router = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await router.waitForDeployment();
 
     // Router is the sole MINTER on stToken.
     await stToken.addMinter(router.target);
@@ -43,7 +44,8 @@ describe("LSTWrapModule (standalone)", () => {
     oracle = await MockLSTPriceOracle.deploy(parseEther("1"));
 
     const LSTWrapModule = await ethers.getContractFactory("LSTWrapModule");
-    lstModule = await LSTWrapModule.deploy(router.target, LST_MOD, lstToken.target, gov.address);
+    lstModule = await upgrades.deployProxy(LSTWrapModule, [router.target, LST_MOD, lstToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+    await lstModule.waitForDeployment();
 
     await router.connect(gov).registerModule(LST_MOD, lstModule.target, mintCapEth);
     await lstModule.connect(gov).setPriceOracle(oracle.target);

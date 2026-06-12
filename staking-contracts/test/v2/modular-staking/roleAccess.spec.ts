@@ -1,4 +1,4 @@
-import {ethers} from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import {expect} from "chai";
 import {parseEther, ZeroAddress} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
@@ -87,14 +87,16 @@ describe("modular-staking role/access sweep", () => {
       stToken = await StToken.deploy();
 
       const StakingRouter = await ethers.getContractFactory("StakingRouter");
-      router = await StakingRouter.deploy(stToken.target, gov.address);
+      router = await upgrades.deployProxy(StakingRouter, [stToken.target, gov.address], {kind: "uups", initializer: "initialize"});
+      await router.waitForDeployment();
       await stToken.addMinter(router.target);
 
       const MockBeaconDeposit = await ethers.getContractFactory("MockBeaconDeposit");
       const mockBeacon = await MockBeaconDeposit.deploy();
 
       const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
-      module1 = await ValidatorModule.deploy(router.target, SOLO, gov.address, mockBeacon.target);
+      module1 = await upgrades.deployProxy(ValidatorModule, [router.target, SOLO, gov.address, mockBeacon.target], {kind: "uups", initializer: "initialize"});
+      await module1.waitForDeployment();
 
       const FeeController = await ethers.getContractFactory("FeeController");
       feeController = await FeeController.deploy(

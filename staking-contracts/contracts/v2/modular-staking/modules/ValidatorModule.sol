@@ -111,7 +111,7 @@ contract ValidatorModule is Initializable, UUPSUpgradeable, AccessControlUpgrade
 
     /// @dev Disambiguate _msgSender across ContextUpgradeable and GranularPauseUpgradeable.
     function _msgSender() internal view override(ContextUpgradeable, GranularPauseUpgradeable) returns (address) {
-        return super._msgSender();
+        return ContextUpgradeable._msgSender();
     }
 
     // ── Module hooks (router-only) ───────────────────────────────────────────

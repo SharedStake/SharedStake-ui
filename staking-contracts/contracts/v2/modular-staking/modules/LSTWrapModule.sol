@@ -50,12 +50,12 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
 
     /// @notice Maximum allowed age (seconds) of the price oracle's last update before
     ///         `wrapLST` reverts with `StaleOracle`. Default 3600 (1 hour).
-    uint256 public maxOracleAgeSecs = 3600;
+    uint256 public maxOracleAgeSecs;
 
     /// @notice Max cross-block ETH/LST price change (basis points). 0 disables the guard.
     ///         Protects against flash-loan oracle inflation: flash loans are single-tx,
     ///         so the stored price reflects the pre-attack state from the previous block.
-    uint256 public maxWrapPriceDriftBps = 1000; // 10%
+    uint256 public maxWrapPriceDriftBps;
 
     // Per-block price observation for the wrap-side drift guard.
     uint256 private _lastWrapPrice; // ETH per LST unit scaled by 1e18
@@ -89,6 +89,8 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         ROUTER = IStakingRouter(router);
         MODULE_ID = moduleId;
         LST_TOKEN = IERC20(lstToken);
+        maxOracleAgeSecs = 3600;
+        maxWrapPriceDriftBps = 1000; // 10%
 
         _grantRole(DEFAULT_ADMIN_ROLE, gov);
         _grantRole(GOV, gov);
@@ -99,7 +101,7 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
 
     /// @dev Disambiguate _msgSender across ContextUpgradeable and GranularPauseUpgradeable.
     function _msgSender() internal view override(ContextUpgradeable, GranularPauseUpgradeable) returns (address) {
-        return super._msgSender();
+        return ContextUpgradeable._msgSender();
     }
 
     // ── User entry/exit ──────────────────────────────────────────────────────
