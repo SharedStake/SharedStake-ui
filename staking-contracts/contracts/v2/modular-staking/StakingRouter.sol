@@ -455,7 +455,7 @@ contract StakingRouter is AccessControl, ReentrancyGuard, GranularPause, IStakin
         uint256 debtPoolAmount,
         uint256 newTotalShares,
         uint256 newTotalPooled
-    ) private view returns (uint256, uint256, uint256, uint256) {
+    ) private pure returns (uint256, uint256, uint256, uint256) {
         uint256 treasuryShares = ShareMath.getSharesByPooledEth(treasuryAmount, newTotalShares, newTotalPooled);
         uint256 operatorShares = ShareMath.getSharesByPooledEth(operatorAmount, newTotalShares, newTotalPooled);
         uint256 referralShares = ShareMath.getSharesByPooledEth(referralAmount, newTotalShares, newTotalPooled);
