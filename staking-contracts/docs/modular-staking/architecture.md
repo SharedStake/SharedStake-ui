@@ -134,7 +134,7 @@ DVTModule will use the same UUPS proxy pattern and `GranularPauseUpgradeable` ba
 | Pause granularity | Per-selector pause via `GranularPauseUpgradeable` |
 | Initialization guard | `initializer` modifier on all `initialize()` functions |
 | Re-entrancy | `ReentrancyGuardUpgradeable` on ETH-accepting paths |
-| Oracle manipulation | `StEthPriceOracle` enforces a [0.9, 1.1] price band |
+| Oracle manipulation | `StEthPriceOracle` derives price from Lido's share math (`getPooledEthByShares`), not a spot feed; Chainlink is used only as a staleness heartbeat. `LSTWrapModule` enforces a `maxOracleAge` staleness guard. |
 
 ---
 
