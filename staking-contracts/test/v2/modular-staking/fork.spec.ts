@@ -107,6 +107,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
     const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
     const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
 
+    await validatorModule.connect(gov).approvePubkey(pubkey);
     await validatorModule.connect(gov).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot);
 
     expect(await validatorModule.bufferedEther()).to.equal(0n);
@@ -132,6 +133,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
     const expectedCreds = await validatorModule.expectedWithdrawalCredentials();
     const {pubkey, signature, depositDataRoot} = randDeposit();
 
+    await validatorModule.connect(gov).approvePubkey(pubkey);
     await expect(validatorModule.connect(gov).depositToBeaconChain(pubkey, expectedCreds, signature, depositDataRoot))
       .to.not.be.reverted;
 
@@ -150,7 +152,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       dvtModule
         .connect(nodeOp)
         .depositToBeaconChainInCluster(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
-    ).to.be.revertedWithCustomError(dvtModule, "ClusterNotActive");
+    ).to.be.revertedWithCustomError(dvtModule, "UseProposalQueue");
   });
 
   it("DVTModule: allows deposit after cluster is registered", async () => {
@@ -161,9 +163,9 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
     const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
     const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
 
-    await dvtModule
-      .connect(nodeOp)
-      .depositToBeaconChainInCluster(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
+    await dvtModule.connect(gov).approvePubkey(pubkey);
+    // depositToBeaconChainInCluster is deprecated; use proposeDeposit which auto-executes at threshold=1
+    await dvtModule.connect(nodeOp).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
 
     const beaconAfter = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
     expect(beaconAfter - beaconBefore).to.equal(parseEther("32"));
@@ -180,7 +182,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       dvtModule
         .connect(nodeOp)
         .depositToBeaconChainInCluster(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
-    ).to.be.revertedWithCustomError(dvtModule, "ClusterNotActive");
+    ).to.be.revertedWithCustomError(dvtModule, "UseProposalQueue");
   });
 
   // ── Fee distribution fork tests ──────────────────────────────────────
@@ -226,6 +228,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       // Step 2: do a beacon deposit — this calls notifyBeaconDeposit internally,
       // which bumps moduleBeaconBalance[SOLO] (the required non-zero baseline).
       const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await validatorModule.connect(gov).approvePubkey(pubkey);
       await validatorModule.connect(gov).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot);
 
       // Read the actual baseline (may be > 32 ETH if prior tests also deposited).
@@ -349,14 +352,15 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       // Ensure the module has at least 32 ETH buffered for the deposit calls below.
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
 
-      // Deposit with wrong credentials reverts.
+      // Deposit with wrong credentials reverts (credential check fires before pubkey check).
       const {pubkey, signature, depositDataRoot} = randDeposit();
       const badCreds = ethers.hexlify(ethers.randomBytes(32));
       await expect(
         validatorModule.connect(gov).depositToBeaconChain(pubkey, badCreds, signature, depositDataRoot),
       ).to.be.revertedWithCustomError(validatorModule, "InvalidWithdrawalCredentials");
 
-      // Deposit with correct credentials succeeds.
+      // Deposit with correct credentials succeeds (pubkey must be approved first).
+      await validatorModule.connect(gov).approvePubkey(pubkey);
       await expect(validatorModule.connect(gov).depositToBeaconChain(pubkey, expectedCreds, signature, depositDataRoot))
         .to.not.be.reverted;
 
@@ -421,6 +425,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
 
       // depositToBeaconChain should succeed
       const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await validatorModule.connect(gov).approvePubkey(pubkey);
       await expect(
         validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
       ).to.not.be.reverted;
@@ -453,6 +458,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
 
       const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await validatorModule.connect(gov).approvePubkey(pubkey);
       await expect(
         validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
       ).to.not.be.reverted;
@@ -514,6 +520,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
 
       const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(validatorExpectedCreds);
+      await validatorModule.connect(gov).approvePubkey(pubkey);
       await expect(
         validatorModule.connect(nodeOp).depositToBeaconChain(pubkey, withdrawalCreds, signature, depositDataRoot),
       ).to.not.be.reverted;
@@ -583,6 +590,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
 
       const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      await dvtModule.connect(gov).approvePubkey(pubkey);
       const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
 
       const receipt = await tx.wait();
@@ -614,6 +622,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
 
       const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
+      await dvtModule.connect(gov).approvePubkey(pubkey);
       const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
 
       const receipt = await tx.wait();
@@ -657,9 +666,10 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
 
       await dvtModule.connect(op2).cancelProposal(proposalId);
 
+      // After cancellation approvalCount is reset to 0, so ProposalNotFound fires before ProposalNotActive.
       await expect(dvtModule.connect(op3).approveDeposit(proposalId)).to.be.revertedWithCustomError(
         dvtModule,
-        "ProposalNotActive",
+        "ProposalNotFound",
       );
     });
 
@@ -672,6 +682,7 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
       const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
 
+      await dvtModule.connect(gov).approvePubkey(pubkey);
       const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
 
       const beaconAfter = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
@@ -706,12 +717,17 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
     });
 
     it("unregistered operator cannot propose even in valid cluster", async () => {
+      // Deploy a local registry with no bonded operators for this test.
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      const localSgt = await MockERC20.deploy("SGT", "SGT");
+      const OperatorRegistryFactory = await ethers.getContractFactory("OperatorRegistry");
+      const localRegistry = await OperatorRegistryFactory.deploy(localSgt.target, gov.address);
+
       // Set operatorRegistry on dvtModule
-      await dvtModule.connect(gov).setOperatorRegistry(operatorRegistry.target);
+      await dvtModule.connect(gov).setOperatorRegistry(localRegistry.target);
 
       // Grant CALLER role to dvtModule
-      const CALLER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("CALLER"));
-      await operatorRegistry.connect(gov).grantCaller(dvtModule.target);
+      await localRegistry.connect(gov).grantCaller(dvtModule.target);
 
       const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("registry-cluster"));
       await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address], 1);
