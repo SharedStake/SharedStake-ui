@@ -21,9 +21,13 @@ These contracts implement the complete modular staking system including:
 
 ## Module System
 
-- **ValidatorModule**: Validator management module
-- **DVTModule**: Distributed Validator Technology module
-- **LSTWrapModule**: Liquid Staking Token wrapper module
+- **ValidatorModule**: Validator management module (UUPS proxy)
+- **LSTWrapModule**: Liquid Staking Token wrapper module (UUPS proxy)
+- **DVTModule**: Distributed Validator Technology module — _deferred to branch `feat/dvt-module` (PR 381); added post-launch via `StakingRouter.registerModule()` with no core contract changes_
+
+## Proxy Upgradeability (UUPS / ERC-1967)
+
+`StakingRouter`, `ValidatorModule`, `LSTWrapModule`, and `OperatorRegistry` are deployed behind ERC-1967 UUPS proxies. Upgrades are authorized exclusively by the `GOV` role (timelock-gated) via `_authorizeUpgrade()`. The proxy pattern keeps contract addresses — and any ETH they hold — stable across logic upgrades, eliminating costly ETH migration on redeploy. See [`docs/modular-staking/architecture.md`](docs/modular-staking/architecture.md) for full details.
 
 ## Complete Infrastructure
 
@@ -115,7 +119,6 @@ staking-contracts/
 - 7 Foundry invariants passing
 - All critical security issues resolved
 - Comprehensive threat model documented
-
 
 ## Build & Test
 

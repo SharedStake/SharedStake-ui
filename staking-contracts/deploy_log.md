@@ -1,5 +1,15 @@
 # Deployment logs for deploys that matter
 
+## 2026-06-12 — PR 379 (`feat/protocol-v3-fresh`) — V3 modular staking, UUPS proxies
+
+**Not yet deployed (pre-deploy audit phase).** Key changes relative to V2:
+
+- `StakingRouter`, `ValidatorModule`, `LSTWrapModule`, `OperatorRegistry` are now deployed behind ERC-1967 UUPS proxies (OpenZeppelin `UUPSUpgradeable`). Upgrade authorization requires the `GOV` role (timelock-gated).
+- `GranularPauseUpgradeable` added to `contracts/v2/lib/` — UUPS-safe selective pause (no `Context` inheritance).
+- `DVTModule` split to branch `feat/dvt-module` (PR 381); will be added post-launch via `StakingRouter.registerModule()` with no core contract changes.
+
+See [`docs/modular-staking/architecture.md`](docs/modular-staking/architecture.md) for full architecture details.
+
 - sepolia
 
 -- deployed with new hardhat deploy tooling, see deployment log for deets
