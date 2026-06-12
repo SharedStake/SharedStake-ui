@@ -2,6 +2,7 @@ import {isAddress, ZeroAddress} from "ethers";
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {OperatorRegistry__factory, ValidatorModule__factory} from "../types";
+import type {OperatorRegistry} from "../types";
 import {assertGovernanceSigner, getGovernanceSigner} from "../helpers/moduleDeployment";
 import {isLocalNetwork, resolveGovernanceAddress} from "../helpers/governance";
 
@@ -42,7 +43,7 @@ function readConfiguredNftAddress(): string | undefined {
  */
 const func: DeployFunction = async hre => {
   const ship = await Ship.init(hre);
-  const {deploy, connect, accounts, address, hre: hardhat} = ship;
+  const {connect, accounts, address, hre: hardhat} = ship;
   const isLocal = isLocalNetwork(hre);
 
   const gov = await resolveGovernanceAddress(hre, ship);
@@ -74,12 +75,32 @@ const func: DeployFunction = async hre => {
   const maxSlots = BigInt(process.env.V2_OPERATOR_MAX_SLOTS ?? "100");
   const DEFAULT_CONFIG = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("default"));
 
-  // ── Deploy ──────────────────────────────────────────────────────────────────
-  const {contract: registry} = await deploy(OperatorRegistry__factory, {
-    from: accounts.deployer,
-    args: [sgtAddress, gov],
-    log: true,
-  });
+  // ── Deploy (UUPS proxy, idempotent) ─────────────────────────────────────────
+  const existingReg = await hre.deployments.getOrNull("OperatorRegistry");
+
+  let proxyAddress: string;
+  if (existingReg) {
+    console.log("  OperatorRegistry already deployed at:", existingReg.address);
+    proxyAddress = existingReg.address;
+  } else {
+    const Factory = await hre.ethers.getContractFactory("OperatorRegistry", accounts.deployer);
+    const proxy = await hre.upgrades.deployProxy(Factory, [sgtAddress, gov], {
+      kind: "uups",
+      initializer: "initialize",
+    });
+    await proxy.waitForDeployment();
+    proxyAddress = await proxy.getAddress();
+
+    const artifact = await hre.artifacts.readArtifact("OperatorRegistry");
+    await hre.deployments.save("OperatorRegistry", {
+      address: proxyAddress,
+      abi: artifact.abi,
+      transactionHash: proxy.deploymentTransaction()?.hash,
+    });
+    console.log("  OperatorRegistry deployed (UUPS proxy) at:", proxyAddress);
+  }
+
+  const registry: OperatorRegistry = OperatorRegistry__factory.connect(proxyAddress, accounts.deployer);
 
   // ── Configure default bond tier ─────────────────────────────────────────────
   const currentConfig = await registry.bondConfigs(DEFAULT_CONFIG);
@@ -121,7 +142,7 @@ const func: DeployFunction = async hre => {
     const currentRegistry = await validatorModule.operatorRegistry();
     if (currentRegistry.toLowerCase() === ZeroAddress.toLowerCase()) {
       console.log("  Wiring OperatorRegistry → ValidatorModule...");
-      await validatorModule.connect(govSigner).setOperatorRegistry(registry.target as string);
+      await validatorModule.connect(govSigner).setOperatorRegistry(proxyAddress);
       // Grant CALLER role so ValidatorModule can call incrementActive/decrementActive
       await registry.connect(govSigner).grantCaller(validatorModuleAddress);
       console.log("  ValidatorModule wired ✓");
