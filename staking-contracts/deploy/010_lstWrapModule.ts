@@ -1,6 +1,7 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {LSTWrapModule__factory, StEthPriceOracle__factory, StakingRouter__factory} from "../types";
+import type {LSTWrapModule} from "../types";
 import {parseEther} from "ethers";
 import {
   assertGovernanceSigner,
@@ -78,12 +79,33 @@ const func: DeployFunction = async hre => {
   const pauseAfterRegistration = readPauseAfterRegistration(hre, LST_WRAP_PAUSED_ENV_KEYS, "LSTWrapModule");
   const moduleId = hre.ethers.keccak256(hre.ethers.toUtf8Bytes(LST_WRAP_STETH));
 
+  // Deploy LSTWrapModule as UUPS proxy (idempotent)
+  const existingLST = await hre.deployments.getOrNull("LSTWrapModule");
+
+  let proxyAddress: string;
+  if (existingLST) {
+    console.log("  LSTWrapModule already deployed at:", existingLST.address);
+    proxyAddress = existingLST.address;
+  } else {
+    const Factory = await hre.ethers.getContractFactory("LSTWrapModule", accounts.deployer);
+    const proxy = await hre.upgrades.deployProxy(Factory, [routerAddress, moduleId, stethAddress, gov], {
+      kind: "uups",
+      initializer: "initialize",
+    });
+    await proxy.waitForDeployment();
+    proxyAddress = await proxy.getAddress();
+
+    const artifact = await hre.artifacts.readArtifact("LSTWrapModule");
+    await hre.deployments.save("LSTWrapModule", {
+      address: proxyAddress,
+      abi: artifact.abi,
+      transactionHash: proxy.deploymentTransaction()?.hash,
+    });
+    console.log("  LSTWrapModule deployed (UUPS proxy) at:", proxyAddress);
+  }
+
   // Deploy the LST module pointing at the on-chain stETH token.
-  const {contract: lstMod} = await deploy(LSTWrapModule__factory, {
-    from: accounts.deployer,
-    args: [routerAddress, moduleId, stethAddress, gov],
-    log: true,
-  });
+  const lstMod: LSTWrapModule = LSTWrapModule__factory.connect(proxyAddress, accounts.deployer);
 
   // Deploy the price oracle that round-trips through the canonical stETH contract.
   const {contract: priceOracle} = await deploy(StEthPriceOracle__factory, {
@@ -99,7 +121,7 @@ const func: DeployFunction = async hre => {
   // Register with the router. Conservative initial cap.
   const router = await connect(StakingRouter__factory);
   const moduleType = await lstMod.moduleType();
-  const moduleRuntimeCode = await hre.ethers.provider.getCode(lstMod.target as string);
+  const moduleRuntimeCode = await hre.ethers.provider.getCode(proxyAddress);
   const moduleCodeHash = hre.ethers.keccak256(moduleRuntimeCode);
   if (!(await router.moduleCodeHashAllowed(moduleType, moduleCodeHash))) {
     console.log(`  Allowlisting LSTWrapModule code hash (${moduleCodeHash})...`);
@@ -109,7 +131,7 @@ const func: DeployFunction = async hre => {
   if (existing.addr === "0x0000000000000000000000000000000000000000") {
     const cap = parseEther("1000");
     console.log(`  Registering LSTWrapModule with router (cap=${cap} wei)...`);
-    await router.connect(govSigner).registerModule(moduleId, lstMod.target as string, cap);
+    await router.connect(govSigner).registerModule(moduleId, proxyAddress, cap);
   }
   await pauseModuleAfterRegistrationIfRequested(router, govSigner, moduleId, "LSTWrapModule", pauseAfterRegistration);
 };
