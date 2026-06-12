@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import {Test} from "forge-std/Test.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {StToken} from "contracts/v2/modular-staking/StToken.sol";
 import {WstToken} from "contracts/v2/modular-staking/WstToken.sol";
 import {StakingRouter} from "contracts/v2/modular-staking/StakingRouter.sol";
@@ -67,9 +68,23 @@ contract ModularStakingInvariants is Test {
       5000,
       0 // no debt pool split
     );
-    router = new StakingRouter(address(stToken), gov);
+    // Deploy StakingRouter behind ERC-1967 UUPS proxy
+    StakingRouter routerImpl = new StakingRouter();
+    router = StakingRouter(
+      payable(address(new ERC1967Proxy(
+        address(routerImpl),
+        abi.encodeCall(StakingRouter.initialize, (address(stToken), gov))
+      )))
+    );
     mockBeaconDeposit = new MockBeaconDeposit();
-    validatorModule = new ValidatorModule(address(router), SOLO, gov, address(mockBeaconDeposit));
+    // Deploy ValidatorModule behind ERC-1967 UUPS proxy
+    ValidatorModule vmImpl = new ValidatorModule();
+    validatorModule = ValidatorModule(
+      payable(address(new ERC1967Proxy(
+        address(vmImpl),
+        abi.encodeCall(ValidatorModule.initialize, (address(router), SOLO, gov, address(mockBeaconDeposit)))
+      )))
+    );
     queue = new WithdrawalQueueV2(address(stToken), gov);
     oracleAdapter = new OracleAdapter(address(validatorModule), gov);
 
