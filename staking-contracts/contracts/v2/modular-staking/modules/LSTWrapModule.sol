@@ -193,6 +193,14 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     function setPriceOracle(address oracle) external onlyRole(GOV) {
         if (oracle == address(0)) revert Errors.ZeroAddress();
         priceOracle = ILSTPriceOracle(oracle);
+        // Seed the drift-guard reference price so the very first wrapLST call is
+        // protected. Without this, _lastWrapPrice == 0 bypasses the drift check
+        // entirely on bootstrap, allowing oracle-manipulation on the first wrap.
+        uint256 seedPrice = ILSTPriceOracle(oracle).getEthValue(1e18);
+        if (seedPrice > 0) {
+            _lastWrapPrice = seedPrice;
+            _lastWrapPriceBlock = block.number;
+        }
         emit PriceOracleSet(oracle);
     }
 
