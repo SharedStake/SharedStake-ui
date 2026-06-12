@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IStakingRouter} from "../interfaces/IStakingRouter.sol";
 import {IStakingModule} from "../interfaces/IStakingModule.sol";
 import {ILSTPriceOracle} from "../interfaces/ILSTPriceOracle.sol";
-import {GranularPause} from "../../lib/GranularPause.sol";
+import {GranularPauseUpgradeable} from "../../lib/GranularPauseUpgradeable.sol";
 import {Errors} from "../../lib/Errors.sol";
 
 /// @title LSTWrapModule - accept LSTs (stETH, rETH, etc.) and mint stToken
@@ -24,7 +27,8 @@ import {Errors} from "../../lib/Errors.sol";
 /// Roles:
 ///   GOV       — set price oracle, pause/unpause
 ///   GUARDIAN  — emergency pause
-contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakingModule {
+/// @custom:oz-upgrades-unsafe-allow constructor
+contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable, GranularPauseUpgradeable, IStakingModule {
     using SafeERC20 for IERC20;
 
     // ── Roles ─────────────────────────────────────────────────────────────────
@@ -35,10 +39,10 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     uint16 public constant PAUSE_WRAP = 0;
     uint16 public constant PAUSE_UNWRAP = 1;
 
-    // ── Immutables ────────────────────────────────────────────────────────────
-    IStakingRouter public immutable ROUTER;
-    bytes32 public immutable MODULE_ID;
-    IERC20 public immutable LST_TOKEN;
+    // ── State (was immutables) ────────────────────────────────────────────────
+    IStakingRouter public ROUTER;
+    bytes32 public MODULE_ID;
+    IERC20 public LST_TOKEN;
 
     // ── State ─────────────────────────────────────────────────────────────────
     ILSTPriceOracle public priceOracle;
@@ -54,7 +58,7 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     uint256 public maxWrapPriceDriftBps = 1000; // 10%
 
     // Per-block price observation for the wrap-side drift guard.
-    uint256 private _lastWrapPrice;      // ETH per LST unit scaled by 1e18
+    uint256 private _lastWrapPrice; // ETH per LST unit scaled by 1e18
     uint256 private _lastWrapPriceBlock;
 
     // ── Events ────────────────────────────────────────────────────────────────
@@ -69,7 +73,15 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     error InsufficientLstHeld(uint256 requested, uint256 held);
     error WrapPriceDriftTooHigh(uint256 currentPrice, uint256 lastPrice, uint256 driftBps, uint256 maxDriftBps);
 
-    constructor(address router, bytes32 moduleId, address lstToken, address gov) {
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address router, bytes32 moduleId, address lstToken, address gov) public initializer {
+        __AccessControl_init();
+        __ReentrancyGuard_init();
+        __UUPSUpgradeable_init();
+
         if (router == address(0) || lstToken == address(0) || gov == address(0)) {
             revert Errors.ZeroAddress();
         }
@@ -81,6 +93,13 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
         _grantRole(DEFAULT_ADMIN_ROLE, gov);
         _grantRole(GOV, gov);
         _grantRole(GUARDIAN, gov);
+    }
+
+    function _authorizeUpgrade(address) internal override onlyRole(GOV) {}
+
+    /// @dev Disambiguate _msgSender across ContextUpgradeable and GranularPauseUpgradeable.
+    function _msgSender() internal view override(ContextUpgradeable, GranularPauseUpgradeable) returns (address) {
+        return super._msgSender();
     }
 
     // ── User entry/exit ──────────────────────────────────────────────────────
@@ -231,4 +250,7 @@ contract LSTWrapModule is AccessControl, ReentrancyGuard, GranularPause, IStakin
     function lstHeld() external view returns (uint256) {
         return _lstHeld;
     }
+
+    // ── Storage gap ─────────────────────────────────────────────────────────────
+    uint256[50] private __gap;
 }
