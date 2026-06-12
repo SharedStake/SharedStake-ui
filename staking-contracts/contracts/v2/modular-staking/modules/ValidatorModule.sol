@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {IStakingRouter} from "../interfaces/IStakingRouter.sol";
 import {IStakingModule} from "../interfaces/IStakingModule.sol";
 import {IDepositContract} from "../../interfaces/IDepositContract.sol";
 import {IOperatorRegistry} from "../interfaces/IOperatorRegistry.sol";
-import {GranularPause} from "../../lib/GranularPause.sol";
+import {GranularPauseUpgradeable} from "../../lib/GranularPauseUpgradeable.sol";
 import {Errors} from "../../lib/Errors.sol";
 
 /// @title ValidatorModule - solo-validator staking module behind StakingRouter
@@ -23,7 +26,8 @@ import {Errors} from "../../lib/Errors.sol";
 ///   ORACLE       — submit beacon balance reports (typically `OracleAdapter`)
 ///   GUARDIAN     — emergency pause
 ///   NODE_OPERATOR— call `depositToBeaconChain` with a validator's deposit data
-contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStakingModule {
+/// @custom:oz-upgrades-unsafe-allow constructor
+contract ValidatorModule is Initializable, UUPSUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable, GranularPauseUpgradeable, IStakingModule {
     // ── Roles ─────────────────────────────────────────────────────────────────
     bytes32 public constant GOV = keccak256("GOV");
     bytes32 public constant ORACLE = keccak256("ORACLE");
@@ -40,13 +44,13 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     address public constant DEFAULT_BEACON_DEPOSIT_CONTRACT = 0x00000000219ab540356cBB839Cbe05303d7705Fa;
     uint256 public constant DEPOSIT_AMOUNT = 32 ether;
 
-    // ── Immutables ────────────────────────────────────────────────────────────
-    IStakingRouter public immutable ROUTER;
-    bytes32 public immutable MODULE_ID;
+    // ── State (was immutables) ────────────────────────────────────────────────
+    IStakingRouter public ROUTER;
+    bytes32 public MODULE_ID;
     /// @notice Configurable beacon-chain deposit contract. Defaults to the mainnet
     ///         address when constructor arg is `address(0)`. Holesky/Hoodi and
     ///         hardhat tests pass alternative addresses.
-    address public immutable BEACON_DEPOSIT_CONTRACT;
+    address public BEACON_DEPOSIT_CONTRACT;
 
     // ── State ─────────────────────────────────────────────────────────────────
     uint256 internal _bufferedEther; // ETH held here, pending validator assignment
@@ -81,7 +85,15 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
     error OperatorNotEligible(address operator);
     error PubkeyNotApproved(bytes32 pubkeyHash);
 
-    constructor(address router, bytes32 moduleId, address gov, address beaconDepositContract) {
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address router, bytes32 moduleId, address gov, address beaconDepositContract) public initializer {
+        __AccessControl_init();
+        __ReentrancyGuard_init();
+        __UUPSUpgradeable_init();
+
         if (router == address(0) || gov == address(0)) revert Errors.ZeroAddress();
         if (moduleId == bytes32(0)) revert Errors.InvalidAmount();
         ROUTER = IStakingRouter(router);
@@ -93,6 +105,13 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
         _grantRole(DEFAULT_ADMIN_ROLE, gov);
         _grantRole(GOV, gov);
         _grantRole(GUARDIAN, gov);
+    }
+
+    function _authorizeUpgrade(address) internal override onlyRole(GOV) {}
+
+    /// @dev Disambiguate _msgSender across ContextUpgradeable and GranularPauseUpgradeable.
+    function _msgSender() internal view override(ContextUpgradeable, GranularPauseUpgradeable) returns (address) {
+        return super._msgSender();
     }
 
     // ── Module hooks (router-only) ───────────────────────────────────────────
@@ -315,4 +334,7 @@ contract ValidatorModule is AccessControl, ReentrancyGuard, GranularPause, IStak
         _bufferedEther += unaccounted;
         emit ExitedEthSwept(unaccounted, _bufferedEther);
     }
+
+    // ── Storage gap ─────────────────────────────────────────────────────────────
+    uint256[50] private __gap;
 }
