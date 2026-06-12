@@ -24,7 +24,7 @@ describe("QuorumOracleAdapter operational flows", () => {
 
   async function latestTs(): Promise<bigint> {
     const blk = await ethers.provider.getBlock("latest");
-    return BigInt(blk!.timestamp);
+    return BigInt(blk!.timestamp) - 30n; // beacon slot timestamps are always in the past (MIN_REPORT_TIMESTAMP_AGE = 12s)
   }
 
   beforeEach(async () => {

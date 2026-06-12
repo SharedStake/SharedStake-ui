@@ -22,6 +22,7 @@ contract QuorumOracleAdapter is AccessControl {
 
     uint256 public constant MIN_DRIFT_BPS = 100; // 1% minimum drift cap (cannot be disabled)
     uint256 public constant MIN_SLASH_BPS = 50; // 0.5% minimum slash cap (cannot be disabled)
+    uint256 public constant MIN_REPORT_TIMESTAMP_AGE = 12; // 1 Ethereum beacon slot = 12 s
 
     uint256 public maxStalenessSeconds = 6 hours;
     uint256 public maxDriftBps = 1000; // 10% per-validator balance change cap
@@ -84,6 +85,7 @@ contract QuorumOracleAdapter is AccessControl {
     error InvalidBeaconReportTuple(uint256 beaconValidators, uint256 beaconBalance);
     error NonMonotonicReportTimestamp(uint256 reportTimestamp, uint256 lastReportTimestamp);
     error ReportTooFrequent(uint256 earliestNextReportTime, uint256 currentTime);
+    error ReportTimestampTooFresh(uint256 reportTimestamp, uint256 blockTimestamp, uint256 minAge);
 
     constructor(address reportTarget, address gov, uint256 initialQuorum) {
         if (reportTarget == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -138,6 +140,9 @@ contract QuorumOracleAdapter is AccessControl {
         OracleValidation.validateBeaconTuple(beaconValidators, beaconBalance);
         OracleValidation.validateTimestamp(reportTimestamp, lastReportTimestamp);
         OracleValidation.validateReportInterval(lastReportTime, minReportIntervalSeconds);
+        if (block.timestamp - reportTimestamp < MIN_REPORT_TIMESTAMP_AGE) {
+            revert ReportTimestampTooFresh(reportTimestamp, block.timestamp, MIN_REPORT_TIMESTAMP_AGE);
+        }
         OracleValidation.validateStaleness(reportTimestamp, maxStalenessSeconds);
         OracleValidation.validateDrift(beaconValidators, beaconBalance, lastBeaconValidators, lastBeaconBalance, maxDriftBps);
         OracleValidation.validateSlashGuard(beaconBalance, lastBeaconBalance, maxSlashBps);
