@@ -263,11 +263,9 @@ contract DVTModule is ValidatorModule {
 
         bytes32 pkHash = keccak256(pubkeyMem);
         if (!approvedPubkeys[pkHash]) revert PubkeyNotApproved(pkHash);
-        // Clear approval after use — each pubkey can only be deposited once
+        // Clear approval before external call — each pubkey can only be deposited once
         delete approvedPubkeys[pkHash];
         if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
-        _depositedPubkeys[pkHash] = true;
-        _depositedValidatorCount += 1;
 
         _bufferedEther -= DEPOSIT_AMOUNT;
 
@@ -277,6 +275,11 @@ contract DVTModule is ValidatorModule {
             signatureMem,
             depositDataRootMem
         );
+
+        // Mark deposited only after confirmed success — prevents permanent blacklist if
+        // the beacon deposit reverts (e.g. malformed BLS data), matching ValidatorModule fix.
+        _depositedPubkeys[pkHash] = true;
+        _depositedValidatorCount += 1;
 
         ROUTER.notifyBeaconDeposit(MODULE_ID, DEPOSIT_AMOUNT);
         emit BeaconChainDeposit(pubkeyMem, DEPOSIT_AMOUNT, _bufferedEther);
