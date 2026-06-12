@@ -1,7 +1,7 @@
 import {isAddress, ZeroAddress} from "ethers";
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
-import {DVTModule__factory, OperatorRegistry__factory, ValidatorModule__factory} from "../types";
+import {OperatorRegistry__factory, ValidatorModule__factory} from "../types";
 import {assertGovernanceSigner, getGovernanceSigner} from "../helpers/moduleDeployment";
 import {isLocalNetwork, resolveGovernanceAddress} from "../helpers/governance";
 
@@ -132,22 +132,7 @@ const func: DeployFunction = async hre => {
     console.log("  ValidatorModule not deployed — skipping wire");
   }
 
-  // ── Wire to DVTModule ───────────────────────────────────────────────────────
-  const dvtModuleAddress = await address(DVTModule__factory);
-  if (dvtModuleAddress) {
-    const dvtModule = await connect(DVTModule__factory);
-    const currentRegistry = await dvtModule.operatorRegistry();
-    if (currentRegistry.toLowerCase() === ZeroAddress.toLowerCase()) {
-      console.log("  Wiring OperatorRegistry → DVTModule...");
-      await dvtModule.connect(govSigner).setOperatorRegistry(registry.target as string);
-      await registry.connect(govSigner).grantCaller(dvtModuleAddress);
-      console.log("  DVTModule wired ✓");
-    } else {
-      console.log("  DVTModule already wired to a registry:", currentRegistry);
-    }
-  } else {
-    console.log("  DVTModule not deployed — skipping wire");
-  }
+  // DVTModule wiring deferred to feat/dvt-module (PR 381)
 };
 
 export default func;

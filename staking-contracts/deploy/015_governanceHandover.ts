@@ -17,7 +17,7 @@ const GOVERNED_DEPLOYMENTS = [
   "OracleAdapterValidator",
   "StakingRouter",
   "ValidatorModule",
-  "DVTModule",
+  // "DVTModule" — deferred to feat/dvt-module (PR 381)
   "LSTWrapModule",
   "QuorumOracleAdapter",
   "InstitutionalPolicyRegistry",
