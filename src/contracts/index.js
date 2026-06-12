@@ -28,7 +28,6 @@ import stakingRouterABI from './abis/stakingRouter.json'
 import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
 import oldVeth2WithdrawalQueueABI from './abis/oldVeth2WithdrawalQueue.json'
 import validatorModuleABI from './abis/validatorModule.json'
-import dvtModuleABI from './abis/dvtModule.json'
 import operatorRegistryABI from './abis/operatorRegistry.json'
 
 // Chain-specific contract addresses
@@ -135,7 +134,6 @@ let _ABIs = {
     withdrawalQueueV2: withdrawalQueueV2ABI,
     oldVeth2WithdrawalQueue: oldVeth2WithdrawalQueueABI,
     validatorModule: validatorModuleABI,
-    dvtModule: dvtModuleABI,
     operatorRegistry: operatorRegistryABI
 }
 

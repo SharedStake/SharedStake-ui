@@ -82,7 +82,7 @@
         Want to run validators?
       </div>
       <p class="text-xs text-muted-foreground mb-4">
-        Solo operators and DVT clusters bond SGT to earn validator slots.
+        Solo operators bond SGT to earn validator slots.
       </p>
       <div class="flex gap-3">
         <router-link
@@ -90,12 +90,6 @@
           class="flex-1 text-center rounded-lg bg-pink-600 py-2 text-sm font-medium text-white hover:bg-pink-500"
         >
           Register as Solo Operator
-        </router-link>
-        <router-link
-          to="/dvt-stake"
-          class="flex-1 text-center rounded-lg bg-muted py-2 text-sm font-medium text-foreground hover:bg-muted/80"
-        >
-          Join a DVT Cluster
         </router-link>
       </div>
     </div>

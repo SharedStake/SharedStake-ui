@@ -51,9 +51,6 @@
         <DropdownItemRouter to="/solo-stake">
           Run a Solo Validator
         </DropdownItemRouter>
-        <DropdownItemRouter to="/dvt-stake">
-          Run a DVT Cluster
-        </DropdownItemRouter>
       </DropdownGroup>
     </div>
 

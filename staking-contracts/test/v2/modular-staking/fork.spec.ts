@@ -15,7 +15,6 @@
  *   1. ValidatorModule routes 32 ETH to the beacon deposit contract address
  *   2. Withdrawal-credentials enforcement fires before the external call
  *   3. ETH accounting is correct post-deposit
- *   4. DVTModule cluster-gating blocks unclustered deposits
  */
 import {ethers} from "hardhat";
 import {expect} from "chai";
@@ -23,7 +22,6 @@ import {parseEther, ZeroAddress} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
 
 const SOLO = ethers.keccak256(ethers.toUtf8Bytes("FORK_SOLO"));
-const DVT_M = ethers.keccak256(ethers.toUtf8Bytes("FORK_DVT"));
 const NODE_OPERATOR_ROLE = ethers.keccak256(ethers.toUtf8Bytes("NODE_OPERATOR"));
 
 // Canonical mainnet beacon deposit contract — we'll shadow it with our mock.
@@ -40,10 +38,8 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
   let stToken: any;
   let router: any;
   let validatorModule: any;
-  let dvtModule: any;
   let queue: any;
   let validatorExpectedCreds: string;
-  let dvtExpectedCreds: string;
 
   before(async () => {
     [deployer, gov, alice, nodeOp] = await ethers.getSigners();
@@ -69,23 +65,16 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
     const ValidatorModule = await ethers.getContractFactory("ValidatorModule");
     validatorModule = await ValidatorModule.deploy(router.target, SOLO, gov.address, BEACON_DEPOSIT_CONTRACT);
 
-    const DVTModule = await ethers.getContractFactory("DVTModule");
-    dvtModule = await DVTModule.deploy(router.target, DVT_M, gov.address, BEACON_DEPOSIT_CONTRACT);
-
     // ── Role wiring ───────────────────────────────────────────────────────
     await stToken.addMinter(router.target);
     await stToken.addMinter(queue.target);
 
     await router.connect(gov).registerModule(SOLO, validatorModule.target, 0);
-    await router.connect(gov).registerModule(DVT_M, dvtModule.target, 0);
     await router.connect(gov).setDefaultModule(SOLO);
 
     await validatorModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, gov.address);
-    await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, nodeOp.address);
     validatorExpectedCreds = ethers.hexlify(ethers.randomBytes(32));
-    dvtExpectedCreds = ethers.hexlify(ethers.randomBytes(32));
     await validatorModule.connect(gov).setExpectedWithdrawalCredentials(validatorExpectedCreds);
-    await dvtModule.connect(gov).setExpectedWithdrawalCredentials(dvtExpectedCreds);
   });
 
   // ── helpers ───────────────────────────────────────────────────────────
@@ -138,51 +127,6 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
       .to.not.be.reverted;
 
     expect(await validatorModule.bufferedEther()).to.equal(0n);
-  });
-
-  // ── DVTModule cluster-gating fork tests ──────────────────────────────
-
-  it("DVTModule: blocks depositToBeaconChain when no cluster registered", async () => {
-    await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("cluster-1"));
-    const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-
-    await expect(
-      dvtModule
-        .connect(nodeOp)
-        .depositToBeaconChainInCluster(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
-    ).to.be.revertedWithCustomError(dvtModule, "UseProposalQueue");
-  });
-
-  it("DVTModule: allows deposit after cluster is registered", async () => {
-    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("cluster-1"));
-    const operators = [nodeOp.address, gov.address];
-    await dvtModule.connect(gov).registerCluster(CLUSTER_ID, operators, 1);
-
-    const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-    const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
-
-    await dvtModule.connect(gov).approvePubkey(pubkey);
-    // depositToBeaconChainInCluster is deprecated; use proposeDeposit which auto-executes at threshold=1
-    await dvtModule.connect(nodeOp).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
-
-    const beaconAfter = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
-    expect(beaconAfter - beaconBefore).to.equal(parseEther("32"));
-  });
-
-  it("DVTModule: deactivating a cluster blocks further deposits", async () => {
-    await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("cluster-1"));
-    await dvtModule.connect(gov).deactivateCluster(CLUSTER_ID);
-
-    const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-    await expect(
-      dvtModule
-        .connect(nodeOp)
-        .depositToBeaconChainInCluster(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
-    ).to.be.revertedWithCustomError(dvtModule, "UseProposalQueue");
   });
 
   // ── Fee distribution fork tests ──────────────────────────────────────
@@ -530,241 +474,4 @@ describeFork("SharedStake V2 Fork (mainnet beacon deposit)", () => {
     });
   });
 
-  // ── DVT multi-operator threshold fork tests ────────────────────────────
-
-  describe("DVT multi-operator threshold", () => {
-    let op1: SignerWithAddress;
-    let op2: SignerWithAddress;
-    let op3: SignerWithAddress;
-
-    before(async () => {
-      const allSigners = await ethers.getSigners();
-      [op1, op2, op3] = [allSigners[4], allSigners[5], allSigners[6]];
-
-      // Grant NODE_OPERATOR role to all operators
-      const NODE_OPERATOR_ROLE = ethers.keccak256(ethers.toUtf8Bytes("NODE_OPERATOR"));
-      await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, op1.address);
-      await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, op2.address);
-      await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, op3.address);
-    });
-
-    it("registers a 2-of-3 cluster", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster"));
-      const operators = [op1.address, op2.address, op3.address];
-      await expect(dvtModule.connect(gov).registerCluster(CLUSTER_ID, operators, 2)).to.not.be.reverted;
-
-      const cluster = await dvtModule.getCluster(CLUSTER_ID);
-      expect(cluster.threshold).to.equal(2);
-      expect(cluster.operators.length).to.equal(3);
-    });
-
-    it("single operator proposeDeposit does not auto-execute for threshold=2", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-2"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
-
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
-
-      // Get proposal ID from event
-      const receipt = await tx.wait();
-      const event = receipt?.logs.find((log: any) => {
-        try {
-          const parsed = dvtModule.interface.parseLog(log);
-          return parsed?.name === "DepositProposed";
-        } catch {
-          return false;
-        }
-      });
-      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
-
-      const proposal = await dvtModule.depositProposals(proposalId);
-      expect(proposal.approvalCount).to.equal(1n);
-      expect(proposal.executed).to.be.false;
-    });
-
-    it("second operator approveDeposit reaches threshold and executes", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-3"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
-
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-      await dvtModule.connect(gov).approvePubkey(pubkey);
-      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
-
-      const receipt = await tx.wait();
-      const event = receipt?.logs.find((log: any) => {
-        try {
-          const parsed = dvtModule.interface.parseLog(log);
-          return parsed?.name === "DepositProposed";
-        } catch {
-          return false;
-        }
-      });
-      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
-
-      const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
-
-      await dvtModule.connect(op2).approveDeposit(proposalId);
-
-      const beaconAfter = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
-      expect(beaconAfter - beaconBefore).to.equal(parseEther("32"));
-
-      const proposal = await dvtModule.depositProposals(proposalId);
-      expect(proposal.executed).to.be.true;
-    });
-
-    it("third approval after execution does nothing (proposal already executed)", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-4"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
-
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-      await dvtModule.connect(gov).approvePubkey(pubkey);
-      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
-
-      const receipt = await tx.wait();
-      const event = receipt?.logs.find((log: any) => {
-        try {
-          const parsed = dvtModule.interface.parseLog(log);
-          return parsed?.name === "DepositProposed";
-        } catch {
-          return false;
-        }
-      });
-      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
-
-      await dvtModule.connect(op2).approveDeposit(proposalId);
-
-      await expect(dvtModule.connect(op3).approveDeposit(proposalId)).to.be.revertedWithCustomError(
-        dvtModule,
-        "ProposalNotActive",
-      );
-    });
-
-    it("cancelProposal blocks further approvals", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-5"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
-
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
-
-      const receipt = await tx.wait();
-      const event = receipt?.logs.find((log: any) => {
-        try {
-          const parsed = dvtModule.interface.parseLog(log);
-          return parsed?.name === "DepositProposed";
-        } catch {
-          return false;
-        }
-      });
-      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
-
-      // Only the proposer (op1) or GOV can cancel — op2 cancel would revert NotProposerOrGov.
-      await dvtModule.connect(op1).cancelProposal(proposalId);
-
-      // After cancellation approvalCount is reset to 0, so ProposalNotFound fires before ProposalNotActive.
-      await expect(dvtModule.connect(op3).approveDeposit(proposalId)).to.be.revertedWithCustomError(
-        dvtModule,
-        "ProposalNotFound",
-      );
-    });
-
-    it("non-proposer cluster operator cannot cancel another member's proposal", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("2-of-3-cluster-grief-test"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address, op2.address, op3.address], 2);
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
-      const receipt = await tx.wait();
-      const event = receipt?.logs.find((log: any) => {
-        try { return dvtModule.interface.parseLog(log)?.name === "DepositProposed"; } catch { return false; }
-      });
-      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
-
-      // op2 is a cluster peer but NOT the proposer — should revert
-      await expect(dvtModule.connect(op2).cancelProposal(proposalId)).to.be.revertedWithCustomError(
-        dvtModule,
-        "NotProposerOrGov",
-      );
-    });
-
-    it("threshold=1 cluster: proposeDeposit auto-executes without separate approve call", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("1-of-1-cluster"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address], 1);
-
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-      const beaconBefore = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
-
-      await dvtModule.connect(gov).approvePubkey(pubkey);
-      const tx = await dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot);
-
-      const beaconAfter = await ethers.provider.getBalance(BEACON_DEPOSIT_CONTRACT);
-      expect(beaconAfter - beaconBefore).to.equal(parseEther("32"));
-
-      const receipt = await tx.wait();
-      const event = receipt?.logs.find((log: any) => {
-        try {
-          const parsed = dvtModule.interface.parseLog(log);
-          return parsed?.name === "DepositProposed";
-        } catch {
-          return false;
-        }
-      });
-      const proposalId = event ? dvtModule.interface.parseLog(event).args.proposalId : ethers.ZeroHash;
-
-      const proposal = await dvtModule.depositProposals(proposalId);
-      expect(proposal.executed).to.be.true;
-    });
-
-    it("depositToBeaconChainInCluster reverts UseProposalQueue", async () => {
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("deprecated-cluster"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address], 1);
-
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-
-      await expect(
-        dvtModule.connect(op1).depositToBeaconChainInCluster(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
-      ).to.be.revertedWithCustomError(dvtModule, "UseProposalQueue");
-    });
-
-    it("unregistered operator cannot propose even in valid cluster", async () => {
-      // Deploy a local registry with no bonded operators for this test.
-      const MockERC20 = await ethers.getContractFactory("MockERC20");
-      const localSgt = await MockERC20.deploy("SGT", "SGT");
-      const OperatorRegistryFactory = await ethers.getContractFactory("OperatorRegistry");
-      const localRegistry = await OperatorRegistryFactory.deploy(localSgt.target, gov.address);
-
-      // Set operatorRegistry on dvtModule
-      await dvtModule.connect(gov).setOperatorRegistry(localRegistry.target);
-
-      // Grant CALLER role to dvtModule
-      await localRegistry.connect(gov).grantCaller(dvtModule.target);
-
-      const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("registry-cluster"));
-      await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [op1.address], 1);
-
-      await router.connect(alice).submitToModule(DVT_M, ZeroAddress, {value: parseEther("32")});
-
-      const {pubkey, withdrawalCreds, signature, depositDataRoot} = randDeposit(dvtExpectedCreds);
-
-      // op1 is not registered in operatorRegistry
-      await expect(
-        dvtModule.connect(op1).proposeDeposit(CLUSTER_ID, pubkey, withdrawalCreds, signature, depositDataRoot),
-      ).to.be.revertedWithCustomError(dvtModule, "OperatorNotEligible");
-
-      // Restore registry state for other tests
-      await dvtModule.connect(gov).setOperatorRegistry(ZeroAddress);
-    });
-  });
 });

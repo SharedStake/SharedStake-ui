@@ -179,13 +179,6 @@
         </router-link>
         <router-link
           class="link"
-          to="/dvt-stake"
-          @click.native="showSidebar = false"
-        >
-          DVT Cluster
-        </router-link>
-        <router-link
-          class="link"
           to="/govern"
           @click.native="showSidebar = false"
         >
