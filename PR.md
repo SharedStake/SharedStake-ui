@@ -1,18 +1,24 @@
 ## Summary
-- Ship modular staking V2: ERC4626 wrapper, veSGT governance locks, DVT staking panel, old vEth2 withdrawal queue with history UI
+- Ship modular staking V3: UUPS-upgradeable StakingRouter, ValidatorModule, LSTWrapModule, OperatorRegistry
+- DVTModule extracted to `feat/dvt-module` (PR 381) for independent security review; registers post-launch via `StakingRouter.registerModule()` with zero core contract changes
 - 4-round Solidity security audit: 22+ bugs fixed (inflation-attack DoS, OracleAdapter last-submitter guard, BigInt-unsafe test assertions, and more)
 - CI hardening: Foundry invariant pipeline + retry wrapper for flaky foundryup installs
 
 ## Changes
-- `staking-contracts/`: ERC4626 wrapper contracts, veSGT locks, modular staking modules, deploy scripts, 22+ security fixes across 4 audit rounds
-- `src/components/ModularStaking/DVTStakePanel.vue`: new DVT staking panel with reactive state
+- `staking-contracts/contracts/`: four core contracts converted to UUPS proxies (ERC-1967); `GranularPauseUpgradeable` added to resolve C3 linearization conflict
+- `staking-contracts/deploy/`: all four proxy deploy scripts updated to use `hre.upgrades.deployProxy()` + hardhat-deploy compatibility shim
+- `staking-contracts/test/v2/modular-staking/upgrades.spec.ts`: 13 new tests covering proxy initialization and `_authorizeUpgrade` access control
+- `staking-contracts/.gitignore`: scoped `.openzeppelin` ignore to `unknown-*.json` only — real-network manifest files are now tracked for upgrade safety
 - `src/components/FAQ/FAQ.vue` + withdrawals history table for old vEth2 queue
-- `docs/modular-staking/`: updated deployment guide, audit workflow, architecture docs; removed 3k lines of stale handoff/AI docs
+- `docs/`: architecture docs updated for UUPS proxies and DVT split; deployment guide includes `.openzeppelin/` operational runbook
 - `.github/workflows/audit.yml`: Foundry invariant step + Slither static analysis
 
+## DVT Split
+DVTModule had 4 security findings across 5 audit rounds and is not included in this PR. It will ship as PR 381 (`feat/dvt-module`) after a dedicated audit pass. The router's `MODULE_TYPE_DVT_VALIDATOR` constant and `IStakingModule` interface are the only hooks left in — enough to register DVT post-launch with no core changes.
+
 ## Risk
+- Medium: UUPS proxy conversion — storage layout gaps (`uint256[50] __gap`) and `_disableInitializers()` on all implementations; validated with `hardhat-upgrades` storage checker
 - Medium: new ERC4626 wrapper is guarded by seeding on deploy to prevent inflation attack
-- Low: DVT panel and withdrawal history are UI-only with no new contract surface
 - Low: CI changes affect only the contract audit workflow
 
 ## Testing
