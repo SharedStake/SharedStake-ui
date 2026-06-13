@@ -89,7 +89,7 @@ contract ValidatorModule is Initializable, UUPSUpgradeable, AccessControlUpgrade
         _disableInitializers();
     }
 
-    function initialize(address router, bytes32 moduleId, address gov, address beaconDepositContract) public initializer {
+    function initialize(address router, bytes32 moduleId, address gov, address beaconDepositContract) public virtual initializer {
         __AccessControl_init();
         __ReentrancyGuard_init();
         __UUPSUpgradeable_init();
