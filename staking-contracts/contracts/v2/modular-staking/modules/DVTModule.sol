@@ -281,35 +281,31 @@ contract DVTModule is ValidatorModule {
         // Cluster must still be active at execution time — deactivation after proposal creation
         // (e.g. compromised operator discovered post-threshold) must block the deposit.
         if (!clusters[p.clusterId].active) revert ClusterNotActive(p.clusterId);
-        p.executed = true;
-        uint256 depositIndex = clusterDepositCount[p.clusterId]++;
-        emit ClusterDeposit(p.clusterId, depositIndex, p.pubkey);
 
-        // Copy storage to memory for calldata compatibility
+        // Copy storage to memory for calldata compatibility before any state changes.
         bytes memory pubkeyMem = p.pubkey;
         bytes memory withdrawalCredsMem = p.withdrawal_credentials;
         bytes memory signatureMem = p.signature;
         bytes32 depositDataRootMem = p.deposit_data_root;
 
-        // Inline deposit logic to handle storage->calldata conversion
-        if (_bufferedEther < DEPOSIT_AMOUNT) {
-            revert InsufficientBuffer(_bufferedEther, DEPOSIT_AMOUNT);
-        }
-
+        // ── Checks ────────────────────────────────────────────────────────────
+        if (_bufferedEther < DEPOSIT_AMOUNT) revert InsufficientBuffer(_bufferedEther, DEPOSIT_AMOUNT);
         _validateWithdrawalCredentials(withdrawalCredsMem);
-
-        if (BEACON_DEPOSIT_CONTRACT.code.length == 0) {
-            revert BeaconDepositContractUnavailable(BEACON_DEPOSIT_CONTRACT);
-        }
+        if (BEACON_DEPOSIT_CONTRACT.code.length == 0) revert BeaconDepositContractUnavailable(BEACON_DEPOSIT_CONTRACT);
 
         bytes32 pkHash = keccak256(pubkeyMem);
         if (!approvedPubkeys[pkHash]) revert PubkeyNotApproved(pkHash);
-        // Clear approval before external call — each pubkey can only be deposited once
-        delete approvedPubkeys[pkHash];
         if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
 
+        // ── Effects ───────────────────────────────────────────────────────────
+        p.executed = true;
+        uint256 depositIndex = clusterDepositCount[p.clusterId]++;
+        // Clear approval before external call — each pubkey can only be deposited once
+        delete approvedPubkeys[pkHash];
         _bufferedEther -= DEPOSIT_AMOUNT;
+        emit ClusterDeposit(p.clusterId, depositIndex, pubkeyMem);
 
+        // ── Interactions ──────────────────────────────────────────────────────
         IDepositContract(BEACON_DEPOSIT_CONTRACT).deposit{value: DEPOSIT_AMOUNT}(
             pubkeyMem,
             withdrawalCredsMem,
