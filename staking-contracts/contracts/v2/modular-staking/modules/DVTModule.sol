@@ -221,13 +221,16 @@ contract DVTModule is ValidatorModule {
         emit DepositApproved(proposalId, msg.sender, p.approvalCount, clusters[p.clusterId].threshold);
 
         if (p.approvalCount >= clusters[p.clusterId].threshold) {
-            // Executor eligibility check: mirrors proposeDeposit's canDeposit guard so the
-            // final approver (who pays the slot cost in operatorRegistry) is validated before
-            // the expensive execution path rather than inside incrementActive.
-            if (address(operatorRegistry) != address(0)) {
-                if (!operatorRegistry.canDeposit(msg.sender)) revert OperatorNotEligible(msg.sender);
-            }
+            _checkExecutorEligibility(msg.sender);
             _executeProposal(proposalId, msg.sender);
+        }
+    }
+
+    /// @dev Mirrors proposeDeposit's canDeposit guard for the final approver/executor.
+    ///      Validates before the expensive execution path rather than inside incrementActive.
+    function _checkExecutorEligibility(address executor) private view {
+        if (address(operatorRegistry) != address(0)) {
+            if (!operatorRegistry.canDeposit(executor)) revert OperatorNotEligible(executor);
         }
     }
 

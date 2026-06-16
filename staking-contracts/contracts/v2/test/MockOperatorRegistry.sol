@@ -10,23 +10,27 @@ contract MockOperatorRegistry is IOperatorRegistry {
         eligible[operator] = value;
     }
 
+    // solhint-disable-next-line no-empty-blocks
+    function incrementActive(address) external override {}
+
+    // solhint-disable-next-line no-empty-blocks
+    function decrementActive(address) external override {}
+
+    // solhint-disable-next-line no-empty-blocks
+    function lockNftForCredit(uint256) external override {}
+
+    // solhint-disable-next-line no-empty-blocks
+    function withdrawEscrowedNfts() external override {}
+
     function canDeposit(address operator) external view override returns (bool) {
         return eligible[operator];
     }
-
-    function incrementActive(address) external override {}
-
-    function decrementActive(address) external override {}
 
     function escrowedNftCount(address) external pure override returns (uint256) {
         return 0;
     }
 
-    function lockNftForCredit(uint256) external override {}
-
     function nftSgtCredit() external pure override returns (uint256) {
         return 0;
     }
-
-    function withdrawEscrowedNfts() external override {}
 }
