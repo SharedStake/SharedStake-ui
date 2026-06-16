@@ -231,9 +231,9 @@ contract ValidatorModule is Initializable, UUPSUpgradeable, AccessControlUpgrade
 
         bytes32 pkHash = keccak256(pubkey);
         if (!approvedPubkeys[pkHash]) revert PubkeyNotApproved(pkHash);
+        if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
         // Clear approval before external call — each pubkey can only be deposited once
         delete approvedPubkeys[pkHash];
-        if (_depositedPubkeys[pkHash]) revert DuplicatePubkey(pkHash);
 
         _bufferedEther -= DEPOSIT_AMOUNT;
 
