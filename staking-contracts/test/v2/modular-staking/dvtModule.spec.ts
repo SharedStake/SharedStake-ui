@@ -274,4 +274,93 @@ describe("DVTModule", () => {
       "IndexOutOfBounds",
     );
   });
+
+  it("deactivated cluster blocks approveDeposit (F-01 regression)", async () => {
+    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_DEACT_APPROVE"));
+    const NODE_OPERATOR_ROLE = await dvtModule.NODE_OPERATOR();
+    await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, outsider.address);
+    // threshold = 2 so nodeOp's proposal does not immediately execute
+    await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address, outsider.address], 2);
+
+    const pubkey = "0x" + "a1".repeat(48);
+    const sig = "0x" + "b2".repeat(96);
+    const dataRoot = "0x" + "c3".repeat(32);
+
+    await dvtModule.connect(nodeOp).proposeDeposit(CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot);
+
+    // GOV deactivates the cluster (e.g. compromised operator discovered)
+    await dvtModule.connect(gov).deactivateCluster(CLUSTER_ID);
+
+    const proposalId = ethers.keccak256(
+      ethers.AbiCoder.defaultAbiCoder().encode(
+        ["bytes32", "bytes", "bytes", "bytes", "bytes32"],
+        [CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot],
+      ),
+    );
+
+    // outsider should not be able to push the proposal past threshold after deactivation
+    await expect(dvtModule.connect(outsider).approveDeposit(proposalId)).to.be.revertedWithCustomError(
+      dvtModule,
+      "ClusterNotActive",
+    );
+  });
+
+  it("executor canDeposit check gates approveDeposit before execution (F-02 regression)", async () => {
+    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_F02"));
+    const NODE_OPERATOR_ROLE = await dvtModule.NODE_OPERATOR();
+    await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, outsider.address);
+    // threshold=2: nodeOp proposes, outsider is the final approver (executor)
+    await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address, outsider.address], 2);
+
+    // Deploy mock registry: nodeOp eligible, outsider NOT eligible
+    const MockOperatorRegistry = await ethers.getContractFactory("MockOperatorRegistry");
+    const mockRegistry = await MockOperatorRegistry.deploy();
+    await mockRegistry.setEligible(nodeOp.address, true);
+    await mockRegistry.setEligible(outsider.address, false);
+    await dvtModule.connect(gov).setOperatorRegistry(mockRegistry.target);
+
+    await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
+
+    const pubkey = "0x" + "a2".repeat(48);
+    const sig = "0x" + "b3".repeat(96);
+    const dataRoot = "0x" + "c4".repeat(32);
+
+    // nodeOp proposes — eligible, threshold=2 so execution does not trigger yet
+    await dvtModule.connect(nodeOp).proposeDeposit(CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot);
+
+    const proposalId = ethers.keccak256(
+      ethers.AbiCoder.defaultAbiCoder().encode(
+        ["bytes32", "bytes", "bytes", "bytes", "bytes32"],
+        [CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot],
+      ),
+    );
+
+    // outsider is the final approver but is not eligible — must revert before execution
+    await expect(dvtModule.connect(outsider).approveDeposit(proposalId)).to.be.revertedWithCustomError(
+      dvtModule,
+      "OperatorNotEligible",
+    );
+  });
+
+  it("deactivated cluster blocks threshold-1 execution via proposeDeposit (F-01 regression)", async () => {
+    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_DEACT_PROPOSE"));
+    await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);
+
+    // Fund the module with 32 ETH
+    await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("32")});
+    // Also fund the new cluster's module (it's the same dvtModule)
+    // No separate module needed — dvtModule holds the buffer
+
+    // GOV deactivates before any deposit
+    await dvtModule.connect(gov).deactivateCluster(CLUSTER_ID);
+
+    const pubkey = "0x" + "d4".repeat(48);
+    const sig = "0x" + "e5".repeat(96);
+    const dataRoot = "0x" + "f6".repeat(32);
+
+    // threshold=1 means proposeDeposit would immediately call _executeProposal if active
+    await expect(
+      dvtModule.connect(nodeOp).proposeDeposit(CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot),
+    ).to.be.revertedWithCustomError(dvtModule, "ClusterNotActive");
+  });
 });

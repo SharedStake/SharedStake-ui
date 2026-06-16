@@ -212,6 +212,7 @@ contract DVTModule is ValidatorModule {
         DepositProposal storage p = depositProposals[proposalId];
         if (p.approvalCount == 0) revert ProposalNotFound(proposalId);
         if (p.executed || p.cancelled) revert ProposalNotActive(proposalId);
+        if (!clusters[p.clusterId].active) revert ClusterNotActive(p.clusterId);
         if (!_clusterOperatorSet[p.clusterId][msg.sender]) revert OperatorNotInCluster(p.clusterId, msg.sender);
         if (_hasApprovedEpoched[_approvalKey(proposalId)][msg.sender]) revert AlreadyApproved(proposalId, msg.sender);
 
@@ -220,6 +221,12 @@ contract DVTModule is ValidatorModule {
         emit DepositApproved(proposalId, msg.sender, p.approvalCount, clusters[p.clusterId].threshold);
 
         if (p.approvalCount >= clusters[p.clusterId].threshold) {
+            // Executor eligibility check: mirrors proposeDeposit's canDeposit guard so the
+            // final approver (who pays the slot cost in operatorRegistry) is validated before
+            // the expensive execution path rather than inside incrementActive.
+            if (address(operatorRegistry) != address(0)) {
+                if (!operatorRegistry.canDeposit(msg.sender)) revert OperatorNotEligible(msg.sender);
+            }
             _executeProposal(proposalId, msg.sender);
         }
     }
@@ -264,6 +271,9 @@ contract DVTModule is ValidatorModule {
 
     function _executeProposal(bytes32 proposalId, address executor) internal {
         DepositProposal storage p = depositProposals[proposalId];
+        // Cluster must still be active at execution time — deactivation after proposal creation
+        // (e.g. compromised operator discovered post-threshold) must block the deposit.
+        if (!clusters[p.clusterId].active) revert ClusterNotActive(p.clusterId);
         p.executed = true;
         uint256 depositIndex = clusterDepositCount[p.clusterId]++;
         emit ClusterDeposit(p.clusterId, depositIndex, p.pubkey);
