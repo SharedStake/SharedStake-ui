@@ -342,6 +342,40 @@ describe("DVTModule", () => {
     );
   });
 
+  it("cancel + repropose does not create duplicate _clusterProposals entry", async () => {
+    const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_DEDUP"));
+    const NODE_OPERATOR_ROLE = await dvtModule.NODE_OPERATOR();
+    await dvtModule.connect(gov).grantRole(NODE_OPERATOR_ROLE, outsider.address);
+    await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address, outsider.address], 2);
+
+    await router.submitToModule(DVT_ID, ZeroAddress, {value: parseEther("64")});
+
+    const pubkey = "0x" + "aa".repeat(48);
+    const sig = "0x" + "bb".repeat(96);
+    const dataRoot = "0x" + "cc".repeat(32);
+
+    // First proposal
+    await dvtModule.connect(nodeOp).proposeDeposit(CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot);
+    expect(await dvtModule.clusterProposalCount(CLUSTER_ID)).to.equal(1);
+
+    const proposalId = ethers.keccak256(
+      ethers.AbiCoder.defaultAbiCoder().encode(
+        ["bytes32", "bytes", "bytes", "bytes", "bytes32"],
+        [CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot],
+      ),
+    );
+
+    // Cancel the proposal
+    await dvtModule.connect(nodeOp).cancelProposal(proposalId);
+
+    // Re-propose same data (epoch bumped, approvalCount reset to 0)
+    await dvtModule.connect(nodeOp).proposeDeposit(CLUSTER_ID, pubkey, EXPECTED_CREDS, sig, dataRoot);
+
+    // Array must still have exactly 1 entry (no duplicate)
+    expect(await dvtModule.clusterProposalCount(CLUSTER_ID)).to.equal(1);
+    expect(await dvtModule.clusterProposalAt(CLUSTER_ID, 0)).to.equal(proposalId);
+  });
+
   it("deactivated cluster blocks threshold-1 execution via proposeDeposit (F-01 regression)", async () => {
     const CLUSTER_ID = ethers.keccak256(ethers.toUtf8Bytes("CLUSTER_DEACT_PROPOSE"));
     await dvtModule.connect(gov).registerCluster(CLUSTER_ID, [nodeOp.address], 1);

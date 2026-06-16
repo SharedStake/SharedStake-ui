@@ -197,7 +197,11 @@ contract DVTModule is ValidatorModule {
             proposer: msg.sender
         });
         _hasApprovedEpoched[_approvalKey(proposalId)][msg.sender] = true;
-        _clusterProposals[clusterId].push(proposalId);
+        // Only index on the first-ever proposal: epoch == 0 means no prior cancel cycle.
+        // Re-proposals after cancel (epoch ≥ 1) reuse the existing array entry.
+        if (_proposalEpoch[proposalId] == 0) {
+            _clusterProposals[clusterId].push(proposalId);
+        }
         emit DepositProposed(clusterId, proposalId, msg.sender, pubkey);
 
         if (clusters[clusterId].threshold == 1) {
