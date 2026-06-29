@@ -156,7 +156,15 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
         uint256 ethAmount = quoteEth(amount);
         if (ethAmount == 0) revert Errors.InvalidAmount();
 
+        // slither-disable-start reentrancy-benign
+        // slither-disable-start reentrancy-balance
+        // Custody precedes request accounting; nonReentrant blocks callback
+        // entry, and the balance delta rejects fee-on-transfer tokens.
+        uint256 balanceBefore = VETH2.balanceOf(address(this));
         VETH2.safeTransferFrom(msg.sender, address(this), amount);
+        uint256 received = VETH2.balanceOf(address(this)) - balanceBefore;
+        if (received != amount) revert Errors.InvalidAmount();
+        // slither-disable-end reentrancy-balance
 
         requestId = nextRequestId++;
         requests[requestId] = WithdrawalRequest({
@@ -173,6 +181,7 @@ contract OldVeth2WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPaus
         totalRequestedVeth2 += amount;
 
         emit WithdrawalRequested(msg.sender, msg.sender, requestId, amount, ethAmount);
+        // slither-disable-end reentrancy-benign
     }
 
     // -- Finalize --------------------------------------------------------------

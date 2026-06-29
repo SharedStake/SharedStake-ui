@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { readFileSync } from 'node:fs';
 import {
   installInjectedImpersonatorProvider,
   pollTxRecordAt,
@@ -22,16 +21,8 @@ const WRAP_AMOUNT_STETH = process.env.E2E_V2_WRAP_AMOUNT_STETH || '0.02';
 const UNWRAP_AMOUNT_WSTETH = process.env.E2E_V2_UNWRAP_AMOUNT_WSTETH || '0.005';
 const WITHDRAW_REQUEST_AMOUNT_STETH =
   process.env.E2E_V2_WITHDRAW_REQUEST_AMOUNT_STETH || '0.01';
-const LOCAL_ADDRESSES = JSON.parse(
-  readFileSync(new URL('../../src/contracts/addresses/local.json', import.meta.url), 'utf8')
-);
 
 const isHexChainId = (value) => /^0x[0-9a-f]+$/i.test(value || '');
-const localAddressQuery = (address) =>
-  new URLSearchParams({
-    e2eAddress: address,
-    e2eContracts: JSON.stringify(LOCAL_ADDRESSES)
-  }).toString();
 
 async function waitForModularStoreIdle(page) {
   await expect

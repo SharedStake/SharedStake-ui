@@ -218,4 +218,5 @@ func.dependencies = [
   "operator-registry",
   "migration",
   "governance",
+  "oldVeth2WithdrawalQueue",
 ];

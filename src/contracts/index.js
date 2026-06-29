@@ -401,7 +401,6 @@ export const rollovers = (useSigner = false) => createContractDefault("rollovers
 export const oldVeth2WithdrawalQueue = (useSigner = false) => createContractDefault('oldVeth2WithdrawalQueue', useSigner);
 export const sgETH = (useSigner = false) => createContractDefault('sgETH', useSigner);
 export const wsgETH = (useSigner = false) => createContractDefault("wsgETH", useSigner);
-export const oldVeth2WithdrawalQueue = (useSigner = false) => createContractDefault("oldVeth2WithdrawalQueue", useSigner);
 
 // Deprecated withdrawals contracts - returns array of contract addresses
 export const getDeprecatedWithdrawalsAddresses = () => {

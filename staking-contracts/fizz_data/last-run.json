@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "createdAt": "2026-06-29T09:54:24.970Z",
+  "createdAt": "2026-06-29T17:02:05.593Z",
   "projectRoot": ".",
   "suiteDir": "test/fizz",
   "metaDir": "fizz_data",
@@ -8,7 +8,7 @@
     {
       "name": "StakingRouter",
       "sourcePath": "contracts/v2/modular-staking/StakingRouter.sol",
-      "sourceHash": "sha256:2ce1deac86654f15bd81128b027baea3aefdca6ba21e2ea9cbfc57bf8803accb",
+      "sourceHash": "sha256:1b6ad9c90d149884006267e0163438c55c17cc9234bf18f1979d9c31406b86ef",
       "constructor": {
         "inputs": [],
         "stateMutability": "nonpayable"
@@ -621,7 +621,7 @@
     {
       "name": "ValidatorModule",
       "sourcePath": "contracts/v2/modular-staking/modules/ValidatorModule.sol",
-      "sourceHash": "sha256:2e8b54b59e45545c0dbde334b1a15d09b8700e1cb81c1362174d6787b0e3ab12",
+      "sourceHash": "sha256:39ce9e367dfc19fe795d258df6456082152cbe9e7bf7ca71d7a7d245137db16c",
       "constructor": {
         "inputs": [],
         "stateMutability": "nonpayable"
@@ -883,7 +883,7 @@
     {
       "name": "WithdrawalQueueV2",
       "sourcePath": "contracts/v2/modular-staking/WithdrawalQueueV2.sol",
-      "sourceHash": "sha256:8d3eaf8e886fa70b1c85a43a70c6c334d7773d07ef2c2ed2778bc41e7410c459",
+      "sourceHash": "sha256:c2866e694689c510c8ec7a9584840773ed44599fb141bba799028aa2f132bfb5",
       "constructor": {
         "inputs": [
           {
@@ -1093,6 +1093,13 @@
       ]
     },
     {
+      "name": "OldVeth2WithdrawalQueue",
+      "sourcePath": "contracts/v2/modular-staking/OldVeth2WithdrawalQueue.sol",
+      "sourceHash": null,
+      "functions": [],
+      "_removedFromSource": true
+    },
+    {
       "name": "WstToken",
       "sourcePath": "contracts/v2/modular-staking/WstToken.sol",
       "sourceHash": "sha256:c4dc3020d35503ed7877aca451ef17ad859d604f0f5a7cfc8eff4a57747f7735",
@@ -1275,7 +1282,8 @@
     }
   ],
   "handlers": {
-    "Handlers.sol": "sha256:6f5d936a9ca2bc5ef7494f6990a565f02911460c438ee98242526d3be4982c02",
+    "Handlers.sol": "sha256:038d6e2d9e26ac685338033ce8e85cdd1c35ac2c0e182b513092ccb96d4db1fb",
+    "OldVeth2WithdrawalQueueHandler.sol": "sha256:f4142009db348e6625f80aebd5f8f365e863cce6aebaae3b5476e21aaad9acca",
     "StakingRouterHandler.sol": "sha256:3adbe0f966bf830ecced1bcdbef71004607439c2049e59ee89ef10e34fb60bb6",
     "ValidatorModuleHandler.sol": "sha256:ec414cc844b650cf49c7e1a55f494fb1f01866e2f1065b5080d4416a9fd75eac",
     "WithdrawalQueueV2Handler.sol": "sha256:9d3826cba66f533edbcd09d883410bf6d29e708da4fb3e2a136926874883e17f",

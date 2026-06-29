@@ -14,8 +14,10 @@ import {WstToken} from "contracts/v2/modular-staking/WstToken.sol";
 import {StakingRouter} from "contracts/v2/modular-staking/StakingRouter.sol";
 import {ValidatorModule} from "contracts/v2/modular-staking/modules/ValidatorModule.sol";
 import {WithdrawalQueueV2} from "contracts/v2/modular-staking/WithdrawalQueueV2.sol";
+import {OldVeth2WithdrawalQueue} from "contracts/v2/modular-staking/OldVeth2WithdrawalQueue.sol";
 import {FeeController} from "contracts/v2/modular-staking/FeeController.sol";
 import {MockBeaconDeposit} from "contracts/v2/test/MockBeaconDeposit.sol";
+import {MockERC20} from "./utils/MockERC20.sol";
 
 abstract contract Base is StringUtils, Clamp, Deployer, Math {
     using DecimalPrinter for uint256;
@@ -26,6 +28,7 @@ abstract contract Base is StringUtils, Clamp, Deployer, Math {
     uint256 internal constant MIN_WITHDRAWAL = 0.01 ether;
     uint256 internal constant MAX_HANDLER_DEPOSIT = 64 ether;
     uint256 internal constant MAX_HANDLER_WITHDRAWAL = 10 ether;
+    uint256 internal constant INITIAL_OLD_VETH2_BALANCE = 100 ether;
     uint256 internal constant MAX_BATCH_WITHDRAWALS = 4;
 
     bytes32 public constant SOLO = keccak256("FIZZ_SOLO");
@@ -46,6 +49,10 @@ abstract contract Base is StringUtils, Clamp, Deployer, Math {
         uint256 withdrawalRequests;
         uint256 finalizedRequests;
         uint256 claimedRequests;
+        uint256 oldVeth2Requests;
+        uint256 oldVeth2FinalizedRequests;
+        uint256 oldVeth2ClaimedRequests;
+        uint256 oldVeth2CanceledRequests;
         bool insolvencyObserved;
     }
 
@@ -60,8 +67,10 @@ abstract contract Base is StringUtils, Clamp, Deployer, Math {
     StakingRouter public stakingRouter;
     ValidatorModule public validatorModule;
     WithdrawalQueueV2 public withdrawalQueueV2;
+    OldVeth2WithdrawalQueue public oldVeth2WithdrawalQueue;
     FeeController public feeController;
     MockBeaconDeposit public mockBeaconDeposit;
+    MockERC20 public oldVeth2;
 
     modifier asActor() virtual {
         vm.startPrank(actor);
@@ -127,6 +136,8 @@ abstract contract Base is StringUtils, Clamp, Deployer, Math {
         );
 
         withdrawalQueueV2 = new WithdrawalQueueV2(address(stToken), gov);
+        oldVeth2 = new MockERC20(address(this), 0, "Mock old vEth2", "mvETH2", 18);
+        oldVeth2WithdrawalQueue = new OldVeth2WithdrawalQueue(address(oldVeth2), 1 ether, gov);
 
         stToken.addMinter(address(stakingRouter));
         stToken.addMinter(address(withdrawalQueueV2));
@@ -148,6 +159,10 @@ abstract contract Base is StringUtils, Clamp, Deployer, Math {
             address _actor = address(new Actor{value: INITIAL_ETH_BALANCE}());
             actors.push(_actor);
             vm.label(_actor, ACTOR_LABELS[i]);
+
+            oldVeth2.deal(_actor, INITIAL_OLD_VETH2_BALANCE);
+            vm.prank(_actor);
+            oldVeth2.approve(address(oldVeth2WithdrawalQueue), type(uint256).max);
         }
         actor = actors[0];
     }

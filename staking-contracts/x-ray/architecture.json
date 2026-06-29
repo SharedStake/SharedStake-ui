@@ -1,5 +1,5 @@
 {
-  "title": "SharedStake V2 Modular Staking",
+  "title": "SharedStake V2 Modular Staking + Legacy vETH2 Exit Queue",
   "nodes": [
     {"id": "users", "label": "Users"},
     {"id": "router", "label": "StakingRouter"},
@@ -8,6 +8,8 @@
     {"id": "validator", "label": "ValidatorModule"},
     {"id": "beacon", "label": "Beacon deposit contract"},
     {"id": "queue", "label": "WithdrawalQueueV2"},
+    {"id": "oldqueue", "label": "OldVeth2WithdrawalQueue"},
+    {"id": "veth2", "label": "legacy vETH2"},
     {"id": "oracle", "label": "Oracle / QuorumOracleAdapter"},
     {"id": "fee", "label": "FeeController"},
     {"id": "referral", "label": "ReferralRegistry"},
@@ -25,11 +27,15 @@
     {"from": "router", "to": "referral", "label": "mint referral fee shares"},
     {"from": "router", "to": "debt", "label": "mint debt fee shares"},
     {"from": "debt", "to": "wst", "label": "wrap fee shares"},
-    {"from": "users", "to": "queue", "label": "request/claim withdrawal"},
+    {"from": "users", "to": "queue", "label": "request/claim stToken withdrawal"},
     {"from": "queue", "to": "sttoken", "label": "burn shares / reduce pool"},
     {"from": "users", "to": "wst", "label": "wrap non-rebasing claim"},
+    {"from": "users", "to": "oldqueue", "label": "request/cancel/claim legacy exit"},
+    {"from": "oldqueue", "to": "veth2", "label": "escrow and recover redeemed vETH2"},
+    {"from": "oldqueue", "to": "users", "label": "owner-only ETH claims / vETH2 cancels"},
     {"from": "gov", "to": "router", "label": "modules, caps, codehash"},
     {"from": "gov", "to": "queue", "label": "finalize batches"},
+    {"from": "gov", "to": "oldqueue", "label": "FIFO finalization, limits, recovery"},
     {"from": "gov", "to": "fee", "label": "recipient/split config"}
   ]
 }

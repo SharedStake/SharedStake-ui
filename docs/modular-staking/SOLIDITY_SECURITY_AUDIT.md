@@ -292,17 +292,17 @@ Known residual classes from Slither/static analysis:
 **Impact:** Low — the function is `onlyRole(GOV)`, `nonReentrant`, rejects zero recipients, and computes recoverable ETH as `address(this).balance - lockedEther - totalPendingRefunds`, so finalized claims and pull refunds remain reserved.
 **Status:** Accepted as governance-controlled recovery. Re-check whenever new ETH liabilities are added.
 
-### 8.5 `calls-loop` in `OldVeth2WithdrawalQueue.claimWithdrawals()`
+### 8.5 `calls-loop` in `OldVeth2WithdrawalQueue._enqueueRequest()`
 **File:** `OldVeth2WithdrawalQueue.sol`
-**Finding:** Batch claims aggregate request amounts in a loop and perform one ETH send to `msg.sender` after state changes.
-**Impact:** Low — request ownership is checked for every ID, duplicate IDs revert atomically after the first `_markClaimed`, and the external call happens after all claim state is updated under `nonReentrant`.
-**Status:** Accepted by design. Large batches remain bounded by gas and are optional because users can call `claimWithdrawal()` per request.
+**Finding:** Slither flags external `balanceOf()` and `safeTransferFrom()` calls when `requestWithdrawals()` loops over multiple requested amounts.
+**Impact:** Low — request creation is `nonReentrant`, custody is taken before request accounting, and the exact post-transfer balance delta must equal the requested amount.
+**Status:** Accepted by design. Batch requests are an optional convenience path; users can call `requestWithdrawal()` per request.
 
-### 8.6 `reentrancy-benign` in `OldVeth2WithdrawalQueue._enqueueRequest()`
+### 8.6 exact vETH2 custody in `OldVeth2WithdrawalQueue._enqueueRequest()`
 **File:** `OldVeth2WithdrawalQueue.sol`
-**Finding:** Slither flags the ERC20 `safeTransferFrom()` before request state is written.
-**Impact:** Low — external entry points that call `_enqueueRequest()` are `nonReentrant`, the transferred token is the configured legacy vEth2 token, and no ETH is sent during request creation.
-**Status:** Accepted with existing `nonReentrant` coverage. Re-check if delegated request ownership or arbitrary token support is added.
+**Finding:** The queue depends on the configured legacy vETH2 token transferring the exact requested amount into escrow.
+**Impact:** Low after hardening — the request path now checks `balanceAfter - balanceBefore == amount` and reverts before writing queue accounting if custody is short.
+**Status:** Fixed in PR 380. Re-check if delegated request ownership, arbitrary token support, or fee-on-transfer token support is ever added.
 
 ### 8.7 `timestamp` and loop-cost residuals in `OldVeth2WithdrawalQueue`
 **File:** `OldVeth2WithdrawalQueue.sol`

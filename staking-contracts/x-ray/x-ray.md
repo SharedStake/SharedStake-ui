@@ -2,57 +2,63 @@
 
 Date: 2026-06-29
 
-Scope: PR 379 modular staking contracts, Fizz fuzz harness, and Pashov smart-contract review workflow.
+Scope: PR 379 modular staking contracts plus PR 380 `OldVeth2WithdrawalQueue`, frontend contract wiring, deploy handover, and Fizz fuzz coverage.
 
 ## Passes Run
 
 | Pass | Command / source | Result |
 |---|---|---|
-| Pashov x-ray | manual inventory, entry-point map, invariants, git/security hygiene | Completed; artifacts in `x-ray/` |
-| Solidity auditor | manual adversarial review plus Devin/Kimi/Nash delegate review | Concrete findings fixed; residual Slither false positives documented |
-| Fizz Foundry | `FOUNDRY_PROFILE=fuzz forge build` and `forge test --match-contract FoundryTester -vv` | Passed |
-| Echidna | `FOUNDRY_PROFILE=fuzz echidna . --contract FuzzTester --config echidna.yaml --test-limit 5 --seq-len 5 --format text` | Passed 7 properties, 24 calls, 13,266 unique instructions |
-| Medusa | `FOUNDRY_PROFILE=fuzz medusa fuzz --config medusa.json --timeout 60 --test-limit 200 --seq-len 25` | Passed 42 tests, 0 failed |
-| Slither | `slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|out|test|mocks'` | Completed; 461 findings across legacy + V2, no unresolved PR-379 critical fix left |
+| Pashov x-ray | contract inventory, entry-point map, invariants, git/security hygiene, docs alignment | Completed; artifacts in `x-ray/` |
+| Solidity auditor | manual adversarial review plus Devin/Kimi delegate review | Concrete findings fixed; residual Slither findings triaged below |
+| Dependency audit | `bun audit --level moderate`; `npm audit --audit-level=moderate` | Passed; staking npm audit has only known low-severity Hardhat/ethers transitive advisories |
+| Type/build | `bun run type-check`; `bun run build` | Passed |
+| Hardhat | `npx hardhat compile`; `npx hardhat test test/v2/modular-staking/*.spec.ts`; `npm run test:invariants` | Passed; modular-staking suite 383 passing / 15 pending; invariants 8 passing |
+| Old-vETH2 focused tests | `npx hardhat test test/v2/modular-staking/oldVeth2WithdrawalQueue.spec.ts` | Passed; 21 passing |
+| Coverage | `npx hardhat coverage` | Passed; 473 passing / 15 pending. Modular-staking: 86.49% statements / 59.92% branches. `OldVeth2WithdrawalQueue`: 97.56% statements / 67.54% branches |
+| Fizz Foundry | `FOUNDRY_PROFILE=fuzz forge build`; `FOUNDRY_PROFILE=fuzz forge test --match-contract FoundryTester -vv` | Passed |
+| Fizz Echidna | `FOUNDRY_PROFILE=fuzz echidna . --contract FuzzTester --config echidna.yaml --test-limit 200 --seq-len 25 --format text` | Passed 10 properties, 282 calls, 32,378 unique instructions, corpus size 9 |
+| Fizz Medusa | `FOUNDRY_PROFILE=fuzz node /home/agents/.codex/skills/fizz/scripts/run_medusa.js . --meta-dir fizz_data --timeout 600` | Passed 53 tests/properties, 0 failed, about 501,988 calls before transaction limit |
+| Slither | `FOUNDRY_PROFILE=fuzz slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|out|test|mocks|crytic-export' --json /tmp/pr380-slither-current.json` | Completed; 466 findings across legacy + V2, no unresolved PR380 critical/current-code issue |
+| Mainnet-fork E2E | `MAINNET_RPC_URL=https://rpc.sharedtools.org/rpc bun run test:e2e:fork -- --fresh-fork --port 18546 --web-port 14174 --old-veth2-address 0x898bad2774eb97cf6b94605677f43b41871410b1 --old-veth2-redemption-rate 1000000000000000000 --old-veth2-source-address 0x610c92c70Eb55dFeAFe8970513D13771Da79f2e0` | Passed; fresh Anvil fork, deploy/sync drift check, fresh Vite server, 26 passed / 1 skipped. Old-vETH2 request/finalize/claim used the real mainnet vETH2 token holder |
 
 ## Concrete Fixes From This Pass
 
-- `DebtPool.receiveStETHAndUnwrap` is now nonReentrant, uses typed `IWstETH.wrap`, checks the allowance-reset result on wrap failure, and avoids stale balance-diff accounting.
-- Removed unused DebtPool internal dead code and added real `StToken`/`WstToken` tests for `receiveStETHAndUnwrap` plus the fee-controller role gate.
-- Root and staking dependency overrides were refreshed so `bun audit --level moderate` and `npm audit --audit-level=moderate` pass without taking the breaking Hardhat/upgrades migration path.
-- Fizz insolvency property was corrected: zero pooled ETH with shares is allowed only after a recorded insolvency, and deposits must remain blocked in that state.
-- Fizz handlers now exercise validator gains, validator loss/exit reports, batch withdrawals, overfunded finalization refunds, refund withdrawal, batch claims, and module codehash enforcement.
-- Medusa and Echidna configs now run in property mode with sufficient target balance and standalone Slither instead of embedded Slither pre-passes.
+- `OldVeth2WithdrawalQueue._enqueueRequest` now checks the exact vETH2 custody balance delta after `safeTransferFrom`, rejecting fee-on-transfer or misconfigured token behavior before request accounting is written.
+- Fizz now deploys and exercises `OldVeth2WithdrawalQueue`, with handlers for request, finalize, finalize-with-refund, cancel, claim, and refund withdrawal.
+- Fizz properties now cover old-vETH2 finalized-claim ETH backing, pending-vETH2 custody backing, and claimed-plus-locked ETH bounded by finalized ETH.
+- `deploy/015_governanceHandover.ts` now migrates `GUARDIAN` roles to the governance timelock and includes the old-vETH2 queue in handover dependencies.
+- Frontend contract exports no longer duplicate `oldVeth2WithdrawalQueue`.
+- Fork E2E now waits for async old-vETH2 queue state and impersonates the timelock guardian after production-style governance handover.
 
 ## Slither Triage
 
 Latest captured result after fixes:
 
-- Total findings: 461
+- Total findings: 466
 - High: 8
-- Medium: 50
+- Medium: 48
 - Low: 105
-- Informational: 282
+- Informational: 289
 - Optimization: 16
 
-PR-379-relevant high/medium modular-staking items reviewed:
+PR380 old-vETH2 findings reviewed:
 
-- `ReferralRegistry.recoverEth` arbitrary ETH send: GOV-only recovery function. Accepted as an administrative rescue path.
-- `ValidatorModule._doBeaconDeposit` arbitrary ETH send: false positive; ETH goes to immutable configured beacon deposit contract after code-length and withdrawal-credential checks.
-- `OperatorRegistry.pendingNftWithdrawals` uninitialized state: false positive; Solidity mappings are intentionally zero-initialized and populated during `exitBond`.
-- `OperatorRegistry.slash` reentrancy-no-eth: function is already `nonReentrant`; token is configured governance asset. No state corruption path found in this pass.
-- `StakingCore` tuple local uninitialized/unused-return findings: false positives caused by `try/catch` tuple assignment; failed external calls return early.
-- `FeeController` and fee-share divide-before-multiply findings: expected fixed-point split rounding; covered by direct tests and fuzz properties.
-- `StakingCore` locked-ether: accepted design for direct staking custody in the legacy core path. Router/module path remains the V2 preferred flow.
+- `calls-loop` in `_enqueueRequest`: accepted. User batch requests intentionally loop over independent requested amounts; each transfer has an exact balance-delta check and all entry points are `nonReentrant`.
+- `timestamp` in `finalize`: accepted. `minRequestAge` is an operational delay, not randomness or pricing.
+- `costly-loop` in request/finalize/claim paths: accepted. Guardian finalization is bounded by `maxRequestsPerFinalize`; user batch request/claim paths are optional convenience flows.
+- `naming-convention` for `VETH2`: informational only; immutable legacy token dependency is intentionally uppercase.
 
-PR-379-relevant low/informational DebtPool items reviewed:
+Inherited high/medium findings reviewed and not introduced by PR380:
 
-- `DebtPool.receiveStETHAndUnwrap` reentrancy-benign: function is `nonReentrant`; preserving wrap-failure telemetry requires state accounting after successful external wrap. Covered by real-token unwrap tests.
-- `DebtPool.withdrawUnclaimedFees` timestamp: intentional 30-day minimum claim-period gate.
-- DebtPool naming/missing-interface inheritance warnings: informational hygiene; no behavioral issue found in this pass.
+- `WithdrawalQueue.requestRedeem` arbitrary ERC20 transfer: legacy delegated ERC-7540-style request flow, still allowance-gated. This pattern is intentionally not copied into old-vETH2 queue.
+- `ReferralRegistry.recoverEth` arbitrary ETH send: GOV-only rescue path.
+- `ValidatorModule._doBeaconDeposit` arbitrary ETH send: false positive; ETH goes to the immutable beacon deposit contract after withdrawal-credential checks.
+- `Withdrawals._redeem` arbitrary ETH send: legacy path outside PR379/PR380 scope.
+- `OperatorRegistry.pendingNftWithdrawals` uninitialized state: false positive; Solidity mappings are intentionally zero-initialized.
+- Upgradeable storage-gap shadowing and NFT metadata encode-packed findings are legacy or non-PR379/380 surfaces.
 
 ## Residual Risk
 
-- Full Slither still reports broad legacy findings outside PR 379 scope. They are not introduced by this pass.
-- Fizz currently uses `via_ir` because the repo's mixed legacy contracts hit stack-depth limits without it. Coverage percentages should be treated as IR-deflated; branch/path review matters more than raw coverage.
-- Short Echidna/Medusa runs are smoke gates. Longer overnight campaigns should reuse the committed harness/configs.
+- Slither still reports broad inherited legacy findings outside the PR379/PR380 scope; they remain tracked as legacy risk, not new regressions from this pass.
+- Echidna and Medusa campaigns were bounded local audit runs. Longer overnight campaigns should reuse the committed Fizz harness/configs before mainnet activation.
+- Mainnet-fork E2E validated deployment wiring, local address sync, frontend contract calls, and old-vETH2 production-token redemption flow, but not wallet-extension mode because no real extension credentials were provided.

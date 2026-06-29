@@ -67,6 +67,12 @@ MAINNET_RPC_URL=https://... bun run test:e2e:fork -- --fresh-fork --port 8546 --
   --old-veth2-source-address 0x...
 ```
 
+The PR 380 audit pass used `https://rpc.sharedtools.org/rpc`,
+`Chimeradefi.eth` resolved to `0x610c92c70Eb55dFeAFe8970513D13771Da79f2e0`,
+and the canonical legacy vETH2 token
+`0x898bad2774eb97cf6b94605677f43b41871410b1`. The full fork E2E passed with
+26 tests and 1 intentionally skipped wallet-dependent test.
+
 Wallet-extension E2E requires `PW_WALLET_EXTENSION_PATH`,
 `PW_WALLET_EXTENSION_ID`, and `PW_WALLET_TEST_ADDRESS`, then:
 
@@ -141,8 +147,8 @@ PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" medusa --version
 PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" echidna --version
 PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz forge build
 PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz forge test --match-contract FoundryTester -vv
-PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz echidna . --contract FuzzTester --config echidna.yaml --test-limit 5 --seq-len 5 --format text
-PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz medusa fuzz --config medusa.json --timeout 60 --test-limit 200 --seq-len 25
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz echidna . --contract FuzzTester --config echidna.yaml --test-limit 200 --seq-len 25 --format text
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz node /home/agents/.codex/skills/fizz/scripts/run_medusa.js . --meta-dir fizz_data --timeout 600
 ```
 
 `fizz` expects Foundry, Medusa, and Echidna before generating or running the
@@ -152,6 +158,12 @@ runtime metadata should stay in `staking-contracts/fizz_data/`.
 For PR 379, embedded Echidna/Medusa Slither pre-passes are disabled so fuzz
 campaigns start promptly; run Slither as a separate explicit gate and record
 triage in `staking-contracts/x-ray/x-ray.md`.
+
+For PR 380, the committed Fizz harness covers `OldVeth2WithdrawalQueue`
+request/finalize/cancel/claim/refund flows and the old-vETH2 custody invariants.
+When governance handover migrates `GUARDIAN` to the timelock, fork E2E should
+impersonate the timelock guardian rather than assuming an unlocked deployer EOA
+retains finalizer authority.
 
 ## Iteration Rule
 

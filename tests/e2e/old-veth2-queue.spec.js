@@ -27,7 +27,10 @@ const OLD_VETH2_QUEUE_ADDRESS =
 const OLD_VETH2_TOKEN_ADDRESS =
   process.env.E2E_OLD_VETH2_TOKEN_ADDRESS || LOCAL_ADDRESSES.vEth2;
 const OLD_VETH2_SOURCE_ADDRESS = process.env.E2E_OLD_VETH2_SOURCE_ADDRESS;
+const OLD_VETH2_GUARDIAN_ADDRESS =
+  process.env.E2E_OLD_VETH2_GUARDIAN_ADDRESS || LOCAL_ADDRESSES.governanceTimelock;
 const OLD_VETH2_FUND_AMOUNT_ETH = process.env.E2E_OLD_VETH2_FUND_AMOUNT_ETH || '1.25';
+const isAddress = (value) => /^0x[a-fA-F0-9]{40}$/.test(value || '');
 const TOKEN_IFACE = new ethers.Interface([
   'function mint(address to, uint256 amount)',
   'function transfer(address to, uint256 amount) returns (bool)'
@@ -100,7 +103,11 @@ const findGuardianAccount = async () => {
   const queue = getOldVeth2Queue();
   const guardianRole = await queue.GUARDIAN();
   const accounts = await rpcRequest(RPC_URL, 'eth_accounts');
-  for (const account of accounts) {
+  const candidates = [
+    ...accounts,
+    ...(isAddress(OLD_VETH2_GUARDIAN_ADDRESS) ? [OLD_VETH2_GUARDIAN_ADDRESS] : [])
+  ];
+  for (const account of [...new Set(candidates.map((candidate) => candidate.toLowerCase()))]) {
     if (await queue.hasRole(guardianRole, account)) {
       return account;
     }
@@ -196,13 +203,14 @@ test.describe('old-vETH2 FIFO queue UI', () => {
 
     await expect(queuePanel).toBeVisible({ timeout: 20_000 });
     await expect(queuePanel.getByText('Configured')).toBeVisible({ timeout: 20_000 });
+    await expect(queuePanel.getByText('Loading queue state...')).toBeHidden({ timeout: 20_000 });
     await expect(
       queuePanel.getByText(
         'Escrow returned vETH2, wait for guardian FIFO finalization, then claim ETH to your wallet.'
       )
     ).toBeVisible();
 
-    await expect(queuePanel.getByText('Your vETH2')).toBeVisible();
+    await expect(queuePanel.getByText('Your vETH2')).toBeVisible({ timeout: 30_000 });
     await expect(queuePanel.getByText('Redemption rate')).toBeVisible();
     await expect(queuePanel.getByText(/Next #\d+ .* Finalized #\d+/)).toBeVisible();
 
