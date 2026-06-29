@@ -16,7 +16,8 @@ import {Errors} from "../lib/Errors.sol";
 ///           debtPool      = totalFee * debtPoolSplitBps / 10000
 ///           referralPool  = totalFee - treasury - operator - debtPool (remainder)
 /// @dev Fee is expressed in basis points (1 bp = 0.01%). Max 2000 bp (20%).
-///      Debt pool is optional; set debtPool address to address(0) to disable.
+///      Debt pool is optional; keep debtPoolSplitBps at zero when debtPool is disabled.
+///      Disabled referral/debt splits are routed to treasury so fees remain conserved.
 contract FeeController is AccessControl {
     bytes32 public constant GOV = keccak256("GOV");
 
@@ -61,6 +62,7 @@ contract FeeController is AccessControl {
         if (gov == address(0) || _treasury == address(0) || _operator == address(0)) revert Errors.ZeroAddress();
         if (_feeBps > MAX_FEE_BPS) revert FeeTooHigh();
         if (_treasurySplitBps + _operatorSplitBps + _debtPoolSplitBps > 10000) revert SplitTooHigh();
+        if (_debtPoolSplitBps > 0 && _debtPool == address(0)) revert DebtPoolSplitWithoutAddress();
 
         // Validate debt pool is a contract if address is set
         if (_debtPool != address(0) && _debtPool.code.length == 0) revert NotAContract();
@@ -134,7 +136,7 @@ contract FeeController is AccessControl {
     ///         Returns (treasuryAmount, operatorAmount, debtPoolAmount, referralAmount) in wei.
     ///         Caller (StakingCore) then mints corresponding shares to treasury/operator/debtPool.
     ///         Referral amount is sent to ReferralRegistry as shares.
-    ///         If debtPool is address(0), debtPoolAmount will be 0.
+    ///         If debtPool or referralRegistry is address(0), that disabled split is routed to treasury.
     function computeFees(
         uint256 rewards
     )
@@ -145,15 +147,19 @@ contract FeeController is AccessControl {
         uint256 totalFee = (rewards * feeBps) / 10000;
         treasuryAmount = (totalFee * treasurySplitBps) / 10000;
         operatorAmount = (totalFee * operatorSplitBps) / 10000;
+        uint256 debtPoolSplitAmount = (totalFee * debtPoolSplitBps) / 10000;
 
-        // Only allocate to debt pool if address is set
         if (debtPool != address(0)) {
-            debtPoolAmount = (totalFee * debtPoolSplitBps) / 10000;
+            debtPoolAmount = debtPoolSplitAmount;
         } else {
-            debtPoolAmount = 0;
+            treasuryAmount += debtPoolSplitAmount;
         }
 
-        referralAmount = totalFee - treasuryAmount - operatorAmount - debtPoolAmount;
+        referralAmount = totalFee - ((totalFee * treasurySplitBps) / 10000) - operatorAmount - debtPoolSplitAmount;
+        if (referralRegistry == address(0)) {
+            treasuryAmount += referralAmount;
+            referralAmount = 0;
+        }
     }
 
     /// @notice Convenience getter for StakingCore to retrieve config in one call.

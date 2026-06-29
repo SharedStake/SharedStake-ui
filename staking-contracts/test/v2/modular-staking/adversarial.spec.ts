@@ -364,11 +364,10 @@ describe("SharedStake V2 adversarial", () => {
       expect(await stToken.totalPooledEther()).to.equal(0n);
       expect(await stToken.getTotalShares()).to.be.gt(0n);
 
-      // After the insolvency fix, new deposits in this state succeed with 1:1 minting
-      // (re-bootstrap) rather than reverting with InvalidBootstrapState. The pool
-      // recovers gracefully instead of being permanently bricked.
-      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
-      expect(await stToken.totalPooledEther()).to.equal(parseEther("1"));
+      // New deposits cannot safely bootstrap while legacy shares still exist:
+      // 1:1 minting here would donate part of Bob's deposit to insolvent shares.
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.be.reverted;
+      expect(await stToken.totalPooledEther()).to.equal(0n);
     });
   });
 

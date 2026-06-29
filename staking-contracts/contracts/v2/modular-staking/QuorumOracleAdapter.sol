@@ -200,20 +200,12 @@ contract QuorumOracleAdapter is AccessControl {
         if (submitter == address(0)) revert Errors.ZeroAddress();
         if (!hasRole(SUBMITTER, submitter)) {
             grantRole(SUBMITTER, submitter);
-            submitterCount += 1;
-            emit SubmitterAdded(submitter);
         }
     }
 
     function removeSubmitter(address submitter) external onlyRole(GOV) {
         if (!hasRole(SUBMITTER, submitter)) return;
-
-        uint256 newCount = submitterCount - 1;
-        if (quorum > newCount) revert InvalidQuorum(quorum, newCount);
-
         revokeRole(SUBMITTER, submitter);
-        submitterCount = newCount;
-        emit SubmitterRemoved(submitter);
     }
 
     /// @notice Emergency report submission bypassing quorum (GOV only).
@@ -238,5 +230,30 @@ contract QuorumOracleAdapter is AccessControl {
 
         REPORT_TARGET.reportBeacon(newBeaconValidators, newBeaconBalance);
         emit EmergencyReport(msg.sender, newBeaconValidators, newBeaconBalance);
+    }
+
+    // ── Internal role overrides ───────────────────────────────────────────────
+    // Keep submitterCount synchronized for every AccessControl mutation path,
+    // including inherited grantRole/revokeRole/renounceRole calls.
+
+    function _grantRole(bytes32 role, address account) internal override {
+        if (role == SUBMITTER && !hasRole(SUBMITTER, account)) {
+            ++submitterCount;
+            emit SubmitterAdded(account);
+        }
+        super._grantRole(role, account);
+    }
+
+    function _revokeRole(bytes32 role, address account) internal override {
+        if (role == SUBMITTER && hasRole(SUBMITTER, account)) {
+            uint256 newCount = submitterCount - 1;
+            if (quorum > newCount) revert InvalidQuorum(quorum, newCount);
+
+            super._revokeRole(role, account);
+            submitterCount = newCount;
+            emit SubmitterRemoved(account);
+        } else {
+            super._revokeRole(role, account);
+        }
     }
 }

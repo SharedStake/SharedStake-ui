@@ -102,6 +102,44 @@ describe("ModularStaking Fuzz / Invariants", () => {
     }
   });
 
+  it("FeeController: disabled referral split is routed to treasury", async () => {
+    const FeeController = await ethers.getContractFactory("FeeController");
+    const fc = await FeeController.deploy(
+      gov.address,
+      gov.address,
+      deployer.address,
+      ZeroAddress,
+      ZeroAddress,
+      1000,
+      4000,
+      4000,
+      0,
+    );
+
+    const [treasury, operator, debtPool, referral] = await fc.computeFees(parseEther("1"));
+    expect(treasury).to.equal(parseEther("0.06"));
+    expect(operator).to.equal(parseEther("0.04"));
+    expect(debtPool).to.equal(0n);
+    expect(referral).to.equal(0n);
+  });
+
+  it("FeeController: rejects debt split without a debt pool at deployment", async () => {
+    const FeeController = await ethers.getContractFactory("FeeController");
+    await expect(
+      FeeController.deploy(
+        gov.address,
+        gov.address,
+        deployer.address,
+        ZeroAddress,
+        ZeroAddress,
+        1000,
+        4000,
+        4000,
+        2000,
+      ),
+    ).to.be.revertedWithCustomError(feeController, "DebtPoolSplitWithoutAddress");
+  });
+
   // ── StakingCore Invariants ───────────────────────────────────────────────
 
   it("StakingCore: totalPooledEther == sum of all deposits before oracle", async () => {

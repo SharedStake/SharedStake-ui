@@ -356,4 +356,54 @@ describe("DebtPool Merkle Tree Integration", () => {
       await expect(debtPool.connect(gov).withdrawUnclaimedFees(DISTRIBUTION_ID, gov.address)).to.not.be.reverted;
     });
   });
+
+  describe("stETH receive and unwrap", () => {
+    async function deployRealTokenDebtPool() {
+      const StToken = await ethers.getContractFactory("StToken");
+      const realStToken = await StToken.deploy();
+
+      const WstToken = await ethers.getContractFactory("WstToken");
+      const realWstETH = await WstToken.deploy(realStToken.target);
+
+      const DebtPool = await ethers.getContractFactory("DebtPool");
+      const realDebtPool = await DebtPool.deploy(
+        realStToken.target,
+        realWstETH.target,
+        gov.address,
+        admin.address,
+        feeController.address,
+      );
+
+      await realStToken.addMinter(deployer.address);
+      return {realStToken, realWstETH, realDebtPool};
+    }
+
+    it("fee controller unwraps minted stETH shares into wstETH", async () => {
+      const {realStToken, realWstETH, realDebtPool} = await deployRealTokenDebtPool();
+      const shares = parseEther("2");
+
+      await realStToken.mintShares(realDebtPool.target, shares);
+      await realStToken.setTotalPooledEther(shares);
+
+      await expect(realDebtPool.connect(feeController).receiveStETHAndUnwrap(shares))
+        .to.emit(realDebtPool, "StETHReceived")
+        .withArgs(shares)
+        .and.to.emit(realDebtPool, "WstETHUnwrapped")
+        .withArgs(shares, shares);
+
+      expect(await realDebtPool.totalStETHSharesReceived()).to.equal(shares);
+      expect(await realWstETH.balanceOf(realDebtPool.target)).to.equal(shares);
+      expect(await realStToken.balanceOf(realDebtPool.target)).to.equal(0n);
+      expect(await realStToken.balanceOf(realWstETH.target)).to.equal(shares);
+    });
+
+    it("only accepts unwrap calls from the fee controller role", async () => {
+      const {realDebtPool} = await deployRealTokenDebtPool();
+
+      await expect(realDebtPool.connect(admin).receiveStETHAndUnwrap(parseEther("1"))).to.be.revertedWithCustomError(
+        realDebtPool,
+        "NotFeeController",
+      );
+    });
+  });
 });

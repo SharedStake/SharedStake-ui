@@ -69,10 +69,49 @@ If Slither is available:
 
 ```bash
 cd staking-contracts
-slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|test'
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz \
+  slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|out|test|mocks'
 ```
 
 If Slither is not available, do not treat that as a pass. Record it as unavailable tooling and rely on Hardhat, Foundry, dependency audit, and manual x-ray review for the current pass.
+
+## Pashov Skill Stack
+
+Keep the Pashov Audit Group skills from `https://github.com/pashov/skills`
+available through the repo-local `skills/` links:
+
+```bash
+python3 /home/agents/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py --repo pashov/skills --path fizz solidity-auditor
+python3 /home/agents/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py --repo pashov/skills --path x-ray --name pashov-x-ray
+```
+
+Run the three smart-contract review passes together for protocol changes:
+
+```bash
+# x-ray / audit readiness
+# Use the installed x-ray methodology and, when needed, the pashov-x-ray scripts.
+
+# multi-agent Solidity review
+# Use solidity-auditor against staking-contracts/ or narrowed changed files.
+
+# fuzz-suite setup
+cd staking-contracts
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" forge --version
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" medusa --version
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" echidna --version
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz forge build
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz forge test --match-contract FoundryTester -vv
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz echidna . --contract FuzzTester --config echidna.yaml --test-limit 5 --seq-len 5 --format text
+PATH="$HOME/.local/bin:$HOME/.foundry/bin:$PATH" FOUNDRY_PROFILE=fuzz medusa fuzz --config medusa.json --timeout 60 --test-limit 200 --seq-len 25
+```
+
+`fizz` expects Foundry, Medusa, and Echidna before generating or running the
+suite. Generated fuzz harnesses should stay in `staking-contracts/test/fizz/`;
+runtime metadata should stay in `staking-contracts/fizz_data/`.
+
+For PR 379, embedded Echidna/Medusa Slither pre-passes are disabled so fuzz
+campaigns start promptly; run Slither as a separate explicit gate and record
+triage in `staking-contracts/x-ray/x-ray.md`.
 
 ## Iteration Rule
 

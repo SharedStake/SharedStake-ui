@@ -190,6 +190,13 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         return keccak256("LST_WRAP");
     }
 
+    /// @inheritdoc IStakingModule
+    function implementationCodeHash() external view override returns (bytes32) {
+        address implementation = _getImplementation();
+        if (implementation == address(0)) return address(this).codehash;
+        return implementation.codehash;
+    }
+
     // ── Internal ─────────────────────────────────────────────────────────────
 
     function _enforceWrapPriceDrift(uint256 unitPrice) private {

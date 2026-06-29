@@ -19,6 +19,7 @@ interface IDebtPool {
 /// @title IWithdrawalQueue - Interface for WithdrawalQueueV2
 interface IWithdrawalQueue {
     function lockedEther() external view returns (uint256);
+    function totalUnclaimedEther() external view returns (uint256);
 }
 
 /// @title StakingCore - SharedStake V2 ETH staking vault
@@ -104,7 +105,7 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     error ReferralCodeRegistryInvalid(address registry);
     error RouterModeDisabled();
     error RouterModeAlreadyEnabled();
-    error QueueExceedsPooledEther(uint256 locked, uint256 postTotalPooled);
+    error QueueExceedsPooledEther(uint256 reserved, uint256 postTotalPooled);
 
     constructor(address stToken, address gov) {
         if (stToken == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -232,18 +233,18 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         _beaconBalance = newBeaconBalance;
 
         uint256 postTotalPooled = _bufferedEther + newBeaconBalance;
-        uint256 locked = _queueLockedEther();
+        uint256 reserved = _queueReservedEther();
         // Ensure we don't underflow if queue has more locked than pooled.
-        // locked == postTotalPooled is the legitimate wind-down state (all ETH in queue).
-        // locked > postTotalPooled can occur after a major validator slash. Hard-reverting
+        // reserved == postTotalPooled is the legitimate wind-down state (all ETH in queue).
+        // reserved > postTotalPooled can occur after a major validator slash. Hard-reverting
         // here would permanently freeze oracle reporting. Instead, cap postTotalPooled at
-        // locked so oracle reports proceed — no positive delta (rewards) are distributed
+        // reserved so oracle reports proceed — no positive delta (rewards) are distributed
         // until the beacon balance recovers. The exchange rate may drop (loss socialised),
         // but the protocol does not freeze.
-        if (locked > postTotalPooled) {
-            postTotalPooled = locked;
+        if (reserved > postTotalPooled) {
+            postTotalPooled = reserved;
         }
-        postTotalPooled -= locked; // reaches 0 cleanly during wind-down or slash recovery
+        postTotalPooled -= reserved; // reaches 0 cleanly during wind-down or slash recovery
         ST_TOKEN.setTotalPooledEther(postTotalPooled);
 
         // Distribute fee shares when there are positive rewards.
@@ -272,9 +273,9 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         emit BufferedEtherUpdated(_bufferedEther);
     }
 
-    function _queueLockedEther() private view returns (uint256) {
+    function _queueReservedEther() private view returns (uint256) {
         if (withdrawalQueue == address(0)) return 0;
-        return IWithdrawalQueue(withdrawalQueue).lockedEther();
+        return IWithdrawalQueue(withdrawalQueue).totalUnclaimedEther();
     }
 
     function _computeFeeShares(
@@ -284,11 +285,31 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         uint256 debtPoolAmount,
         uint256 newTotalShares,
         uint256 newTotalPooled
-    ) private view returns (uint256, uint256, uint256, uint256) {
-        uint256 treasuryShares = ShareMath.getSharesByPooledEth(treasuryAmount, newTotalShares, newTotalPooled);
-        uint256 operatorShares = ShareMath.getSharesByPooledEth(operatorAmount, newTotalShares, newTotalPooled);
-        uint256 referralShares = ShareMath.getSharesByPooledEth(referralAmount, newTotalShares, newTotalPooled);
-        uint256 debtPoolShares = ShareMath.getSharesByPooledEth(debtPoolAmount, newTotalShares, newTotalPooled);
+    ) private pure returns (uint256, uint256, uint256, uint256) {
+        uint256 totalFeeAmount = treasuryAmount + operatorAmount + referralAmount + debtPoolAmount;
+        if (totalFeeAmount == 0 || newTotalShares == 0 || totalFeeAmount >= newTotalPooled) {
+            return (0, 0, 0, 0);
+        }
+
+        uint256 totalFeeShares = (totalFeeAmount * newTotalShares) / (newTotalPooled - totalFeeAmount);
+        uint256 treasuryShares = (totalFeeShares * treasuryAmount) / totalFeeAmount;
+        uint256 operatorShares = (totalFeeShares * operatorAmount) / totalFeeAmount;
+        uint256 referralShares = (totalFeeShares * referralAmount) / totalFeeAmount;
+        uint256 debtPoolShares = (totalFeeShares * debtPoolAmount) / totalFeeAmount;
+
+        uint256 allocated = treasuryShares + operatorShares + referralShares + debtPoolShares;
+        uint256 remainder = totalFeeShares - allocated;
+        if (remainder != 0) {
+            if (treasuryAmount != 0) {
+                treasuryShares += remainder;
+            } else if (operatorAmount != 0) {
+                operatorShares += remainder;
+            } else if (referralAmount != 0) {
+                referralShares += remainder;
+            } else {
+                debtPoolShares += remainder;
+            }
+        }
         return (treasuryShares, operatorShares, referralShares, debtPoolShares);
     }
 
@@ -478,13 +499,13 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     }
 
     /// @notice Set the withdrawal queue address.
-    /// @dev When set, reportBeacon will subtract lockedEther from totalPooledEther.
+    /// @dev When set, reportBeacon subtracts totalUnclaimedEther from totalPooledEther.
     ///      Zero address disables queue awareness (for standalone deployments).
     function setWithdrawalQueue(address queue) external onlyRole(GOV) {
         if (queue != address(0)) {
             if (queue.code.length == 0) revert Errors.NotAContract();
-            // Verify it implements IWithdrawalQueue by calling lockedEther()
-            try IWithdrawalQueue(queue).lockedEther() returns (uint256) {
+            // Verify it implements IWithdrawalQueue by calling totalUnclaimedEther().
+            try IWithdrawalQueue(queue).totalUnclaimedEther() returns (uint256) {
                 // interface validated
             } catch {
                 revert Errors.InvalidAddress();

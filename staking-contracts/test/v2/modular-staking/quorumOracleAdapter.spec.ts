@@ -5,6 +5,7 @@ import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
 
 describe("QuorumOracleAdapter", () => {
   const ORACLE_ROLE = ethers.keccak256(ethers.toUtf8Bytes("ORACLE"));
+  const SUBMITTER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("SUBMITTER"));
 
   let deployer: SignerWithAddress;
   let gov: SignerWithAddress;
@@ -189,6 +190,49 @@ describe("QuorumOracleAdapter", () => {
     await expect(quorumAdapter.connect(outsider).setQuorum(1)).to.be.reverted;
     await expect(quorumAdapter.connect(outsider).submitReport(1, parseEther("32"), await latestTimestamp())).to.be
       .reverted;
+  });
+
+  it("keeps submitterCount synchronized through inherited role APIs", async () => {
+    expect(await quorumAdapter.submitterCount()).to.equal(3n);
+
+    await expect(quorumAdapter.connect(gov).grantRole(SUBMITTER_ROLE, outsider.address))
+      .to.emit(quorumAdapter, "SubmitterAdded")
+      .withArgs(outsider.address);
+    expect(await quorumAdapter.submitterCount()).to.equal(4n);
+
+    await quorumAdapter.connect(gov).grantRole(SUBMITTER_ROLE, outsider.address);
+    expect(await quorumAdapter.submitterCount()).to.equal(4n);
+
+    await expect(quorumAdapter.connect(gov).revokeRole(SUBMITTER_ROLE, outsider.address))
+      .to.emit(quorumAdapter, "SubmitterRemoved")
+      .withArgs(outsider.address);
+    expect(await quorumAdapter.submitterCount()).to.equal(3n);
+
+    await expect(quorumAdapter.connect(submitter3).renounceRole(SUBMITTER_ROLE, submitter3.address))
+      .to.emit(quorumAdapter, "SubmitterRemoved")
+      .withArgs(submitter3.address);
+    expect(await quorumAdapter.submitterCount()).to.equal(2n);
+  });
+
+  it("prevents direct inherited role removal from making quorum unreachable", async () => {
+    expect(await quorumAdapter.submitterCount()).to.equal(3n);
+
+    await expect(quorumAdapter.connect(gov).revokeRole(SUBMITTER_ROLE, submitter1.address))
+      .to.emit(quorumAdapter, "SubmitterRemoved")
+      .withArgs(submitter1.address);
+    expect(await quorumAdapter.submitterCount()).to.equal(2n);
+
+    await expect(quorumAdapter.connect(gov).revokeRole(SUBMITTER_ROLE, submitter2.address))
+      .to.be.revertedWithCustomError(quorumAdapter, "InvalidQuorum")
+      .withArgs(2n, 1n);
+    expect(await quorumAdapter.hasRole(SUBMITTER_ROLE, submitter2.address)).to.equal(true);
+    expect(await quorumAdapter.submitterCount()).to.equal(2n);
+
+    await expect(quorumAdapter.connect(submitter2).renounceRole(SUBMITTER_ROLE, submitter2.address))
+      .to.be.revertedWithCustomError(quorumAdapter, "InvalidQuorum")
+      .withArgs(2n, 1n);
+    expect(await quorumAdapter.hasRole(SUBMITTER_ROLE, submitter2.address)).to.equal(true);
+    expect(await quorumAdapter.submitterCount()).to.equal(2n);
   });
 
   it("rejects non-monotonic report timestamps once a report is finalized", async () => {

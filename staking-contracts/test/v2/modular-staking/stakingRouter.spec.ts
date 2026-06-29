@@ -42,9 +42,8 @@ describe("StakingRouter", () => {
   let mockBeaconDeposit: any;
   let expectedWithdrawalCreds: string;
 
-  async function runtimeCodeHash(addr: string): Promise<string> {
-    const code = await ethers.provider.getCode(addr);
-    return ethers.keccak256(code);
+  async function moduleCodeHash(module: any): Promise<string> {
+    return await module.implementationCodeHash();
   }
 
   async function impersonateAccount(account: string): Promise<any> {
@@ -204,7 +203,7 @@ describe("StakingRouter", () => {
       );
 
       const moduleType = await mod.moduleType();
-      const codeHash = await runtimeCodeHash(mod.target as string);
+      const codeHash = await moduleCodeHash(mod);
       await router2.connect(gov).setModuleCodeHashAllowed(moduleType, codeHash, true);
 
       await expect(router2.connect(gov).registerModule(SECONDARY, mod.target, 0)).to.not.be.reverted;
@@ -726,6 +725,7 @@ describe("StakingRouter", () => {
       // Treasury = gov, Operator = deployer.
       const govSharesBefore = await stToken.sharesOf(gov.address);
       const deployerSharesBefore = await stToken.sharesOf(deployer.address);
+      const totalSharesBefore = await stToken.getTotalShares();
       const tx = await mod1.connect(oracle).reportBeacon(1, parseEther("32.5"));
       const receipt = await tx.wait();
       const govSharesAfter = await stToken.sharesOf(gov.address);
@@ -764,15 +764,14 @@ describe("StakingRouter", () => {
       expect(feeTelemetry!.args.treasuryShares).to.equal(feeSharesMinted!.args.treasuryShares);
       expect(feeTelemetry!.args.operatorShares).to.equal(feeSharesMinted!.args.operatorShares);
 
-      // Exact-ish: under a 50/50 split, treasury and operator must end up with
-      // share counts within 5% of each other. (Discretization aside, both fee
-      // amounts are equal in ETH terms and minted at the same exchange rate.)
+      const totalFee = parseEther("0.05");
+      const totalFeeShares = (totalFee * totalSharesBefore) / (parseEther("32.5") - totalFee);
+      const expectedOperatorShares = totalFeeShares / 2n;
+      const expectedTreasuryShares = expectedOperatorShares + (totalFeeShares % 2n);
       const treasuryShares = govSharesAfter - govSharesBefore;
       const operatorShares = deployerSharesAfter - deployerSharesBefore;
-      expect(treasuryShares).to.be.gt(0n);
-      expect(operatorShares).to.be.gt(0n);
-      expect(treasuryShares).to.be.gte((operatorShares * 95n) / 100n);
-      expect(treasuryShares).to.be.lte((operatorShares * 105n) / 100n);
+      expect(treasuryShares).to.equal(expectedTreasuryShares);
+      expect(operatorShares).to.equal(expectedOperatorShares);
     });
 
     it("routes referral fee shares to treasury when referral registry has zero referred volume", async () => {
@@ -936,10 +935,48 @@ describe("StakingRouter", () => {
 
     it("non-GOV cannot configure code-hash allowlist controls", async () => {
       const validatorType = await mod1.moduleType();
-      const validatorCodeHash = await runtimeCodeHash(mod1.target as string);
+      const validatorCodeHash = await moduleCodeHash(mod1);
 
       await expect(router.connect(alice).setModuleCodeHashAllowed(validatorType, validatorCodeHash, true)).to.be
         .reverted;
+    });
+
+    it("rejects zero module type or code hash in code-hash allowlist controls", async () => {
+      const validatorType = await mod1.moduleType();
+      const validatorCodeHash = await moduleCodeHash(mod1);
+
+      await expect(
+        router.connect(gov).setModuleCodeHashAllowed(ethers.ZeroHash, validatorCodeHash, true),
+      ).to.be.revertedWithCustomError(router, "InvalidModuleCodeHashInput");
+      await expect(
+        router.connect(gov).setModuleCodeHashAllowed(validatorType, ethers.ZeroHash, true),
+      ).to.be.revertedWithCustomError(router, "InvalidModuleCodeHashInput");
+    });
+
+    it("enforces module code-hash allowlist on deposits and callbacks after activation", async () => {
+      const pubkey = ethers.hexlify(ethers.randomBytes(48));
+      const creds = expectedWithdrawalCreds;
+      const sig = ethers.hexlify(ethers.randomBytes(96));
+      const root = ethers.hexlify(ethers.randomBytes(32));
+      await router.connect(alice).submit(ZeroAddress, {value: parseEther("32")});
+      await mod1.connect(gov).approvePubkey(pubkey);
+      await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
+
+      await router.connect(gov).enableCodeHashEnforcement();
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.be.revertedWithCustomError(
+        router,
+        "ModuleCodeHashNotAllowed",
+      );
+      await expect(mod1.connect(oracle).reportBeacon(1, parseEther("32.1"))).to.be.revertedWithCustomError(
+        router,
+        "ModuleCodeHashNotAllowed",
+      );
+
+      const moduleType = await mod1.moduleType();
+      const codeHash = await moduleCodeHash(mod1);
+      await router.connect(gov).setModuleCodeHashAllowed(moduleType, codeHash, true);
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.not.be.reverted;
+      await expect(mod1.connect(oracle).reportBeacon(1, parseEther("32.1"))).to.not.be.reverted;
     });
   });
 

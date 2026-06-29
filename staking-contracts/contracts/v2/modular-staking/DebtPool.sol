@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {Errors} from "../lib/Errors.sol";
 
@@ -11,11 +12,15 @@ interface IStETH is IERC20 {
     function getPooledEthByShares(uint256 sharesAmount) external view returns (uint256);
 }
 
+interface IWstETH is IERC20 {
+    function wrap(uint256 stAmount) external returns (uint256 wstAmount);
+}
+
 /// @title DebtPool - Merkle tree distribution pool for debt repayment
 /// @notice Accumulates stETH shares from FeeController, unwraps to wstETH, and distributes via merkle tree claims
 /// @dev This contract receives stETH shares, unwraps to wstETH, and allows specific addresses to claim
 ///      their share using merkle proofs. Admin can trigger new distributions by updating merkle roots.
-contract DebtPool is AccessControl, Pausable {
+contract DebtPool is AccessControl, Pausable, ReentrancyGuard {
     using MerkleProof for bytes32[];
 
     bytes32 public constant GOV = keccak256("GOV");
@@ -26,7 +31,7 @@ contract DebtPool is AccessControl, Pausable {
     uint256 public constant MIN_CLAIM_PERIOD = 30 days;
 
     IERC20 public immutable ST_TOKEN;
-    IERC20 public immutable WSTETH;
+    IWstETH public immutable WSTETH;
 
     // Distribution tracking
     uint256 public distributionId; // Incremented on each new distribution
@@ -95,7 +100,7 @@ contract DebtPool is AccessControl, Pausable {
         ) revert Errors.ZeroAddress();
 
         ST_TOKEN = IERC20(_stToken);
-        WSTETH = IERC20(_wstETH);
+        WSTETH = IWstETH(_wstETH);
 
         _grantRole(DEFAULT_ADMIN_ROLE, _gov);
         _grantRole(GOV, _gov);
@@ -152,7 +157,7 @@ contract DebtPool is AccessControl, Pausable {
 
     /// @notice Withdraw unclaimed fees from old distributions
     /// @dev Only GOV can call. Allows recovery of unclaimed funds after MIN_CLAIM_PERIOD.
-    function withdrawUnclaimedFees(uint256 _distributionId, address _recipient) external onlyRole(GOV) {
+    function withdrawUnclaimedFees(uint256 _distributionId, address _recipient) external onlyRole(GOV) nonReentrant {
         Distribution storage dist = distributions[_distributionId];
         if (!dist.finalized) revert DistributionNotFinalized();
 
@@ -182,7 +187,7 @@ contract DebtPool is AccessControl, Pausable {
         address _recipient,
         uint256 _amount,
         bytes32[] calldata _proof
-    ) external onlyDistributionFinalized(_distributionId) whenNotPaused {
+    ) external onlyDistributionFinalized(_distributionId) whenNotPaused nonReentrant {
         if (claimed[_distributionId][_leafIndex]) revert AlreadyClaimed();
         if (_amount == 0) revert InvalidAmount();
 
@@ -279,18 +284,12 @@ contract DebtPool is AccessControl, Pausable {
         );
     }
 
-    // ── Internal Functions ─────────────────────────────────────────────────
-
-    function _getClaimedAmount(uint256 _distributionId) internal view returns (uint256) {
-        return distributions[_distributionId].claimedAmount;
-    }
-
     // ── Receive and Unwrap Functions ───────────────────────────────────────
 
     /// @notice Receive stETH from FeeController and unwrap to wstETH
     /// @dev Only FEE_CONTROLLER can call this function. Shares are minted directly to DebtPool by StakingCore/StakingRouter,
     ///      so no transferFrom is needed. The DebtPool already holds the shares when this function is called.
-    function receiveStETHAndUnwrap(uint256 _amount) external onlyFeeController whenNotPaused {
+    function receiveStETHAndUnwrap(uint256 _amount) external onlyFeeController whenNotPaused nonReentrant {
         if (_amount == 0) revert InvalidAmount();
 
         // DebtPool already holds the minted shares - no transferFrom needed.
@@ -303,29 +302,23 @@ contract DebtPool is AccessControl, Pausable {
         bool success = ST_TOKEN.approve(address(WSTETH), stEthAmount);
         if (!success) revert UnwrapFailed();
 
-        uint256 wstETHAmountBefore = WSTETH.balanceOf(address(this));
+        try WSTETH.wrap(stEthAmount) returns (uint256 wstETHReceived) {
+            // wstETH is always worth more than stETH (rate > 1 and growing), so comparing
+            // raw wstETH amounts to stETH amounts is wrong — wstETHReceived will always be
+            // numerically less than stEthAmount. Just verify the wrap produced non-zero output.
+            if (wstETHReceived == 0) revert InsufficientWstETHReceived();
 
-        (bool wrapSuccess, ) = address(WSTETH).call(abi.encodeWithSignature("wrap(uint256)", stEthAmount));
-
-        // If wrap fails, shares remain in DebtPool — approve zero to clean up.
-        // Counter is NOT incremented on failure to avoid permanent accounting inconsistency (M9 fix).
-        if (!wrapSuccess) {
-            ST_TOKEN.approve(address(WSTETH), 0);
+            // Increment counter only after confirmed successful wrap (CEI fix).
+            totalStETHSharesReceived += _amount;
+            emit StETHReceived(_amount);
+            emit WstETHUnwrapped(stEthAmount, wstETHReceived);
+        } catch {
+            // If wrap fails, shares remain in DebtPool — approve zero to clean up.
+            // Counter is NOT incremented on failure to avoid permanent accounting inconsistency (M9 fix).
+            bool resetSuccess = ST_TOKEN.approve(address(WSTETH), 0);
+            if (!resetSuccess) revert UnwrapFailed();
             emit WrapFailed(_amount, stEthAmount);
             return;
         }
-
-        uint256 wstETHAmountAfter = WSTETH.balanceOf(address(this));
-        uint256 wstETHReceived = wstETHAmountAfter - wstETHAmountBefore;
-
-        // wstETH is always worth more than stETH (rate > 1 and growing), so comparing
-        // raw wstETH amounts to stETH amounts is wrong — wstETHReceived will always be
-        // numerically less than stEthAmount. Just verify the wrap produced non-zero output.
-        if (wstETHReceived == 0) revert InsufficientWstETHReceived();
-
-        // Increment counter only after confirmed successful wrap (CEI fix).
-        totalStETHSharesReceived += _amount;
-        emit StETHReceived(_amount);
-        emit WstETHUnwrapped(stEthAmount, wstETHReceived);
     }
 }

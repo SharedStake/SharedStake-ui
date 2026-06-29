@@ -137,6 +137,13 @@ contract ValidatorModule is Initializable, UUPSUpgradeable, AccessControlUpgrade
         return keccak256("SOLO_VALIDATOR");
     }
 
+    /// @inheritdoc IStakingModule
+    function implementationCodeHash() external view virtual override returns (bytes32) {
+        address implementation = _getImplementation();
+        if (implementation == address(0)) return address(this).codehash;
+        return implementation.codehash;
+    }
+
     // ── Oracle reporting ─────────────────────────────────────────────────────
 
     /// @notice ORACLE forwards a (already sanity-checked at adapter) report. We add

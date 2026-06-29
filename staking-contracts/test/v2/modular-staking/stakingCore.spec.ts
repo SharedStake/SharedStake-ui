@@ -257,16 +257,21 @@ describe("StakingCore", () => {
     it("fee shares are minted on positive rewards", async () => {
       const govSharesBefore = await stToken.sharesOf(gov.address);
       const deployerSharesBefore = await stToken.sharesOf(deployer.address);
+      const totalSharesBefore = await stToken.getTotalShares();
 
       await stakingCore.connect(gov).notifyBeaconDeposit(parseEther("10"));
       await stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"));
 
       const govSharesAfter = await stToken.sharesOf(gov.address);
       const deployerSharesAfter = await stToken.sharesOf(deployer.address);
+      const totalFee = parseEther("0.05");
+      const totalFeeShares = (totalFee * totalSharesBefore) / (parseEther("10.5") - totalFee);
+      const expectedOperatorShares = totalFeeShares / 2n;
+      const expectedTreasuryShares = expectedOperatorShares + (totalFeeShares % 2n);
 
       // Both treasury (gov) and operator (deployer) receive fee shares.
-      expect(govSharesAfter).to.be.gt(govSharesBefore);
-      expect(deployerSharesAfter).to.be.gt(deployerSharesBefore);
+      expect(govSharesAfter - govSharesBefore).to.equal(expectedTreasuryShares);
+      expect(deployerSharesAfter - deployerSharesBefore).to.equal(expectedOperatorShares);
     });
 
     it("emits fee-routing telemetry on positive rewards", async () => {
@@ -354,9 +359,10 @@ describe("StakingCore", () => {
       expect(treasuryAfter - treasuryBefore).to.be.gt(operatorAfter - operatorBefore);
     });
 
-    it("subtracts withdrawal queue lockedEther from totalPooledEther", async () => {
+    it("subtracts withdrawal queue totalUnclaimedEther from totalPooledEther", async () => {
       const MockWithdrawalQueue = await ethers.getContractFactory("MockWithdrawalQueue");
       const mockQueue = await MockWithdrawalQueue.deploy(parseEther("2"));
+      await mockQueue.setPendingEther(parseEther("1"));
 
       await stakingCore.connect(gov).setWithdrawalQueue(mockQueue.target);
 
@@ -364,11 +370,11 @@ describe("StakingCore", () => {
 
       // Report 10.5 ETH in beacon (0.5 ETH reward)
       // Without queue: totalPooled = 0 (buffered) + 10.5 (beacon) = 10.5
-      // With queue locked 2 ETH: totalPooled = 0 + 10.5 - 2 = 8.5
+      // With queue owing 3 ETH: totalPooled = 0 + 10.5 - 3 = 7.5
       await stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"));
 
       const postTotalPooled = await stToken.totalPooledEther();
-      expect(postTotalPooled).to.equal(parseEther("8.5"));
+      expect(postTotalPooled).to.equal(parseEther("7.5"));
     });
 
     it("works correctly when withdrawal queue is not set (address 0)", async () => {

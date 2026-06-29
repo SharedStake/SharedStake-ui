@@ -32,4 +32,9 @@ interface IStakingModule {
 
     /// @notice Static identifier (e.g. keccak256("SOLO_VALIDATOR")).
     function moduleType() external pure returns (bytes32);
+
+    /// @notice Code hash governance should allow for this module.
+    /// @dev UUPS proxy modules return their current implementation code hash;
+    ///      non-proxy modules may return their own runtime code hash.
+    function implementationCodeHash() external view returns (bytes32);
 }

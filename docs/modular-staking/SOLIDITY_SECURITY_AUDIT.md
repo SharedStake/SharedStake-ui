@@ -126,9 +126,9 @@ Between `burnShares` and `setTotalPooledEther`, a reentrant call could observe i
 
 #### LOW-09: `StakingRouter._applyBeaconDelta()` clamps pool to 0 on insolvency instead of reverting
 **File:** `StakingRouter.sol`
-**Finding:** If `currentPooled <= loss`, the pool is set to 0 and `PoolInsolvent` is emitted. This means the exchange rate becomes undefined (0 shares / 0 pooled), and the next depositor resets the pool.
-**Impact:** Low — this is a known "socialized loss" design choice.
-**Status:** Documented and accepted by design.
+**Finding:** If `currentPooled <= loss`, the pool is set to 0 and `PoolInsolvent` is emitted. Shares can remain outstanding with zero pooled ETH.
+**Impact:** Low — this is a known "socialized loss" design choice; `ShareMath` now rejects new deposits while shares remain and pooled ETH is zero, preventing a new depositor from re-bootstrapping the pool and donating value to legacy shares.
+**Status:** Documented, fuzzed, and accepted by design.
 
 #### LOW-10: `StakingRouter.wrapFromModule()` and `unwrapToModule()` have asymmetric cap checks
 **File:** `StakingRouter.sol`

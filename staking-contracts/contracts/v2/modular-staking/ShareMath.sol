@@ -17,11 +17,10 @@ library ShareMath {
         uint256 totalPooledEth
     ) internal pure returns (uint256) {
         if (totalPooledEth == 0) {
-            // Bootstrap (totalShares == 0) AND insolvency recovery (totalShares > 0, ETH = 0)
-            // are both handled by 1:1 minting. Reverting on the insolvency case permanently
-            // bricks all deposits/withdrawals — 1:1 is preferable because it allows the pool
-            // to re-bootstrap via donations and lets existing shares be diluted rather than
-            // frozen. The old `InvalidBootstrapState` revert is removed for this reason.
+            // Bootstrap is only valid before any shares exist. If shares survive
+            // while pooled ETH is zero, 1:1 minting would donate new deposits to
+            // legacy shares and dilute the new depositor.
+            if (totalShares != 0) revert InvalidBootstrapState(totalShares, totalPooledEth);
             return ethAmount;
         }
         // Rounds DOWN: minter receives floor(shares). Pool balance never overstated.

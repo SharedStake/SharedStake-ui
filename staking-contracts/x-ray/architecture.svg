@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1473" height="800" viewBox="0 0 589 320" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 6" refX="8" refY="3"
+      markerWidth="4" markerHeight="3" orient="auto">
+      <path d="M0.5,0.5 L7,3 L0.5,5.5" fill="none" stroke="#94A3B8"
+        stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+    </marker>
+    <filter id="shadow" x="-6%" y="-8%" width="112%" height="128%">
+      <feDropShadow dx="0" dy="0.5" stdDeviation="0.8"
+        flood-color="#000" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+  <rect width="589" height="320" fill="#F8F9FB" rx="3"/>
+  <text x="295" y="11" text-anchor="middle" font-size="6" font-weight="700" fill="#1E293B">SharedStake V2 Modular Staking</text>
+  <rect x="220" y="16" width="150" height="10" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="225" y="18.5" width="5" height="5" rx="2.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <text x="233" y="22.5" font-size="3.5" fill="#1E293B">Actor</text>
+  <rect x="265" y="18.5" width="5" height="5" rx="1.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="266" y="19.5" width="0.8" height="3" rx="0.4" fill="#3B82F6"/>
+  <text x="273" y="22.5" font-size="3.5" fill="#1E293B">Protocol</text>
+  <rect x="313" y="18.5" width="5" height="5" rx="1.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="314" y="19.5" width="0.8" height="3" rx="0.4" fill="#F59E0B"/>
+  <text x="321" y="22.5" font-size="3.5" fill="#1E293B">External</text>
+  <path d="M236.4,52.0 Q229.2,104.0 254.4,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M254.4,94.0 Q227.2,104.0 272.3,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M272.3,176.0 C272.3,197.0 424.9,197.0 424.9,218.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M272.3,156.0 C272.3,135.0 127.7,135.0 127.7,114.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M127.7,114.0 C127.7,135.0 98.4,135.0 98.4,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M107.2,52.0 C107.2,73.0 127.7,73.0 127.7,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M127.7,114.0 C127.7,135.0 272.3,135.0 272.3,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M272.3,176.0 C272.3,197.0 518.1,197.0 518.1,218.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M272.3,176.0 C272.3,197.0 324.5,197.0 324.5,218.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M272.3,176.0 C272.3,197.0 224.1,197.0 224.1,218.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M224.1,238.0 C224.1,259.0 215.4,259.0 215.4,280.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M236.4,52.0 C236.4,73.0 288.0,73.0 288.0,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M288.0,114.0 C288.0,135.0 356.5,135.0 356.5,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M356.5,156.0 C356.5,187.0 424.9,187.0 424.9,218.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M236.4,52.0 C236.4,73.0 227.9,73.0 227.9,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M227.9,94.0 C227.9,125.0 222.7,125.0 222.7,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M222.7,156.0 Q184.1,228.0 219.0,218.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M219.0,218.0 Q182.1,228.0 215.4,280.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M348.8,52.0 Q346.8,104.0 310.6,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M310.6,94.0 Q348.8,104.0 272.3,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M348.8,52.0 C348.8,73.0 288.0,73.0 288.0,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M348.8,52.0 C348.8,73.0 397.7,73.0 397.7,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M397.7,94.0 C397.7,125.0 457.9,125.0 457.9,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M457.9,156.0 C457.9,187.0 518.1,187.0 518.1,218.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <g filter="url(#shadow)">
+    <rect x="206.4" y="32.0" width="60.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="209.4" y="35.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="236.4" y="43.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Users</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="231.1" y="156.0" width="82.4" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="234.1" y="159.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="272.3" y="167.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">StakingRouter</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="394.9" y="218.0" width="60.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="397.9" y="221.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="424.9" y="229.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">StToken</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="143.0" y="280.0" width="144.8" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="146.0" y="283.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="215.4" y="291.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">WstToken / ERC4626 wrapper</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="81.7" y="94.0" width="92.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="84.7" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="127.7" y="105.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">ValidatorModule</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="33.2" y="156.0" width="130.4" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="36.2" y="159.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="98.4" y="167.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Beacon deposit contract</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="237.2" y="94.0" width="101.6" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="240.2" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="288.0" y="105.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">WithdrawalQueueV2</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="30.0" y="32.0" width="154.4" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="33.0" y="35.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="107.2" y="43.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Oracle / QuorumOracleAdapter</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="476.9" y="218.0" width="82.4" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="479.9" y="221.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="518.1" y="229.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">FeeController</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="276.1" y="218.0" width="96.8" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="279.1" y="221.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="324.5" y="229.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">ReferralRegistry</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="194.1" y="218.0" width="60.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="197.1" y="221.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="224.1" y="229.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">DebtPool</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="288.4" y="32.0" width="120.8" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="291.4" y="35.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="348.8" y="43.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Governance / Guardian</text>
+  </g>
+  <rect x="227.5" y="118.1" width="25.6" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="240.3" y="123.1" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">stake ETH</text>
+  <rect x="309.4" y="192.0" width="78.4" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="348.6" y="197.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">mint shares / update pooled ETH</text>
+  <rect x="175.2" y="130.0" width="49.6" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="200.0" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">route ETH to module</text>
+  <rect x="93.0" y="130.0" width="40.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="113.0" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">32 ETH deposits</text>
+  <rect x="99.8" y="68.0" width="35.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="117.4" y="73.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">beacon report</text>
+  <rect x="172.8" y="138.0" width="54.4" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="200.0" y="143.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">report baseline delta</text>
+  <rect x="369.2" y="184.0" width="52.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="395.2" y="189.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">compute reward split</text>
+  <rect x="267.6" y="184.0" width="61.6" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="298.4" y="189.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">mint referral fee shares</text>
+  <rect x="222.2" y="192.0" width="52.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="248.2" y="197.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">mint debt fee shares</text>
+  <rect x="199.8" y="254.0" width="40.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="219.8" y="259.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">wrap fee shares</text>
+  <rect x="231.4" y="68.0" width="61.6" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="262.2" y="73.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">request/claim withdrawal</text>
+  <rect x="358.7" y="174.0" width="64.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="390.7" y="179.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">burn shares / reduce pool</text>
+  <rect x="158.8" y="240.9" width="59.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="188.4" y="245.9" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">wrap non-rebasing claim</text>
+  <rect x="297.3" y="117.9" width="59.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="326.9" y="122.9" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">modules, caps, codehash</text>
+  <rect x="297.2" y="68.0" width="42.4" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="318.4" y="73.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">finalize batches</text>
+  <rect x="459.6" y="182.0" width="56.8" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="488.0" y="187.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">recipient/split config</text>
+</svg>

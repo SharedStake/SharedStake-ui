@@ -202,6 +202,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     error ModuleTypeActionMismatch(bytes32 moduleId, bytes32 moduleType, bytes4 action);
     error ModuleCodeHashNotAllowed(bytes32 moduleId, address moduleAddr, bytes32 moduleType, bytes32 codeHash);
     error CodeHashEnforcementAlreadyEnabled();
+    error InvalidModuleCodeHashInput(bytes32 moduleType, bytes32 codeHash);
     error ReferralCodeRegistryNotContract(address registry);
     error ReferralCodeRegistryInvalid(address registry);
 
@@ -337,6 +338,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         if (m.addr == address(0)) revert ModuleNotRegistered(moduleId);
         if (!m.active) revert ModuleInactive(moduleId);
         if (m.paused) revert ModulePaused(moduleId);
+        _enforceModuleCodeHash(moduleId, m.addr, m.moduleType);
         _enforcePolicy(moduleId, user);
 
         // Mint cap: 0 == unlimited; otherwise post-deposit total must not exceed cap.
@@ -476,10 +478,30 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         uint256 newTotalShares,
         uint256 newTotalPooled
     ) private pure returns (uint256, uint256, uint256, uint256) {
-        uint256 treasuryShares = ShareMath.getSharesByPooledEth(treasuryAmount, newTotalShares, newTotalPooled);
-        uint256 operatorShares = ShareMath.getSharesByPooledEth(operatorAmount, newTotalShares, newTotalPooled);
-        uint256 referralShares = ShareMath.getSharesByPooledEth(referralAmount, newTotalShares, newTotalPooled);
-        uint256 debtPoolShares = ShareMath.getSharesByPooledEth(debtPoolAmount, newTotalShares, newTotalPooled);
+        uint256 totalFeeAmount = treasuryAmount + operatorAmount + referralAmount + debtPoolAmount;
+        if (totalFeeAmount == 0 || newTotalShares == 0 || totalFeeAmount >= newTotalPooled) {
+            return (0, 0, 0, 0);
+        }
+
+        uint256 totalFeeShares = (totalFeeAmount * newTotalShares) / (newTotalPooled - totalFeeAmount);
+        uint256 treasuryShares = (totalFeeShares * treasuryAmount) / totalFeeAmount;
+        uint256 operatorShares = (totalFeeShares * operatorAmount) / totalFeeAmount;
+        uint256 referralShares = (totalFeeShares * referralAmount) / totalFeeAmount;
+        uint256 debtPoolShares = (totalFeeShares * debtPoolAmount) / totalFeeAmount;
+
+        uint256 allocated = treasuryShares + operatorShares + referralShares + debtPoolShares;
+        uint256 remainder = totalFeeShares - allocated;
+        if (remainder != 0) {
+            if (treasuryAmount != 0) {
+                treasuryShares += remainder;
+            } else if (operatorAmount != 0) {
+                operatorShares += remainder;
+            } else if (referralAmount != 0) {
+                referralShares += remainder;
+            } else {
+                debtPoolShares += remainder;
+            }
+        }
         return (treasuryShares, operatorShares, referralShares, debtPoolShares);
     }
 
@@ -688,6 +710,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         m = _modules[moduleId];
         if (m.addr == address(0)) revert ModuleNotRegistered(moduleId);
         if (msg.sender != m.addr) revert NotModule(moduleId, msg.sender);
+        _enforceModuleCodeHash(moduleId, m.addr, m.moduleType);
     }
 
     function _requireModuleRegistered(bytes32 moduleId) internal view returns (ModuleInfo storage m) {
@@ -824,11 +847,20 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         }
     }
 
-    function _validateModuleCodeHash(address moduleAddr, bytes32 mType) private view {
+    function _moduleCodeHash(address moduleAddr) private view returns (bytes32) {
+        try IStakingModule(moduleAddr).implementationCodeHash() returns (bytes32 codeHash) {
+            if (codeHash != bytes32(0)) return codeHash;
+        } catch {
+            // Non-proxy or legacy modules can still be governed by runtime hash.
+        }
+        return moduleAddr.codehash;
+    }
+
+    function _enforceModuleCodeHash(bytes32 moduleId, address moduleAddr, bytes32 mType) private view {
         if (enforceModuleCodeHashAllowlist) {
-            bytes32 codeHash = moduleAddr.codehash;
+            bytes32 codeHash = _moduleCodeHash(moduleAddr);
             if (!moduleCodeHashAllowed[mType][codeHash]) {
-                revert ModuleCodeHashNotAllowed(bytes32(0), moduleAddr, mType, codeHash);
+                revert ModuleCodeHashNotAllowed(moduleId, moduleAddr, mType, codeHash);
             }
         }
     }
@@ -840,7 +872,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         _validateModuleWiring(moduleId, moduleAddr);
 
         bytes32 mType = IStakingModule(moduleAddr).moduleType();
-        _validateModuleCodeHash(moduleAddr, mType);
+        _enforceModuleCodeHash(moduleId, moduleAddr, mType);
 
         _modules[moduleId] = ModuleInfo({
             addr: moduleAddr,
@@ -901,7 +933,9 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
 
     /// @notice Allow or disallow a module runtime code hash for a module type.
     function setModuleCodeHashAllowed(bytes32 moduleType, bytes32 codeHash, bool allowed) external onlyRole(GOV) {
-        if (moduleType == bytes32(0) || codeHash == bytes32(0)) revert Errors.InvalidAmount();
+        if (moduleType == bytes32(0) || codeHash == bytes32(0)) {
+            revert InvalidModuleCodeHashInput(moduleType, codeHash);
+        }
         moduleCodeHashAllowed[moduleType][codeHash] = allowed;
         emit ModuleCodeHashAllowedSet(moduleType, codeHash, allowed);
     }

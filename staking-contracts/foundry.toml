@@ -17,3 +17,11 @@ via-ir = true
 runs = 256
 depth = 32
 fail_on_revert = false
+
+# >>> fizz fuzz profile
+[profile.fuzz]
+test = "test/fizz"
+via-ir = true
+optimizer = true
+optimizer-runs = 200
+# <<< fizz fuzz profile

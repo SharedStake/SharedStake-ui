@@ -42,6 +42,20 @@ describe("ShareMath (via StToken)", () => {
       const eth = await stToken.getPooledEthByShares(parseEther("1"));
       expect(eth).to.equal(0n);
     });
+
+    it("reverts when pooled ETH is zero but shares still exist", async () => {
+      const StToken = await ethers.getContractFactory("StToken");
+      const insolvent = await StToken.deploy();
+      await insolvent.addMinter(deployer.address);
+      await insolvent.setTotalPooledEther(parseEther("1"));
+      await insolvent.mintShares(deployer.address, parseEther("1"));
+      await insolvent.setTotalPooledEther(0);
+
+      await expect(insolvent.getSharesByPooledEth(parseEther("1"))).to.be.revertedWithCustomError(
+        insolvent,
+        "InvalidBootstrapState",
+      );
+    });
   });
 
   describe("After seeding the pool", () => {
