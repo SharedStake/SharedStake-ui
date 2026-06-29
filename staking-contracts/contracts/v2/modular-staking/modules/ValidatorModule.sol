@@ -333,12 +333,14 @@ contract ValidatorModule is Initializable, UUPSUpgradeable, AccessControlUpgrade
     ///      the exited validator(s). The sweep restores total ETH accounting without
     ///      double-counting: the oracle lowers _beaconBalance, this raises _bufferedEther
     ///      by the exit proceeds, leaving totalEth() unchanged net.
-    ///      If called before the oracle update, totalEth() temporarily rises; the oracle
-    ///      update will then neutralise the difference.
-    function sweepExitedEth() external onlyRole(GOV) {
+    ///      If called before the oracle update, totalEth() temporarily includes both
+    ///      the still-reported beacon balance and the swept ETH. Pooled accounting is
+    ///      not inflated in that window; the next oracle decrease consumes the credit.
+    function sweepExitedEth() external onlyRole(GOV) nonReentrant {
         uint256 unaccounted = address(this).balance - _bufferedEther;
         if (unaccounted == 0) return;
         _bufferedEther += unaccounted;
+        ROUTER.notifyExitedEther(MODULE_ID, unaccounted);
         emit ExitedEthSwept(unaccounted, _bufferedEther);
     }
 

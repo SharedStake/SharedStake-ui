@@ -48,6 +48,16 @@ On non-local networks the deploy script seeds the wrapper with `V2_WRAPPER_SEED_
 
 ERC-7540 is intentionally not implemented in core V2. `WithdrawalQueueV2` is ERC-7540-inspired but keeps SharedStake-specific request-time value locking, guardian-backed finalization, TURBO/BUNKER modes, and batch claim behavior. If a future integration requires ERC-7540, add a separate adapter/facade over the existing queue instead of rewriting the queue itself.
 
+### Phase 1.2: Withdrawal Queue Accounting Sync (required for router deployments)
+
+Router deployments must wire `WithdrawalQueueV2.accountingSyncer` to `StakingRouter`. The `007_stakingRouter.ts` deploy step does this automatically when `WithdrawalQueueV2` is deployed. This makes withdrawal requests call `StakingRouter.syncAccounting()` before request-time share math, so LST module rebases/depegs are reflected before shares are burned and ETH amounts are locked.
+
+Post-deploy verification checks this wiring. If it is missing, call:
+
+```solidity
+withdrawalQueueV2.setAccountingSyncer(address(stakingRouter));
+```
+
 ### Phase 1.5: Router Module Admission Hardening (required)
 
 Before each module registration, allowlist the module runtime code hash by module type:

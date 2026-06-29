@@ -60,7 +60,7 @@ Deliver a production-oriented router-based staking system with:
 | `StakingRouter` | Canonical entrypoint and pooled accounting coordinator. |
 | `ValidatorModule` | ETH validator flow for router-based staking. |
 | `DVTModule` | Validator flow variant reserved for DVT operations. |
-| `LSTWrapModule` | LST in/out module using external price oracle. |
+| `LSTWrapModule` | LST in/out module using external price oracle; unwraps require stToken approval and burn only module-custodied shares. |
 | `OperatorRegistry` | Operator eligibility, bond accounting, slashing, module caller controls, optional NFT credit escrow. |
 | `MigrationHelper` | Timelocked migration announcement and activation state for frontends/integrators. |
 | `StToken` | Global share ledger and rebasing supply source of truth. |
@@ -72,7 +72,7 @@ Deliver a production-oriented router-based staking system with:
 | `StEthPriceOracle` | Chainlink-backed stETH price oracle for LST module with staleness checks. |
 | `InstitutionalPolicyRegistry` | Optional per-module policy gate provider. |
 | `DebtPool` | Merkle tree-based debt distribution for protocol liabilities and fee claims. |
-| `WithdrawalQueueV2` | Exit queue with request-time value lock and guarded finalization. |
+| `WithdrawalQueueV2` | Exit queue with request-time value lock, optional router accounting syncer, and guarded finalization. |
 | `Referral Service` | Offchain code-to-address mapping and referral code lifecycle (create/revoke/list/resolve). |
 | `Referral Sync Worker` | Reads onchain referral events and reports backend/onchain mapping divergence. |
 

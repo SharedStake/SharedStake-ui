@@ -4,6 +4,7 @@ import {parseEther} from "ethers";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
 
 const DEFAULT_CONFIG = ethers.keccak256(ethers.toUtf8Bytes("default"));
+const CHEAP_CONFIG = ethers.keccak256(ethers.toUtf8Bytes("cheap"));
 
 describe("OperatorRegistry NFT bond credit", () => {
   let deployer: SignerWithAddress;
@@ -79,6 +80,20 @@ describe("OperatorRegistry NFT bond credit", () => {
     const opData = await registry.getOperator(operator.address);
     expect(opData.sgtBonded).to.equal(parseEther("1750"));
     expect(opData.totalSlots).to.equal(2n);
+  });
+
+  it("does not allow re-registering under a different config to bypass slot collateral", async () => {
+    await registry.connect(gov).setBondConfig(CHEAP_CONFIG, parseEther("0.01"), parseEther("1"), 100);
+
+    await mockSgt.mint(operator.address, parseEther("1000"));
+    await mockSgt.connect(operator).approve(registry.target, parseEther("1000"));
+    await registry
+      .connect(operator)
+      .registerBondWithSgt(DEFAULT_CONFIG, 1, parseEther("1000"), {value: parseEther("1")});
+
+    await expect(
+      registry.connect(operator).registerBondWithSgt(CHEAP_CONFIG, 99, 0, {value: parseEther("0.99")}),
+    ).to.be.revertedWithCustomError(registry, "InvalidAmount");
   });
 
   it("freezes NFT credit configuration while NFTs are escrowed", async () => {

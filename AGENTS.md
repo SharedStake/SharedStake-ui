@@ -84,6 +84,9 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - Fork E2E must use a fresh Vite/Playwright server with a free `--web-port`; stale reused Vite servers can serve old bundled `local.json` contract addresses and make fork validation meaningless.
 - Fork E2E deploys must set Hardhat `LOCALHOST_RPC_URL` to the same `http://<host>:<port>` that Playwright uses; otherwise `--port 8546` can deploy to Hardhat's default `8545` while the browser tests `8546`.
 - V2 Playwright suites should preflight `eth_getCode` for required local contract addresses; a zero-code address is a stale-address or wrong-RPC failure, not a valid UI pass.
+- V2 deploy/wiring scripts must wait for state-changing transaction receipts before dependent reads or verification; an `ethers` `TransactionResponse` alone can race on Anvil mainnet forks.
+- Router module code-hash allowlists must use the same hash the Router enforces. For UUPS modules, read `implementationCodeHash()` from the module instead of hashing proxy runtime bytecode.
+- Governance handover scripts must revoke bootstrap/direct bypass roles, such as `StakingCore.ORACLE`, before revoking the signer's admin role.
 - Standard PR 379 gates:
   - `bun audit --level moderate`
   - `bun run type-check`

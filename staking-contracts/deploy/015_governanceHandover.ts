@@ -1,6 +1,7 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {StToken__factory} from "../types";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 const ACCESS_CONTROL_ABI = [
   "function DEFAULT_ADMIN_ROLE() view returns (bytes32)",
@@ -29,14 +30,14 @@ const GOVERNED_DEPLOYMENTS = [
 
 async function grantRoleIfNeeded(contract: any, role: string, holder: string, label: string) {
   if (!(await contract.hasRole(role, holder))) {
-    await contract.grantRole(role, holder);
+    await waitForMined(contract.grantRole(role, holder));
     console.log(`  granted ${label} -> ${holder}`);
   }
 }
 
 async function revokeRoleIfPresent(contract: any, role: string, holder: string, label: string) {
   if (await contract.hasRole(role, holder)) {
-    await contract.revokeRole(role, holder);
+    await waitForMined(contract.revokeRole(role, holder));
     console.log(`  revoked ${label} <- ${holder}`);
   }
 }
@@ -78,11 +79,35 @@ const func: DeployFunction = async hre => {
       // Use whichever account currently holds DEFAULT_ADMIN_ROLE to perform the transfer.
       const adminSigner = signerIsAdmin ? govSigner : accounts.deployer;
       console.log("  Transferring StToken admin to GovernanceTimelock...");
-      await stToken.connect(adminSigner).transferAdmin(timelock);
+      await waitForMined(stToken.connect(adminSigner).transferAdmin(timelock));
       if (!(await stToken.hasRole(defaultAdmin, timelock))) {
         throw new Error("StToken admin handover failed");
       }
       console.log("  StToken admin handover verified.");
+    }
+  }
+
+  // M5: Revoke bootstrap ORACLE from deployer/gov on StakingCore before DEFAULT_ADMIN is handed off.
+  // The bootstrap role was granted by 004_stakingCore.ts for pre-adapter testing and must be
+  // revoked before mainnet launch so gov cannot bypass OracleAdapter sanity checks.
+  const stakingCoreDeployment = await hre.deployments.getOrNull("StakingCore");
+  const oracleAdapterDeployment = await hre.deployments.getOrNull("OracleAdapterValidator");
+  if (stakingCoreDeployment && oracleAdapterDeployment) {
+    const stakingCoreAbi = [...ACCESS_CONTROL_ABI, "function ORACLE() view returns (bytes32)"];
+    const stakingCoreContract = await hre.ethers.getContractAt(
+      stakingCoreAbi,
+      stakingCoreDeployment.address,
+      govSigner,
+    );
+    const ORACLE = await (stakingCoreContract as any).ORACLE();
+    await revokeRoleIfPresent(stakingCoreContract, ORACLE, gov, "StakingCore.ORACLE (bootstrap)");
+    if (accounts.deployer.address !== gov) {
+      await revokeRoleIfPresent(
+        stakingCoreContract,
+        ORACLE,
+        accounts.deployer.address,
+        "StakingCore.ORACLE (bootstrap deployer)",
+      );
     }
   }
 
@@ -150,31 +175,6 @@ const func: DeployFunction = async hre => {
       }
     } catch {
       console.log("  DebtPool ADMIN role not migrated (role unavailable or no access).");
-    }
-  }
-
-  // M5: Revoke bootstrap ORACLE from deployer/gov on StakingCore once OracleAdapter is wired.
-  // The bootstrap role was granted by 004_stakingCore.ts for pre-adapter testing and must be
-  // revoked before mainnet launch so gov cannot bypass OracleAdapter sanity checks.
-  const stakingCoreDeployment = await hre.deployments.getOrNull("StakingCore");
-  const oracleAdapterDeployment = await hre.deployments.getOrNull("OracleAdapterValidator");
-  if (stakingCoreDeployment && oracleAdapterDeployment) {
-    const stakingCoreAbi = [...ACCESS_CONTROL_ABI, "function ORACLE() view returns (bytes32)"];
-    const stakingCoreContract = await hre.ethers.getContractAt(
-      stakingCoreAbi,
-      stakingCoreDeployment.address,
-      govSigner,
-    );
-    const ORACLE = await (stakingCoreContract as any).ORACLE();
-    // Revoke from both govSigner and deployer in case either holds the bootstrap role.
-    await revokeRoleIfPresent(stakingCoreContract, ORACLE, gov, "StakingCore.ORACLE (bootstrap)");
-    if (accounts.deployer.address !== gov) {
-      await revokeRoleIfPresent(
-        stakingCoreContract,
-        ORACLE,
-        accounts.deployer.address,
-        "StakingCore.ORACLE (bootstrap deployer)",
-      );
     }
   }
 

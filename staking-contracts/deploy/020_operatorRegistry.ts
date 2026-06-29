@@ -3,7 +3,7 @@ import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {OperatorRegistry__factory, ValidatorModule__factory} from "../types";
 import type {OperatorRegistry} from "../types";
-import {assertGovernanceSigner, getGovernanceSigner} from "../helpers/moduleDeployment";
+import {assertGovernanceSigner, getGovernanceSigner, waitForMined} from "../helpers/moduleDeployment";
 import {isLocalNetwork, resolveGovernanceAddress} from "../helpers/governance";
 
 const SGT_ADDRESS_ENV_KEYS = ["V2_SGT_ADDRESS"];
@@ -106,8 +106,8 @@ const func: DeployFunction = async hre => {
   const currentConfig = await registry.bondConfigs(DEFAULT_CONFIG);
   if (currentConfig.maxSlots === 0n) {
     console.log("  Configuring default bond tier...");
-    await registry.connect(govSigner).setBondConfig(DEFAULT_CONFIG, ethBondPerSlot, sgtBondPerSlot, maxSlots);
-    await registry.connect(govSigner).setDefaultConfig(DEFAULT_CONFIG);
+    await waitForMined(registry.connect(govSigner).setBondConfig(DEFAULT_CONFIG, ethBondPerSlot, sgtBondPerSlot, maxSlots));
+    await waitForMined(registry.connect(govSigner).setDefaultConfig(DEFAULT_CONFIG));
     console.log(
       `  Default config: ${hre.ethers.formatEther(ethBondPerSlot)} ETH + ${hre.ethers.formatEther(sgtBondPerSlot)} SGT per slot, max ${maxSlots} slots`,
     );
@@ -129,7 +129,7 @@ const func: DeployFunction = async hre => {
     const currentCredit = await registryAny.nftSgtCredit();
     if (currentNft.toLowerCase() !== configuredNft.toLowerCase() || currentCredit !== nftSgtCredit) {
       console.log(`  Configuring NFT credit: ${configuredNft} -> ${hre.ethers.formatEther(nftSgtCredit)} SGT`);
-      await registryAny.connect(govSigner).setNftContract(configuredNft, nftSgtCredit);
+      await waitForMined(registryAny.connect(govSigner).setNftContract(configuredNft, nftSgtCredit));
     } else {
       console.log("  NFT credit already configured");
     }
@@ -142,9 +142,9 @@ const func: DeployFunction = async hre => {
     const currentRegistry = await validatorModule.operatorRegistry();
     if (currentRegistry.toLowerCase() === ZeroAddress.toLowerCase()) {
       console.log("  Wiring OperatorRegistry → ValidatorModule...");
-      await validatorModule.connect(govSigner).setOperatorRegistry(proxyAddress);
+      await waitForMined(validatorModule.connect(govSigner).setOperatorRegistry(proxyAddress));
       // Grant CALLER role so ValidatorModule can call incrementActive/decrementActive
-      await registry.connect(govSigner).grantCaller(validatorModuleAddress);
+      await waitForMined(registry.connect(govSigner).grantCaller(validatorModuleAddress));
       console.log("  ValidatorModule wired ✓");
     } else {
       console.log("  ValidatorModule already wired to a registry:", currentRegistry);

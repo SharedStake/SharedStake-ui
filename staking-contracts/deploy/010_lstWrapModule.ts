@@ -8,6 +8,7 @@ import {
   getGovernanceSigner,
   pauseModuleAfterRegistrationIfRequested,
   readPauseAfterRegistration,
+  waitForMined,
 } from "../helpers/moduleDeployment";
 import {resolveGovernanceAddress} from "../helpers/governance";
 
@@ -116,22 +117,21 @@ const func: DeployFunction = async hre => {
 
   // Wire price oracle on the module.
   console.log("  Setting price oracle on LSTWrapModule...");
-  await lstMod.connect(govSigner).setPriceOracle(priceOracle.target as string);
+  await waitForMined(lstMod.connect(govSigner).setPriceOracle(priceOracle.target as string));
 
   // Register with the router. Conservative initial cap.
   const router = await connect(StakingRouter__factory);
   const moduleType = await lstMod.moduleType();
-  const moduleRuntimeCode = await hre.ethers.provider.getCode(proxyAddress);
-  const moduleCodeHash = hre.ethers.keccak256(moduleRuntimeCode);
+  const moduleCodeHash = await lstMod.implementationCodeHash();
   if (!(await router.moduleCodeHashAllowed(moduleType, moduleCodeHash))) {
     console.log(`  Allowlisting LSTWrapModule code hash (${moduleCodeHash})...`);
-    await router.connect(govSigner).setModuleCodeHashAllowed(moduleType, moduleCodeHash, true);
+    await waitForMined(router.connect(govSigner).setModuleCodeHashAllowed(moduleType, moduleCodeHash, true));
   }
   const existing = await router.modules(moduleId);
   if (existing.addr === "0x0000000000000000000000000000000000000000") {
     const cap = parseEther("1000");
     console.log(`  Registering LSTWrapModule with router (cap=${cap} wei)...`);
-    await router.connect(govSigner).registerModule(moduleId, proxyAddress, cap);
+    await waitForMined(router.connect(govSigner).registerModule(moduleId, proxyAddress, cap));
   }
   await pauseModuleAfterRegistrationIfRequested(router, govSigner, moduleId, "LSTWrapModule", pauseAfterRegistration);
 };

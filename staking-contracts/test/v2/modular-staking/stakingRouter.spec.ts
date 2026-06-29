@@ -880,6 +880,55 @@ describe("StakingRouter", () => {
       expect(await stToken.totalPooledEther()).to.be.gte(parseEther("31"));
     });
 
+    it("sweepExitedEth restores validator exit proceeds after a beacon decrease", async () => {
+      const pubkey = ethers.hexlify(ethers.randomBytes(48));
+      const creds = expectedWithdrawalCreds;
+      const sig = ethers.hexlify(ethers.randomBytes(96));
+      const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
+      await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
+      await mod1.connect(oracle).reportBeacon(1, parseEther("32"));
+
+      await mod1.connect(oracle).reportBeacon(0, 0);
+      expect(await stToken.totalPooledEther()).to.equal(0n);
+      expect(await router.moduleAppliedBeaconLosses(SOLO)).to.equal(parseEther("32"));
+
+      await gov.sendTransaction({to: mod1.target, value: parseEther("32")});
+      await expect(mod1.connect(gov).sweepExitedEth())
+        .to.emit(router, "ExitedEtherNotified")
+        .withArgs(SOLO, parseEther("32"), parseEther("32"), 0n, parseEther("32"));
+
+      expect(await stToken.totalPooledEther()).to.equal(parseEther("32"));
+      expect(await router.moduleAppliedBeaconLosses(SOLO)).to.equal(0n);
+    });
+
+    it("sweepExitedEth before a beacon decrease stores credit without inflating the pool", async () => {
+      const pubkey = ethers.hexlify(ethers.randomBytes(48));
+      const creds = expectedWithdrawalCreds;
+      const sig = ethers.hexlify(ethers.randomBytes(96));
+      const root = ethers.hexlify(ethers.randomBytes(32));
+      await mod1.connect(gov).approvePubkey(pubkey);
+      await mod1.connect(gov).depositToBeaconChain(pubkey, creds, sig, root);
+      await mod1.connect(oracle).reportBeacon(1, parseEther("32"));
+
+      await gov.sendTransaction({to: mod1.target, value: parseEther("32")});
+      await expect(mod1.connect(gov).sweepExitedEth())
+        .to.emit(router, "ExitedEtherNotified")
+        .withArgs(SOLO, parseEther("32"), 0n, parseEther("32"), parseEther("32"));
+      expect(await stToken.totalPooledEther()).to.equal(parseEther("32"));
+
+      await router.connect(gov).setMintCap(SOLO, parseEther("64"));
+      await expect(router.connect(bob).submit(ZeroAddress, {value: parseEther("1")})).to.be.revertedWithCustomError(
+        router,
+        "MintCapExceeded",
+      );
+
+      await mod1.connect(oracle).reportBeacon(0, 0);
+      expect(await stToken.totalPooledEther()).to.equal(parseEther("32"));
+      expect(await router.moduleExitedEtherCredit(SOLO)).to.equal(0n);
+      expect(await router.moduleAppliedBeaconLosses(SOLO)).to.equal(0n);
+    });
+
     it("notifyBeaconDeposit baseline math: 32 ETH push then 33 ETH report yields +1 ETH delta", async () => {
       const pubkey = ethers.hexlify(ethers.randomBytes(48));
       const creds = expectedWithdrawalCreds;
@@ -1074,6 +1123,7 @@ describe("StakingRouter", () => {
       const sharesBefore = await stToken.sharesOf(alice.address);
 
       // Unwrap exactly the amount we wrapped.
+      await stToken.connect(alice).approve(lstModule.target, stBalanceBefore);
       await lstModule.connect(alice).unwrapLST(stBalanceBefore, alice.address);
 
       const sharesAfter = await stToken.sharesOf(alice.address);
@@ -1083,6 +1133,24 @@ describe("StakingRouter", () => {
       expect(await lstToken.balanceOf(lstModule.target)).to.equal(0n);
       // Alice gets her LST back.
       expect(await lstToken.balanceOf(alice.address)).to.equal(lstBalanceBefore + parseEther("1"));
+    });
+
+    it("withdrawal queue syncs LST depeg accounting before request-time share math", async () => {
+      await lstModule.connect(alice).wrapLST(parseEther("2"), alice.address);
+      expect(await stToken.totalPooledEther()).to.equal(parseEther("2"));
+
+      const WithdrawalQueueV2 = await ethers.getContractFactory("WithdrawalQueueV2");
+      const queue = await WithdrawalQueueV2.deploy(stToken.target, gov.address);
+      await stToken.addMinter(queue.target);
+      await queue.connect(gov).setAccountingSyncer(router.target);
+
+      await oracleContract.setEthPerLst(parseEther("0.5"));
+      await queue.connect(alice).requestWithdrawals([parseEther("1")], alice.address);
+
+      const request = await queue.getRequest(1);
+      expect(request.ethAmount).to.equal(parseEther("1"));
+      expect(await stToken.totalPooledEther()).to.equal(0n);
+      expect(await router.moduleAccountedEth(LST_MOD)).to.equal(parseEther("1"));
     });
 
     it("mint cap exceeded reverts with MintCapExceeded", async () => {

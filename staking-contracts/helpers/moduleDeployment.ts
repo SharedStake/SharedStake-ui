@@ -25,6 +25,10 @@ export function assertGovernanceSigner(ship: Ship, gov: string): void {
   }
 }
 
+export async function waitForMined(txPromise: Promise<{wait: () => Promise<unknown>}>): Promise<void> {
+  await (await txPromise).wait();
+}
+
 // ── Role helpers ───────────────────────────────────────────────────────────────
 
 /** Grant NODE_OPERATOR role to nodeOperator on a ValidatorModule / DVTModule. Idempotent. */
@@ -41,7 +45,7 @@ export async function grantNodeOperatorRole(
     return;
   }
   console.log(`  [${name}] Granting NODE_OPERATOR to ${nodeOperator}...`);
-  await module.connect(govSigner).grantRole(NODE_OPERATOR, nodeOperator);
+  await waitForMined(module.connect(govSigner).grantRole(NODE_OPERATOR, nodeOperator));
 }
 
 // ── Mint cap ───────────────────────────────────────────────────────────────────
@@ -119,7 +123,7 @@ export async function allowlistModuleCodeHash(
     return;
   }
   console.log(`  [${name}] Allowlisting code hash ${codeHash.slice(0, 10)}...`);
-  await router.connect(govSigner).setModuleCodeHashAllowed(moduleType, codeHash, true);
+  await waitForMined(router.connect(govSigner).setModuleCodeHashAllowed(moduleType, codeHash, true));
 }
 
 /**
@@ -133,7 +137,7 @@ export async function enableCodeHashAllowlistEnforcement(router: any, govSigner:
     return;
   }
   console.log("  Enabling code hash allowlist enforcement...");
-  await router.connect(govSigner).enableCodeHashEnforcement();
+  await waitForMined(router.connect(govSigner).enableCodeHashEnforcement());
 }
 
 /**
@@ -166,7 +170,7 @@ export async function registerOrUpdateModule(
     }
   } else {
     console.log(`  [${name}] Registering with StakingRouter...`);
-    await router.connect(govSigner).registerModule(moduleId, moduleAddr, mintCapWei);
+    await waitForMined(router.connect(govSigner).registerModule(moduleId, moduleAddr, mintCapWei));
   }
 
   if (opts.pauseAfterRegistration) {
@@ -183,7 +187,7 @@ export async function registerOrUpdateModule(
     const currentDefault: string = await router.defaultModuleId();
     if (currentDefault !== moduleId) {
       console.log(`  [${name}] Setting as default module...`);
-      await router.connect(govSigner).setDefaultModule(moduleId);
+      await waitForMined(router.connect(govSigner).setDefaultModule(moduleId));
     } else {
       console.log(`  [${name}] Already set as default module`);
     }
@@ -223,7 +227,7 @@ export async function pauseModuleAfterRegistrationIfRequested(
   }
 
   console.log(`  [${name}] Pausing module after registration for dark launch...`);
-  await router.connect(guardianSigner).pauseModule(moduleId);
+  await waitForMined(router.connect(guardianSigner).pauseModule(moduleId));
 }
 
 // ── Beacon deposit ─────────────────────────────────────────────────────────────
@@ -281,5 +285,5 @@ export async function wireWithdrawalCredentials(
   }
 
   console.log(`  Setting withdrawal credentials → ${credentials} on ${module.target}...`);
-  await module.connect(govSigner).setExpectedWithdrawalCredentials(credentials);
+  await waitForMined(module.connect(govSigner).setExpectedWithdrawalCredentials(credentials));
 }

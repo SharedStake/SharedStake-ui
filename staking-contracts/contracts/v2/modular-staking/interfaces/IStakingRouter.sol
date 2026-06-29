@@ -27,6 +27,11 @@ interface IStakingRouter {
     ///         next oracle report does not double-count the principal.
     function notifyBeaconDeposit(bytes32 moduleId, uint256 amount) external;
 
+    /// @notice Called by a validator module after sweeping exited ETH into its buffer.
+    ///         Restores pooled ETH for execution-layer proceeds so only true slash
+    ///         shortfalls remain as losses after a lower beacon-balance report.
+    function notifyExitedEther(bytes32 moduleId, uint256 amount) external;
+
     /// @notice Called by an LST module to mint stToken shares on LST deposit.
     function wrapFromModule(bytes32 moduleId, address recipient, uint256 ethEquiv) external;
 
@@ -36,6 +41,9 @@ interface IStakingRouter {
         address caller,
         uint256 stTokenAmount
     ) external returns (uint256 ethValue);
+
+    /// @notice Synchronize module-level accounting before price-sensitive share math.
+    function syncAccounting() external returns (uint256 syncedPooledEther);
 
     /// @notice Module registry getter.
     function modules(

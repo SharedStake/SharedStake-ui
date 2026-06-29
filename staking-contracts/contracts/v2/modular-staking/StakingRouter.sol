@@ -32,7 +32,10 @@ interface IDebtPool {
 /// Accounting invariant:
 ///         totalPooledEther == sum_over_modules( module.totalEth() )
 ///                          == sum( bufferedEther_i + beaconBalance_i ) for validator modules
-///                          == priceOracle.getEthValue(lstHeld_i) for LST modules
+///                          == priceOracle.getEthValue(live LST balance_i) for LST modules
+///         except during a governance-triggered validator exit sweep that precedes the
+///         oracle's beacon-balance decrease; in that window pooled accounting holds
+///         the swept ETH as exit credit until the oracle report consumes it.
 ///
 ///         The Router stores `moduleBeaconBalance[moduleId]` — the baseline of the
 ///         module's beacon side. It is bumped when validator modules call
@@ -80,6 +83,14 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     /// @notice Last reported beacon balance per module — used for delta-only oracle reports.
     mapping(bytes32 => uint256) public moduleBeaconBalance;
 
+    /// @notice Exited ETH swept by validator modules but not yet matched against a
+    ///         lower beacon-balance report.
+    mapping(bytes32 => uint256) public moduleExitedEtherCredit;
+
+    /// @notice Beacon-balance losses already applied to pooled ETH that can still
+    ///         be restored by later execution-layer exit proceeds.
+    mapping(bytes32 => uint256) public moduleAppliedBeaconLosses;
+
     /// @notice Optional per-module limiter config. Disabled if either field is zero.
     mapping(bytes32 => InflowLimitConfig) public moduleInflowLimitConfig;
 
@@ -102,6 +113,13 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     /// @notice Optional resolver for referral code hashes. Zero address disables
     ///         code resolution and preserves legacy address-only referral flow.
     IReferralCodeRegistry public referralCodeRegistry;
+
+    /// @notice Last ETH value accounted into StToken for modules whose backing can
+    ///         change outside router callbacks, keyed by module id.
+    mapping(bytes32 => uint256) public moduleAccountedEth;
+
+    /// @dev Registered LST modules that need oracle-backed accounting sync.
+    bytes32[] private _lstModuleIds;
 
     /// @notice Optional per-module policy id. Zero value disables policy checks for that module.
     mapping(bytes32 => bytes32) public modulePolicyId;
@@ -150,6 +168,13 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     event DefaultModuleSet(bytes32 indexed moduleId);
     event ModuleBeaconReported(bytes32 indexed moduleId, uint256 newBeaconBalance, int256 delta);
     event BeaconDepositNotified(bytes32 indexed moduleId, uint256 amount);
+    event ExitedEtherNotified(
+        bytes32 indexed moduleId,
+        uint256 amount,
+        uint256 restoredLoss,
+        uint256 remainingCredit,
+        uint256 newTotalPooledEther
+    );
     event FeeControllerSet(address indexed feeController);
     event FeeSharesMinted(
         address indexed treasury,
@@ -180,6 +205,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     event ModuleCodeHashAllowedSet(bytes32 indexed moduleType, bytes32 indexed codeHash, bool allowed);
     event ModuleCodeHashAllowlistEnforcementSet(bool enabled);
     event ReferralCodeRegistrySet(address indexed registry);
+    event ModuleAccountingSynced(bytes32 indexed moduleId, uint256 previousEth, uint256 currentEth, int256 delta);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error ModuleNotRegistered(bytes32 moduleId);
@@ -205,6 +231,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     error InvalidModuleCodeHashInput(bytes32 moduleType, bytes32 codeHash);
     error ReferralCodeRegistryNotContract(address registry);
     error ReferralCodeRegistryInvalid(address registry);
+    error ModuleBurnCallerMismatch(bytes32 moduleId, address expectedCaller, address actualCaller);
 
     constructor() {
         _disableInitializers();
@@ -341,6 +368,8 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         _enforceModuleCodeHash(moduleId, m.addr, m.moduleType);
         _enforcePolicy(moduleId, user);
 
+        uint256 currentPooled = _syncAllLSTModules(ST_TOKEN.totalPooledEther());
+
         // Mint cap: 0 == unlimited; otherwise post-deposit total must not exceed cap.
         if (m.mintCapEth != 0) {
             uint256 newTotal = _effectiveModuleTotalForCap(moduleId, m.addr) + amount;
@@ -351,7 +380,6 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         _consumeGlobalInflow(amount);
 
         // Compute shares BEFORE updating pool — pre-deposit exchange rate (no inflation).
-        uint256 currentPooled = ST_TOKEN.totalPooledEther();
         uint256 currentShares = ST_TOKEN.getTotalShares();
         sharesAmount = ShareMath.getSharesByPooledEth(amount, currentShares, currentPooled);
         if (sharesAmount == 0) revert Errors.InvalidAmount();
@@ -380,7 +408,7 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         _requireValidatorModuleType(moduleId, m.moduleType, this.reportModuleBeaconBalance.selector);
         if (m.paused) revert ModulePaused(moduleId);
         uint256 prior = moduleBeaconBalance[moduleId];
-        uint256 currentPooled = ST_TOKEN.totalPooledEther();
+        uint256 currentPooled = _syncAllLSTModules(ST_TOKEN.totalPooledEther());
         moduleBeaconBalance[moduleId] = newBeaconBalance;
         int256 delta = _applyBeaconDelta(moduleId, prior, newBeaconBalance, currentPooled);
 
@@ -393,6 +421,21 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         _requireValidatorModuleType(moduleId, m.moduleType, this.notifyBeaconDeposit.selector);
         moduleBeaconBalance[moduleId] += amount;
         emit BeaconDepositNotified(moduleId, amount);
+    }
+
+    /// @inheritdoc IStakingRouter
+    function notifyExitedEther(bytes32 moduleId, uint256 amount) external override nonReentrant {
+        ModuleInfo storage m = _requireModuleCaller(moduleId);
+        _requireValidatorModuleType(moduleId, m.moduleType, this.notifyExitedEther.selector);
+        if (amount == 0) revert Errors.InvalidAmount();
+        (uint256 newPooled, uint256 restoredLoss) = _applyExitedEtherCredit(moduleId, amount);
+        emit ExitedEtherNotified(
+            moduleId,
+            amount,
+            restoredLoss,
+            moduleExitedEtherCredit[moduleId],
+            newPooled
+        );
     }
 
     /// @inheritdoc IStakingRouter
@@ -409,21 +452,25 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         if (ethEquiv == 0) revert Errors.InvalidAmount();
         _enforcePolicy(moduleId, recipient);
 
+        uint256 currentPooled = _syncAllLSTModulesExcept(moduleId, ST_TOKEN.totalPooledEther());
+        uint256 currentModuleEth = IStakingModule(m.addr).totalEth();
+        uint256 priorModuleEth = currentModuleEth > ethEquiv ? currentModuleEth - ethEquiv : 0;
+        currentPooled = _syncLSTModuleTo(moduleId, currentPooled, priorModuleEth);
+
         if (m.mintCapEth != 0) {
-            uint256 newTotal = _effectiveModuleTotalForCap(moduleId, m.addr) + ethEquiv;
-            if (newTotal > m.mintCapEth) revert MintCapExceeded(moduleId, newTotal, m.mintCapEth);
+            if (currentModuleEth > m.mintCapEth) revert MintCapExceeded(moduleId, currentModuleEth, m.mintCapEth);
         }
 
         _consumeInflow(moduleId, ethEquiv);
         _consumeGlobalInflow(ethEquiv);
 
-        uint256 currentPooled = ST_TOKEN.totalPooledEther();
         uint256 currentShares = ST_TOKEN.getTotalShares();
         uint256 shares = ShareMath.getSharesByPooledEth(ethEquiv, currentShares, currentPooled);
         if (shares == 0) revert Errors.InvalidAmount();
 
         _enforceGlobalCap(currentPooled + ethEquiv);
         ST_TOKEN.mintShares(recipient, shares);
+        moduleAccountedEth[moduleId] = currentModuleEth;
 
         emit LSTWrapped(moduleId, recipient, ethEquiv, shares);
     }
@@ -439,33 +486,35 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         if (caller == address(0)) revert Errors.ZeroAddress();
         if (stTokenAmount == 0) revert Errors.InvalidAmount();
 
-        // H8 — TRUST BOUNDARY: `caller` is supplied by the registered LST_WRAP module.
-        // The router cannot verify this is the genuine originating user. A compromised or
-        // malicious module could pass an arbitrary address, burning that account's shares.
-        //
-        // Required module convention (enforced by module code review at registration time):
-        //   1. Transfer stToken from the end-user to address(this) via safeTransferFrom.
-        //   2. Call unwrapToModule(..., address(this), amount) so `caller` == module.
-        //   3. This limits the worst-case to the module's own holdings.
-        //
-        // A future hardening path: verify module code-hash at call-time (stored in ModuleInfo
-        // at registration) so an upgradeable-proxy swap cannot retroactively change the convention.
+        // Trust boundary: a module may only burn stToken it already pulled into
+        // its own custody. This prevents a compromised module from naming an
+        // arbitrary holder and burning third-party shares without approval.
+        if (caller != msg.sender) revert ModuleBurnCallerMismatch(moduleId, msg.sender, caller);
+
+        uint256 currentPooled = _syncAllLSTModulesExcept(moduleId, ST_TOKEN.totalPooledEther());
+        uint256 currentModuleEth = IStakingModule(m.addr).totalEth();
+        currentPooled = _syncLSTModuleTo(moduleId, currentPooled, currentModuleEth);
 
         // Compute shares from token amount at current exchange rate.
         uint256 shares = ST_TOKEN.getSharesByPooledEth(stTokenAmount);
         if (shares == 0) revert Errors.InvalidAmount();
         ethValue = ST_TOKEN.getPooledEthByShares(shares);
 
-        // Burn the shares from the original LST holder, reduce the pool to keep rate.
-        uint256 currentPooled = ST_TOKEN.totalPooledEther();
+        // Burn the module-custodied shares and reduce pooled ETH at the synced rate.
         ST_TOKEN.burnShares(caller, shares);
         if (currentPooled >= ethValue) {
             ST_TOKEN.setTotalPooledEther(currentPooled - ethValue);
         } else {
             ST_TOKEN.setTotalPooledEther(0);
         }
+        moduleAccountedEth[moduleId] = currentModuleEth > ethValue ? currentModuleEth - ethValue : 0;
 
         emit LSTUnwrapped(moduleId, caller, stTokenAmount, ethValue);
+    }
+
+    /// @inheritdoc IStakingRouter
+    function syncAccounting() external override nonReentrant returns (uint256 syncedPooledEther) {
+        return _syncAllLSTModules(ST_TOKEN.totalPooledEther());
     }
 
     // ── Fee distribution (mirrors StakingCore behaviour for parity) ──────────
@@ -744,6 +793,62 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         return newPooled;
     }
 
+    function _syncAllLSTModules(uint256 currentPooled) internal returns (uint256 syncedPooled) {
+        syncedPooled = currentPooled;
+        for (uint256 i; i < _lstModuleIds.length; ++i) {
+            syncedPooled = _syncLSTModuleToCurrent(_lstModuleIds[i], syncedPooled);
+        }
+    }
+
+    function _syncAllLSTModulesExcept(
+        bytes32 excludedModuleId,
+        uint256 currentPooled
+    ) internal returns (uint256 syncedPooled) {
+        syncedPooled = currentPooled;
+        for (uint256 i; i < _lstModuleIds.length; ++i) {
+            bytes32 moduleId = _lstModuleIds[i];
+            if (moduleId != excludedModuleId) {
+                syncedPooled = _syncLSTModuleToCurrent(moduleId, syncedPooled);
+            }
+        }
+    }
+
+    function _syncLSTModuleToCurrent(bytes32 moduleId, uint256 currentPooled) internal returns (uint256) {
+        ModuleInfo storage m = _modules[moduleId];
+        if (m.addr == address(0) || m.moduleType != MODULE_TYPE_LST_WRAP) return currentPooled;
+        return _syncLSTModuleTo(moduleId, currentPooled, IStakingModule(m.addr).totalEth());
+    }
+
+    function _syncLSTModuleTo(
+        bytes32 moduleId,
+        uint256 currentPooled,
+        uint256 currentEth
+    ) internal returns (uint256 syncedPooled) {
+        uint256 previousEth = moduleAccountedEth[moduleId];
+        if (currentEth == previousEth) return currentPooled;
+
+        moduleAccountedEth[moduleId] = currentEth;
+        if (currentEth > previousEth) {
+            uint256 gain = currentEth - previousEth;
+            syncedPooled = currentPooled + gain;
+            ST_TOKEN.setTotalPooledEther(syncedPooled);
+            emit ModuleAccountingSynced(moduleId, previousEth, currentEth, _signedDelta(gain, false));
+            return syncedPooled;
+        }
+
+        uint256 loss = previousEth - currentEth;
+        if (currentPooled <= loss) {
+            emit PoolInsolvent(moduleId, loss, currentPooled);
+            ST_TOKEN.setTotalPooledEther(0);
+            emit ModuleAccountingSynced(moduleId, previousEth, currentEth, _signedDelta(loss, true));
+            return 0;
+        }
+
+        syncedPooled = currentPooled - loss;
+        ST_TOKEN.setTotalPooledEther(syncedPooled);
+        emit ModuleAccountingSynced(moduleId, previousEth, currentEth, _signedDelta(loss, true));
+    }
+
     function _applyBeaconDelta(
         bytes32 moduleId,
         uint256 prior,
@@ -760,18 +865,52 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
             if (address(feeController) != address(0)) {
                 _distributeFees(moduleId, gain, postPool);
             }
-            return int256(gain);
+            return _signedDelta(gain, false);
         }
 
         uint256 loss = prior - newBeaconBalance;
+        uint256 pendingExitedEth = moduleExitedEtherCredit[moduleId];
+        uint256 offset = loss < pendingExitedEth ? loss : pendingExitedEth;
+        if (offset != 0) {
+            moduleExitedEtherCredit[moduleId] = pendingExitedEth - offset;
+        }
+        uint256 netLoss = loss - offset;
+        if (netLoss == 0) return _signedDelta(loss, true);
+
+        moduleAppliedBeaconLosses[moduleId] += netLoss;
         // Explicit branch on insolvency so we leave a trace before clamping to 0.
-        if (currentPooled <= loss) {
-            emit PoolInsolvent(moduleId, loss, currentPooled);
+        if (currentPooled <= netLoss) {
+            emit PoolInsolvent(moduleId, netLoss, currentPooled);
             ST_TOKEN.setTotalPooledEther(0);
         } else {
-            ST_TOKEN.setTotalPooledEther(currentPooled - loss);
+            ST_TOKEN.setTotalPooledEther(currentPooled - netLoss);
         }
-        return -int256(loss);
+        return _signedDelta(loss, true);
+    }
+
+    function _signedDelta(uint256 amount, bool negative) private pure returns (int256) {
+        if (amount > uint256(type(int256).max)) revert Errors.InvalidAmount();
+        // forge-lint: disable-next-line(unsafe-typecast)
+        int256 signedAmount = int256(amount);
+        return negative ? -signedAmount : signedAmount;
+    }
+
+    function _applyExitedEtherCredit(
+        bytes32 moduleId,
+        uint256 amount
+    ) private returns (uint256 newPooled, uint256 restoredLoss) {
+        moduleExitedEtherCredit[moduleId] += amount;
+
+        uint256 appliedLosses = moduleAppliedBeaconLosses[moduleId];
+        uint256 credit = moduleExitedEtherCredit[moduleId];
+        restoredLoss = credit < appliedLosses ? credit : appliedLosses;
+        newPooled = ST_TOKEN.totalPooledEther();
+        if (restoredLoss == 0) return (newPooled, 0);
+
+        moduleExitedEtherCredit[moduleId] = credit - restoredLoss;
+        moduleAppliedBeaconLosses[moduleId] = appliedLosses - restoredLoss;
+        newPooled += restoredLoss;
+        ST_TOKEN.setTotalPooledEther(newPooled);
     }
 
     function _enforceBeaconGainSanity(
@@ -882,6 +1021,10 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
             paused: false
         });
         _moduleIdByAddress[moduleAddr] = moduleId;
+        if (mType == MODULE_TYPE_LST_WRAP) {
+            _lstModuleIds.push(moduleId);
+            moduleAccountedEth[moduleId] = IStakingModule(moduleAddr).totalEth();
+        }
         emit ModuleRegistered(moduleId, moduleAddr, mType, mintCapEth);
     }
 
@@ -1050,5 +1193,5 @@ contract StakingRouter is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     }
 
     // ── Storage gap ─────────────────────────────────────────────────────────────
-    uint256[50] private __gap;
+    uint256[46] private __gap;
 }

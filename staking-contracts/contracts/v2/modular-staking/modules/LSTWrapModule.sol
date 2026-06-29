@@ -14,15 +14,24 @@ import {ILSTPriceOracle} from "../interfaces/ILSTPriceOracle.sol";
 import {GranularPauseUpgradeable} from "../../lib/GranularPauseUpgradeable.sol";
 import {Errors} from "../../lib/Errors.sol";
 
+interface IRouterStTokenGetter {
+    // slither-disable-next-line naming-convention
+    function ST_TOKEN() external view returns (address);
+}
+
+interface IRouterAccountingSyncer {
+    function syncAccounting() external;
+}
+
 /// @title LSTWrapModule - accept LSTs (stETH, rETH, etc.) and mint stToken
 /// @notice Separate entry/exit path from the validator modules. Users deposit an
 ///         existing LST, get stToken backed by the ETH equivalent of that LST.
 ///         Exits go through this module's `unwrapLST` (NOT the withdrawal queue):
-///         the contract burns stToken via the Router and returns LST 1-for-1 with
-///         what the user originally locked.
+///         the module pulls approved stToken, burns its own custody via the Router,
+///         and returns LST at the current oracle value.
 ///
-///         This module's `totalEth()` is `priceOracle.getEthValue(_lstHeld)` so the
-///         Router's mint cap can bound exposure to LST market depeg risk.
+///         This module's `totalEth()` is `priceOracle.getEthValue(LST balance)` so
+///         the Router can sync rebases/depegs into global stToken accounting.
 ///
 /// Roles:
 ///   GOV       — set price oracle, pause/unpause
@@ -46,7 +55,6 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
 
     // ── State ─────────────────────────────────────────────────────────────────
     ILSTPriceOracle public priceOracle;
-    uint256 internal _lstHeld;
 
     /// @notice Maximum allowed age (seconds) of the price oracle's last update before
     ///         `wrapLST` reverts with `StaleOracle`. Default 3600 (1 hour).
@@ -109,6 +117,9 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     /// @notice Deposit `lstAmount` of the wrapped LST in exchange for stToken.
     ///         Caller must have approved this contract for at least `lstAmount`.
     /// @param recipient Address to receive the minted stToken.
+    // slither-disable-start reentrancy-benign
+    // The token transfer precedes drift-guard state writes so fee-on-transfer LSTs
+    // can be measured by balance delta; nonReentrant blocks module callback entry.
     function wrapLST(
         uint256 lstAmount,
         address recipient
@@ -123,27 +134,35 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
         if (lastUpdated > block.timestamp || block.timestamp - lastUpdated >= maxOracleAgeSecs) {
             revert Errors.StaleOracle();
         }
-        ethEquiv = priceOracle.getEthValue(lstAmount);
-        if (ethEquiv == 0) revert Errors.InvalidAmount();
+        // slither-disable-start reentrancy-balance
+        // False positive: nonReentrant blocks module reentry, and the post-transfer
+        // balance delta is intentionally used to support fee-on-transfer LSTs.
+        uint256 balanceBefore = LST_TOKEN.balanceOf(address(this));
+        LST_TOKEN.safeTransferFrom(msg.sender, address(this), lstAmount);
+        uint256 balanceAfter = LST_TOKEN.balanceOf(address(this));
+        uint256 received = balanceAfter - balanceBefore;
+        if (received < 1) revert Errors.InvalidAmount();
+        // slither-disable-end reentrancy-balance
+
+        ethEquiv = priceOracle.getEthValue(received);
+        if (ethEquiv < 1) revert Errors.InvalidAmount();
 
         // Per-block price drift guard (H5 fix): compare current unit price against the
         // price observed in the most recent block that recorded a wrap. Flash loans are
         // single-transaction, so the stored price reflects the pre-manipulation state.
-        uint256 unitPrice = (ethEquiv * 1e18) / lstAmount;
+        uint256 unitPrice = (ethEquiv * 1e18) / received;
         _enforceWrapPriceDrift(unitPrice);
-
-        // Pull LST in first so the router's totalEth() / mint-cap check sees the new balance.
-        LST_TOKEN.safeTransferFrom(msg.sender, address(this), lstAmount);
-        _lstHeld += lstAmount;
 
         // Router mints shares to recipient and (re)checks the cap.
         ROUTER.wrapFromModule(MODULE_ID, recipient, ethEquiv);
 
-        emit LstWrapped(msg.sender, recipient, lstAmount, ethEquiv);
+        emit LstWrapped(msg.sender, recipient, received, ethEquiv);
     }
+    // slither-disable-end reentrancy-benign
 
     /// @notice Burn `stTokenAmount` of stToken and receive LST in return.
-    ///         Caller must hold the stToken; the Router will burn it from `msg.sender`.
+    ///         Caller must approve this module for stToken; the module pulls the
+    ///         shares into custody before asking the Router to burn them.
     function unwrapLST(
         uint256 stTokenAmount,
         address recipient
@@ -157,14 +176,21 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
             revert Errors.StaleOracle();
         }
 
-        // Router burns the stToken shares from msg.sender and tells us the ETH value.
-        uint256 ethValue = ROUTER.unwrapToModule(MODULE_ID, msg.sender, stTokenAmount);
+        // Sync module valuation before ERC20 token-amount allowance math, then pull
+        // stToken into module custody. The router will only burn from this module.
+        IRouterAccountingSyncer(address(ROUTER)).syncAccounting();
+        IERC20(IRouterStTokenGetter(address(ROUTER)).ST_TOKEN()).safeTransferFrom(
+            msg.sender,
+            address(this),
+            stTokenAmount
+        );
+        uint256 ethValue = ROUTER.unwrapToModule(MODULE_ID, address(this), stTokenAmount);
 
         lstAmount = priceOracle.getLstValue(ethValue);
         if (lstAmount == 0) revert Errors.InvalidAmount();
-        if (lstAmount > _lstHeld) revert InsufficientLstHeld(lstAmount, _lstHeld);
+        uint256 held = LST_TOKEN.balanceOf(address(this));
+        if (lstAmount > held) revert InsufficientLstHeld(lstAmount, held);
 
-        _lstHeld -= lstAmount;
         LST_TOKEN.safeTransfer(recipient, lstAmount);
 
         emit LstUnwrapped(msg.sender, recipient, stTokenAmount, lstAmount);
@@ -181,8 +207,9 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
 
     /// @inheritdoc IStakingModule
     function totalEth() external view override returns (uint256) {
-        if (address(priceOracle) == address(0) || _lstHeld == 0) return 0;
-        return priceOracle.getEthValue(_lstHeld);
+        uint256 held = LST_TOKEN.balanceOf(address(this));
+        if (address(priceOracle) == address(0) || held < 1) return 0;
+        return priceOracle.getEthValue(held);
     }
 
     /// @inheritdoc IStakingModule
@@ -257,7 +284,7 @@ contract LSTWrapModule is Initializable, UUPSUpgradeable, AccessControlUpgradeab
     // ── Views ────────────────────────────────────────────────────────────────
 
     function lstHeld() external view returns (uint256) {
-        return _lstHeld;
+        return LST_TOKEN.balanceOf(address(this));
     }
 
     // ── Storage gap ─────────────────────────────────────────────────────────────

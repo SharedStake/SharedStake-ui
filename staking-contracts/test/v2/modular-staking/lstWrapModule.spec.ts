@@ -59,7 +59,7 @@ describe("LSTWrapModule (standalone)", () => {
     await deployFresh();
   });
 
-  it("wrapLST: pulls LST, mints stToken, tracks _lstHeld == lstAmount", async () => {
+  it("wrapLST: pulls LST, mints stToken, reports live LST custody", async () => {
     const sharesBefore = await stToken.sharesOf(alice.address);
     const totalPooledBefore = await stToken.totalPooledEther();
 
@@ -75,7 +75,7 @@ describe("LSTWrapModule (standalone)", () => {
     expect(await stToken.totalPooledEther()).to.equal(totalPooledBefore + parseEther("1"));
   });
 
-  it("unwrapLST: stToken balance decreases, user gets LST back, _lstHeld == 0", async () => {
+  it("unwrapLST: stToken balance decreases, user gets LST back, custody is drained", async () => {
     await lstModule.connect(alice).wrapLST(parseEther("1"), alice.address);
     expect(await lstModule.lstHeld()).to.equal(parseEther("1"));
 
@@ -83,6 +83,7 @@ describe("LSTWrapModule (standalone)", () => {
     const lstBalanceBefore = await lstToken.balanceOf(alice.address);
     const sharesBefore = await stToken.sharesOf(alice.address);
 
+    await stToken.connect(alice).approve(lstModule.target, stBalanceBefore);
     await lstModule.connect(alice).unwrapLST(stBalanceBefore, alice.address);
 
     // Shares burned.
@@ -92,6 +93,15 @@ describe("LSTWrapModule (standalone)", () => {
     expect(await lstToken.balanceOf(lstModule.target)).to.equal(0n);
     // Alice received her LST back.
     expect(await lstToken.balanceOf(alice.address)).to.equal(lstBalanceBefore + parseEther("1"));
+  });
+
+  it("unwrapLST requires stToken approval before the module can burn shares", async () => {
+    await lstModule.connect(alice).wrapLST(parseEther("1"), alice.address);
+    const stBalance = await stToken.balanceOf(alice.address);
+
+    await expect(lstModule.connect(alice).unwrapLST(stBalance, alice.address)).to.be.reverted;
+    expect(await stToken.balanceOf(alice.address)).to.equal(stBalance);
+    expect(await lstToken.balanceOf(lstModule.target)).to.equal(parseEther("1"));
   });
 
   it("mint cap exceeded: 0.5 ETH cap rejects 1 LST wrap with MintCapExceeded", async () => {

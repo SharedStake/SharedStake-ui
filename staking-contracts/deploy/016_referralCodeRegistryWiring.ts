@@ -1,6 +1,7 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {StakingCore__factory, StakingRouter__factory} from "../types";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 const func: DeployFunction = async hre => {
   const {connect, accounts} = await Ship.init(hre);
@@ -22,7 +23,7 @@ const func: DeployFunction = async hre => {
     const current = await stakingCore.referralCodeRegistry();
     if (current.toLowerCase() !== referralCodeRegistry.address.toLowerCase()) {
       console.log("  Wiring ReferralCodeRegistry -> StakingCore...");
-      await stakingCore.connect(govSigner).setReferralCodeRegistry(referralCodeRegistry.address);
+      await waitForMined(stakingCore.connect(govSigner).setReferralCodeRegistry(referralCodeRegistry.address));
     }
   }
 
@@ -32,7 +33,7 @@ const func: DeployFunction = async hre => {
     const current = await stakingRouter.referralCodeRegistry();
     if (current.toLowerCase() !== referralCodeRegistry.address.toLowerCase()) {
       console.log("  Wiring ReferralCodeRegistry -> StakingRouter...");
-      await stakingRouter.connect(govSigner).setReferralCodeRegistry(referralCodeRegistry.address);
+      await waitForMined(stakingRouter.connect(govSigner).setReferralCodeRegistry(referralCodeRegistry.address));
     }
   }
 };

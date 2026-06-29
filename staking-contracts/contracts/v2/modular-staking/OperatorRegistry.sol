@@ -199,6 +199,7 @@ contract OperatorRegistry is Initializable, UUPSUpgradeable, AccessControlUpgrad
 
     /// @notice Register with ETH + SGT bond (only valid registration path)
     function registerBondWithSgt(bytes32 configName, uint256 slots, uint256 sgtAmount) external payable nonReentrant {
+        if (operators[msg.sender].totalSlots != 0) revert Errors.InvalidAmount();
         _bond(configName, slots, msg.value, sgtAmount);
         sgtToken.safeTransferFrom(msg.sender, address(this), sgtAmount);
         emit BondRegistered(msg.sender, configName, msg.value, sgtAmount);
@@ -360,6 +361,7 @@ contract OperatorRegistry is Initializable, UUPSUpgradeable, AccessControlUpgrad
     // ── Internal helpers ─────────────────────────────────────────────────────
 
     function _bond(bytes32 configName, uint256 slots, uint256 ethAmount, uint256 sgtAmount) internal {
+        if (slots == 0) revert Errors.InvalidAmount();
         BondConfig storage config = bondConfigs[configName];
         if (config.maxSlots == 0) revert ConfigNotFound(configName);
 

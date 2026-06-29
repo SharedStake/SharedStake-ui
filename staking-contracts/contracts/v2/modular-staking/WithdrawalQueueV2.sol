@@ -7,6 +7,10 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {StToken} from "./StToken.sol";
 import {Errors} from "../lib/Errors.sol";
 
+interface IAccountingSyncer {
+    function syncAccounting() external;
+}
+
 /// @title WithdrawalQueueV2 - SharedStake V2 withdrawal queue
 /// @notice Three-step lifecycle:
 ///   1. requestWithdrawals  — user burns stToken shares, obtains requestId(s)
@@ -19,6 +23,7 @@ import {Errors} from "../lib/Errors.sol";
 ///   - Claimed flag prevents replay.
 ///
 /// Safety: the contract accepts ETH during finalize so it can hold funds between finalize and claim.
+// slither-disable-next-line missing-inheritance
 contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     using Address for address payable;
 
@@ -67,6 +72,10 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     WithdrawalMode public withdrawalMode;
     uint256 public lastOracleReportTimestamp;
 
+    // Optional hook used by router deployments to refresh module accounting before
+    // request-time share math. Zero address preserves standalone deployments.
+    address public accountingSyncer;
+
     // Bunker mode finalize guardrails.
     uint256 public bunkerMaxRequestsPerFinalize = 16;
     uint256 public bunkerMinRequestAge = 1 days;
@@ -91,6 +100,7 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
     );
     event WithdrawalModeUpdated(WithdrawalMode mode, uint256 reportTimestamp);
     event BunkerParamsUpdated(uint256 bunkerMaxRequestsPerFinalize, uint256 bunkerMinRequestAge);
+    event AccountingSyncerSet(address indexed syncer);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error RequestNotFinalized(uint256 requestId);
@@ -127,11 +137,16 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         address owner
     ) external nonReentrant returns (uint256[] memory requestIds) {
         if (owner == address(0)) revert Errors.ZeroAddress();
+        // slither-disable-start reentrancy-benign
+        // Sync happens before request state is written and the nonReentrant guard
+        // prevents callback entry into queue mutators.
+        _syncAccounting();
 
         requestIds = new uint256[](amounts.length);
         for (uint256 i; i < amounts.length; ++i) {
             requestIds[i] = _enqueueRequest(amounts[i], owner);
         }
+        // slither-disable-end reentrancy-benign
     }
 
     function _enqueueRequest(uint256 stTokenAmount, address owner) internal returns (uint256 requestId) {
@@ -261,6 +276,15 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         emit BunkerParamsUpdated(bunkerMaxRequestsPerFinalize, bunkerMinRequestAge);
     }
 
+    /// @notice Set a contract that refreshes accounting before withdrawal requests.
+    /// @dev Router deployments should set this to StakingRouter. Standalone deployments
+    ///      can leave it unset.
+    function setAccountingSyncer(address syncer) external onlyRole(GOV) {
+        if (syncer != address(0) && syncer.code.length == 0) revert Errors.NotAContract();
+        accountingSyncer = syncer;
+        emit AccountingSyncerSet(syncer);
+    }
+
     /// @notice Recover accidentally sent ETH that is not locked for claims.
     ///         Note: pendingEther obligations are not backed by held ETH until finalize() is called.
     ///         ETH pre-deposited via receive() for future finalize batches is NOT protected by this guard.
@@ -309,6 +333,13 @@ contract WithdrawalQueueV2 is AccessControl, ReentrancyGuard {
         }
         lockedEther -= totalEth;
         recipient.sendValue(totalEth);
+    }
+
+    function _syncAccounting() private {
+        address syncer = accountingSyncer;
+        if (syncer != address(0)) {
+            IAccountingSyncer(syncer).syncAccounting();
+        }
     }
 
     // ── Views ─────────────────────────────────────────────────────────────────

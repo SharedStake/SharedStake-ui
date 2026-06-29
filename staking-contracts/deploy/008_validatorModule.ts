@@ -82,8 +82,7 @@ const func: DeployFunction = async hre => {
   // deployments should set a sane risk budget here.
   const router = await connect(StakingRouter__factory);
   const moduleType = await validatorModule.moduleType();
-  const moduleRuntimeCode = await hre.ethers.provider.getCode(proxyAddress);
-  const moduleCodeHash = hre.ethers.keccak256(moduleRuntimeCode);
+  const moduleCodeHash = await validatorModule.implementationCodeHash();
   await allowlistModuleCodeHash(router, moduleType, moduleCodeHash, govSigner, "ValidatorModule");
   await enableCodeHashAllowlistEnforcement(router, govSigner);
   await registerOrUpdateModule(

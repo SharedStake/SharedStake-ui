@@ -359,7 +359,7 @@ describe("StakingCore", () => {
       expect(treasuryAfter - treasuryBefore).to.be.gt(operatorAfter - operatorBefore);
     });
 
-    it("subtracts withdrawal queue totalUnclaimedEther from totalPooledEther", async () => {
+    it("does not subtract withdrawal queue obligations a second time on beacon reports", async () => {
       const MockWithdrawalQueue = await ethers.getContractFactory("MockWithdrawalQueue");
       const mockQueue = await MockWithdrawalQueue.deploy(parseEther("2"));
       await mockQueue.setPendingEther(parseEther("1"));
@@ -368,13 +368,13 @@ describe("StakingCore", () => {
 
       await stakingCore.connect(gov).notifyBeaconDeposit(parseEther("10"));
 
-      // Report 10.5 ETH in beacon (0.5 ETH reward)
-      // Without queue: totalPooled = 0 (buffered) + 10.5 (beacon) = 10.5
-      // With queue owing 3 ETH: totalPooled = 0 + 10.5 - 3 = 7.5
+      // WithdrawalQueueV2 reduces totalPooledEther when a request is created.
+      // reportBeacon therefore publishes live backing directly and must not
+      // subtract totalUnclaimedEther again.
       await stakingCore.connect(oracle).reportBeacon(1, parseEther("10.5"));
 
       const postTotalPooled = await stToken.totalPooledEther();
-      expect(postTotalPooled).to.equal(parseEther("7.5"));
+      expect(postTotalPooled).to.equal(parseEther("10.5"));
     });
 
     it("works correctly when withdrawal queue is not set (address 0)", async () => {

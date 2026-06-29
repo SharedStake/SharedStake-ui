@@ -1,6 +1,7 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {StakingCore__factory, StToken__factory, FeeController__factory, OracleAdapter__factory} from "../types";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 const func: DeployFunction = async hre => {
   const {deploy, connect, accounts, address} = await Ship.init(hre);
@@ -28,14 +29,14 @@ const func: DeployFunction = async hre => {
   const hasRole = await stToken.hasRole(MINTER, stakingCore.target);
   if (!hasRole) {
     console.log("  Granting MINTER role to StakingCore...");
-    await stToken.connect(accounts.deployer).addMinter(stakingCore.target as string);
+    await waitForMined(stToken.connect(accounts.deployer).addMinter(stakingCore.target as string));
   }
 
   // Wire FeeController if deployed.
   const feeControllerAddress = await address(FeeController__factory);
   if (feeControllerAddress) {
     console.log("  Setting FeeController on StakingCore...");
-    await stakingCore.connect(govSigner).setFeeController(feeControllerAddress);
+    await waitForMined(stakingCore.connect(govSigner).setFeeController(feeControllerAddress));
   }
 
   // Grant ORACLE role to OracleAdapter if it exists, otherwise bootstrap gov until oracle deployment grants/revokes roles.
@@ -44,10 +45,10 @@ const func: DeployFunction = async hre => {
   const oracleAdapterAddress = await address(OracleAdapter__factory);
   if (oracleAdapterAddress) {
     console.log("  Granting ORACLE role to OracleAdapter on StakingCore...");
-    await stakingCore.connect(govSigner).grantRole(ORACLE, oracleAdapterAddress);
+    await waitForMined(stakingCore.connect(govSigner).grantRole(ORACLE, oracleAdapterAddress));
   } else {
     console.log("  Granting bootstrap ORACLE role to gov on StakingCore...");
-    await stakingCore.connect(govSigner).grantRole(ORACLE, gov);
+    await waitForMined(stakingCore.connect(govSigner).grantRole(ORACLE, gov));
   }
 
   const referralCodeRegistryDeployment = await hre.deployments.getOrNull("ReferralCodeRegistry");
@@ -55,7 +56,7 @@ const func: DeployFunction = async hre => {
     const currentRegistry = await stakingCore.referralCodeRegistry();
     if (currentRegistry.toLowerCase() !== referralCodeRegistryDeployment.address.toLowerCase()) {
       console.log("  Setting ReferralCodeRegistry on StakingCore...");
-      await stakingCore.connect(govSigner).setReferralCodeRegistry(referralCodeRegistryDeployment.address);
+      await waitForMined(stakingCore.connect(govSigner).setReferralCodeRegistry(referralCodeRegistryDeployment.address));
     }
   }
 };

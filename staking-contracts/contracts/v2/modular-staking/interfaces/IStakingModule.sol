@@ -12,8 +12,8 @@ import {IStakingRouter} from "./IStakingRouter.sol";
 ///         module must accept the value and update its internal accounting.
 ///
 ///         `totalEth()` returns the module's contribution to `totalPooledEther`. For a
-///         validator module that's `bufferedEther + beaconBalance`; for an LST wrap
-///         module it's `priceOracle.getEthValue(lstHeld)`.
+    ///         validator module that's `bufferedEther + beaconBalance`; for an LST wrap
+    ///         module it's `priceOracle.getEthValue(live LST balance)`.
 ///
 ///         `moduleType()` is a tag used by tooling (kept opaque from the Router).
 interface IStakingModule {

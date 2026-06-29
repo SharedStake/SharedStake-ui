@@ -8,6 +8,7 @@ import {
 } from "../types";
 import {resolveGovernanceAddress} from "../helpers/governance";
 import {isAddress, ZeroAddress} from "ethers";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 const SGT_ADDRESS_ENV_KEYS = ["V2_SGT_ADDRESS"];
 
@@ -111,25 +112,25 @@ const func: DeployFunction = async hre => {
   const DEFAULT_ADMIN_ROLE = await timelock.connect(accounts.deployer).DEFAULT_ADMIN_ROLE();
 
   console.log("  Granting PROPOSER to Governor...");
-  await timelock.connect(accounts.deployer).grantRole(PROPOSER_ROLE, governor.target);
+  await waitForMined(timelock.connect(accounts.deployer).grantRole(PROPOSER_ROLE, governor.target));
 
   console.log("  Granting EXECUTOR to Governor...");
-  await timelock.connect(accounts.deployer).grantRole(EXECUTOR_ROLE, governor.target);
+  await waitForMined(timelock.connect(accounts.deployer).grantRole(EXECUTOR_ROLE, governor.target));
 
   console.log(`  Granting EXECUTOR to governance signer (${gov})...`);
-  await timelock.connect(accounts.deployer).grantRole(EXECUTOR_ROLE, gov);
+  await waitForMined(timelock.connect(accounts.deployer).grantRole(EXECUTOR_ROLE, gov));
 
   console.log(`  Granting CANCELLER to governance signer (${gov})...`);
-  await timelock.connect(accounts.deployer).grantRole(CANCELLER_ROLE, gov);
+  await waitForMined(timelock.connect(accounts.deployer).grantRole(CANCELLER_ROLE, gov));
 
   console.log("  Revoking deployer DEFAULT_ADMIN_ROLE on Timelock...");
-  await timelock.connect(accounts.deployer).renounceRole(DEFAULT_ADMIN_ROLE, accounts.deployer.address);
+  await waitForMined(timelock.connect(accounts.deployer).renounceRole(DEFAULT_ADMIN_ROLE, accounts.deployer.address));
 
   // ── Transfer VoteEscrowV2.gov to Timelock ──────────────────────────────────
   // Security requirement: penalty rate and collector changes must go through
   // the 48h governance delay, not a single EOA key.
   console.log("  Transferring VoteEscrowV2.gov to GovernanceTimelock...");
-  await voteEscrow.connect(govSigner).transferGov(timelock.target as string);
+  await waitForMined(voteEscrow.connect(govSigner).transferGov(timelock.target as string));
   const veGov = await voteEscrow.gov();
   if (veGov.toLowerCase() !== (timelock.target as string).toLowerCase()) {
     throw new Error(`VoteEscrowV2.gov assertion failed: got ${veGov}, expected ${timelock.target}`);

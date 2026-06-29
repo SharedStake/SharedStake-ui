@@ -28,6 +28,7 @@ async function main() {
   const deployments = await ethers.getDeployments();
   const failures: RoleCheck[] = [];
   const checks: RoleCheck[] = [];
+  const configFailures: string[] = [];
 
   // Helper to check if address is EOA
   const isEOA = async (address: string): Promise<boolean> => {
@@ -205,14 +206,35 @@ async function main() {
     }
   }
 
+  const stakingRouterDeployment = deployments.StakingRouter;
+  const withdrawalQueueDeployment = deployments.WithdrawalQueueV2;
+  if (stakingRouterDeployment?.address && withdrawalQueueDeployment?.address) {
+    const withdrawalQueue = await ethers.getContractAt("WithdrawalQueueV2", withdrawalQueueDeployment.address);
+    const syncer = await withdrawalQueue.accountingSyncer();
+    if (syncer.toLowerCase() !== stakingRouterDeployment.address.toLowerCase()) {
+      configFailures.push(
+        `WithdrawalQueueV2.accountingSyncer is ${syncer}; expected StakingRouter ${stakingRouterDeployment.address}`,
+      );
+    }
+  }
+
   console.log(`\nChecked ${checks.length} role assignments.\n`);
 
-  if (failures.length > 0) {
-    console.error("❌ FAIL: Privileged roles held by EOAs detected!\n");
+  if (failures.length > 0 || configFailures.length > 0) {
+    console.error("❌ FAIL: Deployment safety checks failed.\n");
+    if (failures.length > 0) {
+      console.error("Privileged roles held by EOAs detected:\n");
+    }
     for (const failure of failures) {
       console.error(`  ${failure.contractName}.${failure.role}: ${failure.roleHolder} (EOA)`);
     }
-    console.error("\nThese roles must be transferred to contracts (multisigs, timelock) before mainnet use.\n");
+    if (configFailures.length > 0) {
+      console.error("\nConfiguration failures:\n");
+      for (const failure of configFailures) {
+        console.error(`  ${failure}`);
+      }
+    }
+    console.error("\nFix role ownership and deployment wiring before mainnet use.\n");
     process.exit(1);
   } else {
     console.log("✅ PASS: All privileged roles are held by contracts.\n");

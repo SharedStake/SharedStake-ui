@@ -1,6 +1,7 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {WithdrawalQueueV2__factory, StToken__factory, StakingCore__factory} from "../types";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 const func: DeployFunction = async hre => {
   const {deploy, connect, accounts, address} = await Ship.init(hre);
@@ -24,17 +25,18 @@ const func: DeployFunction = async hre => {
   const hasRole = await stToken.hasRole(MINTER, queue.target);
   if (!hasRole) {
     console.log("  Granting MINTER role to WithdrawalQueueV2...");
-    await stToken.connect(accounts.deployer).addMinter(queue.target as string);
+    await waitForMined(stToken.connect(accounts.deployer).addMinter(queue.target as string));
   }
 
-  // Wire WithdrawalQueueV2 to StakingCore so reportBeacon can subtract lockedEther
+  // Wire WithdrawalQueueV2 to StakingCore for standalone deployments. Router-mode
+  // deployments leave reportBeacon queue obligations at request-time accounting.
   const stakingCoreDeployment = await address(StakingCore__factory);
   if (stakingCoreDeployment) {
     const stakingCore = await connect(StakingCore__factory);
     const currentQueue = await stakingCore.withdrawalQueue();
     if (currentQueue.toLowerCase() !== queue.target.toString().toLowerCase()) {
       console.log("  Setting WithdrawalQueueV2 address on StakingCore...");
-      await stakingCore.connect(govSigner).setWithdrawalQueue(queue.target as string);
+      await waitForMined(stakingCore.connect(govSigner).setWithdrawalQueue(queue.target as string));
     }
   }
 };

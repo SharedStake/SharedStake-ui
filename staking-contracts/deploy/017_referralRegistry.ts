@@ -8,6 +8,7 @@ import {
   StToken__factory,
 } from "../types";
 import {resolveGovernanceAddress} from "../helpers/governance";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 /**
  * Deploys the ReferralRegistry contract for on-chain referral attribution.
@@ -35,7 +36,7 @@ const func: DeployFunction = async hre => {
   const hasRouterRoleCore = await referralRegistry.hasRole(ROUTER, stakingCoreDeployment.address);
   if (!hasRouterRoleCore) {
     console.log("  Granting ROUTER role to StakingCore on ReferralRegistry...");
-    await referralRegistry.connect(govSigner).grantRole(ROUTER, stakingCoreDeployment.address);
+    await waitForMined(referralRegistry.connect(govSigner).grantRole(ROUTER, stakingCoreDeployment.address));
   }
 
   // Grant ROUTER role to StakingRouter
@@ -43,7 +44,7 @@ const func: DeployFunction = async hre => {
   const hasRouterRoleRouter = await referralRegistry.hasRole(ROUTER, stakingRouterDeployment.address);
   if (!hasRouterRoleRouter) {
     console.log("  Granting ROUTER role to StakingRouter on ReferralRegistry...");
-    await referralRegistry.connect(govSigner).grantRole(ROUTER, stakingRouterDeployment.address);
+    await waitForMined(referralRegistry.connect(govSigner).grantRole(ROUTER, stakingRouterDeployment.address));
   }
 
   // Grant FEE_CTRL role to FeeController
@@ -52,14 +53,14 @@ const func: DeployFunction = async hre => {
   const hasFeeCtrlRole = await referralRegistry.hasRole(FEE_CTRL, feeControllerDeployment.address);
   if (!hasFeeCtrlRole) {
     console.log("  Granting FEE_CTRL role to FeeController on ReferralRegistry...");
-    await referralRegistry.connect(govSigner).grantRole(FEE_CTRL, feeControllerDeployment.address);
+    await waitForMined(referralRegistry.connect(govSigner).grantRole(FEE_CTRL, feeControllerDeployment.address));
   }
 
   const feeController = await connect(FeeController__factory, feeControllerDeployment.address);
   const currentFeeReferralRegistry = await feeController.referralRegistry();
   if (currentFeeReferralRegistry.toLowerCase() !== referralRegistry.target.toString().toLowerCase()) {
     console.log("  Setting ReferralRegistry on FeeController...");
-    await feeController.connect(govSigner).setReferralRegistry(referralRegistry.target as string);
+    await waitForMined(feeController.connect(govSigner).setReferralRegistry(referralRegistry.target as string));
   }
 
   console.log(`  ReferralRegistry deployed at: ${referralRegistry.target}`);

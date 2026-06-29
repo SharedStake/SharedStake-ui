@@ -150,15 +150,16 @@ OracleSubmitter → OracleAdapter.submitReport(validators, balance, ts)
 ```
 Step 1 — Request:
   User → WithdrawalQueueV2.requestWithdrawals(stTokenAmount)
+       → optional accountingSyncer.syncAccounting()
+       → ethAmount = stShares × (totalPooled / totalShares)
        → StToken.burnShares(user, stShares)
-       → enqueue {owner, stShares, requestedAt, finalized=false}
+       → totalPooledEther -= ethAmount
+       → enqueue {owner, stShares, ethAmount, requestedAt, finalized=false}
        → emit WithdrawalRequested(requestId, owner, stShares)
 
 Step 2 — Finalize:
   Guardian → WithdrawalQueueV2.finalize(lastRequestId) {value: ETH}
            → for each pending request [nextFinalize..lastRequestId]:
-               ethAmount = stShares × (totalPooled / totalShares)
-               request.ethAmount = ethAmount
                request.finalized = true
            → totalPendingRefunds += Σ(guardianRefunds)
            → emit BatchFinalized(from, to, ethProvided)

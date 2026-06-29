@@ -6,6 +6,7 @@ import {
   OracleAdapter__factory,
 } from "../types";
 import {resolveGovernanceAddress, resolveOracleSubmitterAddresses} from "../helpers/governance";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 /**
  * Deploys QuorumOracleAdapter as an ALTERNATIVE oracle path (not replacing
@@ -66,11 +67,11 @@ const func: DeployFunction = async hre => {
     const hasRole = await moduleContract.hasRole(ORACLE, adapter.target);
     if (!hasRole) {
       console.log(`  Granting ORACLE role to QuorumOracleAdapter on ${moduleName}...`);
-      await moduleContract.connect(govSigner).grantRole(ORACLE, adapter.target as string);
+      await waitForMined(moduleContract.connect(govSigner).grantRole(ORACLE, adapter.target as string));
     }
     if (gov.toLowerCase() !== (adapter.target as string).toLowerCase() && (await moduleContract.hasRole(ORACLE, gov))) {
       console.log(`  Revoking direct ORACLE role from gov on ${moduleName}...`);
-      await moduleContract.connect(govSigner).revokeRole(ORACLE, gov);
+      await waitForMined(moduleContract.connect(govSigner).revokeRole(ORACLE, gov));
     }
   };
 
@@ -90,7 +91,7 @@ const func: DeployFunction = async hre => {
     // Revoke from ValidatorModule
     if (await validatorModule.hasRole(ORACLE, oracleAdapterAddress)) {
       console.log("  Revoking ORACLE from OracleAdapter on ValidatorModule...");
-      await validatorModule.connect(govSigner).revokeRole(ORACLE, oracleAdapterAddress);
+      await waitForMined(validatorModule.connect(govSigner).revokeRole(ORACLE, oracleAdapterAddress));
     }
 
     console.log("  QuorumOracleAdapter is now the sole oracle (quorum enforced)");
@@ -100,7 +101,7 @@ const func: DeployFunction = async hre => {
   for (const submitter of submitters) {
     if (!(await adapter.hasRole(SUBMITTER, submitter))) {
       console.log(`  Adding SUBMITTER on QuorumOracleAdapter: ${submitter}`);
-      await adapter.connect(govSigner).addSubmitter(submitter);
+      await waitForMined(adapter.connect(govSigner).addSubmitter(submitter));
     }
   }
 

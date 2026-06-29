@@ -1,7 +1,14 @@
 import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
-import {StakingRouter__factory, StToken__factory, FeeController__factory, StakingCore__factory} from "../types";
+import {
+  StakingRouter__factory,
+  StToken__factory,
+  FeeController__factory,
+  StakingCore__factory,
+  WithdrawalQueueV2__factory,
+} from "../types";
 import type {StakingRouter} from "../types";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 /**
  * Deploys the StakingRouter, the modular front-door for ETH staking.
@@ -51,14 +58,14 @@ const func: DeployFunction = async hre => {
   const hasRole = await stToken.hasRole(MINTER, router.target);
   if (!hasRole) {
     console.log("  Granting MINTER role to StakingRouter...");
-    await stToken.connect(accounts.deployer).addMinter(router.target as string);
+    await waitForMined(stToken.connect(accounts.deployer).addMinter(router.target as string));
   }
 
   // Wire FeeController if it has been deployed.
   const feeControllerAddress = await address(FeeController__factory);
   if (feeControllerAddress) {
     console.log("  Setting FeeController on StakingRouter...");
-    await router.connect(govSigner).setFeeController(feeControllerAddress);
+    await waitForMined(router.connect(govSigner).setFeeController(feeControllerAddress));
   }
 
   const referralCodeRegistryDeployment = await hre.deployments.getOrNull("ReferralCodeRegistry");
@@ -66,7 +73,17 @@ const func: DeployFunction = async hre => {
     const currentRegistry = await router.referralCodeRegistry();
     if (currentRegistry.toLowerCase() !== referralCodeRegistryDeployment.address.toLowerCase()) {
       console.log("  Setting ReferralCodeRegistry on StakingRouter...");
-      await router.connect(govSigner).setReferralCodeRegistry(referralCodeRegistryDeployment.address);
+      await waitForMined(router.connect(govSigner).setReferralCodeRegistry(referralCodeRegistryDeployment.address));
+    }
+  }
+
+  const withdrawalQueueDeployment = await hre.deployments.getOrNull("WithdrawalQueueV2");
+  if (withdrawalQueueDeployment) {
+    const withdrawalQueue = WithdrawalQueueV2__factory.connect(withdrawalQueueDeployment.address, accounts.deployer);
+    const currentSyncer = await withdrawalQueue.accountingSyncer();
+    if (currentSyncer.toLowerCase() !== router.target.toString().toLowerCase()) {
+      console.log("  Setting WithdrawalQueueV2 accounting syncer to StakingRouter...");
+      await waitForMined(withdrawalQueue.connect(govSigner).setAccountingSyncer(router.target as string));
     }
   }
 
@@ -79,7 +96,7 @@ const func: DeployFunction = async hre => {
     const stakingCore = await connect(StakingCore__factory);
     const currentRouterMode = await stakingCore.routerMode();
     if (!currentRouterMode) {
-      await stakingCore.connect(govSigner).enableRouterMode(router.target as string);
+      await waitForMined(stakingCore.connect(govSigner).enableRouterMode(router.target as string));
     }
 
     // Revoke StakingCore's MINTER role — router is now the sole minter.
@@ -87,7 +104,7 @@ const func: DeployFunction = async hre => {
     const coreHasMinter = await stToken.hasRole(MINTER, stakingCoreDeployment.address);
     if (coreHasMinter) {
       console.log("  Revoking MINTER from StakingCore (StakingRouter is now the sole minter)...");
-      await stToken.connect(accounts.deployer).removeMinter(stakingCoreDeployment.address);
+      await waitForMined(stToken.connect(accounts.deployer).removeMinter(stakingCoreDeployment.address));
     }
   }
 };

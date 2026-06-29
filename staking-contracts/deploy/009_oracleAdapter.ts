@@ -2,6 +2,7 @@ import {DeployFunction} from "hardhat-deploy/types";
 import Ship from "../utils/ship";
 import {OracleAdapter__factory, ValidatorModule__factory} from "../types";
 import {resolveGovernanceAddress, resolveOracleSubmitterAddresses} from "../helpers/governance";
+import {waitForMined} from "../helpers/moduleDeployment";
 
 /**
  * Deploys an OracleAdapter that points at the ValidatorModule (router-managed
@@ -41,11 +42,11 @@ const func: DeployFunction = async hre => {
     const hasRole = await moduleContract.hasRole(ORACLE, adapter.target);
     if (!hasRole) {
       console.log(`  Granting ORACLE role to OracleAdapter on ${moduleName}...`);
-      await moduleContract.connect(govSigner).grantRole(ORACLE, adapter.target as string);
+      await waitForMined(moduleContract.connect(govSigner).grantRole(ORACLE, adapter.target as string));
     }
     if (gov.toLowerCase() !== (adapter.target as string).toLowerCase() && (await moduleContract.hasRole(ORACLE, gov))) {
       console.log(`  Revoking direct ORACLE role from gov on ${moduleName}...`);
-      await moduleContract.connect(govSigner).revokeRole(ORACLE, gov);
+      await waitForMined(moduleContract.connect(govSigner).revokeRole(ORACLE, gov));
     }
   };
 
@@ -60,7 +61,7 @@ const func: DeployFunction = async hre => {
   for (const submitter of submitters) {
     if (!(await adapter.hasRole(SUBMITTER, submitter))) {
       console.log(`  Adding SUBMITTER on OracleAdapterValidator: ${submitter}`);
-      await adapter.connect(govSigner).addSubmitter(submitter);
+      await waitForMined(adapter.connect(govSigner).addSubmitter(submitter));
     }
   }
 };

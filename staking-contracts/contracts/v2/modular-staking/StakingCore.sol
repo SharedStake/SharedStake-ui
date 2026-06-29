@@ -18,7 +18,6 @@ interface IDebtPool {
 
 /// @title IWithdrawalQueue - Interface for WithdrawalQueueV2
 interface IWithdrawalQueue {
-    function lockedEther() external view returns (uint256);
     function totalUnclaimedEther() external view returns (uint256);
 }
 
@@ -105,7 +104,6 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     error ReferralCodeRegistryInvalid(address registry);
     error RouterModeDisabled();
     error RouterModeAlreadyEnabled();
-    error QueueExceedsPooledEther(uint256 reserved, uint256 postTotalPooled);
 
     constructor(address stToken, address gov) {
         if (stToken == address(0) || gov == address(0)) revert Errors.ZeroAddress();
@@ -232,19 +230,10 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
         _beaconValidators = newBeaconValidators;
         _beaconBalance = newBeaconBalance;
 
+        // WithdrawalQueueV2 removes queued ETH from totalPooledEther at request time.
+        // Beacon reports therefore publish the remaining live backing directly and must
+        // not subtract totalUnclaimedEther again when exited validators fund the queue.
         uint256 postTotalPooled = _bufferedEther + newBeaconBalance;
-        uint256 reserved = _queueReservedEther();
-        // Ensure we don't underflow if queue has more locked than pooled.
-        // reserved == postTotalPooled is the legitimate wind-down state (all ETH in queue).
-        // reserved > postTotalPooled can occur after a major validator slash. Hard-reverting
-        // here would permanently freeze oracle reporting. Instead, cap postTotalPooled at
-        // reserved so oracle reports proceed — no positive delta (rewards) are distributed
-        // until the beacon balance recovers. The exchange rate may drop (loss socialised),
-        // but the protocol does not freeze.
-        if (reserved > postTotalPooled) {
-            postTotalPooled = reserved;
-        }
-        postTotalPooled -= reserved; // reaches 0 cleanly during wind-down or slash recovery
         ST_TOKEN.setTotalPooledEther(postTotalPooled);
 
         // Distribute fee shares when there are positive rewards.
@@ -271,11 +260,6 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
 
         emit BeaconDepositNotified(amount, _bufferedEther, _beaconBalance);
         emit BufferedEtherUpdated(_bufferedEther);
-    }
-
-    function _queueReservedEther() private view returns (uint256) {
-        if (withdrawalQueue == address(0)) return 0;
-        return IWithdrawalQueue(withdrawalQueue).totalUnclaimedEther();
     }
 
     function _computeFeeShares(
@@ -499,8 +483,9 @@ contract StakingCore is AccessControl, ReentrancyGuard, GranularPause {
     }
 
     /// @notice Set the withdrawal queue address.
-    /// @dev When set, reportBeacon subtracts totalUnclaimedEther from totalPooledEther.
-    ///      Zero address disables queue awareness (for standalone deployments).
+    /// @dev Zero address disables queue validation (for standalone deployments).
+    ///      WithdrawalQueueV2 burns queued shares and updates pooled ETH at request time,
+    ///      so reportBeacon deliberately does not subtract queue obligations again.
     function setWithdrawalQueue(address queue) external onlyRole(GOV) {
         if (queue != address(0)) {
             if (queue.code.length == 0) revert Errors.NotAContract();
