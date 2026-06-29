@@ -9,6 +9,7 @@ const ACCESS_CONTROL_ABI = [
   "function grantRole(bytes32 role, address account)",
   "function revokeRole(bytes32 role, address account)",
   "function GOV() view returns (bytes32)",
+  "function GUARDIAN() view returns (bytes32)",
 ];
 
 const GOVERNED_DEPLOYMENTS = [
@@ -145,6 +146,20 @@ const func: DeployFunction = async hre => {
       await grantRoleIfNeeded(contract, govRole, timelock, "GOV");
       if (gov.toLowerCase() !== timelock.toLowerCase()) {
         await revokeRoleIfPresent(contract, govRole, gov, "GOV");
+      }
+    }
+
+    let guardianRole: string | undefined;
+    try {
+      guardianRole = await contract.GUARDIAN();
+    } catch {
+      guardianRole = undefined;
+    }
+
+    if (guardianRole) {
+      await grantRoleIfNeeded(contract, guardianRole, timelock, "GUARDIAN");
+      if (gov.toLowerCase() !== timelock.toLowerCase()) {
+        await revokeRoleIfPresent(contract, guardianRole, gov, "GUARDIAN");
       }
     }
 
