@@ -107,15 +107,9 @@ describe("SharedStake V2 adversarial", () => {
       // Transfer 2 stETH worth to the attacker contract so it can request a withdrawal.
       await stToken.connect(alice).transfer(attacker.target, parseEther("2"));
 
-      // The attacker contract requests a withdrawal owned by itself.
-      // We need the attacker to be msg.sender for requestWithdrawals so its shares are burnt.
-      // Workaround: have attacker call requestWithdrawals via a forwarder-style helper.
-      // Simpler: alice requests withdrawal owned by attacker, then attacker claims.
-      // The attacker must own the request to claim it.
-      // requestWithdrawals(amounts, owner) burns msg.sender's shares and assigns ownership.
-      // So alice burns her own shares and assigns ownership to attacker.
-      await stToken.connect(alice).transfer(alice.address, 0n); // no-op
-      await queue.connect(alice).requestWithdrawals([parseEther("1")], attacker.target);
+      // The attacker contract requests a withdrawal owned by itself. This keeps
+      // the test aligned with the production invariant that owner == msg.sender.
+      await attacker.requestWithdrawal(parseEther("1"));
 
       // Guardian (gov) finalizes.
       await queue.connect(gov).finalize(1, {value: parseEther("1.1")});

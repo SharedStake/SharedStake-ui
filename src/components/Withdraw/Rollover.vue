@@ -30,7 +30,7 @@ export default {
     return {
       ABI: ABI_Rollover,
       title: "Rollover",
-      descr: "BROKEN do not use! | Redeem vETH2 for sgETH",
+      descr: "Legacy rollover is disabled. Use the old-vETH2 FIFO queue for governed redemptions.",
       ethAvailableForWithdrawal: BN(0),
       totalRedeemed: BN(0),
       outputTokenName: "sgETH"

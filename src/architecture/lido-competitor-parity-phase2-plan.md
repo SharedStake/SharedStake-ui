@@ -8,7 +8,8 @@ Owner: protocol + contracts
 Build a modular roadmap to reach competitive parity while preserving SharedStake's documented phased rollout and security-first posture.
 
 Primary references:
-- SharedStake v2 evolution context (`llm/V2_ARCHITECTURE_EVOLUTION_CONTEXT.md`)
+- SharedStake modular staking architecture (`docs/modular-staking/architecture.md`)
+- SharedStake protocol diagrams (`docs/modular-staking/diagrams.md`)
 - Lido docs (StakingRouter, Lido, WithdrawalQueue, Accounting/Oracle flow)
 - Rocket Pool docs (minipool architecture, deposit queue, operator-bonded model)
 - StakeWise docs (vault architecture, oracle quorum, osToken overcollateralization)

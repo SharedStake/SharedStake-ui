@@ -1,7 +1,7 @@
 # Solidity Security Audit — SharedStake V2 Modular Staking
 
 **Date:** 2026-05-08
-**Auditor:** Codex GPT-5
+**Auditor:** Internal protocol security review
 **Scope:** `contracts/v2/modular-staking/*.sol` + `contracts/v2/modular-staking/modules/*.sol`
 **Commit:** `721a055` (pre-migration internal audit baseline; sources now live in `staking-contracts/`)
 
@@ -266,7 +266,7 @@ If GUARDIAN key is compromised:
 
 ## 8. Slither / Static Analysis Residuals
 
-From the prior security review, 2 medium findings remain:
+Known residual classes from Slither/static analysis:
 
 ### 8.1 `divide-before-multiply` in `FeeController.computeFees()`
 **File:** `FeeController.sol`
@@ -278,6 +278,36 @@ From the prior security review, 2 medium findings remain:
 **File:** `StakingCore.sol`
 **Finding:** Contract holds ETH but has no function to withdraw arbitrary ETH.
 **Impact:** Low — ETH is accounted for in `_bufferedEther` and exits through `WithdrawalQueueV2`.
+**Status:** Accepted by design.
+
+### 8.3 `arbitrary-send-erc20` in `WithdrawalQueue.requestRedeem()`
+**File:** `WithdrawalQueue.sol`
+**Finding:** `requestRedeem(uint256 shares, address owner, address controller)` transfers `WSGETH` from `owner` into the queue.
+**Impact:** Low — this is the ERC-7540-style delegated request flow. The queue escrows shares from `owner`, assigns request control to `controller`, and still requires token allowance from `owner`; callers cannot pull assets without approval.
+**Status:** Accepted by design. Do not copy this pattern into owner-only queues such as old-vEth2 withdrawals unless delegated ownership is explicitly required and separately audited.
+
+### 8.4 `arbitrary-send-eth` in `OldVeth2WithdrawalQueue.recoverEth()`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** `recoverEth(address payable to, uint256 amount)` can send ETH to an arbitrary recipient.
+**Impact:** Low — the function is `onlyRole(GOV)`, `nonReentrant`, rejects zero recipients, and computes recoverable ETH as `address(this).balance - lockedEther - totalPendingRefunds`, so finalized claims and pull refunds remain reserved.
+**Status:** Accepted as governance-controlled recovery. Re-check whenever new ETH liabilities are added.
+
+### 8.5 `calls-loop` in `OldVeth2WithdrawalQueue._enqueueRequest()`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** Slither flags external `balanceOf()` and `safeTransferFrom()` calls when `requestWithdrawals()` loops over multiple requested amounts.
+**Impact:** Low — request creation is `nonReentrant`, custody is taken before request accounting, and the exact post-transfer balance delta must equal the requested amount.
+**Status:** Accepted by design. Batch requests are an optional convenience path; users can call `requestWithdrawal()` per request.
+
+### 8.6 exact vETH2 custody in `OldVeth2WithdrawalQueue._enqueueRequest()`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** The queue depends on the configured legacy vETH2 token transferring the exact requested amount into escrow.
+**Impact:** Low after hardening — the request path now checks `balanceAfter - balanceBefore == amount` and reverts before writing queue accounting if custody is short.
+**Status:** Fixed in PR 380. Re-check if delegated request ownership, arbitrary token support, or fee-on-transfer token support is ever added.
+
+### 8.7 `timestamp` and loop-cost residuals in `OldVeth2WithdrawalQueue`
+**File:** `OldVeth2WithdrawalQueue.sol`
+**Finding:** Slither flags `block.timestamp` in finalization age checks and state writes inside bounded request/finalize/claim loops.
+**Impact:** Low — `minRequestAge` is governance-configured operational delay, not a randomness or price source; `maxRequestsPerFinalize` bounds guardian finalization work, and user batch requests/claims are optional convenience paths.
 **Status:** Accepted by design.
 
 ---
@@ -300,10 +330,5 @@ From the prior security review, 2 medium findings remain:
 
 ### Documentation
 
-9. Add a "Risk Acceptance" section to the operational runbook for the 2 Slither medium findings
+9. Keep the Slither risk-acceptance section synced with each analyzer pass
 10. Document the exact GOV → timelock migration path in deployment scripts
-
----
-
-**Agent:** Codex GPT-5
-**Co-authored-by:** Chimera <chimera_defi@protonmail.com>

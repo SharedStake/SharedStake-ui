@@ -33,6 +33,14 @@ contract ReentrantClaimer {
         requestId = id;
     }
 
+    /// @notice Create a withdrawal request owned by this contract.
+    function requestWithdrawal(uint256 amount) external returns (uint256 id) {
+        uint256[] memory amounts = new uint256[](1);
+        amounts[0] = amount;
+        uint256[] memory ids = QUEUE.requestWithdrawals(amounts, address(this));
+        id = ids[0];
+    }
+
     /// @notice Initiate the legitimate first claim. The reentrancy attempt
     ///         happens inside `receive()` when the queue forwards ETH.
     function attack(uint256 id) external {

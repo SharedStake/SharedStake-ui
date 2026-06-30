@@ -42,10 +42,29 @@ export const rpcRequest = async (rpcUrl, method, params = []) => {
   return data.result;
 };
 
+const rpcRequestWithFallback = async (rpcUrl, primary, fallback, params = []) => {
+  try {
+    return await rpcRequest(rpcUrl, primary, params);
+  } catch (primaryError) {
+    try {
+      return await rpcRequest(rpcUrl, fallback, params);
+    } catch (fallbackError) {
+      throw new Error(
+        `RPC ${primary} failed (${primaryError.message}); fallback ${fallback} failed (${fallbackError.message})`
+      );
+    }
+  }
+};
+
 export const seedAndImpersonate = async (rpcUrl, address, ethAmount) => {
   const weiHex = toWeiHex(ethAmount);
-  await rpcRequest(rpcUrl, 'anvil_setBalance', [address, weiHex]);
-  await rpcRequest(rpcUrl, 'anvil_impersonateAccount', [address]);
+  await rpcRequestWithFallback(rpcUrl, 'anvil_setBalance', 'hardhat_setBalance', [
+    address,
+    weiHex
+  ]);
+  await rpcRequestWithFallback(rpcUrl, 'anvil_impersonateAccount', 'hardhat_impersonateAccount', [
+    address
+  ]);
   return weiHex;
 };
 

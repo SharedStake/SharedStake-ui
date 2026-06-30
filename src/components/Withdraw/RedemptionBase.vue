@@ -59,12 +59,9 @@
             Next steps
           </p>
           <div class="flex justify-center gap-6">
-            <div class="disabled-link flex flex-col items-center">
-              <span>Stake ETH</span>
-              <div class="coming-soon">
-                Coming Soon
-              </div>
-            </div>
+            <SharedLink to="/v2">
+              Stake ETH in V2
+            </SharedLink>
             <SharedLink to="/wrap">
               Wrap sgETH
             </SharedLink>
@@ -596,19 +593,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.disabled-link {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-  color: #999;
-}
-
-.coming-soon {
-  font-size: 10px;
-  color: #999;
-  margin-top: 2px;
-  font-weight: normal;
-}
-</style>

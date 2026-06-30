@@ -82,16 +82,26 @@ WEI_HEX="$(
   ' "$ETH_AMOUNT"
 )"
 
-set_balance_payload="$(jq -n \
-  --arg address "$WALLET_ADDRESS" \
-  --arg wei "$WEI_HEX" \
-  '{jsonrpc:"2.0", method:"anvil_setBalance", params:[$address, $wei], id:1}')"
+set_balance_response=""
+set_balance() {
+  local method="$1"
+  local payload
+  payload="$(jq -n \
+    --arg method "$method" \
+    --arg address "$WALLET_ADDRESS" \
+    --arg wei "$WEI_HEX" \
+    '{jsonrpc:"2.0", method:$method, params:[$address, $wei], id:1}')"
 
-set_balance_response="$(curl -sS "$RPC_URL" -H "content-type: application/json" --data "$set_balance_payload")"
+  set_balance_response="$(curl -sS "$RPC_URL" -H "content-type: application/json" --data "$payload")"
+  [[ "$(jq -r '.error // empty' <<< "$set_balance_response")" == "" ]]
+}
 
-if [[ "$(jq -r '.error // empty' <<< "$set_balance_response")" != "" ]]; then
+if ! set_balance "anvil_setBalance"; then
   warn "anvil_setBalance response: $set_balance_response"
-  die "Failed to seed wallet balance via anvil_setBalance"
+  if ! set_balance "hardhat_setBalance"; then
+    warn "hardhat_setBalance response: $set_balance_response"
+    die "Failed to seed wallet balance via anvil_setBalance or hardhat_setBalance"
+  fi
 fi
 
 balance_payload="$(jq -n \

@@ -39,10 +39,6 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     using Address for address payable;
     using SafeERC20 for IERC20;
 
-    struct Request {
-        address requester;
-        uint256 shares;
-    }
     // SharedDepositMinterV2 public immutable MINTER;
     address public immutable MINTER;
     address public immutable WSGETH;
@@ -54,7 +50,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
 
     bytes32 public constant GOV = keccak256("GOV"); // Governance for settings - normally timelock controlled by multisig
 
-    mapping(uint256 => Request) internal requests;
+    mapping(address => uint256) public redeemRequestShares;
     mapping(address => uint256) public redeemRequests;
 
     event RedeemRequest(
@@ -77,7 +73,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
 
         uint256 maxUint256 = 2 ** 256 - 1;
 
-        IERC20(WSGETH).approve(_minter, maxUint256);
+        IERC20(WSGETH).safeApprove(_minter, maxUint256);
 
         _grantRole(GOV, _governance);
     }
@@ -86,7 +82,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     /// @dev This function must be called by either the owner or an operator of the vault, and is only allowed when the contract is not paused.
 
     /// @param shares The number of shares to redeem.
-    /// @param requester The address requesting the redemption.
+    /// @param requester The request controller. Must equal owner; operators may initiate but not reassign claims.
     /// @param owner The owner of the vault being redeemed from.
 
     /// @return requestId The unique ID assigned to this redemption request.
@@ -98,26 +94,28 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         if (shares == 0) {
             revert Errors.InvalidAmount();
         }
+        if (requester != owner) {
+            revert Errors.PermissionDenied();
+        }
         IERC20(WSGETH).safeTransferFrom(owner, address(this), shares); // asset here is the Vault underlying asset
 
         requestId = requestsCreated++;
-        requests[requestId] = Request({requester: requester, shares: shares});
         // use assets for tracking
         uint256 assets = IERC4626(WSGETH).previewRedeem(shares);
 
         _stakeForWithdrawal(owner, assets);
         totalPendingRequest += assets;
+        redeemRequestShares[requester] += shares;
         redeemRequests[requester] += assets; // underflow would revert if not enough claimable shares
 
         emit RedeemRequest(requester, owner, requestId, msg.sender, shares);
     }
 
     /// @notice Allows a user to redeem their vault shares.
-    /// @dev This function must be called by either the owner or an operator of the requester's vault, and is only allowed when the contract is not paused.
-
+    /// @dev This function must be called by either the requester or an operator of the requester.
     /// @param shares The number of shares to redeem.
     /// @param receiver The address that will receive the redeemed assets.
-    /// @param requester The address requesting the redemption.
+    /// @param requester The address that owns the redeem request.
 
     /// @return assets The amount of assets that were successfully redeemed.
     function redeem(
@@ -126,6 +124,12 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         address requester
     ) external onlyOwnerOrOperator(requester) nonReentrant whenNotPaused(uint16(2)) returns (uint256 assets) {
         if (shares == 0) {
+            revert Errors.InvalidAmount();
+        }
+        if (msg.sender != requester && receiver != requester) {
+            revert Errors.PermissionDenied();
+        }
+        if (redeemRequestShares[requester] < shares) {
             revert Errors.InvalidAmount();
         }
 
@@ -139,6 +143,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
 
         _withdraw(requester, assets);
         // Treat everything as claimableRedeemRequest and validate here if there's adequate funds
+        redeemRequestShares[requester] -= shares;
         redeemRequests[requester] -= assets; // underflow would revert if not enough claimable shares
         totalPendingRequest -= assets;
         // Track total returned
@@ -165,11 +170,15 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         address requester
     ) external onlyOwnerOrOperator(requester) nonReentrant whenNotPaused(uint16(3)) returns (uint256 assets) {
         uint256 shares = pendingRedeemRequest(requester);
-        assets = IERC4626(WSGETH).previewRedeem(shares);
 
         if (shares == 0) {
             revert Errors.InvalidAmount();
         }
+        if (msg.sender != requester && receiver != requester) {
+            revert Errors.PermissionDenied();
+        }
+
+        assets = redeemRequests[requester];
 
         _verifyEpochHasElapsed(requester);
 
@@ -180,7 +189,8 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
         }
 
         // Treat everything as claimableRedeemRequest and validate here if there's adequate funds
-        redeemRequests[requester] -= assets; // underflow would revert if not enough claimable shares
+        redeemRequestShares[requester] = 0;
+        redeemRequests[requester] = 0;
         totalPendingRequest -= assets;
         _withdraw(requester, assets);
         IERC20(WSGETH).safeTransfer(receiver, shares); // asset here is the Vault underlying asset
@@ -202,7 +212,7 @@ contract WithdrawalQueue is AccessControl, ReentrancyGuard, GranularPause, FIFOQ
     }
 
     function pendingRedeemRequest(address owner) public view returns (uint256 shares) {
-        return redeemRequests[owner];
+        return redeemRequestShares[owner];
     }
 
     // claimableRedeemRequest - returns owners shares in claimable state,

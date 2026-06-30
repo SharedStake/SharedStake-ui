@@ -22,7 +22,7 @@
       <template #answer>
         When you click "Withdraw vETH2", the contract will execute a withdrawal transaction that returns your deposited vETH2 tokens to your wallet. 
         This is a one-way operation - your vETH2 will be sent back to your connected wallet address. 
-        After the withdrawal is complete, you can then deposit these vETH2 tokens into the new withdrawal contract (coming soon) to redeem them for ETH once it's launched.
+        After the withdrawal is complete, request redemption in the old-vETH2 FIFO queue once governance has configured it for the connected network.
       </template>
     </QuestionAnswer>
 
@@ -33,7 +33,7 @@
       <template #answer>
         The deprecated contracts are no longer actively processing withdrawals or accepting new deposits. 
         To use your vETH2 tokens in the new system, you need to withdraw them from the old contracts first. 
-        Once withdrawn, you can hold them in your wallet until the new withdrawal contract launches, then deposit them there to redeem for ETH.
+        Once withdrawn, you can hold them in your wallet or request redemption in the old-vETH2 FIFO queue when that queue is configured.
       </template>
     </QuestionAnswer>
 
@@ -46,11 +46,11 @@
         <br>
         <strong>Step 1:</strong> Your vETH2 will be returned to your wallet
         <br>
-        <strong>Step 2:</strong> Wait for the new withdrawal contract to launch (coming soon)
+        <strong>Step 2:</strong> Open the old-vETH2 FIFO queue on this page
         <br>
-        <strong>Step 3:</strong> Once launched, approve and deposit your vETH2 into the new withdrawal contract
+        <strong>Step 3:</strong> Approve and request redemption for your vETH2
         <br>
-        <strong>Step 4:</strong> Wait for ETH to become available, then redeem your vETH2 for ETH
+        <strong>Step 4:</strong> Wait for guardian FIFO finalization, then claim ETH
       </template>
     </QuestionAnswer>
 
@@ -291,8 +291,8 @@
       </template>
       <template #answer>
         Your vETH2 tokens are safe in the deprecated contracts - they won't disappear. However, these contracts are no longer 
-        actively processing redemptions, so you won't be able to redeem them for ETH until you withdraw and move them to the new contract (coming soon). 
-        We recommend withdrawing your vETH2 from deprecated contracts now so you're ready when the new contract launches.
+        actively processing redemptions, so you won't be able to redeem them for ETH until you withdraw and move them into the old-vETH2 FIFO queue once it is configured.
+        We recommend withdrawing your vETH2 from deprecated contracts now so you're ready to request a governed FIFO redemption.
       </template>
     </QuestionAnswer>
 

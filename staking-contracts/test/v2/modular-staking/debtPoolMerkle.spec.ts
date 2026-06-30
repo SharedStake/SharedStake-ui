@@ -303,6 +303,46 @@ describe("DebtPool Merkle Tree Integration", () => {
       expect(canClaimResult).to.be.true;
     });
 
+    it("canClaim returns false for zero, swept, or over-cap claims", async () => {
+      await debtPool.connect(admin).createDistribution(merkleRoot, TOTAL_AMOUNT);
+
+      const proofData = proofs.get(recipient1.address.toLowerCase());
+      expect(
+        await debtPool.canClaim(proofData.distributionId, proofData.leafIndex, recipient1.address, 0, proofData.proof),
+      ).to.equal(false);
+
+      const overAmount = TOTAL_AMOUNT + parseEther("1");
+      const overTree = StandardMerkleTree.of(
+        [[DISTRIBUTION_ID, 0, recipient1.address, overAmount.toString()]],
+        ["uint256", "uint256", "address", "uint256"],
+      );
+      await wstETH.mint(debtPool.target, overAmount);
+      await debtPool.connect(admin).createDistribution(overTree.root, TOTAL_AMOUNT);
+      expect(
+        await debtPool.canClaim(
+          await debtPool.distributionId(),
+          0,
+          recipient1.address,
+          overAmount,
+          overTree.getProof([DISTRIBUTION_ID, 0, recipient1.address, overAmount.toString()]),
+        ),
+      ).to.equal(false);
+
+      await ethers.provider.send("evm_increaseTime", [30 * 24 * 60 * 60]);
+      await ethers.provider.send("evm_mine", []);
+      await debtPool.connect(gov).withdrawUnclaimedFees(DISTRIBUTION_ID, gov.address);
+
+      expect(
+        await debtPool.canClaim(
+          proofData.distributionId,
+          proofData.leafIndex,
+          recipient1.address,
+          proofData.amount,
+          proofData.proof,
+        ),
+      ).to.equal(false);
+    });
+
     it("claim reverts when cumulative claims would exceed distribution total (cap invariant)", async () => {
       // Build a tree with one leaf claiming more than the declared total
       const overAmount = TOTAL_AMOUNT + parseEther("1"); // 11 wstETH > 10 wstETH total
@@ -314,7 +354,6 @@ describe("DebtPool Merkle Tree Integration", () => {
       await wstETH.mint(debtPool.target, overAmount);
       await debtPool.connect(admin).createDistribution(overRoot, TOTAL_AMOUNT);
       const distId = await debtPool.distributionId();
-      const [, proof] = overTree.entries().next().value as [number, [number, number, string, string]];
       await expect(
         debtPool
           .connect(recipient1)
@@ -326,6 +365,62 @@ describe("DebtPool Merkle Tree Integration", () => {
             overTree.getProof([DISTRIBUTION_ID, 0, recipient1.address, overAmount.toString()]),
           ),
       ).to.be.revertedWithCustomError(debtPool, "ExceedsDistributionTotal");
+    });
+
+    it("counts received stETH shares only after a successful wrap", async () => {
+      const StToken = await ethers.getContractFactory("StToken");
+      const realStToken = await StToken.deploy();
+      const WstToken = await ethers.getContractFactory("WstToken");
+      const realWstETH = await WstToken.deploy(realStToken.target);
+      const DebtPool = await ethers.getContractFactory("DebtPool");
+      const realDebtPool = await DebtPool.deploy(
+        realStToken.target,
+        realWstETH.target,
+        gov.address,
+        admin.address,
+        feeController.address,
+      );
+
+      const amount = parseEther("1");
+      await realStToken.addMinter(feeController.address);
+      await realStToken.connect(feeController).mintShares(realDebtPool.target, amount);
+      await realStToken.connect(feeController).setTotalPooledEther(amount);
+
+      await expect(realDebtPool.connect(feeController).receiveStETHAndUnwrap(amount))
+        .to.emit(realDebtPool, "StETHReceived")
+        .withArgs(amount);
+
+      const stats = await realDebtPool.getStats();
+      expect(stats[0]).to.equal(amount);
+      expect(stats[1]).to.equal(amount);
+    });
+
+    it("does not overstate received stETH shares when wrap fails", async () => {
+      const StToken = await ethers.getContractFactory("StToken");
+      const realStToken = await StToken.deploy();
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      const nonWrappingWstETH = await MockERC20.deploy("Non-wrapping wstETH", "nwstETH");
+      const DebtPool = await ethers.getContractFactory("DebtPool");
+      const realDebtPool = await DebtPool.deploy(
+        realStToken.target,
+        nonWrappingWstETH.target,
+        gov.address,
+        admin.address,
+        feeController.address,
+      );
+
+      const amount = parseEther("1");
+      await realStToken.addMinter(feeController.address);
+      await realStToken.connect(feeController).mintShares(realDebtPool.target, amount);
+      await realStToken.connect(feeController).setTotalPooledEther(amount);
+
+      await expect(realDebtPool.connect(feeController).receiveStETHAndUnwrap(amount))
+        .to.emit(realDebtPool, "WrapFailed")
+        .withArgs(amount, amount);
+
+      const stats = await realDebtPool.getStats();
+      expect(stats[0]).to.equal(0);
+      expect(stats[1]).to.equal(0);
     });
 
     it("withdrawUnclaimedFees reverts before MIN_CLAIM_PERIOD elapsed (fix 2: lock period)", async () => {

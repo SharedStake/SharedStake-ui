@@ -25,6 +25,7 @@ test.describe('impersonator wallet stake + approve/unstake flow', () => {
   test.skip(!VALIDATOR_ADDRESS, 'Legacy validator contract is not deployed in the local address map');
 
   test('runs real tx execution with deterministic funding and gas settings', async ({ page }) => {
+    test.skip(!VALIDATOR_ADDRESS, 'legacy validator address is not configured for this local deployment');
     test.setTimeout(180_000);
 
     const chainIdHex = await rpcRequest(RPC_URL, 'eth_chainId');

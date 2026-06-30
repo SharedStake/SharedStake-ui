@@ -21,6 +21,8 @@ Before running `deploy/v2-modular-staking/*` on non-local networks, set:
 - Optional operator bond overrides: `V2_OPERATOR_ETH_BOND_PER_SLOT`, `V2_OPERATOR_SGT_BOND_PER_SLOT`, `V2_OPERATOR_MAX_SLOTS`
 - Optional dark-launch controls: `V2_MODULES_DARK_LAUNCH`, `V2_VALIDATOR_MODULE_PAUSED`, `V2_DVT_MODULE_PAUSED`, `V2_LST_WRAP_MODULE_PAUSED`
 - Optional ERC-4626 wrapper seed override: `V2_WRAPPER_SEED_AMOUNT` in stToken units, default `0.001` on non-local networks. Set to `0` only for an intentionally unseeded wrapper deployment.
+- `V2_OLD_VETH2_ADDRESS` for the legacy vEth2 token when deploying the old-vEth2 FIFO withdrawal queue
+- `V2_OLD_VETH2_REDEMPTION_RATE`, scaled by 1e18, for old-vEth2 ETH quotes
 
 Deployment scripts now fail closed on non-local networks when these are missing or inconsistent. Non-local module deployments default to `pauseAfterRegistration=true` unless overridden, so modules can be deployed and verified before governance enables user inflow.
 
@@ -29,14 +31,27 @@ Deployment scripts now fail closed on non-local networks when these are missing 
 ### Phase 1: Core Contracts (already deployed)
 
 1. `StToken`
-2. `StakingRouter`
-3. `StakingCore`
-4. `WithdrawalQueueV2`
-5. `FeeController`
-6. `ValidatorModule` / `LSTWrapModule` / `DVTModule`
-7. `OracleAdapter` / `QuorumOracleAdapter`
-8. `StTokenERC4626Wrapper`
-
+2. `WstToken`
+3. `FeeController`
+4. `StakingCore`
+5. `WithdrawalQueueV2`
+6. `ReferralCodeRegistry`
+7. `StakingRouter`
+8. `ValidatorModule`
+9. `OracleAdapter`
+10. `LSTWrapModule`
+11. `StTokenERC4626Wrapper`
+12. `DVTModule`
+13. `QuorumOracleAdapter`
+14. `GovernanceTimelock` / `VoteEscrowV2` / `SharedStakeGovernor`
+15. `GovernanceHandover`
+16. `ReferralCodeRegistryWiring`
+17. `ReferralRegistry`
+18. `DebtPool`
+19. `InstitutionalPolicyRegistry`
+20. `OperatorRegistry`
+21. `MigrationHelper`
+22. `OldVeth2WithdrawalQueue` for legacy vEth2 redemptions
 
 ### Phase 1.1: ERC-4626 Wrapper (included in modular-staking deploy)
 
@@ -347,6 +362,28 @@ NFT credit is escrow based: the NFT contract cannot be changed or repriced while
 
 `MigrationHelper(oldRouter, gov)` is deployed after `staking-router` and `governance`. It does not move user funds; it publishes a governance-controlled migration notice and activation signal for frontends and integrators.
 
+### Phase 3.7: Legacy vEth2 Withdrawal Queue
+
+#### Step 17b: Deploy OldVeth2WithdrawalQueue (via deploy script 022_oldVeth2WithdrawalQueue.ts)
+
+The old-vEth2 queue is separate from the canonical `WithdrawalQueueV2`. It exists only to process legacy vEth2 liabilities through a FIFO request/finalize/claim lifecycle. Users escrow their own old vEth2, the request locks `ethAmount = vEth2Amount * redemptionRate / 1e18`, guardians finalize request ID ranges in order with ETH funding, and owners claim finalized ETH back to themselves. Delegated request ownership and recipient redirection are intentionally unsupported.
+
+Required non-local environment variables:
+
+- `V2_GOVERNANCE_ADDRESS`
+- `V2_OLD_VETH2_ADDRESS`
+- `V2_OLD_VETH2_REDEMPTION_RATE` (1e18-scaled ETH per vEth2)
+
+Local deployments use a `MockERC20` old-vEth2 token and a 1:1 redemption rate when the old-vEth2 env vars are absent. Non-local deployments fail closed until the legacy token and rate are explicit.
+
+Operational checks before enabling requests:
+
+1. Confirm `VETH2()` is the canonical legacy vEth2 token.
+2. Confirm `redemptionRate()` matches the governance-approved old-vEth2 liability calculation.
+3. Optionally set `setRequestLimits(min, max)` and `setFinalizeLimits(maxBatch, minAge)`.
+4. Keep `PAUSE_REQUESTS` enabled until governance is ready for holders to enqueue.
+5. Fund finalization only through `finalize(lastRequestId)` so `lockedEther` matches finalized claims.
+
 ### Phase 4: ValidatorModule Hardening
 
 #### Step 18: Set Expected Withdrawal Credentials
@@ -450,8 +487,3 @@ For large slashes (>X%), consider pausing finalization and socializing loss over
 2. Default is 1% per report in current router deployment defaults
 3. **Mitigation:** keep `maxDeltaBps` conservative and environment-specific
 4. **Mitigation:** Use QuorumOracleAdapter with multiple independent oracles
-
----
-
-**Agent:** Codex GPT-5
-**Co-authored-by:** Chimera <chimera_defi@protonmail.com>

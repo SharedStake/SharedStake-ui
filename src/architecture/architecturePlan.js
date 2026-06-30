@@ -2,7 +2,7 @@ export const architectureMeta = {
   title: "SharedStake V3 Modular Staking Architecture",
   subtitle:
     "Router-first staking architecture, governed module rollout, and contract-readiness execution",
-  updatedAt: "2026-06-02",
+  updatedAt: "2026-06-07",
   sources: [
     "https://docs.sharedstake.finance/sharedstake-v2.md",
     "https://docs.sharedstake.finance/sharedstake-v2/key-changes-over-v1.md",
@@ -21,6 +21,8 @@ export const architectureMeta = {
     "staking-contracts/contracts/v2/governance/VoteEscrowV2.sol",
     "staking-contracts/contracts/v2/governance/SharedStakeGovernor.sol",
     "staking-contracts/contracts/v2/governance/GovernanceTimelock.sol",
+    "staking-contracts/contracts/v2/modular-staking/DebtPool.sol",
+    "staking-contracts/contracts/v2/modular-staking/OldVeth2WithdrawalQueue.sol",
   ],
 };
 
@@ -111,9 +113,9 @@ export const contractV1Readiness = [
     title: "Automated audit gates",
     goal: "Make contract safety checks repeatable locally and in GitHub Actions.",
     currentState:
-      "Root CI and the Contract Audit workflow pass on the PR head, including dependency audit, Solidity lint, Hardhat compile, modular Hardhat tests, Foundry invariants, and Slither.",
+      "Local gates pass for dependency audit, Solidity lint, Hardhat compile, modular Hardhat tests, Foundry invariants, frontend type-check, frontend build, and local modular deployment. Slither is required in the Contract Audit workflow and is recorded as local residual risk when unavailable.",
     nextStep:
-      "Keep moderate-or-higher dependency advisories blocked and treat Slither regressions as review findings.",
+      "Keep moderate-or-higher dependency advisories blocked, rerun Slither where installed or in CI, and treat Slither regressions as review findings.",
     tasks: [
       "Run npm audit --audit-level=moderate inside staking-contracts.",
       "Run npx hardhat test test/v2/modular-staking/*.spec.ts before contract changes land.",

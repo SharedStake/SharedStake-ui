@@ -106,11 +106,24 @@ describe("WithdrawalQueueV2", () => {
       await expect(queue.connect(alice).requestWithdrawals([parseEther("1")], ZeroAddress)).to.be.reverted;
     });
 
+    it("reverts when caller tries to assign claim ownership to another account", async () => {
+      await expect(
+        queue.connect(alice).requestWithdrawals([parseEther("1")], bob.address),
+      ).to.be.revertedWithCustomError(queue, "PermissionDenied");
+    });
+
     it("batch request: multiple amounts in one call", async () => {
       const ids = await queue
         .connect(alice)
         .requestWithdrawals.staticCall([parseEther("1"), parseEther("2")], alice.address);
       expect(ids.length).to.equal(2);
+    });
+
+    it("reverts for empty request batches", async () => {
+      await expect(queue.connect(alice).requestWithdrawals([], alice.address)).to.be.revertedWithCustomError(
+        queue,
+        "InvalidAmount",
+      );
     });
   });
 
@@ -167,10 +180,21 @@ describe("WithdrawalQueueV2", () => {
       const receipt = await tx.wait();
       const gasUsed1 = receipt!.gasUsed * receipt!.gasPrice;
 
-      // Excess ETH stored in pendingRefunds — gov must withdraw it
+      // Excess ETH is reserved as a refund and must not be governable recovery ETH.
+      expect(await queue.pendingRefunds(gov.address)).to.equal(parseEther("1"));
+      expect(await queue.totalPendingRefunds()).to.equal(parseEther("1"));
+      expect(await queue.availableEther()).to.equal(0n);
+      await expect(queue.connect(gov).recoverEth(gov.address, 1n)).to.be.revertedWithCustomError(
+        queue,
+        "InsufficientBalance",
+      );
+
       const tx2 = await queue.connect(gov).withdrawRefund();
       const receipt2 = await tx2.wait();
       const gasUsed2 = receipt2!.gasUsed * receipt2!.gasPrice;
+      expect(await queue.pendingRefunds(gov.address)).to.equal(0n);
+      expect(await queue.totalPendingRefunds()).to.equal(0n);
+      expect(await queue.availableEther()).to.equal(0n);
 
       const govAfter = await ethers.provider.getBalance(gov.address);
       // Gov paid ~1 ETH (finalized) + gas on both txs, got ~1 ETH back via withdrawRefund.
@@ -345,6 +369,13 @@ describe("WithdrawalQueueV2", () => {
 
       // Alice receives ~2 ETH (minus gas).
       expect(aliceAfter).to.be.gt(aliceBefore);
+    });
+
+    it("reverts for empty claim batches", async () => {
+      await expect(queue.connect(alice).claimWithdrawals([], alice.address)).to.be.revertedWithCustomError(
+        queue,
+        "InvalidAmount",
+      );
     });
   });
 

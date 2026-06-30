@@ -11,10 +11,10 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.
 /** @dev Deployer chooses static virtual price at launch in 1e18 and the underlying ERC20 token
 Users call deposit(amt) to stake their ERC20 and signal intent to exit
 When the contract has enough ETH to service the users debt
-Users call redeem() to redem for ETH = deposited shares * virtualPrice
+Users call redeem() to redeem for ETH = deposited shares * virtualPrice
 The user can further call withdraw() if they change their mind about redeeming for ETH
 **/
-contract RedemptionsBase is ReentrancyGuard {
+abstract contract RedemptionsBase is ReentrancyGuard {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
@@ -58,9 +58,7 @@ contract RedemptionsBase is ReentrancyGuard {
     _redeem(amountToReturn);
   }
 
-  function _redeem(uint256 amountToReturn) internal virtual { // solhint-disable-line
-    require(false, "implement me"); // solhint-disable-line
-  }
+  function _redeem(uint256 amountToReturn) internal virtual;
 
   function _stakeForWithdrawal(address sender, uint256 amount) internal {
     UserEntry memory ue = userEntries[sender];

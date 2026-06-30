@@ -8,6 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: oven-sh/setup-bun@f4d14e03ff726c06358e5557344e1da148b56cf7 # v1
-      - run: bun install && bun run lint:fix && bun run type-check && bun run build
+      - run: bun install
+      - run: bun audit --level moderate
+      - run: bun run lint:fix && bun run type-check && bun run build
       - working-directory: ./services/referral-service
         run: bun install && bun test

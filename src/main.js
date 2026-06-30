@@ -49,6 +49,15 @@ if (import.meta.env.DEV) {
           import('./stores/wallet')
         ]);
         const walletStore = useWalletStore(pinia);
+        if (window.ethereum) {
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          window.ethersProvider = provider;
+          walletStore.setEthersProvider(provider);
+
+          const network = await provider.getNetwork();
+          const chainId = window.ethereum.chainId || `0x${network.chainId.toString(16)}`;
+          walletStore.setNetwork(String(chainId).toLowerCase());
+        }
         walletStore.setAddressOnboard(ethers.getAddress(e2eAddress));
       } catch (error) {
         console.warn('Invalid e2eAddress supplied:', e2eAddress, error);

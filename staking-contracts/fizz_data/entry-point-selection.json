@@ -83,6 +83,36 @@
     ]
   },
   {
+    "name": "OldVeth2WithdrawalQueue",
+    "sourcePath": "contracts/v2/modular-staking/OldVeth2WithdrawalQueue.sol",
+    "functions": [
+      {
+        "name": "requestWithdrawal",
+        "inputs": [{"name": "amount", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "finalize",
+        "inputs": [{"name": "lastRequestId", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "payable",
+        "tier": "primary"
+      },
+      {
+        "name": "cancelWithdrawal",
+        "inputs": [{"name": "requestId", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "claimWithdrawal",
+        "inputs": [{"name": "requestId", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ]
+  },
+  {
     "name": "WstToken",
     "sourcePath": "contracts/v2/modular-staking/WstToken.sol",
     "functions": [

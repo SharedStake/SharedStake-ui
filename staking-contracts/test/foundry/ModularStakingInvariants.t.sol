@@ -109,6 +109,18 @@ contract ModularStakingInvariants is Test {
 
     // Set initial min rate to max
     minRateObserved = type(uint256).max;
+
+    bytes4[] memory selectors = new bytes4[](9);
+    selectors[0] = this.deposit.selector;
+    selectors[1] = this.depositToModule.selector;
+    selectors[2] = this.pushToBeacon.selector;
+    selectors[3] = this.reportBeacon.selector;
+    selectors[4] = this.requestWithdrawal.selector;
+    selectors[5] = this.finalizeWithdrawals.selector;
+    selectors[6] = this.claimWithdrawal.selector;
+    selectors[7] = this.wrapStETH.selector;
+    selectors[8] = this.unwrapWstETH.selector;
+    targetSelector(FuzzSelector({addr: address(this), selectors: selectors}));
   }
 
   function _addUser(address addr) internal {
@@ -270,8 +282,8 @@ contract ModularStakingInvariants is Test {
     for (uint256 i = 0; i < users.length; i++) {
       sum += stToken.balanceOf(users[i]);
     }
-    // Add wstToken holders' underlying stETH
-    uint256 wstTotal = wstToken.balanceOf(address(wstToken));
+    // Add stETH custodied by the wrapper for wstToken holders.
+    sum += stToken.balanceOf(address(wstToken));
     // Also count stETH held by queue (for pending withdrawals)
     sum += stToken.balanceOf(address(queue));
     // Count stETH held by router (should be 0)

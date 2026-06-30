@@ -78,6 +78,8 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
 - Use x-ray for Solidity audit loops: inventory contracts, classify entry points and roles, derive invariants, check duplicate sources/gitlinks/conflict markers, run static analysis, then do manual adversarial review.
 - For smart-contract review passes, keep Pashov Audit Group skills available from `https://github.com/pashov/skills` through repo-local links in `skills/`: run x-ray, `solidity-auditor`, and `fizz` together when the work touches protocol contracts or fuzz/invariant coverage.
 - Run `fizz` against `staking-contracts/` in automatic mode for fuzz-suite setup. Required local tools are Foundry `forge`, Medusa, and Echidna; if any are missing, install them or record the tool gap before claiming fuzzing coverage.
+- For withdrawal/redeem queues, treat claim ownership as a hard invariant: asset owner and request controller must not diverge, and operators may initiate only without reassigning claim ownership.
+- Recovery functions must subtract every reserved balance, including locked claims, pending refunds, and pending escrowed tokens/shares, before sending assets to governance or arbitrary recipients.
 - Use Devin and Kimi only through their delegate wrappers, with an envelope first, scoped tasks, acceptance criteria, and concrete output requirements.
 - Fix only concrete bugs, vulnerabilities, broken gates, stale docs, duplicate/dead code, or low-risk coverage gaps. Do not broaden PR 379 into speculative redesign.
 - After each fix, rerun the narrow relevant tests first, then the broader gates needed for confidence.
@@ -96,9 +98,25 @@ For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned wi
   - `cd staking-contracts && npx hardhat compile`
   - `cd staking-contracts && npx hardhat test test/v2/modular-staking/*.spec.ts`
   - `cd staking-contracts && npm run test:invariants`
-  - Slither when available; if unavailable, record it as residual tooling risk.
+  - `cd staking-contracts && ./scripts/run-forge.sh test --match-path test/foundry/DebtPoolFuzz.t.sol`
+  - `cd staking-contracts && ./scripts/run-forge.sh test --match-path test/foundry/MigrationHelperFuzz.t.sol`
+  - Slither with local report review; CI may continue-on-error only to preserve analyzer output.
+- Foundry setup must go through `cd staking-contracts && npm run setup:foundry`; that wrapper retries transient release-download failures so CI audit status reflects contract quality instead of one-off network flakes.
+- Production recommendations that touch deployment, frontend contract wiring, wallet transactions, staking flows, or old-vEth2 redemptions must be validated with `bun run test:e2e:fork -- --fresh-fork --port <free-port>` and `MAINNET_RPC_URL` or `ALCHEMY_KEY`. For real old-vEth2 fork validation, pass `--old-veth2-address`, `--old-veth2-redemption-rate`, and `--old-veth2-source-address`; otherwise localhost uses the mock-token lifecycle. `--skip-deploy` is only a local harness smoke unless the reused RPC is known to be an Anvil mainnet fork.
+- Fork E2E must use a fresh Vite/Playwright server with a free `--web-port`; stale reused Vite servers can serve old bundled `local.json` contract addresses and make fork validation meaningless.
+- Fork E2E deploys must set Hardhat `LOCALHOST_RPC_URL` to the same `http://<host>:<port>` that Playwright uses; otherwise `--port 8546` can deploy to Hardhat's default `8545` while the browser tests `8546`.
 - Push completed changes back to PR 379 and verify remote `CI` and `Contract Audit` before claiming completion.
 <!-- sharedstake-pr379-workflow:end -->
+
+<!-- sharedstake-legacy-veth2:begin -->
+## SharedStake Legacy vEth2 Withdrawal Work
+
+- For separate legacy-vEth2 work derived from PR 379, branch from the latest PR 379 head but open a separate PR, normally stacked on `feat/protocol-v3-fresh`.
+- Do not reuse `RedemptionsBase` / `Withdrawals` for new old-vEth2 redemption work; the legacy cancellation path used `transferFrom(address(this), user, amount)` and is not a safe pattern to copy.
+- Preserve old-vEth2 semantics through an explicit redemption rate, but use the V2 request/finalize/claim lifecycle with strict request-ID FIFO finalization, pull refunds, and locked-asset recovery guards. Legacy old-vEth2 queues should be owner-only: `msg.sender` owns requests, and cancel/claim proceeds return to `msg.sender`; do not add delegated owner or arbitrary recipient redirection unless governance explicitly asks for it.
+- Do not assume the legacy `vEth2` minter can be moved to a new queue. Escrow old vEth2 unless governance explicitly designs a burn/retirement step.
+- Non-local old-vEth2 queue deployment must require an explicit legacy token address and 1e18-scaled redemption rate; local deploys may use a mock token fallback.
+<!-- sharedstake-legacy-veth2:end -->
 
 <!-- gbrain-workflow:begin -->
 ## Central Agent Memory (gBrain) — MANDATORY

@@ -1,8 +1,8 @@
 # SharedStake V2 Modular Staking — Architecture & Threat Model
 
-> Phase: PR 379 launch-readiness hardening
+> Phase: PR 379/380 launch-readiness hardening
 > Status: Internal audit and local verification in progress
-> Last updated: 2026-06-01
+> Last updated: 2026-06-07
 
 ---
 
@@ -16,6 +16,7 @@ Users can:
 1. Deposit ETH → receive rebasing **stETH** shares.
 2. Wrap stETH → non-rebasing **wstETH** for DeFi composability.
 3. Request withdrawals via a **queue** → claim ETH after guardian finalization.
+4. Exit legacy vETH2 through a standalone FIFO queue at the governance-approved redemption rate.
 
 Protocol earns a fee on beacon rewards; fees accrue as shares minted to treasury and operator addresses.
 
@@ -40,6 +41,10 @@ Protocol earns a fee on beacon rewards; fees accrue as shares minted to treasury
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+Legacy vETH2 holders use a separate `OldVeth2WithdrawalQueue`: request escrows
+the caller's old vETH2, guardian finalization funds FIFO request IDs with ETH,
+and claim returns ETH only to the original request owner.
+
 ### Contract Responsibilities
 
 | Contract | Responsibility |
@@ -49,6 +54,7 @@ Protocol earns a fee on beacon rewards; fees accrue as shares minted to treasury
 | `WstToken` | Non-rebasing ERC4626-like wrapper. Holds stTokens; each wstToken = 1 share in stToken. |
 | `StakingCore` | Entry point for ETH. Mints shares on deposit. Requires explicit beacon-baseline initialization (`notifyBeaconDeposit`) before positive oracle reports; triggers fee distribution on net rewards only. |
 | `WithdrawalQueueV2` | Three-step queue: request (burn shares) → finalize (guardian sends ETH) → claim (user receives ETH). |
+| `OldVeth2WithdrawalQueue` | Standalone FIFO queue for legacy vETH2 liabilities. Escrows old vETH2, locks request-time ETH quotes, and pays finalized ETH only to the request owner. |
 | `FeeController` | Stores fee bps and recipient addresses. Provides `computeFees(rewards)` view. |
 | `OracleAdapter` | Validates oracle reports (staleness, drift, slash bounds). Calls `StakingCore.reportBeacon`. |
 
@@ -83,7 +89,7 @@ All divisions floor. This means:
 | `DEFAULT_ADMIN_ROLE` | Deployer → transferred to multisig | `grantRole`, `revokeRole` |
 | `GOV` (keccak "GOV") | DAO timelock / multisig | `setFeeController`, `unpause`, `setFee`, `setRecipients`, `setMaxStaleness/Drift/Slash`, `addSubmitter` |
 | `ORACLE` | OracleAdapter contract | `StakingCore.reportBeacon` |
-| `GUARDIAN` | Multisig (can act without timelock) | `pause`, `WithdrawalQueueV2.finalize` |
+| `GUARDIAN` | Multisig (can act without timelock) | `pause`, `WithdrawalQueueV2.finalize`, `OldVeth2WithdrawalQueue.finalize` |
 | `NODE_OPERATOR` | Validator operations key (or governance during bootstrap) | `StakingCore.notifyBeaconDeposit` |
 | `MINTER` | StakingCore + WithdrawalQueueV2 | `StToken.mintShares`, `burnShares`, `setTotalPooledEther` |
 | `SUBMITTER` | Oracle infrastructure keys | `OracleAdapter.submitReport` |
@@ -124,6 +130,7 @@ Rationale:
 | Beacon ETH | Validators | Oracle reporting manipulation |
 | stToken shares | StToken._sharesOf | Unauthorized mint or accounting error |
 | Finalized ETH (queue) | WithdrawalQueueV2 | Claim by wrong address; double-claim |
+| Legacy vETH2 + finalized ETH | OldVeth2WithdrawalQueue | Claim theft, FIFO bypass, or recovery draining reserved assets |
 
 ### Actor Trust Levels
 
@@ -155,6 +162,8 @@ Rationale:
 | T14 | Pause bricking withdrawals | GUARDIAN pauses submit but not claim | `PAUSE_SUBMIT` only disables deposits; claims remain open | ✅ Design |
 | T15 | Integer overflow in ShareMath | Large values cause overflow | Solidity 0.8 checked arithmetic; fuzz tests | ✅ Mitigated |
 | T16 | First positive report counts principal as rewards | Oracle reports positive beacon balance before baseline transfer is tracked | `notifyBeaconDeposit` required before positive reports in core/router | ✅ Mitigated |
+| T17 | Legacy vETH2 claim theft | Third party claims or redirects another user's old-vETH2 request | `OldVeth2WithdrawalQueue` binds owner to `msg.sender`; claim/cancel proceeds only return to the request owner | ✅ Mitigated |
+| T18 | Legacy queue recovery drains reserved assets | GOV recovers ETH or old vETH2 backing pending claims/refunds | Recovery excludes `lockedEther`, `totalPendingRefunds`, and `pendingVeth2`; tests cover locked ETH and unfinalized vETH2 | ✅ Mitigated |
 
 ---
 
@@ -173,11 +182,12 @@ Rationale:
 
 1. `stToken.totalSupply() == stToken.totalPooledEther()` at all times.
 2. No user can claim more ETH from WithdrawalQueueV2 than was provided in finalize.
-3. `stToken.balanceOf(account) == stToken.getPooledEthByShares(stToken.sharesOf(account))`.
-4. `WithdrawalQueueV2.lockedEther <= address(withdrawalQueueV2).balance` always.
-5. Fee shares minted ≤ `rewards × feeBps / 10000` (at current exchange rate).
-6. Exchange rate is monotonically non-decreasing except on slash events.
-7. Positive beacon reports require baseline initialization (`notifyBeaconDeposit`) before reward deltas are accepted.
+3. Old vETH2 requests finalize strictly from the FIFO head and claims/cancels are owner-only.
+4. `stToken.balanceOf(account) == stToken.getPooledEthByShares(stToken.sharesOf(account))`.
+5. `WithdrawalQueueV2.lockedEther <= address(withdrawalQueueV2).balance` always.
+6. Fee shares minted ≤ `rewards × feeBps / 10000` (at current exchange rate).
+7. Exchange rate is monotonically non-decreasing except on slash events.
+8. Positive beacon reports require baseline initialization (`notifyBeaconDeposit`) before reward deltas are accepted.
 
 ---
 
@@ -233,12 +243,12 @@ Rationale:
 
 ### Internal Audit Passes (6+ iterations)
 
-**Audit Pass 1-2 (Devin-led):** General contract audit
+**Audit Pass 1-2:** General contract review
 - Fixed ReferralRegistry.setFeeToken zero-address guard
 - Fixed VoteEscrowV2.setPenaltyCollector non-zero validation
 - Fixed wrap() allowance pre-check (skip redundant approve)
 
-**Audit Pass 3 (Opus-guided focus: DebtPool):**
+**Audit Pass 3 (DebtPool focus):**
 - CRITICAL: DebtPool claims mapping changed to distributionId+leafIndex keying (prevents double-claim)
 - CRITICAL: updateMerkleRoot blocked on finalized distributions
 - HIGH: FeeController enforces debtPoolSplitBps==0 when debtPool==address(0)

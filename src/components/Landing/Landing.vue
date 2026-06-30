@@ -51,11 +51,13 @@
         <div
           class="hero-actions flex items-center justify-center gap-6 mb-8 md-large:justify-start flex-wrap"
         >
-          <ComingSoonPill
-            label="STAKE V2"
-            class="hero-cta px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-gray-600 to-gray-700 md:font-medium md:text-3xl md:px-8 whitespace-nowrap cursor-not-allowed opacity-50 flex flex-col items-center shadow-lg"
-            aria-label="Stake V2 is coming soon"
-          />
+          <router-link
+            to="/v2"
+            class="hero-cta px-6 py-3 text-xl font-semibold transition-all border-2 border-transparent rounded-full bg-gradient-to-r from-pink-600 to-cyan-600 hover:from-pink-500 hover:to-cyan-500 md:font-medium md:text-3xl md:px-8 whitespace-nowrap flex flex-col items-center shadow-lg text-white"
+            aria-label="Open Stake V2"
+          >
+            STAKE V2
+          </router-link>
           <a
             class="hero-cta px-6 py-3 text-xl font-medium transition-all duration-300 border border-transparent rounded-full whitespace-nowrap md:text-2xl md:px-8 bg-gradient-to-r from-[#e6007a] via-[#c30066] to-[#9f004f] hover:from-[#f30082] hover:via-[#d3006f] hover:to-[#ac0056] hover:scale-105 hover:shadow-xl text-white"
             rel="noopener noreferrer nofollow"
@@ -81,40 +83,21 @@
         <div
           class="hero-socials flex items-center justify-center gap-8 mb-8 md-large:justify-start"
         >
-          <template
+          <a
             v-for="social in socialLinks"
             :key="social.key"
+            :href="social.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+            :aria-label="social.ariaLabel"
           >
-            <a
-              v-if="!social.disabled"
-              :href="social.href"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="social-link"
-              :aria-label="social.ariaLabel"
-            >
-              <ImageVue
-                :src="social.icon"
-                size="24px"
-                class="socialLogo"
-              />
-            </a>
-            <div
-              v-else
-              class="social-link social-link-disabled cursor-not-allowed opacity-50 flex flex-col items-center"
-              aria-disabled="true"
-              :aria-label="social.ariaLabel"
-            >
-              <ImageVue
-                :src="social.icon"
-                size="24px"
-                class="socialLogo"
-              />
-              <div class="text-xs mt-1 text-center">
-                {{ social.subLabel || "Coming Soon" }}
-              </div>
-            </div>
-          </template>
+            <ImageVue
+              :src="social.icon"
+              size="24px"
+              class="socialLogo"
+            />
+          </a>
         </div>
 
         <div class="flex items-center justify-center md-large:justify-start">
@@ -131,13 +114,15 @@
             disabled
             aria-disabled="true"
           >
-            Rollover (Returning soon!)
+            Legacy rollover disabled
           </button>
-          <ComingSoonPill
-            label="Withdraw"
-            class="px-4 py-2 text-base font-medium transition-all border border-gray-500 rounded-full whitespace-nowrap md:text-lg md:px-6 cursor-not-allowed opacity-50 flex flex-col items-center bg-gradient-to-r from-gray-600 to-gray-700"
-            aria-label="Withdraw is coming soon"
-          />
+          <router-link
+            to="/withdraw-from-deprecated"
+            class="px-4 py-2 text-base font-medium transition-all border border-cyan-400 rounded-full whitespace-nowrap md:text-lg hover:border-cyan-300 hover:text-cyan-300 hover:bg-cyan-400/10 md:px-6 text-white"
+            aria-label="Open vETH2 withdrawal queue"
+          >
+            Withdraw vETH2
+          </router-link>
         </div>
       </div>
     </div>
@@ -253,8 +238,8 @@
             class="exp Info"
           >
             vEth2 is designed for DeFi compatibility. It is a yield bearing
-            token with a 1:1 price ratio with Ether. vEth2 staking is also
-            incentivized further with SGT, the SharedStake Governance Token.
+            token for legacy SharedStake staking exposure. vEth2 staking is
+            also incentivized further with SGT, the SharedStake Governance Token.
           </div>
           <a
             class="LearnButton"
@@ -293,9 +278,8 @@
           </div>
           <div class="exp Info mb30">
             SharedStake optimizes Eth2 staking profits by creating an off-chain
-            yield bearing stable token (vEth2 has a 1:1 price ratio with Ether).
-            Ethereum2 profit distribution will start with the Eth2 launch so
-            until then, track your Eth2 profits in the SharedStake Dashboard.
+            yield bearing token for legacy staking exposure. Legacy vEth2 exits
+            use protocol liquidity or the governed old-vEth2 withdrawal queue.
           </div>
           <ImageVue
             :src="'discount.svg'"
@@ -312,8 +296,8 @@
             gain an extra 8-9% yearly growth with off-chain profit distribution.
             <br>
             Since vEth2 doesn't contain any 'imaginary' staking rewards, its
-            stability is derived from its peg to Ether's value, practically
-            eliminating concerns with Impermanent Loss.
+            value is intended to track the protocol's underlying staking
+            position and available legacy redemption paths.
           </div>
           <ImageVue
             :src="'diamond.svg'"
@@ -344,8 +328,8 @@
           <div class="exp Info mb30">
             10% of all staked Ether remains in the staking contract, creating a
             liquidity bridge between all users, old and new. <br>
-            SharedStakers can un-stake their Ether at anytime by burning their
-            vEth2 through the staking contract, subject to the pooled amount.
+            Legacy vEth2 exits depend on available protocol liquidity or FIFO
+            withdrawal queue finalization at the configured redemption rate.
           </div>
           <ImageVue
             :src="'balance.svg'"
@@ -412,7 +396,6 @@
 import ImageVue from "../Handlers/ImageVue.vue";
 import MailingListSubscribeForm from "../Common/MailingListSubscribeForm.vue";
 import Partners from "./Partners.vue";
-import ComingSoonPill from "./ComingSoonPill.vue";
 import axios from "axios";
 import BN from "bignumber.js";
 import { priceInUsdAsync } from "@/utils/coingecko";
@@ -422,7 +405,6 @@ export default {
     ImageVue,
     MailingListSubscribeForm,
     Partners,
-    ComingSoonPill,
   },
   props: ["scrolled", "windowWidth", "headerOffset"],
   data() {
@@ -447,13 +429,6 @@ export default {
           href: "https://discord.gg/C9GhCv86My",
           ariaLabel: "Join SharedStake on Discord",
           icon: "socialmediaicons/Discord.svg",
-        },
-        {
-          key: "telegram",
-          disabled: true,
-          ariaLabel: "Telegram is coming soon",
-          icon: "socialmediaicons/TG.svg",
-          subLabel: "Coming Soon",
         },
         {
           key: "github",
@@ -862,14 +837,6 @@ export default {
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px) scale(1.1);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-}
-
-.social-link-disabled {
-  pointer-events: none;
-}
-
-.social-link-disabled .socialLogo {
-  filter: brightness(190%);
 }
 
 /* Enhanced bubble styling */

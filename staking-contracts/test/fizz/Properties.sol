@@ -27,6 +27,20 @@ abstract contract Properties is PropertiesAsserts, Snapshots {
             withdrawalQueueV2.lockedEther() + withdrawalQueueV2.totalPendingRefunds();
     }
 
+    function property_oldVeth2QueueBalanceCoversFinalizedClaims() public view returns (bool) {
+        return address(oldVeth2WithdrawalQueue).balance >=
+            oldVeth2WithdrawalQueue.lockedEther() + oldVeth2WithdrawalQueue.totalPendingRefunds();
+    }
+
+    function property_oldVeth2PendingBackedByCustody() public view returns (bool) {
+        return oldVeth2.balanceOf(address(oldVeth2WithdrawalQueue)) >= oldVeth2WithdrawalQueue.pendingVeth2();
+    }
+
+    function property_oldVeth2ClaimedAndLockedCoveredByFinalized() public view returns (bool) {
+        return oldVeth2WithdrawalQueue.totalClaimedEth() + oldVeth2WithdrawalQueue.lockedEther() <=
+            oldVeth2WithdrawalQueue.totalFinalizedEth();
+    }
+
     function property_moduleAccountingMatchesBufferedPlusBeacon() public view returns (bool) {
         bytes32[] memory moduleIds = new bytes32[](1);
         moduleIds[0] = SOLO;

@@ -329,9 +329,12 @@ export const useModularStakingStore = defineStore('modularStaking', {
             this.defaultModuleId = await stakingRouter.defaultModuleId()
             const inflowState = await stakingRouter.globalInflowWindowState()
             const inflowConfig = await stakingRouter.globalInflowLimitConfig()
-            this.moduleInflowUsed = inflowState.totalDeposited.toString()
-            this.moduleInflowLimit = inflowConfig.limit.toString()
-            this.moduleInflowWindowReset = Number(inflowState.windowStart)
+            const inflowUsed = inflowState.inflowEth ?? inflowState.totalDeposited ?? inflowState[1] ?? 0n
+            const inflowLimit = inflowConfig.maxInflowEthPerWindow ?? inflowConfig.limit ?? inflowConfig[1] ?? 0n
+            const windowStart = inflowState.windowStart ?? inflowState[0] ?? 0n
+            this.moduleInflowUsed = inflowUsed.toString()
+            this.moduleInflowLimit = inflowLimit.toString()
+            this.moduleInflowWindowReset = Number(windowStart)
           }
         } catch (inflowErr) {
           // Non-fatal: surface in console only. Happens when address is zero.

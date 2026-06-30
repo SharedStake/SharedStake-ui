@@ -18,6 +18,12 @@ Options:
   --chain-id <id>        Local fork chain id, hex or decimal (default: 31337)
   --web-port <port>      Vite/Playwright web server port (default: \$E2E_WEB_PORT or 4173)
   --sync-target <path>   UI addresses target file (default: src/contracts/addresses/local.json)
+  --old-veth2-address <addr>
+                         Legacy vEth2 token for old-vETH2 queue deploy and E2E
+  --old-veth2-redemption-rate <wei>
+                         1e18-scaled old-vETH2 redemption rate for explicit token deploys
+  --old-veth2-source-address <addr>
+                         Impersonated holder used to fund old-vETH2 request E2E on real-token forks
   --impersonator-address <addr>
                          Address used for injected-wallet tx E2E (default: \$E2E_IMPERSONATOR_ADDRESS or 0x111...1111)
   --impersonator-seed-eth <n>
@@ -32,6 +38,13 @@ Options:
 Examples:
   MAINNET_RPC_URL=https://... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174
   ALCHEMY_KEY=... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174
+  MAINNET_RPC_URL=https://... bun run test:e2e:fork -- --fresh-fork --port 8546 --web-port 4174 \\
+    --old-veth2-address 0x898bad2774eb97cf6b94605677f43b41871410b1 \\
+    --old-veth2-redemption-rate 1000000000000000000 \\
+    --old-veth2-source-address 0x...
+
+Wallet extension mode additionally requires PW_WALLET_EXTENSION_PATH,
+PW_WALLET_EXTENSION_ID, and PW_WALLET_TEST_ADDRESS.
 USAGE
 }
 
@@ -45,6 +58,9 @@ if [[ -z "$RPC_URL" && -n "${ALCHEMY_KEY:-}" ]]; then
   RPC_URL="https://eth-mainnet.g.alchemy.com/v2/$ALCHEMY_KEY"
 fi
 SYNC_TARGET="$REPO_ROOT/src/contracts/addresses/local.json"
+OLD_VETH2_ADDRESS="${V2_OLD_VETH2_ADDRESS:-${OLD_VETH2_ADDRESS:-}}"
+OLD_VETH2_REDEMPTION_RATE="${V2_OLD_VETH2_REDEMPTION_RATE:-${OLD_VETH2_REDEMPTION_RATE:-}}"
+OLD_VETH2_SOURCE_ADDRESS="${E2E_OLD_VETH2_SOURCE_ADDRESS:-}"
 IMPERSONATOR_ADDRESS="${E2E_IMPERSONATOR_ADDRESS:-0x1111111111111111111111111111111111111111}"
 IMPERSONATOR_SEED_ETH="${E2E_IMPERSONATOR_SEED_ETH:-5}"
 RUN_WALLET=0
@@ -92,6 +108,21 @@ while [[ $# -gt 0 ]]; do
       SYNC_TARGET="$2"
       shift 2
       ;;
+    --old-veth2-address)
+      [[ $# -ge 2 ]] || die "Missing value for --old-veth2-address"
+      OLD_VETH2_ADDRESS="$2"
+      shift 2
+      ;;
+    --old-veth2-redemption-rate)
+      [[ $# -ge 2 ]] || die "Missing value for --old-veth2-redemption-rate"
+      OLD_VETH2_REDEMPTION_RATE="$2"
+      shift 2
+      ;;
+    --old-veth2-source-address)
+      [[ $# -ge 2 ]] || die "Missing value for --old-veth2-source-address"
+      OLD_VETH2_SOURCE_ADDRESS="$2"
+      shift 2
+      ;;
     --impersonator-address)
       [[ $# -ge 2 ]] || die "Missing value for --impersonator-address"
       IMPERSONATOR_ADDRESS="$2"
@@ -137,6 +168,36 @@ require_cmd curl
 require_cmd bun
 
 [[ "$WEB_PORT" =~ ^[0-9]+$ ]] || die "Invalid web port: $WEB_PORT"
+
+normalize_address_arg() {
+  local value="$1"
+  local label="$2"
+  [[ "$value" =~ ^0x[0-9a-fA-F]{40}$ ]] || die "Invalid $label address: $value"
+  printf '%s\n' "${value,,}"
+}
+
+if [[ -n "$OLD_VETH2_ADDRESS" && -z "$OLD_VETH2_REDEMPTION_RATE" ]]; then
+  die "Explicit old-vETH2 token deploy requires --old-veth2-redemption-rate or V2_OLD_VETH2_REDEMPTION_RATE."
+fi
+
+if [[ -n "$OLD_VETH2_SOURCE_ADDRESS" && -z "$OLD_VETH2_ADDRESS" ]]; then
+  die "--old-veth2-source-address requires --old-veth2-address or V2_OLD_VETH2_ADDRESS."
+fi
+
+if [[ -n "$OLD_VETH2_ADDRESS" ]]; then
+  OLD_VETH2_ADDRESS="$(normalize_address_arg "$OLD_VETH2_ADDRESS" "old-vETH2 token")"
+  export V2_OLD_VETH2_ADDRESS="$OLD_VETH2_ADDRESS"
+  export E2E_OLD_VETH2_TOKEN_ADDRESS="$OLD_VETH2_ADDRESS"
+fi
+
+if [[ -n "$OLD_VETH2_REDEMPTION_RATE" ]]; then
+  export V2_OLD_VETH2_REDEMPTION_RATE="$OLD_VETH2_REDEMPTION_RATE"
+fi
+
+if [[ -n "$OLD_VETH2_SOURCE_ADDRESS" ]]; then
+  OLD_VETH2_SOURCE_ADDRESS="$(normalize_address_arg "$OLD_VETH2_SOURCE_ADDRESS" "old-vETH2 source")"
+  export E2E_OLD_VETH2_SOURCE_ADDRESS="$OLD_VETH2_SOURCE_ADDRESS"
+fi
 
 normalize_chain_id_hex() {
   local raw="$1"
@@ -261,7 +322,8 @@ bun run test:e2e -- \
   tests/e2e/solo-stake.spec.js \
   tests/e2e/wrap-panel.spec.js \
   tests/e2e/withdraw-panel.spec.js \
-  tests/e2e/lock-gov.spec.js
+  tests/e2e/lock-gov.spec.js \
+  tests/e2e/old-veth2-queue.spec.js
 
 if [[ "$RUN_WALLET" -eq 1 ]]; then
   if [[ -z "${PW_WALLET_EXTENSION_PATH:-}" || -z "${PW_WALLET_EXTENSION_ID:-}" || -z "${PW_WALLET_TEST_ADDRESS:-}" ]]; then

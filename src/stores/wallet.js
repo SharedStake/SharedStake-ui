@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { markRaw } from 'vue'
 
 let changeWalletsLoader = null
 
@@ -38,7 +39,6 @@ export const useWalletStore = defineStore('wallet', {
     getters: {
         userAddress: (state) => state.address,
         isAuth: (state) => !!state.address,
-        ethersProvider: (state) => state.ethersProvider,
         getNetwork: (state) => networks[state.network],
         getNetworkId: (state) => state.network,
     },
@@ -55,7 +55,7 @@ export const useWalletStore = defineStore('wallet', {
             this.address = null
         },
         setEthersProvider(newProvider) {
-            this.ethersProvider = newProvider
+            this.ethersProvider = markRaw(newProvider)
         },
         setWallet(wallet) {
             this.walletname = wallet

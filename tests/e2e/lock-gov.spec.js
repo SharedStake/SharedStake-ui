@@ -55,6 +55,7 @@ test.describe('Lock/Gov panels — UI rendering', () => {
     await expect(page.getByText('veSGT Governance Lock')).toBeVisible({ timeout: 10_000 });
 
     // Stat cards
+    await expect(page.getByText('SGT Balance', { exact: true })).toBeVisible();
     await expect(page.getByText('Projected veSGT', { exact: true })).toBeVisible();
     await expect(page.getByText('Total Locked', { exact: true })).toBeVisible();
 
@@ -69,8 +70,6 @@ test.describe('Lock/Gov panels — UI rendering', () => {
 
     const lockBtn = page.getByRole('button', { name: 'Lock SGT for veSGT' });
     await expect(lockBtn).toBeVisible({ timeout: 10_000 });
-    // Button should be disabled: contractsDeployed is false (governance addresses are zero on local)
-    // OR wallet not connected yet; either way it must not be enabled without a valid amount.
     await expect(lockBtn).toBeDisabled();
   });
 
@@ -113,7 +112,7 @@ test.describe('Lock/Gov panels — UI rendering', () => {
     ).toBeVisible({ timeout: 10_000 });
   });
 
-  test('GovernancePanel Create Proposal button is disabled without a proposal', async ({ page }) => {
+  test('GovernancePanel Create Proposal button is disabled without a valid proposal', async ({ page }) => {
     await page.getByRole('button', { name: 'Governance', exact: true }).click();
 
     await expect(page.getByText('Create Proposal', { exact: true })).toBeVisible({ timeout: 10_000 });

@@ -42,13 +42,25 @@ jobs:
         run: npx hardhat test test/v2/modular-staking/*.spec.ts
 
       - name: Setup Foundry
-        run: npm run setup:foundry
+        run: |
+          npm run setup:foundry
+          echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+          echo "$HOME/.foundry/bin" >> "$GITHUB_PATH"
 
       - name: Foundry invariants
         run: npm run test:invariants
 
+      - name: Foundry fuzz suites
+        run: |
+          ./scripts/run-forge.sh test --match-path test/foundry/DebtPoolFuzz.t.sol
+          ./scripts/run-forge.sh test --match-path test/foundry/MigrationHelperFuzz.t.sol
+
       - name: Slither static analysis
         continue-on-error: true
         run: |
-          python3 -m pip install --user slither-analyzer
-          python3 -m slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|test'
+          export PATH="$PWD/node_modules/.bin:$HOME/.foundry/bin:$PATH"
+          forge --version
+          python3 -m venv /tmp/slither-venv
+          /tmp/slither-venv/bin/python -m pip install --upgrade pip
+          /tmp/slither-venv/bin/python -m pip install slither-analyzer
+          /tmp/slither-venv/bin/python -m slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|test'
