@@ -55,3 +55,4 @@ jobs:
             - [ ] No breaking changes
           branch: dependency-update
           delete-branch: true
+          reviewers: chimera-defi

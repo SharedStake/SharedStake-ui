@@ -77,22 +77,10 @@
         {{ store.error }}
       </div>
       <div
-        v-if="requestError || claimError"
-        class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
-      >
-        {{ requestError || claimError }}
-      </div>
-      <div
         v-if="requestTxHash"
         class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
       >
-        Withdrawal requested! Tx: {{ requestTxHash.slice(0, 10) }}...
-      </div>
-      <div
-        v-if="claimTxHash"
-        class="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
-      >
-        Claimed! Tx: {{ claimTxHash.slice(0, 10) }}...
+        Request submitted! Tx: {{ requestTxHash.slice(0, 10) }}...
       </div>
 
       <button
@@ -105,6 +93,7 @@
       >
         <span v-if="store.loading">Requesting...</span>
         <span v-else-if="!walletStore.isAuth">Connect Wallet</span>
+        <span v-else-if="!store.contractsDeployed">Not Deployed</span>
         <span v-else-if="!withdrawAmount || parseFloat(withdrawAmount) < 0.01">Min 0.01 stETH</span>
         <span v-else>Request Withdrawal</span>
       </button>
@@ -115,6 +104,13 @@
       v-if="activeTab === 1"
       class="flex flex-col gap-3"
     >
+      <div
+        v-if="store.error"
+        class="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
+      >
+        {{ store.error }}
+      </div>
+
       <div
         v-if="store.userRequests.length === 0"
         class="rounded-lg bg-muted p-4 text-center text-sm text-muted-foreground"
@@ -214,10 +210,7 @@ export default {
       activeTab: 0,
       withdrawAmount: '',
       requestTxHash: null,
-      requestError: null,
       claimingId: null,
-      claimTxHash: null,
-      claimError: null,
     }
   },
 
@@ -258,7 +251,6 @@ export default {
     async handleRequest() {
       if (!this.canRequest) return
       this.requestTxHash = null
-      this.requestError = null
       try {
         const tx = await this.store.requestWithdrawal(this.withdrawAmount)
         this.requestTxHash = tx.hash
@@ -266,20 +258,15 @@ export default {
         this.activeTab = 1
       } catch (e) {
         console.error('Withdrawal request error:', e)
-        this.requestError = e?.reason || e?.message || 'Request failed'
       }
     },
 
     async handleClaim(requestId) {
-      this.claimTxHash = null
-      this.claimError = null
       this.claimingId = requestId
       try {
-        const tx = await this.store.claimWithdrawal(requestId)
-        this.claimTxHash = tx.hash
+        await this.store.claimWithdrawal(requestId)
       } catch (e) {
         console.error('Claim error:', e)
-        this.claimError = e?.reason || e?.message || 'Claim failed'
       } finally {
         this.claimingId = null
       }

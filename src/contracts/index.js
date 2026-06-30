@@ -1,6 +1,9 @@
 /**
- * Contract ABIs, addresses, and factories used by legacy and V2 UI flows.
- */
+ * This file includes the contract informations 
+ * such as abi's, addresses and constants imported from contracts folder.
+ * Import any contract to use from here.
+ * DELETE USELESS INFO 
+**/
 
 import { ethers } from 'ethers';
 import { notifyNotification } from '@/utils/common';
@@ -14,11 +17,18 @@ import sgtABI from './abis/erc20.json'
 import airdrop_distributor from './abis/distributor.json'
 import migratorABI from './abis/migrator.json' 
 
-// https://github.com/chimera-defi/SharedDeposit/blob/main/data/abi/Withdrawals.json
 import withdrawalsABI from './abis/withdrawals.json'
 import rolloversABI from './abis/rollovers.json'
 import sgETHABI from './abis/sgETH.json'
 import wsgETHABI from './abis/wsgETH.json'
+import stTokenABI from './abis/stToken.json'
+import wstTokenABI from './abis/wstToken.json'
+import stTokenERC4626WrapperABI from './abis/stTokenERC4626Wrapper.json'
+import stakingRouterABI from './abis/stakingRouter.json'
+import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
+import oldVeth2WithdrawalQueueABI from './abis/oldVeth2WithdrawalQueue.json'
+import validatorModuleABI from './abis/validatorModule.json'
+import operatorRegistryABI from './abis/operatorRegistry.json'
 
 // Chain-specific contract addresses
 import mainnetAddresses from './addresses/mainnet.json'
@@ -28,12 +38,7 @@ import localAddresses from './addresses/local.json'
 
 let _addresses = {};
 
-const setAddressMap = (nextAddresses = {}) => {
-    Object.keys(_addresses).forEach((key) => {
-        delete _addresses[key];
-    });
-    Object.assign(_addresses, nextAddresses);
-};
+// V2 changes
 const chainIdGoerli = "0x5";
 const chainIdMainnet = "0x1";
 
@@ -108,15 +113,6 @@ const getAddressMapForChain = (chainId) => {
 };
 
 
-import stTokenABI from './abis/stToken.json'
-import wstTokenABI from './abis/wstToken.json'
-import stakingCoreABI from './abis/stakingCore.json'
-import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
-import stakingRouterABI from './abis/stakingRouter.json'
-import voteEscrowV2ABI from './abis/voteEscrowV2.json'
-import sharedStakeGovernorABI from './abis/sharedStakeGovernor.json'
-import governanceTimelockABI from './abis/governanceTimelock.json'
-
 let _ABIs = {
     validator: sharedStake,
     vEth2: vEth2Token,
@@ -133,12 +129,12 @@ let _ABIs = {
     wsgETH: wsgETHABI,
     stToken: stTokenABI,
     wstToken: wstTokenABI,
-    stakingCore: stakingCoreABI,
-    withdrawalQueueV2: withdrawalQueueV2ABI,
+    stTokenERC4626Wrapper: stTokenERC4626WrapperABI,
     stakingRouter: stakingRouterABI,
-    voteEscrowV2: voteEscrowV2ABI,
-    sharedStakeGovernor: sharedStakeGovernorABI,
-    governanceTimelock: governanceTimelockABI,
+    withdrawalQueueV2: withdrawalQueueV2ABI,
+    oldVeth2WithdrawalQueue: oldVeth2WithdrawalQueueABI,
+    validatorModule: validatorModuleABI,
+    operatorRegistry: operatorRegistryABI
 }
 
 let connErr = () => {
@@ -257,7 +253,7 @@ const initializeEthers = async () => {
             createContractDefault = (name, useSigner = false) => createContract(name, name, useSigner)
 
             if (isValidChain(chainId)) {
-                setAddressMap(addressTemp); // ethers.js handles checksumming automatically
+                _addresses = addressTemp; // ethers.js handles checksumming automatically
                 console.info("Contracts initialized for chain:", chainId);
             } else {
                 const chainDecimal = parseInt(chainId, 16);
@@ -277,11 +273,11 @@ const initializeEthers = async () => {
                 if (chainDecimal > 1000) { 
                     console.info("Using Sepolia addresses as fallback for development network");
                     addressTemp = sepoliaAddresses;
-                    setAddressMap(addressTemp);
+                    _addresses = addressTemp;
                     console.warn("⚠️ Using fallback addresses - contracts may not function correctly on this network");
                 } else {
                     // Set empty addresses to prevent contract creation
-                    setAddressMap({});
+                    _addresses = {};
                 }
             }
 
@@ -336,18 +332,13 @@ export const SGT = (useSigner = false) => createContractDefault('SGT', useSigner
 export const SGT_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_uniswap", useSigner);
 export const SGT_vEth2_uniswap = (useSigner = false) => createContract("erc20_uniswap", "SGT_vEth2_uniswap", useSigner);
 export const vEth2_saddle = (useSigner = false) => createContract("erc20", "vEth2_saddle", useSigner);
+export const stTokenERC4626Wrapper = (useSigner = false) => createContractDefault('stTokenERC4626Wrapper', useSigner);
 // Geyser contracts
 export const geyser_vEth2 = (useSigner = false) => createContract("geyser", "geyser_vEth2", useSigner);
 export const geyser_SGT = (useSigner = false) => createContract("geyser", "geyser_SGT", useSigner);
 export const geyser_SGT_uniswap = (useSigner = false) => createContract("geyser", "geyser_SGT_uniswap", useSigner);
 export const geyser_SGT_vEth2_uniswap = (useSigner = false) => createContract("geyser", "geyser_SGT_vEth2_uniswap", useSigner);
 export const geyser_vEth2_saddle = (useSigner = false) => createContract("geyser_new", "geyser_vEth2_saddle", useSigner);
-
-// Legacy geyser contracts
-export const geyser_vEth2_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_old", useSigner);
-export const geyser_SGT_old = (useSigner = false) => createContract("geyser", "geyser_SGT_old", useSigner);
-export const geyser_SGT_uniswap_old = (useSigner = false) => createContract("geyser", "geyser_SGT_uniswap_old", useSigner);
-export const geyser_vEth2_saddle_old = (useSigner = false) => createContract("geyser", "geyser_vEth2_saddle_old", useSigner);
 
 // Utility contracts
 const isDevMode = typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV;
@@ -407,6 +398,7 @@ export const vETH2_CRV = (useSigner = false) => createContract('erc20', 'vETH2_C
 
 export const withdrawals = (useSigner = false) => createContractDefault('withdrawals', useSigner);
 export const rollovers = (useSigner = false) => createContractDefault("rollovers", useSigner);
+export const oldVeth2WithdrawalQueue = (useSigner = false) => createContractDefault('oldVeth2WithdrawalQueue', useSigner);
 export const sgETH = (useSigner = false) => createContractDefault('sgETH', useSigner);
 export const wsgETH = (useSigner = false) => createContractDefault("wsgETH", useSigner);
 
@@ -453,18 +445,4 @@ export const createDeprecatedWithdrawalsContract = (address, useSigner = false) 
     return createContractWithAddress(address, 'withdrawals', useSigner);
 };
 
-export const stToken = (useSigner = false) => createContractDefault('stToken', useSigner);
-export const wstToken = (useSigner = false) => createContractDefault('wstToken', useSigner);
-export const stakingCore = (useSigner = false) => createContractDefault('stakingCore', useSigner);
-export const withdrawalQueueV2 = (useSigner = false) => createContractDefault('withdrawalQueueV2', useSigner);
-export const stakingRouter = (useSigner = false) => createContractDefault('stakingRouter', useSigner);
-export const voteEscrowV2 = (useSigner = false) => createContractDefault('voteEscrowV2', useSigner);
-export const sharedStakeGovernor = (useSigner = false) => createContractDefault('sharedStakeGovernor', useSigner);
-export const governanceTimelock = (useSigner = false) => createContractDefault('governanceTimelock', useSigner);
-
-export const oldPools = {
-    geyser_SGT: geyser_SGT_old,
-    geyser_SGT_uniswap: geyser_SGT_uniswap_old,
-    geyser_vEth2: geyser_vEth2_old,
-    geyser_vEth2_saddle: geyser_vEth2_saddle_old
-}
+export const oldPools = {}

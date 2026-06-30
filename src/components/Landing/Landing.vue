@@ -480,10 +480,10 @@ export default {
     this.setupTvl();
     if (!this.isMobile() && !import.meta.env.DEV) {
       this.setupApy().catch(() => {
-        this.APY = BN(5).toString();
+        this.APY = '5';
       });
       this.getValidatorInfo().catch(() => {
-        // Third-party validator stats are best-effort and may be blocked by CORS locally.
+        // Third-party validator stats are best-effort; may be blocked by CORS locally.
       });
     }
   },

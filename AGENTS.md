@@ -66,3 +66,56 @@ All Devin calls MUST route through the skill wrapper. Direct `devin --print` and
 - If Devin asks for clarification, use Codex guidance first and Claude second before asking a human.
 - Inspect telemetry regularly (`./skills/devin-delegate/scripts/devin_delegate_telemetry.py summary --days 14`).
 <!-- devin-delegate:end -->
+
+<!-- sharedstake-pr379-workflow:begin -->
+## SharedStake PR 379 / V2 Workflow
+
+For PR 379 and related V2 modular-staking work, keep Claude and Codex aligned with `CLAUDE.md`:
+
+- Treat `origin/feat/protocol-v3-fresh` as the PR 379 target branch unless the user says otherwise.
+- Before changing code, fetch the PR branch, confirm the current branch/head, and check for a clean worktree.
+- If repo-local token-reduce helpers are missing or unreadable, use the installed fallback at `/home/agents/workspace/token-reduce-skill/scripts/` and state the fallback briefly.
+- Use x-ray for Solidity audit loops: inventory contracts, classify entry points and roles, derive invariants, check duplicate sources/gitlinks/conflict markers, run static analysis, then do manual adversarial review.
+- For smart-contract review passes, keep Pashov Audit Group skills available from `https://github.com/pashov/skills` through repo-local links in `skills/`: run x-ray, `solidity-auditor`, and `fizz` together when the work touches protocol contracts or fuzz/invariant coverage.
+- Run `fizz` against `staking-contracts/` in automatic mode for fuzz-suite setup. Required local tools are Foundry `forge`, Medusa, and Echidna; if any are missing, install them or record the tool gap before claiming fuzzing coverage.
+- Use Devin and Kimi only through their delegate wrappers, with an envelope first, scoped tasks, acceptance criteria, and concrete output requirements.
+- Fix only concrete bugs, vulnerabilities, broken gates, stale docs, duplicate/dead code, or low-risk coverage gaps. Do not broaden PR 379 into speculative redesign.
+- After each fix, rerun the narrow relevant tests first, then the broader gates needed for confidence.
+- Fork E2E must use a fresh Vite/Playwright server with a free `--web-port`; stale reused Vite servers can serve old bundled `local.json` contract addresses and make fork validation meaningless.
+- Fork E2E deploys must set Hardhat `LOCALHOST_RPC_URL` to the same `http://<host>:<port>` that Playwright uses; otherwise `--port 8546` can deploy to Hardhat's default `8545` while the browser tests `8546`.
+- V2 Playwright suites should preflight `eth_getCode` for required local contract addresses; a zero-code address is a stale-address or wrong-RPC failure, not a valid UI pass.
+- V2 deploy/wiring scripts must wait for state-changing transaction receipts before dependent reads or verification; an `ethers` `TransactionResponse` alone can race on Anvil mainnet forks.
+- Router module code-hash allowlists must use the same hash the Router enforces. For UUPS modules, read `implementationCodeHash()` from the module instead of hashing proxy runtime bytecode.
+- Governance handover scripts must revoke bootstrap/direct bypass roles, such as `StakingCore.ORACLE`, before revoking the signer's admin role.
+- Standard PR 379 gates:
+  - `bun audit --level moderate`
+  - `bun run type-check`
+  - `bun run build`
+  - `cd staking-contracts && npm audit --audit-level=moderate`
+  - `cd staking-contracts && npm run lint:sol`
+  - `cd staking-contracts && npx hardhat compile`
+  - `cd staking-contracts && npx hardhat test test/v2/modular-staking/*.spec.ts`
+  - `cd staking-contracts && npm run test:invariants`
+  - Slither when available; if unavailable, record it as residual tooling risk.
+- Push completed changes back to PR 379 and verify remote `CI` and `Contract Audit` before claiming completion.
+<!-- sharedstake-pr379-workflow:end -->
+
+<!-- gbrain-workflow:begin -->
+## Central Agent Memory (gBrain) — MANDATORY
+
+- Central root: `/home/agents/agent-memory`
+- Writer namespace: `agents/claude/`
+- Durable private memory → `agents/claude/private/`; shareable facts → `agents/claude/public/`
+- Do NOT read other agents private sources without explicit human instruction.
+- Never store plaintext secrets; use pointers to secret managers only.
+- Retrieval: search first, then cite as `brain:agent-claude-private:<slug>`.
+- Sync after any session that changes durable facts: run the `gstack-sync-gbrain` skill.
+<!-- gbrain-workflow:end -->
+
+<!-- context-save-restore:begin -->
+## Context Save / Restore
+
+- Before ending a long-running work session, run `/context-save` so the next session can resume without context loss.
+- At the start of a new session on in-progress work, run `/context-restore` first.
+- Pair with `gstack-sync-gbrain` so both gBrain and local memory stay aligned.
+<!-- context-save-restore:end -->

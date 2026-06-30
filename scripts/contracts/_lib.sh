@@ -3,7 +3,7 @@ set -euo pipefail
 
 CONTRACTS_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$CONTRACTS_SCRIPT_DIR/../.." && pwd)"
-SHAREDDEPOSIT_DIR="${SHAREDDEPOSIT_DIR:-$REPO_ROOT/SharedDeposit}"
+CONTRACTS_DIR="${CONTRACTS_DIR:-$REPO_ROOT/staking-contracts}"
 GENERATED_DIR="${GENERATED_DIR:-$CONTRACTS_SCRIPT_DIR/generated}"
 
 log() {
@@ -24,15 +24,16 @@ require_cmd() {
   command -v "$cmd" >/dev/null 2>&1 || die "Missing required command: $cmd"
 }
 
-ensure_shareddeposit_present() {
-  [[ -d "$SHAREDDEPOSIT_DIR" ]] || die "SharedDeposit directory not found: $SHAREDDEPOSIT_DIR"
-  [[ -f "$SHAREDDEPOSIT_DIR/package.json" ]] || die "SharedDeposit does not look initialized (missing package.json)"
+ensure_contracts_present() {
+  [[ -d "$CONTRACTS_DIR" ]] || die "Contracts directory not found: $CONTRACTS_DIR"
+  [[ -f "$CONTRACTS_DIR/package.json" ]] || die "Contracts workspace is missing package.json: $CONTRACTS_DIR"
+  [[ -f "$CONTRACTS_DIR/hardhat.config.ts" ]] || die "Contracts workspace is missing hardhat.config.ts: $CONTRACTS_DIR"
 }
 
 deployment_file() {
   local network="$1"
   local contract_name="$2"
-  printf '%s/deployments/%s/%s.json\n' "$SHAREDDEPOSIT_DIR" "$network" "$contract_name"
+  printf '%s/deployments/%s/%s.json\n' "$CONTRACTS_DIR" "$network" "$contract_name"
 }
 
 read_address_or_empty() {
@@ -63,7 +64,7 @@ resolve_validator_address() {
 
 normalized_addresses_json() {
   local network="$1"
-  local deployment_dir="$SHAREDDEPOSIT_DIR/deployments/$network"
+  local deployment_dir="$CONTRACTS_DIR/deployments/$network"
 
   [[ -d "$deployment_dir" ]] || die "Deployment directory not found: $deployment_dir"
 
@@ -80,9 +81,17 @@ normalized_addresses_json() {
   local staking_router
   local validator_module
   local dvt_module
+  local lst_wrap_module
+  local st_token_erc4626_wrapper
   local oracle_adapter
   local quorum_oracle_adapter
   local fee_controller
+  local referral_code_registry
+  local referral_registry
+  local debt_pool
+  local institutional_policy_registry
+  local operator_registry
+  local migration_helper
   local sgt_v2
   local vote_escrow_v2
   local governance_timelock
@@ -101,9 +110,17 @@ normalized_addresses_json() {
   staking_router="$(read_address_or_empty "$network" "StakingRouter")"
   validator_module="$(read_address_or_empty "$network" "ValidatorModule")"
   dvt_module="$(read_address_or_empty "$network" "DVTModule")"
+  lst_wrap_module="$(read_address_or_empty "$network" "LSTWrapModule")"
+  st_token_erc4626_wrapper="$(read_address_or_empty "$network" "StTokenERC4626Wrapper")"
   oracle_adapter="$(read_address_or_empty "$network" "OracleAdapter")"
   quorum_oracle_adapter="$(read_address_or_empty "$network" "QuorumOracleAdapter")"
   fee_controller="$(read_address_or_empty "$network" "FeeController")"
+  referral_code_registry="$(read_address_or_empty "$network" "ReferralCodeRegistry")"
+  referral_registry="$(read_address_or_empty "$network" "ReferralRegistry")"
+  debt_pool="$(read_address_or_empty "$network" "DebtPool")"
+  institutional_policy_registry="$(read_address_or_empty "$network" "InstitutionalPolicyRegistry")"
+  operator_registry="$(read_address_or_empty "$network" "OperatorRegistry")"
+  migration_helper="$(read_address_or_empty "$network" "MigrationHelper")"
   sgt_v2="$(read_address_or_empty "$network" "SGTV2")"
   vote_escrow_v2="$(read_address_or_empty "$network" "VoteEscrowV2")"
   governance_timelock="$(read_address_or_empty "$network" "GovernanceTimelock")"
@@ -123,9 +140,17 @@ normalized_addresses_json() {
     --arg staking_router "$staking_router" \
     --arg validator_module "$validator_module" \
     --arg dvt_module "$dvt_module" \
+    --arg lst_wrap_module "$lst_wrap_module" \
+    --arg st_token_erc4626_wrapper "$st_token_erc4626_wrapper" \
     --arg oracle_adapter "$oracle_adapter" \
     --arg quorum_oracle_adapter "$quorum_oracle_adapter" \
     --arg fee_controller "$fee_controller" \
+    --arg referral_code_registry "$referral_code_registry" \
+    --arg referral_registry "$referral_registry" \
+    --arg debt_pool "$debt_pool" \
+    --arg institutional_policy_registry "$institutional_policy_registry" \
+    --arg operator_registry "$operator_registry" \
+    --arg migration_helper "$migration_helper" \
     --arg sgt_v2 "$sgt_v2" \
     --arg vote_escrow_v2 "$vote_escrow_v2" \
     --arg governance_timelock "$governance_timelock" \
@@ -144,9 +169,17 @@ normalized_addresses_json() {
       stakingRouter: $staking_router,
       validatorModule: $validator_module,
       dvtModule: $dvt_module,
+      lstWrapModule: $lst_wrap_module,
+      stTokenERC4626Wrapper: $st_token_erc4626_wrapper,
       oracleAdapter: $oracle_adapter,
       quorumOracleAdapter: $quorum_oracle_adapter,
       feeController: $fee_controller,
+      referralCodeRegistry: $referral_code_registry,
+      referralRegistry: $referral_registry,
+      debtPool: $debt_pool,
+      institutionalPolicyRegistry: $institutional_policy_registry,
+      operatorRegistry: $operator_registry,
+      migrationHelper: $migration_helper,
       sgtV2: $sgt_v2,
       voteEscrowV2: $vote_escrow_v2,
       governanceTimelock: $governance_timelock,

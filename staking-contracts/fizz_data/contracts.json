@@ -1,0 +1,7910 @@
+[
+  {
+    "name": "Allowlist",
+    "sourcePath": "contracts/Allowlist.sol",
+    "artifactPath": "out/Allowlist.sol/Allowlist.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantGovernanceRoles",
+        "inputs": [
+          {
+            "name": "_governance",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "_addresses",
+            "type": "array",
+            "internalType": "address[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "populateBlocklist",
+        "inputs": [
+          {
+            "name": "_addresses",
+            "type": "array",
+            "internalType": "address[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renoucePrivileges",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setBlockListed",
+        "inputs": [
+          {
+            "name": "_user",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_val",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "togglePause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "_governance",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "Blocklist",
+    "sourcePath": "contracts/blocklist.sol",
+    "artifactPath": "out/blocklist.sol/Blocklist.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantGovernanceRoles",
+        "inputs": [
+          {
+            "name": "_governance",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "_addresses",
+            "type": "array",
+            "internalType": "address[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "populateBlocklist",
+        "inputs": [
+          {
+            "name": "_addresses",
+            "type": "array",
+            "internalType": "address[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renoucePrivileges",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setBlockListed",
+        "inputs": [
+          {
+            "name": "_user",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_isBlocked",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "togglePause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "_governance",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "FundDistributor",
+    "sourcePath": "contracts/governance/FundDistributor.sol",
+    "artifactPath": "out/FundDistributor.sol/FundDistributor.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "addRequester",
+        "inputs": [
+          {
+            "name": "_requester",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "distributeTo",
+        "inputs": [
+          {
+            "name": "_receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "_reward",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "removeRequester",
+        "inputs": [
+          {
+            "name": "_requester",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "MasterChef",
+    "sourcePath": "contracts/governance/MasterChef.sol",
+    "artifactPath": "out/MasterChef.sol/MasterChef.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_reward",
+          "type": "contract",
+          "internalType": "IERC20"
+        },
+        {
+          "name": "_fund",
+          "type": "contract",
+          "internalType": "IFundDistributor"
+        },
+        {
+          "name": "_tum",
+          "type": "contract",
+          "internalType": "ITokenUtilityModule"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "add",
+        "inputs": [
+          {
+            "name": "allocPoint",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_lpToken",
+            "type": "contract",
+            "internalType": "IERC20"
+          },
+          {
+            "name": "_rewarder",
+            "type": "contract",
+            "internalType": "IRewarder"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "deposit",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "emergencyWithdraw",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "harvest",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "harvestAllRewards",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "massUpdatePools",
+        "inputs": [
+          {
+            "name": "pids",
+            "type": "array",
+            "internalType": "uint256[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "set",
+        "inputs": [
+          {
+            "name": "_pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_allocPoint",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_rewarder",
+            "type": "contract",
+            "internalType": "IRewarder"
+          },
+          {
+            "name": "overwrite",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setFund",
+        "inputs": [
+          {
+            "name": "_fund",
+            "type": "contract",
+            "internalType": "IFundDistributor"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setRewardPerSecond",
+        "inputs": [
+          {
+            "name": "_rewardPerSecond",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setTokenUtilityModule",
+        "inputs": [
+          {
+            "name": "_tum",
+            "type": "contract",
+            "internalType": "ITokenUtilityModule"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updatePool",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdrawAndHarvest",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "SGTv2",
+    "sourcePath": "contracts/governance/SGTv2.sol",
+    "artifactPath": "out/SGTv2.sol/SGTv2.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "symbol",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "initialSupply",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "owner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "burn",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "burnFrom",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "decreaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "subtractedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "addedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "permit",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "ComplexRewarderTime",
+    "sourcePath": "contracts/governance/rewarders/ComplexRewarderTime.sol",
+    "artifactPath": "out/ComplexRewarderTime.sol/ComplexRewarderTime.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "__rewardToken",
+          "type": "contract",
+          "internalType": "IERC20"
+        },
+        {
+          "name": "_rewardPerSecond",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_masterChef",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "add",
+        "inputs": [
+          {
+            "name": "allocPoint",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "massUpdatePools",
+        "inputs": [
+          {
+            "name": "pids",
+            "type": "array",
+            "internalType": "uint256[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "onReward",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_user",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lpToken",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "set",
+        "inputs": [
+          {
+            "name": "_pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_allocPoint",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setRewardPerSecond",
+        "inputs": [
+          {
+            "name": "_rewardPerSecond",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updatePool",
+        "inputs": [
+          {
+            "name": "pid",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "MintableNFTSale",
+    "sourcePath": "contracts/nfts/MintableNFTSale.sol",
+    "artifactPath": "out/MintableNFTSale.sol/MintableNFTSale.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "_symbol",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "_price",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_maxSupply",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_maxPerMint",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "artist",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "num",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "safeTransferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "safeTransferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setApprovalForAll",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "approved",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setBaseURI",
+        "inputs": [
+          {
+            "name": "baseURI",
+            "type": "string",
+            "internalType": "string"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "toggleMint",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updateParams",
+        "inputs": [
+          {
+            "name": "numericParams",
+            "type": "array",
+            "internalType": "uint256[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": true
+  },
+  {
+    "name": "PriceOracle",
+    "sourcePath": "contracts/priceOracle.sol",
+    "artifactPath": "out/priceOracle.sol/PriceOracle.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantGovernanceRoles",
+        "inputs": [
+          {
+            "name": "_governance",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "_costPerShare",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renoucePrivileges",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setCostPerShare",
+        "inputs": [
+          {
+            "name": "_costPerShare",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "togglePause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "TokenManager",
+    "sourcePath": "contracts/tokenManager.sol",
+    "artifactPath": "out/tokenManager.sol/TokenManager.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "burn",
+        "inputs": [
+          {
+            "name": "recv",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "donate",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "grantGovernanceRoles",
+        "inputs": [
+          {
+            "name": "_governance",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "_tokenAddress",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "recv",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "petrifyMinterTransfer",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renoucePrivileges",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setTokenAddress",
+        "inputs": [
+          {
+            "name": "_address",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "togglePause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferTokenMinterRights",
+        "inputs": [
+          {
+            "name": "minter_",
+            "type": "address",
+            "internalType": "address payable"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "OwnershipRolesTemplate",
+    "sourcePath": "contracts/util/OwnershipRolesTemplate.sol",
+    "artifactPath": "out/OwnershipRolesTemplate.sol/OwnershipRolesTemplate.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantGovernanceRoles",
+        "inputs": [
+          {
+            "name": "_governance",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renoucePrivileges",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "togglePause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "SingleTokenVestingNonRevocable",
+    "sourcePath": "contracts/util/SingleTokenVestingNonRevocable.sol",
+    "artifactPath": "out/SingleTokenVestingNonRevocable.sol/SingleTokenVestingNonRevocable.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "token",
+          "type": "contract",
+          "internalType": "IERC20"
+        },
+        {
+          "name": "beneficiary",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "start",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "cliffDuration",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "duration",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "changeBeneficiary",
+        "inputs": [
+          {
+            "name": "newBeneficiary",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "release",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "TokenTimelock",
+    "sourcePath": "contracts/util/TokenTimelock.sol",
+    "artifactPath": "out/TokenTimelock.sol/TokenTimelock.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "token",
+          "type": "contract",
+          "internalType": "IERC20"
+        },
+        {
+          "name": "beneficiary",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "releaseTime",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "changeBeneficiary",
+        "inputs": [
+          {
+            "name": "newBeneficiary",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "release",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "UpgradeableSafeContractBase",
+    "sourcePath": "contracts/util/UpgradeableSafeContractBase.sol",
+    "artifactPath": "out/UpgradeableSafeContractBase.sol/UpgradeableSafeContractBase.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "VaultWithAdminFeeUpgradeable",
+    "sourcePath": "contracts/util/VaultWithAdminFeeUpgradeable.sol",
+    "artifactPath": "out/VaultWithAdminFeeUpgradeable.sol/VaultWithAdminFeeUpgradeable.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "burn",
+        "inputs": [
+          {
+            "name": "reciever",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "reciever",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "pause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setAdminFee",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setAdminParams",
+        "inputs": [
+          {
+            "name": "_cap",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_buffer",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_currentShares",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_costPerShare",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_adminFee",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_withdrawRefundBool",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "_tokenAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_epochLength",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "toggleWithdrawAdminFeeRefund",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unpause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdrawAdminFee",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "RewardsReceiver",
+    "sourcePath": "contracts/v2/core/RewardsReceiver.sol",
+    "artifactPath": "out/RewardsReceiver.sol/RewardsReceiver.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_withdrawalAddr",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "yieldDirectorAddresses",
+          "type": "array",
+          "internalType": "address[]"
+        },
+        {
+          "name": "initialOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "payable"
+    },
+    "functions": [
+      {
+        "name": "flipState",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setDAOFeeSplitter",
+        "inputs": [
+          {
+            "name": "_feeSplitter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "work",
+        "inputs": [],
+        "stateMutability": "payable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": true
+  },
+  {
+    "name": "Rollover",
+    "sourcePath": "contracts/v2/core/Rollover.sol",
+    "artifactPath": "out/Rollover.sol/Rollover.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_underlying",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_newToken",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_virtualPrice",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "payable"
+    },
+    "functions": [
+      {
+        "name": "deposit",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "redeem",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": true
+  },
+  {
+    "name": "SgETH",
+    "sourcePath": "contracts/v2/core/SgETH.sol",
+    "artifactPath": "out/SgETH.sol/SgETH.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "addMinter",
+        "inputs": [
+          {
+            "name": "minterAddress",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "burn",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "burn",
+        "inputs": [
+          {
+            "name": "addr",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "burnFrom",
+        "inputs": [
+          {
+            "name": "addr",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "decreaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "subtractedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "addedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "addr",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "permit",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "removeMinter",
+        "inputs": [
+          {
+            "name": "minterAddress",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "SharedDepositMinterV2",
+    "sourcePath": "contracts/v2/core/SharedDepositMinterV2.sol",
+    "artifactPath": "out/SharedDepositMinterV2.sol/SharedDepositMinterV2.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_numValidators",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_adminFee",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "addresses",
+          "type": "array",
+          "internalType": "address[]"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "batchDepositToEth2",
+        "inputs": [
+          {
+            "name": "pubkeys",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "signatures",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "depositDataRoots",
+            "type": "array",
+            "internalType": "bytes32[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "deposit",
+        "inputs": [],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "depositAndStake",
+        "inputs": [],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "depositAndStakeFor",
+        "inputs": [
+          {
+            "name": "dest",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "depositFor",
+        "inputs": [
+          {
+            "name": "dest",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "donate",
+        "inputs": [],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "migrateShares",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setFeeCalc",
+        "inputs": [
+          {
+            "name": "_feeCalculatorAddr",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setNumValidators",
+        "inputs": [
+          {
+            "name": "_numValidators",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setWithdrawalCredential",
+        "inputs": [
+          {
+            "name": "_newWithdrawalCreds",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "slash",
+        "inputs": [
+          {
+            "name": "amt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "togglePause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "toggleWithdrawRefund",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unstakeAndWithdraw",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "dest",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdrawAdminFee",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdrawTo",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "dest",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": true
+  },
+  {
+    "name": "WSGETH",
+    "sourcePath": "contracts/v2/core/WSGEth.sol",
+    "artifactPath": "out/WSGEth.sol/WSGETH.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_underlying",
+          "type": "contract",
+          "internalType": "ERC20"
+        },
+        {
+          "name": "_rewardsCycleLength",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "deposit",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "depositWithSignature",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "approveMax",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "permit",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "redeem",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "syncRewards",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "WithdrawalQueue",
+    "sourcePath": "contracts/v2/core/WithdrawalQueue.sol",
+    "artifactPath": "out/WithdrawalQueue.sol/WithdrawalQueue.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_minter",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_wsgEth",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_epochLength",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_governance",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "cancelRedeem",
+        "inputs": [
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "requester",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "redeem",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "requester",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "requestRedeem",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "requester",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setEpochLength",
+        "inputs": [
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setOperator",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "approved",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "togglePause",
+        "inputs": [
+          {
+            "name": "func",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": true
+  },
+  {
+    "name": "Withdrawals",
+    "sourcePath": "contracts/v2/core/Withdrawals.sol",
+    "artifactPath": "out/Withdrawals.sol/Withdrawals.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_underlying",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_virtualPrice",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "payable"
+    },
+    "functions": [
+      {
+        "name": "deposit",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "redeem",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": true
+  },
+  {
+    "name": "GovernanceTimelock",
+    "sourcePath": "contracts/v2/governance/GovernanceTimelock.sol",
+    "artifactPath": "out/GovernanceTimelock.sol/GovernanceTimelock.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "minDelay",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "proposers",
+          "type": "array",
+          "internalType": "address[]"
+        },
+        {
+          "name": "executors",
+          "type": "array",
+          "internalType": "address[]"
+        },
+        {
+          "name": "admin",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "cancel",
+        "inputs": [
+          {
+            "name": "id",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "execute",
+        "inputs": [
+          {
+            "name": "target",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "payload",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "predecessor",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "salt",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "executeBatch",
+        "inputs": [
+          {
+            "name": "targets",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "payloads",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "predecessor",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "salt",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "onERC1155BatchReceived",
+        "inputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "onERC1155Received",
+        "inputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "onERC721Received",
+        "inputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "schedule",
+        "inputs": [
+          {
+            "name": "target",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "predecessor",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "salt",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "delay",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "scheduleBatch",
+        "inputs": [
+          {
+            "name": "targets",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "payloads",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "predecessor",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "salt",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "delay",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updateDelay",
+        "inputs": [
+          {
+            "name": "newDelay",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "SharedStakeGovernor",
+    "sourcePath": "contracts/v2/governance/SharedStakeGovernor.sol",
+    "artifactPath": "out/SharedStakeGovernor.sol/SharedStakeGovernor.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_veToken",
+          "type": "contract",
+          "internalType": "IVotes"
+        },
+        {
+          "name": "_timelock",
+          "type": "contract",
+          "internalType": "TimelockController"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "cancel",
+        "inputs": [
+          {
+            "name": "targets",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "calldatas",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "descriptionHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "castVote",
+        "inputs": [
+          {
+            "name": "proposalId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "support",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "castVoteBySig",
+        "inputs": [
+          {
+            "name": "proposalId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "support",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "castVoteWithReason",
+        "inputs": [
+          {
+            "name": "proposalId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "support",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "reason",
+            "type": "string",
+            "internalType": "string"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "castVoteWithReasonAndParams",
+        "inputs": [
+          {
+            "name": "proposalId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "support",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "reason",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "params",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "castVoteWithReasonAndParamsBySig",
+        "inputs": [
+          {
+            "name": "proposalId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "support",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "reason",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "params",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "execute",
+        "inputs": [
+          {
+            "name": "targets",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "calldatas",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "descriptionHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "onERC1155BatchReceived",
+        "inputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "onERC1155Received",
+        "inputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "onERC721Received",
+        "inputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "propose",
+        "inputs": [
+          {
+            "name": "targets",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "calldatas",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "internalType": "string"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "queue",
+        "inputs": [
+          {
+            "name": "targets",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "calldatas",
+            "type": "array",
+            "internalType": "bytes[]"
+          },
+          {
+            "name": "descriptionHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "relay",
+        "inputs": [
+          {
+            "name": "target",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "setProposalThreshold",
+        "inputs": [
+          {
+            "name": "newProposalThreshold",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setVotingDelay",
+        "inputs": [
+          {
+            "name": "newVotingDelay",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setVotingPeriod",
+        "inputs": [
+          {
+            "name": "newVotingPeriod",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updateQuorumNumerator",
+        "inputs": [
+          {
+            "name": "newQuorumNumerator",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updateTimelock",
+        "inputs": [
+          {
+            "name": "newTimelock",
+            "type": "contract",
+            "internalType": "TimelockController"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "VoteEscrowV2",
+    "sourcePath": "contracts/v2/governance/VoteEscrowV2.sol",
+    "artifactPath": "out/VoteEscrowV2.sol/VoteEscrowV2.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "_symbol",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "_sgt",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_minLockedAmount",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_gov",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "checkpoint",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "checkpointMany",
+        "inputs": [
+          {
+            "name": "accounts",
+            "type": "array",
+            "internalType": "address[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "create_lock",
+        "inputs": [
+          {
+            "name": "_value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_days",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "create_lock_until",
+        "inputs": [
+          {
+            "name": "_value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_unlockTime",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "decreaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "subtractedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "delegate",
+        "inputs": [
+          {
+            "name": "delegatee",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "delegateBySig",
+        "inputs": [
+          {
+            "name": "delegatee",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "nonce",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "expiry",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "emergencyWithdraw",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "addedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increase_amount",
+        "inputs": [
+          {
+            "name": "_value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increase_unlock_time",
+        "inputs": [
+          {
+            "name": "_days",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increase_unlock_time_to",
+        "inputs": [
+          {
+            "name": "_unlockTime",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "permit",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setEarlyWithdrawPenaltyRate",
+        "inputs": [
+          {
+            "name": "_rate",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMinLockedAmount",
+        "inputs": [
+          {
+            "name": "_amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setPenaltyCollector",
+        "inputs": [
+          {
+            "name": "_addr",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferGov",
+        "inputs": [
+          {
+            "name": "_newGov",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "PaymentSplitter",
+    "sourcePath": "contracts/v2/lib/PaymentSplitter.sol",
+    "artifactPath": "out/PaymentSplitter.sol/PaymentSplitter.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "payees",
+          "type": "array",
+          "internalType": "address[]"
+        },
+        {
+          "name": "shares_",
+          "type": "array",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "payable"
+    },
+    "functions": [
+      {
+        "name": "release",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address payable"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "release",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "contract",
+            "internalType": "IERC20"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "DebtPool",
+    "sourcePath": "contracts/v2/modular-staking/DebtPool.sol",
+    "artifactPath": "out/DebtPool.sol/DebtPool.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_stToken",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_wstETH",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_gov",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_admin",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_feeController",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "claim",
+        "inputs": [
+          {
+            "name": "_distributionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_leafIndex",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_recipient",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_proof",
+            "type": "array",
+            "internalType": "bytes32[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "createDistribution",
+        "inputs": [
+          {
+            "name": "_merkleRoot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "_totalAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "emergencyOverrideMerkleRoot",
+        "inputs": [
+          {
+            "name": "_distributionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_newRoot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "pause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "receiveStETHAndUnwrap",
+        "inputs": [
+          {
+            "name": "_amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unpause",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdrawUnclaimedFees",
+        "inputs": [
+          {
+            "name": "_distributionId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "_recipient",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "FeeController",
+    "sourcePath": "contracts/v2/modular-staking/FeeController.sol",
+    "artifactPath": "out/FeeController.sol/FeeController.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_treasury",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_operator",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_referralRegistry",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_debtPool",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_feeBps",
+          "type": "uint16",
+          "internalType": "uint16"
+        },
+        {
+          "name": "_treasurySplitBps",
+          "type": "uint16",
+          "internalType": "uint16"
+        },
+        {
+          "name": "_operatorSplitBps",
+          "type": "uint16",
+          "internalType": "uint16"
+        },
+        {
+          "name": "_debtPoolSplitBps",
+          "type": "uint16",
+          "internalType": "uint16"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setFee",
+        "inputs": [
+          {
+            "name": "_feeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "_treasurySplitBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "_operatorSplitBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "_debtPoolSplitBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setRecipients",
+        "inputs": [
+          {
+            "name": "_treasury",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_referralRegistry",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "_debtPool",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setReferralRegistry",
+        "inputs": [
+          {
+            "name": "_referralRegistry",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "InstitutionalPolicyRegistry",
+    "sourcePath": "contracts/v2/modular-staking/InstitutionalPolicyRegistry.sol",
+    "artifactPath": "out/InstitutionalPolicyRegistry.sol/InstitutionalPolicyRegistry.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "createPolicy",
+        "inputs": [
+          {
+            "name": "policyId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "mode",
+            "type": "enum",
+            "internalType": "InstitutionalPolicyRegistry.PolicyMode"
+          },
+          {
+            "name": "manager",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setAllowlisted",
+        "inputs": [
+          {
+            "name": "policyId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "allowed",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setBlocklisted",
+        "inputs": [
+          {
+            "name": "policyId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "blocked",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setPolicyManager",
+        "inputs": [
+          {
+            "name": "policyId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "manager",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setPolicyMode",
+        "inputs": [
+          {
+            "name": "policyId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "mode",
+            "type": "enum",
+            "internalType": "InstitutionalPolicyRegistry.PolicyMode"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "MigrationHelper",
+    "sourcePath": "contracts/v2/modular-staking/MigrationHelper.sol",
+    "artifactPath": "out/MigrationHelper.sol/MigrationHelper.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "router",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "activateMigration",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "announceMigration",
+        "inputs": [
+          {
+            "name": "_newRouter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "cancelMigration",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "OperatorRegistry",
+    "sourcePath": "contracts/v2/modular-staking/OperatorRegistry.sol",
+    "artifactPath": "out/OperatorRegistry.sol/OperatorRegistry.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "adminDecrementActive",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "count",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "decrementActive",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "exitBond",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "expandSlotsWithSgt",
+        "inputs": [
+          {
+            "name": "slots",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sgtAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "grantCaller",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "incrementActive",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "_sgtToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "gov",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "lockNftForCredit",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "registerBondWithSgt",
+        "inputs": [
+          {
+            "name": "configName",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "slots",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sgtAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeCaller",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setBondConfig",
+        "inputs": [
+          {
+            "name": "name",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "ethBondPerSlot",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sgtBondPerSlot",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "maxSlots",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setDefaultConfig",
+        "inputs": [
+          {
+            "name": "name",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setNftContract",
+        "inputs": [
+          {
+            "name": "nft",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sgtCredit",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setSlashLock",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "until",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "slash",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sgtAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeTo",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeToAndCall",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "withdrawEscrowedNfts",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "OracleAdapter",
+    "sourcePath": "contracts/v2/modular-staking/OracleAdapter.sol",
+    "artifactPath": "out/OracleAdapter.sol/OracleAdapter.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "reportTarget",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "addSubmitter",
+        "inputs": [
+          {
+            "name": "submitter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "removeSubmitter",
+        "inputs": [
+          {
+            "name": "submitter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxDriftBps",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxSlashBps",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxStaleness",
+        "inputs": [
+          {
+            "name": "seconds_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMinReportInterval",
+        "inputs": [
+          {
+            "name": "seconds_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "submitReport",
+        "inputs": [
+          {
+            "name": "beaconValidators",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "beaconBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reportTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "QuorumOracleAdapter",
+    "sourcePath": "contracts/v2/modular-staking/QuorumOracleAdapter.sol",
+    "artifactPath": "out/QuorumOracleAdapter.sol/QuorumOracleAdapter.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "reportTarget",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "initialQuorum",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "addSubmitter",
+        "inputs": [
+          {
+            "name": "submitter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "clearVotes",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "emergencySubmitReport",
+        "inputs": [
+          {
+            "name": "newBeaconValidators",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "newBeaconBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reportTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "removeSubmitter",
+        "inputs": [
+          {
+            "name": "submitter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxDriftBps",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxSlashBps",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxStaleness",
+        "inputs": [
+          {
+            "name": "seconds_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMinReportInterval",
+        "inputs": [
+          {
+            "name": "seconds_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setQuorum",
+        "inputs": [
+          {
+            "name": "newQuorum",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "submitReport",
+        "inputs": [
+          {
+            "name": "beaconValidators",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "beaconBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reportTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "ReferralCodeRegistry",
+    "sourcePath": "contracts/v2/modular-staking/ReferralCodeRegistry.sol",
+    "artifactPath": "out/ReferralCodeRegistry.sol/ReferralCodeRegistry.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "registerReferralCode",
+        "inputs": [
+          {
+            "name": "codeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "referrer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "metadataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeReferralCode",
+        "inputs": [
+          {
+            "name": "codeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updateReferralCode",
+        "inputs": [
+          {
+            "name": "codeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "referrer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "metadataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upsertReferralCode",
+        "inputs": [
+          {
+            "name": "codeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "referrer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "metadataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "ReferralRegistry",
+    "sourcePath": "contracts/v2/modular-staking/ReferralRegistry.sol",
+    "artifactPath": "out/ReferralRegistry.sol/ReferralRegistry.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_gov",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_feeToken",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "claimFees",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "depositReferralFeeShares",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "recordDeposit",
+        "inputs": [
+          {
+            "name": "referrer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "referee",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "ethAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "recoverEth",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "recoverToken",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setFeeToken",
+        "inputs": [
+          {
+            "name": "_token",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMinReferralStake",
+        "inputs": [
+          {
+            "name": "_min",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setReferralFeeBps",
+        "inputs": [
+          {
+            "name": "_bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "StToken",
+    "sourcePath": "contracts/v2/modular-staking/StToken.sol",
+    "artifactPath": "out/StToken.sol/StToken.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "addMinter",
+        "inputs": [
+          {
+            "name": "minter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "burnShares",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sharesAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mintShares",
+        "inputs": [
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sharesAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "removeMinter",
+        "inputs": [
+          {
+            "name": "minter",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setTotalPooledEther",
+        "inputs": [
+          {
+            "name": "newTotalPooledEther",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferAdmin",
+        "inputs": [
+          {
+            "name": "newAdmin",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferShares",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sharesAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "StTokenERC4626Wrapper",
+    "sourcePath": "contracts/v2/modular-staking/StTokenERC4626Wrapper.sol",
+    "artifactPath": "out/StTokenERC4626Wrapper.sol/StTokenERC4626Wrapper.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "stToken",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "decreaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "subtractedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "deposit",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "addedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "redeem",
+        "inputs": [
+          {
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "StakingCore",
+    "sourcePath": "contracts/v2/modular-staking/StakingCore.sol",
+    "artifactPath": "out/StakingCore.sol/StakingCore.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "stToken",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "enableRouterMode",
+        "inputs": [
+          {
+            "name": "router",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "notifyBeaconDeposit",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "pause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "reportBeacon",
+        "inputs": [
+          {
+            "name": "newBeaconValidators",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "newBeaconBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setFeeController",
+        "inputs": [
+          {
+            "name": "fc",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setReferralCodeRegistry",
+        "inputs": [
+          {
+            "name": "registry",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setWithdrawalQueue",
+        "inputs": [
+          {
+            "name": "queue",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "submit",
+        "inputs": [
+          {
+            "name": "referral",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitWithAttribution",
+        "inputs": [
+          {
+            "name": "referral",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sourceId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitWithCodeAttribution",
+        "inputs": [
+          {
+            "name": "referralCode",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "sourceId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitWithReferralCode",
+        "inputs": [
+          {
+            "name": "referralCode",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "unpause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "StakingRouter",
+    "sourcePath": "contracts/v2/modular-staking/StakingRouter.sol",
+    "artifactPath": "out/StakingRouter.sol/StakingRouter.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "emergencyPauseAll",
+        "inputs": [
+          {
+            "name": "moduleIds",
+            "type": "array",
+            "internalType": "bytes32[]"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "enableCodeHashEnforcement",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "stToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "gov",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "notifyBeaconDeposit",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "pause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "pauseModule",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "registerModule",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "moduleAddr",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "mintCapEth",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "reportModuleBeaconBalance",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "newBeaconBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setDefaultModule",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setFeeController",
+        "inputs": [
+          {
+            "name": "fc",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setGlobalInflowLimit",
+        "inputs": [
+          {
+            "name": "windowSeconds",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "maxInflowEthPerWindow",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxDeltaBps",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxTotalPooledEther",
+        "inputs": [
+          {
+            "name": "cap",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMintCap",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "mintCapEth",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setModuleCodeHashAllowed",
+        "inputs": [
+          {
+            "name": "moduleType",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "codeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "allowed",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setModuleInflowLimit",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "windowSeconds",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "maxInflowEthPerWindow",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setModulePolicy",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "policyId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setPolicyRegistry",
+        "inputs": [
+          {
+            "name": "registry",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setReferralCodeRegistry",
+        "inputs": [
+          {
+            "name": "registry",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "submit",
+        "inputs": [
+          {
+            "name": "referral",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitToModule",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "referral",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitToModuleWithReferralCode",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "referralCode",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitToModuleWithSource",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "referral",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sourceId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitToModuleWithSourceAndReferralCode",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "referralCode",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "sourceId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitWithReferralCode",
+        "inputs": [
+          {
+            "name": "referralCode",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitWithSource",
+        "inputs": [
+          {
+            "name": "referral",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "sourceId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "submitWithSourceAndReferralCode",
+        "inputs": [
+          {
+            "name": "referralCode",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "sourceId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "unpause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unpauseModule",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unwrapToModule",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "stTokenAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeTo",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeToAndCall",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "wrapFromModule",
+        "inputs": [
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "ethEquiv",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "WithdrawalQueueV2",
+    "sourcePath": "contracts/v2/modular-staking/WithdrawalQueueV2.sol",
+    "artifactPath": "out/WithdrawalQueueV2.sol/WithdrawalQueueV2.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "stToken",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "gov",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "claimWithdrawal",
+        "inputs": [
+          {
+            "name": "requestId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address payable"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "claimWithdrawals",
+        "inputs": [
+          {
+            "name": "requestIds",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address payable"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "finalize",
+        "inputs": [
+          {
+            "name": "lastRequestId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "recoverEth",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address payable"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "requestWithdrawals",
+        "inputs": [
+          {
+            "name": "amounts",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setBunkerMaxRequestsPerFinalize",
+        "inputs": [
+          {
+            "name": "maxRequests",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setBunkerMinRequestAge",
+        "inputs": [
+          {
+            "name": "minAge",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "updateModeFromOracle",
+        "inputs": [
+          {
+            "name": "isBunkerMode",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "reportTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "withdrawRefund",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "WstToken",
+    "sourcePath": "contracts/v2/modular-staking/WstToken.sol",
+    "artifactPath": "out/WstToken.sol/WstToken.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "stToken",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "decreaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "subtractedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "increaseAllowance",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "addedValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "permit",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unwrap",
+        "inputs": [
+          {
+            "name": "wstAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "wrap",
+        "inputs": [
+          {
+            "name": "stAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "LSTWrapModule",
+    "sourcePath": "contracts/v2/modular-staking/modules/LSTWrapModule.sol",
+    "artifactPath": "out/LSTWrapModule.sol/LSTWrapModule.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "router",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "lstToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "gov",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "pause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "receiveDeposit",
+        "inputs": [],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxOracleAge",
+        "inputs": [
+          {
+            "name": "secs",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMaxWrapPriceDrift",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setPriceOracle",
+        "inputs": [
+          {
+            "name": "oracle",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unpause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unwrapLST",
+        "inputs": [
+          {
+            "name": "stTokenAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeTo",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeToAndCall",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "wrapLST",
+        "inputs": [
+          {
+            "name": "lstAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "ValidatorModule",
+    "sourcePath": "contracts/v2/modular-staking/modules/ValidatorModule.sol",
+    "artifactPath": "out/ValidatorModule.sol/ValidatorModule.json",
+    "constructor": {
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approvePubkey",
+        "inputs": [
+          {
+            "name": "pubkey",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "depositToBeaconChain",
+        "inputs": [
+          {
+            "name": "pubkey",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "withdrawal_credentials",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "signature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "deposit_data_root",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "grantRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "initialize",
+        "inputs": [
+          {
+            "name": "router",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "moduleId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "gov",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "beaconDepositContract",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "pause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "receiveDeposit",
+        "inputs": [],
+        "stateMutability": "payable"
+      },
+      {
+        "name": "renounceRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "reportBeacon",
+        "inputs": [
+          {
+            "name": "newBeaconValidators",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "newBeaconBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokePubkey",
+        "inputs": [
+          {
+            "name": "pubkey",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "revokeRole",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setExpectedWithdrawalCredentials",
+        "inputs": [
+          {
+            "name": "_expected",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setOperatorRegistry",
+        "inputs": [
+          {
+            "name": "registry",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "sweepExitedEth",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "unpause",
+        "inputs": [
+          {
+            "name": "fnId",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeTo",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "upgradeToAndCall",
+        "inputs": [
+          {
+            "name": "newImplementation",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ],
+        "stateMutability": "payable"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "FeeCalc",
+    "sourcePath": "contracts/v2/periphery/FeeCalc.sol",
+    "artifactPath": "out/FeeCalc.sol/FeeCalc.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "_settings",
+          "type": "tuple",
+          "internalType": "FeeCalc.Settings"
+        },
+        {
+          "name": "initialOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "acceptOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "renounceOwnership",
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "set",
+        "inputs": [
+          {
+            "name": "newSettings",
+            "type": "tuple",
+            "internalType": "FeeCalc.Settings"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setAdminFee",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setExitFee",
+        "inputs": [
+          {
+            "name": "_exitFee",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setRefundFeesOnWithdraw",
+        "inputs": [
+          {
+            "name": "_refundFeesOnWithdraw",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferOwnership",
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "vEth2",
+    "sourcePath": "contracts/vEth2.sol",
+    "artifactPath": "out/vEth2.sol/vEth2.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "minter_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "mintingAllowedAfter_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rawAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "burn",
+        "inputs": [
+          {
+            "name": "src",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rawAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "delegate",
+        "inputs": [
+          {
+            "name": "delegatee",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "delegateBySig",
+        "inputs": [
+          {
+            "name": "delegatee",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "nonce",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "expiry",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "dst",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rawAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "permit",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rawAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "v",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "r",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "s",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "setMinter",
+        "inputs": [
+          {
+            "name": "minter_",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "dst",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rawAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "src",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "dst",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rawAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  }
+]

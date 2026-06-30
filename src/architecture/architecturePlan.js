@@ -1,132 +1,92 @@
 export const architectureMeta = {
-  title: "SharedStake V2 Modular Staking — Architecture",
+  title: "SharedStake V3 Modular Staking Architecture",
   subtitle:
-    "Non-upgradeable, module-composable staking protocol. StakingRouter coordinates validator modules, fee distribution, and on-chain governance.",
-  updatedAt: "2026-05-15",
+    "Router-first staking architecture, governed module rollout, and contract-readiness execution",
+  updatedAt: "2026-06-02",
   sources: [
     "https://docs.sharedstake.finance/sharedstake-v2.md",
     "https://docs.sharedstake.finance/sharedstake-v2/key-changes-over-v1.md",
+    "https://docs.sharedstake.finance/sharedstake-v2/phased-launch.md",
     "https://docs.sharedstake.finance/sharedstake-v2/shareddeposit-v2-architecture.md",
   ],
   localDocs: [
+    "docs/modular-staking/architecture.md",
+    "docs/modular-staking/diagrams.md",
+    "docs/modular-staking/DEPLOYMENT_GUIDE.md",
     "docs/modular-staking/UPGRADE_PATH.md",
-    "src/architecture/MODULAR_STAKING_ARCHITECTURE.md",
-    "SharedDeposit/contracts/v2/modular-staking/",
-    "SharedDeposit/test/v2/modular-staking/",
+    "docs/modular-staking/AUDIT_WORKFLOW.md",
+    "staking-contracts/contracts/v2/modular-staking/StakingRouter.sol",
+    "staking-contracts/contracts/v2/modular-staking/modules/ValidatorModule.sol",
+    "staking-contracts/contracts/v2/modular-staking/modules/LSTWrapModule.sol",
+    "staking-contracts/contracts/v2/governance/VoteEscrowV2.sol",
+    "staking-contracts/contracts/v2/governance/SharedStakeGovernor.sol",
+    "staking-contracts/contracts/v2/governance/GovernanceTimelock.sol",
   ],
 };
 
 export const coreArchitecture = [
   {
-    title: "StakingRouter",
+    title: "Router + Accounting Plane",
     points: [
-      "Central coordinator: receives ETH from users, routes to modules.",
-      "Owns the MINTER role on StToken — only contract that mints/burns shares.",
-      "Tracks per-module beacon balances; triggers StToken rebases on oracle reports.",
-      "Enforces per-module inflow limits, pause state, and sanity caps on oracle deltas.",
+      "StakingRouter is the canonical staking entrypoint and pooled-accounting coordinator.",
+      "StToken tracks rebasing share ownership; WstToken provides non-rebasing wrapped exposure.",
+      "WithdrawalQueueV2 burns shares at request time and settles finalized ETH claims.",
     ],
   },
   {
-    title: "ValidatorModule / DVTModule",
+    title: "Execution Modules",
     points: [
-      "ValidatorModule: single-operator 32-ETH validator path with withdrawal credential enforcement.",
-      "DVTModule extends ValidatorModule with an on-chain cluster registry for Distributed Validator Technology.",
-      "Both share _doBeaconDeposit() with pubkey deduplication and withdrawal-cred validation.",
-      "Paused independently; oracle reports blocked while paused.",
+      "ValidatorModule handles solo-validator ETH flow behind the router.",
+      "Planned DVTModule support extends validator flow with cluster-attributed deposits and DVT controls; contract deployment and UI activation are deferred to the DVT follow-up PR.",
+      "LSTWrapModule accepts oracle-priced LST exposure and mints/burns through router callbacks.",
     ],
   },
   {
-    title: "FeeController",
+    title: "Control Plane",
     points: [
-      "Configures treasury/operator fee split and the referral registry address.",
-      "Called by StakingRouter on each reward distribution; mints fee shares to treasury/operator.",
-      "Referral tracking via MasterChef-style ReferralRegistry.",
-    ],
-  },
-  {
-    title: "Governance Stack",
-    points: [
-      "VoteEscrowV2: lock SGT → veSGT for voting weight; 30% penalty on emergency withdraw.",
-      "GovernanceTimelock: 48h delay on all parameter changes.",
-      "SharedStakeGovernor: OZ Governor wired to veSGT + Timelock.",
-      "VoteEscrowV2.gov must be the Timelock — penalty rate changes require a full governance vote.",
-    ],
-  },
-  {
-    title: "WithdrawalQueueV2",
-    points: [
-      "Users request withdrawals; GOV finalizes batches with ETH from operator exits.",
-      "Bunker mode adds minimum age and batch-size guards during validator churn events.",
-      "Used as the exit path during Router-to-Router migrations.",
-    ],
-  },
-  {
-    title: "MigrationHelper",
-    points: [
-      "Signal-only contract — holds no funds, moves no funds.",
-      "GOV announces a new router; 14-day notice clock starts.",
-      "activateMigration() sets migrationActive = true (front-ends redirect to newRouter).",
-      "Activated state is terminal; cancelMigration() only works before activation.",
-    ],
-  },
-  {
-    title: "StTokenERC4626Wrapper",
-    points: [
-      "ERC-4626 compliant vault wrapping the rebasing stToken into a non-rebasing vault token.",
-      "Enables DeFi composability: Aave, Compound, Pendle, and other yield protocols.",
-      "asset = stToken shares; vault share appreciates as protocol accrues staking rewards.",
-      "Withdrawal returns stToken shares synchronously; convert to ETH via WithdrawalQueueV2.",
+      "VoteEscrowV2 turns locked SGT into non-transferable veSGT with four-year max locks and linear decay.",
+      "SharedStakeGovernor and GovernanceTimelock own registration, caps, default routing, policy assignment, and unpause actions through GOV roles.",
+      "GUARDIAN can pause globally or per-module for fast incident response while GOV-only unpause preserves reviewability.",
+      "Code-hash allowlisting, inflow windows, mint caps, policy registries, and veSGT lock metrics bound module risk.",
     ],
   },
 ];
 
 export const phaseRoadmap = [
   {
-    phase: "Phase 1 — DONE",
-    name: "Modular Core",
+    phase: "Phase 0",
+    name: "Local Contract Migration",
     additions: [
-      "StakingRouter + StToken + ValidatorModule deployed and tested.",
-      "FeeController with treasury/operator/referral routing.",
-      "WithdrawalQueueV2 with bunker mode.",
-      "6-pass internal security audit complete; all CRITICAL/HIGH fixed.",
+      "All Solidity sources live under staking-contracts with no tracked submodules.",
+      "Duplicate contract copies and stale import paths are removed.",
+      "Contract audit workflow runs dependency audit, lint, compile, Hardhat tests, Foundry invariants, and Slither.",
     ],
   },
   {
-    phase: "Phase 2 — DONE",
-    name: "DVT + Governance",
+    phase: "Phase 1",
+    name: "Dark Module Deployment",
     additions: [
-      "DVTModule: on-chain cluster registry, depositToBeaconChainInCluster.",
-      "VoteEscrowV2 + GovernanceTimelock + SharedStakeGovernor deployed.",
-      "MigrationHelper: 14-day-notice migration coordination contract.",
-      "307 Hardhat + 22 keeper unit + 13 ERC-4626 + 7 Foundry invariant tests; 20 Playwright E2E tests.",
+      "Deploy router, token, queue, fee, oracle, and module contracts with verified addresses.",
+      "Register modules with conservative caps and keep risky inflow paths paused until governance enables them.",
+      "Wire withdrawal credentials, keepers, oracle submitters, and governance handover before user-facing launch.",
     ],
   },
   {
-    phase: "Phase 3 — PENDING",
-    name: "Mainnet Deployment",
+    phase: "Phase 2",
+    name: "Governed Activation",
     additions: [
-      "Set expectedWithdrawalCredentials on all ValidatorModule instances.",
-      "Transfer GOV + DEFAULT_ADMIN_ROLE to GovernanceTimelock.",
-      "External human security audit of full V2 surface.",
-      "Configure .env.keeper and supervised keeper processes.",
+      "Use veSGT-backed Governor/Timelock proposals to raise caps, unpause modules, and set default routing.",
+      "Roll out validator, DVT, and LST modules independently with telemetry-based risk budgets.",
+      "Keep GUARDIAN-only pause and GOV-only unpause separation intact.",
     ],
   },
   {
-    phase: "Phase 4",
-    name: "Operator Decentralization",
+    phase: "Phase 3",
+    name: "Operational Expansion",
     additions: [
-      "Permissionless operator onboarding (ERC-6551 + SGT gating).",
-      "Operator performance guards and exit-event handling.",
-      "Additional DVT cluster operators beyond core team.",
-    ],
-  },
-  {
-    phase: "Phase 5",
-    name: "Multi-Chain",
-    additions: [
-      "Minter extension to additional L1/L2 environments.",
-      "Cross-domain accounting for sgETH mint paths.",
-      "Chain-by-chain rollout with independent risk limits.",
+      "Expand operator registry capacity, NFT bond credit policy, and DVT cluster onboarding.",
+      "Tune inflow windows, oracle cadence, and withdrawal finalization based on production telemetry.",
+      "Publish release manifests and external audit results before mainnet promotion.",
     ],
   },
 ];
@@ -134,180 +94,260 @@ export const phaseRoadmap = [
 export const contractV1Readiness = [
   {
     status: "done",
-    title: "Core contracts + test suite",
-    goal: "Production-ready non-upgradeable contracts with full test coverage.",
+    title: "Local contract migration",
+    goal: "Keep every production Solidity source local to staking-contracts and out of submodules.",
     currentState:
-      "342 Hardhat/keeper/ERC-4626 + 7 Foundry invariant tests green. Fork tests cover fee distribution, withdrawal queue, governance params, and DVT credential enforcement.",
-    nextStep: "External human audit before mainnet.",
+      "PR 379 has no tracked gitlinks, no Solidity files outside staking-contracts, and no duplicate production Solidity basenames or exact duplicate Solidity blobs.",
+    nextStep:
+      "Keep the layout checks in docs/modular-staking/AUDIT_WORKFLOW.md and .github/workflows/audit.yml green for every follow-up.",
     tasks: [
-      "StakingRouter, ValidatorModule, DVTModule, FeeController, WithdrawalQueueV2.",
-      "MigrationHelper coordination contract.",
-      "VoteEscrowV2 + GovernanceTimelock + SharedStakeGovernor.",
+      "Run gitlink, outside-contract, duplicate-source, and conflict-marker checks before merge.",
+      "Keep Foundry dependencies materialized through the ignored lib/forge-std path only.",
+      "Do not reintroduce contract copies under frontend or legacy submodule paths.",
     ],
   },
   {
     status: "done",
-    title: "Security audit (6 passes)",
-    goal: "No unaddressed CRITICAL/HIGH findings before mainnet.",
+    title: "Automated audit gates",
+    goal: "Make contract safety checks repeatable locally and in GitHub Actions.",
     currentState:
-      "6 internal audit passes complete. All CRITICAL/HIGH fixed. 4 MEDIUM findings accepted by design (documented with rationale). DVTM-04 accepted.",
-    nextStep: "External paid human audit.",
+      "Root CI and the Contract Audit workflow pass on the PR head, including dependency audit, Solidity lint, Hardhat compile, modular Hardhat tests, Foundry invariants, and Slither.",
+    nextStep:
+      "Keep moderate-or-higher dependency advisories blocked and treat Slither regressions as review findings.",
     tasks: [
-      "Pass 1-2: 15 findings fixed.",
-      "Pass 3: No CRITICAL/HIGH; 3 MEDIUM accepted, 4 LOW/INFO fixed.",
-      "Pass 4 (DVT): DVTM-01/02/03 fixed; DVTM-04 accepted by design.",
-      "Pass 5: All candidates below threshold.",
-      "Pass 6: LSTWrapModule oracle order + missing unwrapLST guard fixed.",
-    ],
-  },
-  {
-    status: "done",
-    title: "Governance wiring",
-    goal: "All privileged parameter paths gated behind 48h governance delay.",
-    currentState:
-      "VoteEscrowV2.gov = GovernanceTimelock. Deployer admin role renounced. Governor has PROPOSER + CANCELLER roles. Deploy script asserts gov transfer.",
-    nextStep: "Transfer StakingRouter GOV + DEFAULT_ADMIN_ROLE to Timelock on mainnet.",
-    tasks: [
-      "013_governance.ts: deploys and wires all governance contracts.",
-      "Hard assertion: veGov == timelock.target post-deploy.",
-      "Docs: docs/modular-staking/UPGRADE_PATH.md.",
+      "Run npm audit --audit-level=moderate inside staking-contracts.",
+      "Run npx hardhat test test/v2/modular-staking/*.spec.ts before contract changes land.",
+      "Run npm run setup:foundry and npm run test:invariants on clean machines.",
     ],
   },
   {
     status: "in_progress",
-    title: "Mainnet pre-deployment checklist",
-    goal: "Ops and governance tasks before mainnet launch.",
+    title: "Deployment readiness",
+    goal: "Prepare the dark-launch deployment path without accidentally opening module inflows.",
     currentState:
-      "Code complete. Four ops/governance tasks remain (not code changes).",
-    nextStep: "Complete all four pre-mainnet blockers.",
+      "Deployment scripts deploy and register modules; local networks default enabled for integration testing, while non-local deployments default to paused dark-launch state unless explicitly overridden.",
+    nextStep:
+      "Add explicit deployment controls for dark-launching modules with paused state and conservative caps, then activate with Governor/Timelock proposals.",
     tasks: [
-      "Set expectedWithdrawalCredentials on all ValidatorModule instances.",
-      "Transfer GOV + DEFAULT_ADMIN_ROLE to GovernanceTimelock.",
-      "Complete external human security audit.",
-      "Configure keeper environment and supervised processes.",
+      "Populate src/contracts/addresses after verified testnet/mainnet deployment.",
+      "Set expectedWithdrawalCredentials before validator deposits.",
+      "Document each module default, cap, inflow window, and pause state in the deployment manifest.",
     ],
   },
   {
-    status: "todo",
-    title: "Deployment reproducibility",
-    goal: "Deterministic release manifest with addresses, constructor args, and verification links.",
+    status: "in_progress",
+    title: "Governance activation",
+    goal: "Enable modules only through auditable governance actions after observation gates clear.",
     currentState:
-      "Deploy scripts exist (001-013 in deploy/v2-modular-staking/). Manifests not yet published per-network.",
-    nextStep: "Create per-network release manifest and publish bytecode verification.",
+      "StakingRouter exposes GOV-only setMintCap, setModuleInflowLimit, setDefaultModule, and unpauseModule; GUARDIAN can pause modules immediately.",
+    nextStep:
+      "Prepare proposal payload templates for staged module activation and cap increases, and require checkpointed veSGT before snapshots.",
     tasks: [
-      "Pin compiler version, optimizer settings, and expected bytecode hashes.",
-      "Document per-network params and governance addresses.",
-      "Publish verification checklist for Etherscan and downstream integrators.",
-    ],
-  },
-  {
-    status: "todo",
-    title: "Operational runbooks",
-    goal: "Playbooks for pause/unpause, validator exits, and queue incidents.",
-    currentState:
-      "Pause controls and queue finalization are in contracts. Operator runbooks not yet written.",
-    nextStep: "Write and rehearse incident runbooks before mainnet.",
-    tasks: [
-      "Pause/unpause, slash handling, withdrawal queue backlog.",
-      "SLOs for reward sync cadence and withdrawal processing.",
-      "On-call and escalation paths for governance/operators.",
+      "Queue setMintCap and setModuleInflowLimit before unpauseModule.",
+      "Keep setDefaultModule separate from module deployment unless default traffic should start immediately.",
+      "Use guardian pause drills before enabling mainnet user flow.",
     ],
   },
 ];
 
-export const governanceModel = [
+export const architectureDiagrams = [
   {
-    title: "VoteEscrowV2",
-    points: [
-      "Lock SGT for 7–730 days to receive veSGT voting weight.",
-      "Voting weight decays linearly to zero at lock expiry.",
-      "emergencyWithdraw() available before expiry with 30% SGT penalty.",
-      "gov address = GovernanceTimelock; penalty rate changes require governance vote.",
+    title: "Router-First Component Map",
+    summary:
+      "Users enter through StakingRouter; modules execute asset-specific flows; StToken/WstToken and WithdrawalQueueV2 hold user accounting.",
+    groups: [
+      {
+        label: "User Surface",
+        nodes: ["Stake UI", "Wrap UI", "Withdraw UI", "Governance UI"],
+      },
+      {
+        label: "Router Plane",
+        nodes: [
+          "StakingRouter",
+          "FeeController",
+          "InstitutionalPolicyRegistry",
+        ],
+      },
+      {
+        label: "Modules",
+        nodes: ["ValidatorModule", "Planned DVTModule", "LSTWrapModule"],
+      },
+      {
+        label: "Accounting",
+        nodes: ["StToken", "WstToken", "WithdrawalQueueV2"],
+      },
+      {
+        label: "Operations",
+        nodes: [
+          "OracleAdapter",
+          "QuorumOracleAdapter",
+          "OperatorRegistry",
+          "Keepers",
+        ],
+      },
+    ],
+    flows: [
+      "Submit ETH -> StakingRouter -> selected validator module -> StToken shares",
+      "Wrap LST -> LSTWrapModule -> StakingRouter callback -> StToken shares",
+      "Request exit -> WithdrawalQueueV2 burns shares -> guardian finalizes ETH -> user claims",
+      "Oracle report -> module validates -> router updates pooled ETH and fee shares",
     ],
   },
   {
-    title: "GovernanceTimelock",
-    points: [
-      "48h delay (1s on hardhat for test speed).",
-      "Governor has PROPOSER + CANCELLER roles.",
-      "address(0) executor — anyone can execute once delay has passed.",
-      "Deployer DEFAULT_ADMIN_ROLE renounced post-deploy (self-governing).",
+    title: "Deposit, Report, Rebase Flow",
+    summary:
+      "Deposits mint shares immediately; beacon/LST reports later update pooled value and route protocol/operator/referral fees.",
+    groups: [
+      { label: "Deposit", nodes: ["User", "submitToModule", "receiveDeposit"] },
+      {
+        label: "Mint",
+        nodes: ["StakingRouter", "StToken.mintShares", "User shares"],
+      },
+      {
+        label: "Report",
+        nodes: [
+          "OracleAdapter",
+          "ValidatorModule.reportBeacon",
+          "Router pooled update",
+        ],
+      },
+      {
+        label: "Fees",
+        nodes: ["FeeController", "Treasury shares", "Operator shares"],
+      },
+    ],
+    flows: [
+      "User ETH is routed to the selected module and priced into shares.",
+      "Module reports cannot exceed configured drift/slash sanity bounds.",
+      "Fee accounting changes share ownership, not direct user ETH balances.",
     ],
   },
   {
-    title: "SharedStakeGovernor",
-    points: [
-      "OZ Governor with veSGT as voting token.",
-      "Proposals require a voting period + quorum threshold.",
-      "Passed proposals execute via GovernanceTimelock.",
-      "All StakingRouter / FeeController / VoteEscrowV2 param changes go through here.",
+    title: "Vote-Escrow Governance Stack",
+    summary:
+      "SGT lockers receive non-transferable veSGT that decays over a four-year max lock; Governor snapshots checkpointed veSGT and executes through Timelock.",
+    groups: [
+      {
+        label: "Lock",
+        nodes: ["SGT", "VoteEscrowV2", "veSGT"],
+      },
+      {
+        label: "Measure",
+        nodes: ["getLockStats", "globalLockStats", "checkpointMany"],
+      },
+      {
+        label: "Govern",
+        nodes: [
+          "SharedStakeGovernor",
+          "GovernanceTimelock",
+          "Protocol GOV roles",
+        ],
+      },
+      {
+        label: "Modules",
+        nodes: [
+          "setMintCap",
+          "setModuleInflowLimit",
+          "unpauseModule",
+          "setDefaultModule",
+        ],
+      },
+    ],
+    flows: [
+      "Longer SGT locks create more initial veSGT; voting power decays linearly until lock expiry.",
+      "Users or keepers checkpoint locks before proposal snapshots to align ERC20Votes checkpoints with projected ve power.",
+      "Executed proposals move through Timelock before touching router caps, inflow windows, pause state, or default routing.",
+    ],
+  },
+  {
+    title: "Dark Launch Governance Path",
+    summary:
+      "Modules can be deployed and registered before user traffic, then activated later through timelocked governance actions.",
+    groups: [
+      {
+        label: "Deploy",
+        nodes: ["Deploy module", "Allowlist code hash", "Register module"],
+      },
+      {
+        label: "Keep Off",
+        nodes: ["pauseModule", "bounded cap", "not default route"],
+      },
+      {
+        label: "Vote",
+        nodes: ["Governor propose", "Timelock delay", "Execute"],
+      },
+      {
+        label: "Enable",
+        nodes: [
+          "setMintCap",
+          "setModuleInflowLimit",
+          "unpauseModule",
+          "setDefaultModule",
+        ],
+      },
+    ],
+    flows: [
+      "GUARDIAN can pause immediately; GOV must unpause through the governed path.",
+      "GOV can raise caps and make a module default only after proposal execution.",
+      "Each module can be activated independently after monitoring and audit gates clear.",
     ],
   },
 ];
 
-export const upgradePath = [
+export const governedRollout = [
   {
-    title: "Minor: Parameter Change",
-    points: [
-      "No migration needed.",
-      "Governance proposal → Timelock 48h delay → execute.",
-      "Examples: fee bps, inflow limits, oracle delta caps.",
+    stage: "Deploy Off",
+    owner: "Deployer + governance signer",
+    controls: [
+      "Deploy modules and verify bytecode.",
+      "Allowlist runtime code hashes before registration.",
+      "Register modules with conservative mint caps; do not use cap 0 as an off switch because cap 0 means unlimited.",
+      "Pause modules immediately when they should remain dark after deployment.",
     ],
   },
   {
-    title: "Module Upgrade",
-    points: [
-      "Deploy new module (e.g. DVTModuleV2).",
-      "Governance registerModule on StakingRouter with new module address.",
-      "Governance deregisterModule for old module once funds are moved.",
-      "No user action required.",
+    stage: "Observe",
+    owner: "Ops + guardian",
+    controls: [
+      "Confirm withdrawal credentials and keeper env are set.",
+      "Confirm oracle submitters, quorum, and monitoring are live.",
+      "Keep default routing pointed only at the approved launch module.",
     ],
   },
   {
-    title: "Router Migration (Full)",
-    points: [
-      "Deploy new StakingRouter.",
-      "GOV calls MigrationHelper.announceMigration(newRouter) — 14-day notice starts.",
-      "Users withdraw via WithdrawalQueueV2 during voluntary exit window.",
-      "After 14 days: GOV calls activateMigration(); front-ends redirect to newRouter.",
-      "migrationActive = true is terminal; cannot be rolled back.",
-    ],
-  },
-  {
-    title: "Emergency Path",
-    points: [
-      "GUARDIAN pauses deposits on old router immediately.",
-      "Governance votes to fast-track: cancelMigration() + fresh announceMigration with shorter notice.",
-      "MigrationHelper does not enforce an early activation path by design.",
+    stage: "Govern On",
+    owner: "Governor/Timelock",
+    controls: [
+      "Execute setMintCap and setModuleInflowLimit with bounded risk budgets.",
+      "Execute unpauseModule for the target module.",
+      "Execute setDefaultModule only after the module is intended to receive default submit() flow.",
     ],
   },
 ];
 
 export const releaseTracks = [
   {
-    milestone: "Code Complete (NOW)",
+    milestone: "PR 379 Code Complete",
     criteria: [
-      "342 Hardhat/keeper/ERC-4626 + 7 Foundry tests green.",
-      "6-pass internal audit complete; no unaddressed CRITICAL/HIGH.",
-      "Fork tests: fee distribution, withdrawal queue, governance params, DVT credentials.",
-      "20 Playwright E2E tests passing.",
+      "No tracked submodule contract sources or duplicate production Solidity copies.",
+      "Root CI and Contract Audit workflow are green on the PR head.",
+      "Architecture docs and frontend ArchitectureHub point at the same router-first model.",
     ],
   },
   {
-    milestone: "Mainnet Ready",
+    milestone: "Testnet Dark Launch",
     criteria: [
-      "External human audit complete and findings resolved.",
-      "expectedWithdrawalCredentials set on all ValidatorModule instances.",
-      "GOV + DEFAULT_ADMIN_ROLE transferred to GovernanceTimelock.",
-      "Keeper environment configured and supervised keeper processes rehearsed.",
+      "Contracts deployed, verified, and addresses populated in src/contracts/addresses/.",
+      "Modules deployed with risk caps, pause/default state intentionally documented, and keepers configured.",
+      "Governance handover to timelock is verified by deployment script and manifest checks.",
     ],
   },
   {
-    milestone: "Mainnet V1",
+    milestone: "Governed Activation",
     criteria: [
-      "Deployment reproducibility checklist completed.",
-      "Operational runbooks written and rehearsed.",
-      "Emergency response drills completed.",
+      "Governor proposal enables each module only after monitoring and audit gates clear.",
+      "Initial caps and inflow windows are low enough for rollback through GUARDIAN pause.",
+      "External audit findings are closed or explicitly accepted before mainnet activation.",
     ],
   },
 ];

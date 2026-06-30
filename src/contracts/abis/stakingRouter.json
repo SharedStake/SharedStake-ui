@@ -54,6 +54,11 @@
   },
   {
     "inputs": [],
+    "name": "CodeHashEnforcementAlreadyEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "DefaultModuleNotSet",
     "type": "error"
   },
@@ -1143,6 +1148,13 @@
   },
   {
     "inputs": [],
+    "name": "enableCodeHashEnforcement",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "enforceModuleCodeHashAllowlist",
     "outputs": [
       {
@@ -1614,19 +1626,6 @@
       }
     ],
     "name": "setDefaultModule",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "enabled",
-        "type": "bool"
-      }
-    ],
-    "name": "setEnforceModuleCodeHashAllowlist",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

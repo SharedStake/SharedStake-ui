@@ -1,6 +1,5 @@
 /**
- * Pinia store for the SharedStake V2 modular staking protocol
- * (StakingCore / StToken / WstToken / WithdrawalQueueV2).
+ * Pinia store for the Lido-parity staking protocol (StakingCore / StToken / WstToken / WithdrawalQueueV2).
  *
  * Separating this from the legacy wallet store keeps the new protocol isolated
  * while still sharing the wallet connection (provider/signer) from useWalletStore.
@@ -8,15 +7,13 @@
 import { defineStore } from 'pinia'
 import { ethers } from 'ethers'
 import { useWalletStore } from './wallet'
-import { normalizeChainId } from '@/utils/common'
 
 import stTokenABI from '@/contracts/abis/stToken.json'
 import wstTokenABI from '@/contracts/abis/wstToken.json'
-import stakingCoreABI from '@/contracts/abis/stakingCore.json'
-import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
 import stakingRouterABI from '@/contracts/abis/stakingRouter.json'
-import feeControllerABI from '@/contracts/abis/feeController.json'
-import debtPoolABI from '@/contracts/abis/debtPool.json'
+import withdrawalQueueV2ABI from '@/contracts/abis/withdrawalQueueV2.json'
+import validatorModuleABI from '@/contracts/abis/validatorModule.json'
+import operatorRegistryABI from '@/contracts/abis/operatorRegistry.json'
 import mainnetAddresses from '@/contracts/addresses/mainnet.json'
 import goerliAddresses from '@/contracts/addresses/goerli.json'
 import sepoliaAddresses from '@/contracts/addresses/sepolia.json'
@@ -25,37 +22,110 @@ import localAddresses from '@/contracts/addresses/local.json'
 // Placeholder zero address used when contracts are not deployed on the connected chain.
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
-const ADDRESS_BOOK_BY_CHAIN = {
+// Placeholder module ID for solo validator staking (bytes32(1))
+const SOLO_VALIDATOR_MODULE_ID = '0x' + '0'.repeat(63) + '1'
+const ERC721_ENUMERABLE_ABI = [
+  'function balanceOf(address owner) view returns (uint256)',
+  'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
+  'function approve(address to, uint256 tokenId)',
+  'function getApproved(uint256 tokenId) view returns (address)',
+]
+
+// Per-chain contract addresses come from the same JSON files used by the
+// legacy contract index. Local/fork deployments update local.json through
+// scripts/contracts/sync-addresses.sh.
+const DEFAULT_CONTRACT_ADDRESSES = {
+  stakingRouter: ZERO_ADDR,
+  stToken: ZERO_ADDR,
+  wstToken: ZERO_ADDR,
+  withdrawalQueueV2: ZERO_ADDR,
+  validatorModule: ZERO_ADDR,
+  operatorRegistry: ZERO_ADDR,
+  sgtToken: ZERO_ADDR,
+  nftContract: ZERO_ADDR,
+}
+
+const SGT_TOKEN_BY_CHAIN = {
+  '0x1': '0x84810bcF08744d5862B8181f12d17bfd57d3b078',
+}
+
+const ADDRESS_MAPS_BY_CHAIN = {
   '0x1': mainnetAddresses,
   '0x5': goerliAddresses,
   '0xaa36a7': sepoliaAddresses,
   '0x7a69': localAddresses,
-  '0x539': localAddresses, // Ganache-style local chain id
+  '0x539': localAddresses,
+}
+
+const LOCAL_CHAIN_IDS = new Set(['0x7a69', '0x539'])
+const ADDRESS_OVERRIDES_QUERY_KEY = 'e2eContracts'
+const ADDRESS_OVERRIDES_STORAGE_KEY = 'e2eContractAddresses'
+
+function normalizeChainId(id) {
+  if (!id && id !== 0) return ''
+  if (typeof id === 'bigint') return '0x' + id.toString(16)
+  if (typeof id === 'number') return '0x' + id.toString(16)
+  if (typeof id === 'string' && !id.toLowerCase().startsWith('0x')) return '0x' + parseInt(id, 10).toString(16)
+  return id.toLowerCase()
+}
+
+function validAddress(value) {
+  return typeof value === 'string' && ethers.isAddress(value) ? value : null
+}
+
+function pickAddress(source, key, fallbackKey = null) {
+  if (!source) return ZERO_ADDR
+  return validAddress(source[key]) || (fallbackKey ? validAddress(source[fallbackKey]) : null) || ZERO_ADDR
+}
+
+function pickFirstAddress(values) {
+  return values.map(validAddress).find(Boolean) || ZERO_ADDR
+}
+
+function parseAddressOverrides(rawValue) {
+  if (!rawValue) return null
+  try {
+    const parsed = JSON.parse(rawValue)
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed
+    }
+  } catch (error) {
+    console.warn('Failed to parse modular staking address overrides:', error)
+  }
+  return null
+}
+
+function getLocalAddressOverrides(chainId) {
+  if (!LOCAL_CHAIN_IDS.has(chainId)) return null
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  const queryOverride = parseAddressOverrides(params.get(ADDRESS_OVERRIDES_QUERY_KEY))
+  if (queryOverride) return queryOverride
+  return parseAddressOverrides(window.localStorage?.getItem(ADDRESS_OVERRIDES_STORAGE_KEY))
 }
 
 function getAddresses(chainId) {
   const cid = normalizeChainId(chainId)
-  const source = ADDRESS_BOOK_BY_CHAIN[cid]
+  const baseSource = ADDRESS_MAPS_BY_CHAIN[cid]
+  const overrides = getLocalAddressOverrides(cid)
+  const source = overrides ? { ...baseSource, ...overrides } : baseSource
   if (!source) return null
+
   return {
-    stakingCore: source.stakingCore || ZERO_ADDR,
-    stToken: source.stToken || ZERO_ADDR,
-    wstToken: source.wstToken || ZERO_ADDR,
-    withdrawalQueueV2: source.withdrawalQueueV2 || ZERO_ADDR,
-    stakingRouter: source.stakingRouter || ZERO_ADDR,
-    feeController: source.feeController || ZERO_ADDR,
-    debtPool: source.debtPool || ZERO_ADDR,
+    ...DEFAULT_CONTRACT_ADDRESSES,
+    stakingRouter: pickAddress(source, 'stakingRouter'),
+    stToken: pickAddress(source, 'stToken'),
+    wstToken: pickAddress(source, 'wstToken'),
+    withdrawalQueueV2: pickAddress(source, 'withdrawalQueueV2'),
+    validatorModule: pickAddress(source, 'validatorModule'),
+    operatorRegistry: pickAddress(source, 'operatorRegistry'),
+    sgtToken: pickFirstAddress([source.sgtToken, source.sgtV2, SGT_TOKEN_BY_CHAIN[cid]]),
+    nftContract: pickAddress(source, 'nftContract'),
   }
 }
 
-function normalizeAmountInput(value) {
-  if (typeof value === 'string') return value.trim()
-  if (typeof value === 'number') {
-    if (!Number.isFinite(value)) throw new Error('Invalid numeric amount')
-    return value.toString()
-  }
-  if (typeof value === 'bigint') return value.toString()
-  return String(value ?? '').trim()
+export function getModularStakingAddresses(chainId) {
+  return getAddresses(chainId)
 }
 
 export const useModularStakingStore = defineStore('modularStaking', {
@@ -95,16 +165,14 @@ export const useModularStakingStore = defineStore('modularStaking', {
     moduleInflowLimit: '0',     // ETH limit per window (wei) — 0 = unlimited
     moduleInflowWindowReset: 0, // unix timestamp when window resets
 
-    // FeeController config (read-only, display only)
-    feeConfig: {
-      treasury: 0,
-      operator: 0,
-      referral: 0,
-      debtPool: 0,
-    },
+    // Validator module (solo staking)
+    validatorModuleInfo: null,  // { bufferedEther, beaconValidators, depositedValidatorCount, beaconBalance }
 
-    // DebtPool info (gated, display only)
-    debtPoolInfo: null, // null = not deployed, object = { distributionId, totalAccumulated, totalClaimed }
+    // Optional NFT bond credit
+    nftBalance: '0',
+    nftTokenIds: [],
+    nftSgtCredit: '0',
+    lockedNftCount: '0',
 
     // Contract deployment status
     contractsDeployed: false,
@@ -160,20 +228,16 @@ export const useModularStakingStore = defineStore('modularStaking', {
       if (!provider && typeof window !== 'undefined' && window.ethereum) {
         provider = new ethers.BrowserProvider(window.ethereum)
         walletStore.setEthersProvider(provider)
-        if (!walletStore.network && window.ethereum.chainId) {
-          walletStore.setNetwork(String(window.ethereum.chainId).toLowerCase())
-        }
       }
       if (!provider) return null
 
-      const fallbackWindowChainId =
-        typeof window !== 'undefined' && window.ethereum ? window.ethereum.chainId : null
-      const chainId = this.chainId || walletStore.network || fallbackWindowChainId
+      const chainId = this.chainId
       const addresses = getAddresses(chainId)
       if (!addresses) return null
 
-      // Check that contracts are actually deployed (non-zero address).
-      const allDeployed = Object.values(addresses).every(a => a !== ZERO_ADDR)
+      // Check that core staking contracts are deployed. NFT credit is optional.
+      const requiredContracts = ['stakingRouter', 'stToken', 'wstToken', 'withdrawalQueueV2', 'validatorModule']
+      const allDeployed = requiredContracts.every(key => addresses[key] && addresses[key] !== ZERO_ADDR)
       this.contractsDeployed = allDeployed
       if (!allDeployed) return null
 
@@ -188,22 +252,6 @@ export const useModularStakingStore = defineStore('modularStaking', {
       }
 
       return { addresses, make, makeSigned }
-    },
-
-    async _withTx(fn) {
-      this.loading = true
-      this.error = null
-      try {
-        const result = await fn()
-        const walletStore = useWalletStore()
-        await this.init(this.chainId, walletStore.address)
-        return result
-      } catch (e) {
-        this.error = e.message
-        throw e
-      } finally {
-        this.loading = false
-      }
     },
 
     // ── Data fetching ──────────────────────────────────────────────────────────
@@ -274,90 +322,48 @@ export const useModularStakingStore = defineStore('modularStaking', {
           }
         }
 
+        // Read module inflow data from StakingRouter
+        try {
+          const stakingRouter = make(stakingRouterABI, addresses.stakingRouter)
+          if (stakingRouter) {
+            this.defaultModuleId = await stakingRouter.defaultModuleId()
+            const inflowState = await stakingRouter.globalInflowWindowState()
+            const inflowConfig = await stakingRouter.globalInflowLimitConfig()
+            this.moduleInflowUsed = inflowState.totalDeposited.toString()
+            this.moduleInflowLimit = inflowConfig.limit.toString()
+            this.moduleInflowWindowReset = Number(inflowState.windowStart)
+          }
+        } catch (inflowErr) {
+          // Non-fatal: surface in console only. Happens when address is zero.
+          console.warn('ModularStakingStore: failed to read module inflow data', inflowErr)
+        }
+
+        // Read ValidatorModule data for solo staking
+        try {
+          if (addresses.validatorModule && addresses.validatorModule !== ZERO_ADDR) {
+            const validatorModule = make(validatorModuleABI, addresses.validatorModule)
+            if (validatorModule) {
+              const bufferedEther = await validatorModule.bufferedEther()
+              const beaconValidators = await validatorModule.beaconValidators()
+              const depositedValidatorCount = await validatorModule.depositedValidatorCount()
+              const beaconBalance = await validatorModule.beaconBalance()
+              this.validatorModuleInfo = {
+                bufferedEther: bufferedEther.toString(),
+                beaconValidators: beaconValidators.toString(),
+                depositedValidatorCount: depositedValidatorCount.toString(),
+                beaconBalance: beaconBalance.toString(),
+              }
+            }
+          }
+        } catch (validatorModuleErr) {
+          // Non-fatal: surface in console only. Happens when address is zero.
+          console.warn('ModularStakingStore: failed to read validator module data', validatorModuleErr)
+        }
+
         // Compute exchange rate: 1 ETH = how many stTokens
         if (BigInt(this.totalShares) > 0n) {
           const rate = (BigInt(this.totalPooledEther) * BigInt(1e18)) / BigInt(this.totalShares)
           this.exchangeRate = ethers.formatEther(rate)
-        }
-
-        // Read StakingRouter module metadata (non-fatal if missing).
-        try {
-          const routerAddr = addresses.stakingRouter
-          if (routerAddr && routerAddr !== ZERO_ADDR) {
-            const router = make(stakingRouterABI, routerAddr)
-            if (router) {
-              const modId = await router.defaultModuleId()
-              this.defaultModuleId = modId
-
-              if (modId && modId !== '0x0000000000000000000000000000000000000000000000000000000000000000') {
-                const mod = await router.modules(modId)
-                this.defaultModuleInfo = {
-                  addr: mod.addr,
-                  moduleType: mod.moduleType,
-                  mintCapEth: mod.mintCapEth.toString(),
-                  active: mod.active,
-                  paused: mod.paused,
-                }
-
-                const winState = await router.moduleInflowWindowState(modId)
-                this.moduleInflowUsed = winState.inflowEth.toString()
-
-                const limitCfg = await router.moduleInflowLimitConfig(modId)
-                this.moduleInflowLimit = limitCfg.maxInflowEthPerWindow.toString()
-
-                // Compute window reset timestamp.
-                const now = Math.floor(Date.now() / 1000)
-                const windowStart = Number(winState.windowStart)
-                const windowSeconds = Number(limitCfg.windowSeconds)
-                if (windowSeconds > 0) {
-                  const elapsed = now - windowStart
-                  const remaining = Math.max(0, windowSeconds - (elapsed % windowSeconds))
-                  this.moduleInflowWindowReset = now + remaining
-                } else {
-                  this.moduleInflowWindowReset = 0
-                }
-              }
-            }
-          }
-        } catch (routerErr) {
-          console.warn('ModularStakingStore: failed to read StakingRouter metadata', routerErr)
-        }
-
-        // Read FeeController config (read-only, display only)
-        try {
-          const feeControllerAddr = addresses.feeController
-          if (feeControllerAddr && feeControllerAddr !== ZERO_ADDR) {
-            const feeController = make(feeControllerABI, feeControllerAddr)
-            if (feeController && typeof feeController.getFeeConfig === 'function') {
-              const config = await feeController.getFeeConfig()
-              this.feeConfig = {
-                treasury: Number(config.treasurySplitBps),
-                operator: Number(config.operatorSplitBps),
-                referral: Number(config.referralSplitBps),
-                debtPool: Number(config.debtPoolSplitBps),
-              }
-            }
-          }
-        } catch (feeErr) {
-          console.warn('ModularStakingStore: failed to read FeeController config', feeErr)
-        }
-
-        // Read DebtPool info (gated, display only)
-        try {
-          const debtPoolAddr = addresses.debtPool
-          if (debtPoolAddr && debtPoolAddr !== ZERO_ADDR) {
-            const debtPool = make(debtPoolABI, debtPoolAddr)
-            if (debtPool && typeof debtPool.getStats === 'function') {
-              const stats = await debtPool.getStats()
-              this.debtPoolInfo = {
-                distributionId: stats._currentDistributionId.toString(),
-                totalAccumulated: stats._totalAccumulated.toString(),
-                totalClaimed: stats._totalClaimed.toString(),
-              }
-            }
-          }
-        } catch (debtErr) {
-          console.warn('ModularStakingStore: failed to read DebtPool info', debtErr)
         }
       } catch (e) {
         console.error('ModularStakingStore.init error:', e)
@@ -373,7 +379,7 @@ export const useModularStakingStore = defineStore('modularStaking', {
       const queue = make(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
       if (!queue) return
 
-      const nextId = parseInt(this.nextRequestId) || 0
+      const nextId = parseInt(this.nextRequestId)
       const requests = []
 
       for (let id = 1; id < nextId; id++) {
@@ -398,75 +404,36 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
     // ── Transactions ──────────────────────────────────────────────────────────
 
-    async stake(ethAmountStr, opts = {}) {
-      return this._withTx(async () => {
+    async stake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
+      this.loading = true
+      this.error = null
+      try {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available on this network')
 
         const { addresses, makeSigned } = ctx
+        const stakingRouter = await makeSigned(stakingRouterABI, addresses.stakingRouter)
+        if (!stakingRouter) throw new Error('StakingRouter not deployed')
 
-        // Prefer StakingRouter (modular V2 path) when available,
-        // falling back to StakingCore for legacy / non-modular deployments.
-        let contract = null
-        let contractName = 'StakingRouter'
-        if (addresses.stakingRouter && addresses.stakingRouter !== ZERO_ADDR) {
-          contract = await makeSigned(stakingRouterABI, addresses.stakingRouter)
-        }
-        if (!contract) {
-          contract = await makeSigned(stakingCoreABI, addresses.stakingCore)
-          contractName = 'StakingCore'
-        }
-        if (!contract) throw new Error(`${contractName} not deployed`)
-
-        const amount = ethers.parseEther(normalizeAmountInput(ethAmountStr))
-        const referralAddressInput =
-          typeof opts === 'string'
-            ? opts
-            : typeof opts === 'object' && opts !== null
-              ? opts.referralAddress
-              : null
-        const referralCodeHashInput =
-          typeof opts === 'object' && opts !== null ? opts.referralCodeHash : null
-
-        let referralAddress = ZERO_ADDR
-        try {
-          if (referralAddressInput && ethers.isAddress(referralAddressInput)) {
-            const canonical = ethers.getAddress(referralAddressInput)
-            if (canonical !== ZERO_ADDR) {
-              referralAddress = canonical
-            }
-          }
-        } catch {
-          referralAddress = ZERO_ADDR
-        }
-
-        let referralCodeHash = null
-        if (typeof referralCodeHashInput === 'string' && ethers.isHexString(referralCodeHashInput, 32)) {
-          referralCodeHash = referralCodeHashInput
-        }
-
-        const hasSubmitWithReferralCode =
-          typeof contract.submitWithReferralCode === 'function' &&
-          contract.interface &&
-          typeof contract.interface.hasFunction === 'function' &&
-          contract.interface.hasFunction('submitWithReferralCode(bytes32)')
-
-        let tx
-        if (referralCodeHash && hasSubmitWithReferralCode) {
-          tx = await contract.submitWithReferralCode(referralCodeHash, { value: amount })
-        } else if (referralAddress !== ZERO_ADDR) {
-          tx = await contract.submit(referralAddress, { value: amount })
-        } else {
-          tx = await contract.submit(ZERO_ADDR, { value: amount })
-        }
-
+        const amount = ethers.parseEther(String(ethAmountStr))
+        const tx = await stakingRouter.submit(referral, { value: amount })
         await tx.wait()
+
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
         return tx
-      })
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
 
     async wrap(stAmountStr) {
-      return this._withTx(async () => {
+      this.loading = true
+      this.error = null
+      try {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -475,10 +442,11 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const stToken = await makeSigned(stTokenABI, addresses.stToken)
         if (!wstToken || !stToken) throw new Error('Contracts not deployed')
 
-        const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
+        const amount = ethers.parseEther(String(stAmountStr))
+        const walletStore = useWalletStore()
 
-        // Approve wstToken to spend stToken only if allowance is insufficient.
-        const allowance = await stToken.allowance(await stToken.runner.getAddress(), addresses.wstToken)
+        // Skip approve when existing allowance already covers the amount.
+        const allowance = await stToken.allowance(walletStore.address, addresses.wstToken)
         if (allowance < amount) {
           const approveTx = await stToken.approve(addresses.wstToken, amount)
           await approveTx.wait()
@@ -486,12 +454,20 @@ export const useModularStakingStore = defineStore('modularStaking', {
 
         const wrapTx = await wstToken.wrap(amount)
         await wrapTx.wait()
+        await this.init(this.chainId, walletStore.address)
         return wrapTx
-      })
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
 
     async unwrap(wstAmountStr) {
-      return this._withTx(async () => {
+      this.loading = true
+      this.error = null
+      try {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -499,15 +475,25 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const wstToken = await makeSigned(wstTokenABI, addresses.wstToken)
         if (!wstToken) throw new Error('WstToken not deployed')
 
-        const amount = ethers.parseEther(normalizeAmountInput(wstAmountStr))
+        const amount = ethers.parseEther(String(wstAmountStr))
         const tx = await wstToken.unwrap(amount)
         await tx.wait()
+
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
         return tx
-      })
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
 
     async requestWithdrawal(stAmountStr) {
-      return this._withTx(async () => {
+      this.loading = true
+      this.error = null
+      try {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -516,15 +502,24 @@ export const useModularStakingStore = defineStore('modularStaking', {
         if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
 
         const walletStore = useWalletStore()
-        const amount = ethers.parseEther(normalizeAmountInput(stAmountStr))
+        const amount = ethers.parseEther(String(stAmountStr))
         const tx = await queue.requestWithdrawals([amount], walletStore.address)
         await tx.wait()
+
+        await this.init(this.chainId, walletStore.address)
         return tx
-      })
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
 
     async claimWithdrawal(requestId) {
-      return this._withTx(async () => {
+      this.loading = true
+      this.error = null
+      try {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
@@ -535,23 +530,118 @@ export const useModularStakingStore = defineStore('modularStaking', {
         const walletStore = useWalletStore()
         const tx = await queue.claimWithdrawal(requestId, walletStore.address)
         await tx.wait()
+
+        await this.init(this.chainId, walletStore.address)
         return tx
-      })
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
 
-    async finalize(lastRequestId) {
-      return this._withTx(async () => {
+
+    async checkNftBalance(userAddress) {
+      const walletStore = useWalletStore()
+      const provider = walletStore.ethersProvider
+      const addresses = getAddresses(this.chainId)
+      if (!provider || !addresses || !userAddress || !addresses.nftContract || addresses.nftContract === ZERO_ADDR) {
+        this.nftBalance = '0'
+        this.nftTokenIds = []
+        this.nftSgtCredit = '0'
+        this.lockedNftCount = '0'
+        return { balance: '0', tokenIds: [] }
+      }
+
+      const nft = new ethers.Contract(addresses.nftContract, ERC721_ENUMERABLE_ABI, provider)
+      const balance = await nft.balanceOf(userAddress)
+      const maxToRead = balance > 20n ? 20n : balance
+      const tokenIds = []
+      for (let i = 0n; i < maxToRead; i++) {
+        try {
+          tokenIds.push((await nft.tokenOfOwnerByIndex(userAddress, i)).toString())
+        } catch (err) {
+          console.warn('ModularStakingStore: NFT token enumeration failed', err)
+          break
+        }
+      }
+
+      this.nftBalance = balance.toString()
+      this.nftTokenIds = tokenIds
+
+      if (addresses.operatorRegistry && addresses.operatorRegistry !== ZERO_ADDR) {
+        const registry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, provider)
+        try {
+          this.nftSgtCredit = (await registry.nftSgtCredit()).toString()
+          this.lockedNftCount = (await registry.escrowedNftCount(userAddress)).toString()
+        } catch (err) {
+          console.warn('ModularStakingStore: NFT credit metadata unavailable', err)
+        }
+      }
+
+      return { balance: balance.toString(), tokenIds }
+    },
+
+    async lockNftForCredit(tokenId) {
+      this.loading = true
+      this.error = null
+      try {
+        const walletStore = useWalletStore()
+        const provider = walletStore.ethersProvider
+        const addresses = getAddresses(this.chainId)
+        if (!provider || !addresses) throw new Error('Contracts not available')
+        if (!addresses.operatorRegistry || addresses.operatorRegistry === ZERO_ADDR) throw new Error('OperatorRegistry not deployed')
+        if (!addresses.nftContract || addresses.nftContract === ZERO_ADDR) throw new Error('NFT contract not configured')
+
+        const signer = await provider.getSigner()
+        const nft = new ethers.Contract(addresses.nftContract, ERC721_ENUMERABLE_ABI, signer)
+        const registry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, signer)
+        const id = BigInt(tokenId)
+
+        const approved = await nft.getApproved(id)
+        if (approved.toLowerCase() !== addresses.operatorRegistry.toLowerCase()) {
+          const approveTx = await nft.approve(addresses.operatorRegistry, id)
+          await approveTx.wait()
+        }
+
+        const tx = await registry.lockNftForCredit(id)
+        await tx.wait()
+        await this.checkNftBalance(walletStore.address)
+        return tx
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
+    },
+    async soloStake(ethAmountStr, referral = '0x0000000000000000000000000000000000000000') {
+      this.loading = true
+      this.error = null
+      try {
         const ctx = this._getContracts()
         if (!ctx) throw new Error('Contracts not available')
 
         const { addresses, makeSigned } = ctx
-        const queue = await makeSigned(withdrawalQueueV2ABI, addresses.withdrawalQueueV2)
-        if (!queue) throw new Error('WithdrawalQueueV2 not deployed')
+        const router = await makeSigned(stakingRouterABI, addresses.stakingRouter)
+        if (!router) throw new Error('StakingRouter not deployed')
 
-        const tx = await queue.finalize(lastRequestId)
+        const amount = ethers.parseEther(String(ethAmountStr))
+        if (amount < ethers.parseEther('32')) throw new Error('Minimum 32 ETH for solo staking')
+
+        const tx = await router.submitToModule(SOLO_VALIDATOR_MODULE_ID, referral, { value: amount })
         await tx.wait()
+
+        const walletStore = useWalletStore()
+        await this.init(this.chainId, walletStore.address)
         return tx
-      })
+      } catch (e) {
+        this.error = e.message
+        throw e
+      } finally {
+        this.loading = false
+      }
     },
   },
 })

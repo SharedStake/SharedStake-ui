@@ -18,8 +18,9 @@ yarn-error.log*
 pnpm-debug.log*
 .yarnclean
 
-# Package manager lock files (we use Bun exclusively)
+# Package manager lock files (root app uses Bun; staking-contracts uses npm for Hardhat)
 package-lock.json
+!staking-contracts/package-lock.json
 yarn.lock
 pnpm-lock.yaml
 

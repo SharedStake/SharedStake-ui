@@ -4,6 +4,10 @@ import {
   rpcRequest,
   seedAndImpersonate,
 } from './helpers/impersonator.js';
+import {
+  assertLocalContractsDeployed,
+  localAddressQuery
+} from './helpers/local-address-query.js';
 
 const DEFAULT_IMPERSONATOR_ADDRESS = '0x1111111111111111111111111111111111111111';
 const RPC_URL = process.env.E2E_IMPERSONATOR_RPC_URL || 'http://127.0.0.1:8545';
@@ -15,6 +19,7 @@ test.describe('WrapPanel — UI rendering', () => {
 
   test.beforeAll(async () => {
     chainIdHex = await rpcRequest(RPC_URL, 'eth_chainId');
+    await assertLocalContractsDeployed(RPC_URL);
   });
 
   test.beforeEach(async ({ page }) => {
@@ -26,7 +31,7 @@ test.describe('WrapPanel — UI rendering', () => {
       chainIdHex,
     });
 
-    await page.goto(`/v2?e2eAddress=${IMPERSONATOR_ADDRESS}`, {
+    await page.goto(`/v2?${localAddressQuery(IMPERSONATOR_ADDRESS)}`, {
       waitUntil: 'networkidle',
     });
 

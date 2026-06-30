@@ -1,0 +1,13 @@
+arrowParens: avoid
+bracketSpacing: false
+endOfLine: auto
+printWidth: 120
+singleQuote: false
+tabWidth: 2
+trailingComma: all
+plugins: ["prettier-plugin-solidity"]
+overrides:
+  - files: "contracts/**/*.sol"
+    options:
+      tabWidth: 4
+      parser: "solidity-parse"

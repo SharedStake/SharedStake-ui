@@ -1,0 +1,54 @@
+name: Contract Audit
+
+on:
+  pull_request:
+    paths:
+      - 'staking-contracts/**'
+      - 'docs/modular-staking/**'
+      - '.github/workflows/audit.yml'
+  push:
+    branches:
+      - main
+      - feat/protocol-v3-fresh
+    paths:
+      - 'staking-contracts/**'
+      - 'docs/modular-staking/**'
+      - '.github/workflows/audit.yml'
+  workflow_dispatch:
+
+jobs:
+  staking-contracts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: staking-contracts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Dependency audit
+        run: npm audit --audit-level=moderate
+
+      - name: Solidity lint
+        run: npm run lint:sol
+
+      - name: Compile contracts
+        run: npx hardhat compile
+
+      - name: Hardhat modular staking tests
+        run: npx hardhat test test/v2/modular-staking/*.spec.ts
+
+      - name: Setup Foundry
+        run: npm run setup:foundry
+
+      - name: Foundry invariants
+        run: npm run test:invariants
+
+      - name: Slither static analysis
+        continue-on-error: true
+        run: |
+          python3 -m pip install --user slither-analyzer
+          python3 -m slither . --exclude-dependencies --filter-paths 'node_modules|artifacts|cache|test'

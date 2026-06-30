@@ -3,9 +3,13 @@
 **Date:** 2026-05-08
 **Auditor:** Codex GPT-5
 **Scope:** `contracts/v2/modular-staking/*.sol` + `contracts/v2/modular-staking/modules/*.sol`
-**Commit:** `721a055` (SharedDeposit submodule)
+**Commit:** `721a055` (pre-migration internal audit baseline; sources now live in `staking-contracts/`)
 
 ---
+
+## Latest PR 379 Validation Note
+
+As of 2026-06-02, modular staking sources are expected to live locally under `staking-contracts/`, with no SharedDeposit or infra submodule gitlinks. Current repeatable gates are documented in `AUDIT_WORKFLOW.md` and mirrored by `.github/workflows/audit.yml`. The historical findings below remain useful context, but landing checks should use the current workflow gates and the latest branch commit under review.
 
 ## Executive Summary
 
@@ -39,11 +43,11 @@ The V2 modular staking contracts are **well-architected with strong security fun
 **Impact:** Low — admin turnover could leave stale MINTER privileges.
 **Fix:** Add `revokeRole(MINTER, msg.sender)` in `transferAdmin()` if caller has MINTER.
 
-#### LOW-02: `FeeController.recordDistribution()` has no meaningful access control value
+#### LOW-02 (fixed): `FeeController.recordDistribution()` had no meaningful access control value
 **File:** `FeeController.sol`
-**Finding:** `recordDistribution()` is `onlyRole(GOV)` but only emits an event. It doesn't affect state. GOV can call it but it's purely ceremonial.
-**Impact:** Low — unnecessary function. Could be called by StakingCore/Router directly after minting.
-**Fix:** Remove or make callable by any MINTER-contract.
+**Finding:** `recordDistribution()` was `onlyRole(GOV)` but only emitted an event. It did not affect state.
+**Impact:** Low — unnecessary function.
+**Status:** Fixed — the function has been removed from `FeeController.sol`; fee distribution happens in `StakingCore._distributeFees()` and `StakingRouter._distributeFees()`.
 
 #### LOW-03: `StakingCore` and `StakingRouter` both have `receive()` with no role check
 **File:** `StakingCore.sol`, `StakingRouter.sol`
@@ -122,9 +126,9 @@ Between `burnShares` and `setTotalPooledEther`, a reentrant call could observe i
 
 #### LOW-09: `StakingRouter._applyBeaconDelta()` clamps pool to 0 on insolvency instead of reverting
 **File:** `StakingRouter.sol`
-**Finding:** If `currentPooled <= loss`, the pool is set to 0 and `PoolInsolvent` is emitted. This means the exchange rate becomes undefined (0 shares / 0 pooled), and the next depositor resets the pool.
-**Impact:** Low — this is a known "socialized loss" design choice.
-**Status:** Documented and accepted by design.
+**Finding:** If `currentPooled <= loss`, the pool is set to 0 and `PoolInsolvent` is emitted. Shares can remain outstanding with zero pooled ETH.
+**Impact:** Low — this is a known "socialized loss" design choice; `ShareMath` now rejects new deposits while shares remain and pooled ETH is zero, preventing a new depositor from re-bootstrapping the pool and donating value to legacy shares.
+**Status:** Documented, fuzzed, and accepted by design.
 
 #### LOW-10: `StakingRouter.wrapFromModule()` and `unwrapToModule()` have asymmetric cap checks
 **File:** `StakingRouter.sol`
@@ -173,17 +177,17 @@ This caps `reportAge` at 0 for future timestamps. So a future timestamp passes w
 
 ### 5.1 Frontend-only artifacts in contracts
 
-#### INFO-01: `FeeController.recordDistribution()` is dead code
+#### INFO-01 (fixed): `FeeController.recordDistribution()` was dead code
 **File:** `FeeController.sol`
-**Finding:** This function only emits an event and is `onlyRole(GOV)`. The actual fee distribution happens in `StakingCore._distributeFees()` and `StakingRouter._distributeFees()`, which mint shares directly. No one calls `recordDistribution()`.
-**Fix:** Remove or repurpose as a callback from MINTER.
+**Finding:** This function only emitted an event and was `onlyRole(GOV)`. The actual fee distribution happens in `StakingCore._distributeFees()` and `StakingRouter._distributeFees()`, which mint shares directly.
+**Status:** Fixed — the function has been removed.
 
 ### 5.2 Unused imports
 
-#### INFO-02: `StToken.sol` imports `IERC20Metadata` but never uses it
+#### INFO-02 (fixed): `StToken.sol` imported `IERC20Metadata` but never used it
 **File:** `StToken.sol`
-**Finding:** `import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";` is unused.
-**Fix:** Remove import.
+**Finding:** `import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";` was unused.
+**Status:** Fixed — the unused import has been removed.
 
 #### INFO-03: `ValidatorModule.sol` imports `IDepositContract` but it's only used in a cast
 **File:** `ValidatorModule.sol`

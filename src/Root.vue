@@ -165,6 +165,34 @@
         </router-link>
       </div>
 
+      <!-- Validators Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">
+          Validators
+        </div>
+        <router-link
+          class="link"
+          to="/solo-stake"
+          @click.native="showSidebar = false"
+        >
+          Solo Validator
+        </router-link>
+        <router-link
+          class="link"
+          to="/govern"
+          @click.native="showSidebar = false"
+        >
+          Governance / veSGT
+        </router-link>
+        <router-link
+          class="link"
+          to="/v2"
+          @click.native="showSidebar = false"
+        >
+          V2 Staking (Beta)
+        </router-link>
+      </div>
+
       <!-- Learn & Resources Section -->
       <div class="sidebar-section">
         <div class="sidebar-section-header">
@@ -179,18 +207,19 @@
         </router-link>
         <router-link
           class="link"
-          to="/docs/architecture"
+          to="/architecture"
           @click.native="showSidebar = false"
         >
           Architecture
         </router-link>
-        <router-link
-          class="link"
-          to="/docs"
-          @click.native="showSidebar = false"
-        >
-          Docs
-        </router-link>
+        <span class="link">
+          <a
+            href="https://docs.sharedstake.finance/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Docs
+          </a>
+        </span>
         <span class="link">
           <a
             href="https://snapshot.page/#/sharedstake.eth"
@@ -344,10 +373,14 @@
               >Github
               </a></span>
             <span class="link footerLink">
-              <router-link to="/docs">Documentation</router-link>
-            </span>
+              <a
+                href="https://docs.sharedstake.finance/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Documentation
+              </a></span>
             <span class="link footerLink">
-              <router-link to="/docs/architecture">Architecture</router-link>
+              <router-link to="/architecture">Architecture</router-link>
             </span>
             <span class="link footerLink">
               <router-link to="/blog">Blog</router-link>
@@ -376,8 +409,12 @@
               <router-link to="/FAQ">FAQ </router-link>
             </span>
             <span class="link footerLink">
-              <router-link to="/docs/security-risks">Risks</router-link>
-            </span>
+              <a
+                href="https://docs.sharedstake.org/risks"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Risks
+              </a></span>
             <span class="link footerLink">
               <router-link to="/privacy">Privacy Policy </router-link>
             </span>

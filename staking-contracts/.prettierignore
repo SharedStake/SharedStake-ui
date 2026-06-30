@@ -1,0 +1,23 @@
+# folders
+artifacts/
+build/
+cache/
+coverage/
+dist/
+lib/
+node_modules/
+typechain/
+flats/
+data/
+
+# files
+coverage.json
+other_contracts/sharedDeposit_1.1.0.sol
+other_contracts/*
+contracts/interfaces/*
+deploy_log.json
+
+contracts/governance/VestingMerkleDistributor.sol
+contracts/governance/SimpleVesting.sol
+contracts/util/SingleTokenVestingNonRevocable.sol
+contracts/drafts/*
