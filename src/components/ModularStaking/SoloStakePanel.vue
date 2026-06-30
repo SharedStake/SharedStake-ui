@@ -480,19 +480,53 @@ export default {
     formattedNftCredit() {
       try { return parseFloat(ethers.formatEther(this.nftSgtCredit || '0')).toLocaleString() } catch { return '0' }
     },
+
+    walletAddress() {
+      return this.walletStore.address
+    },
+
+    walletNetwork() {
+      return this.walletStore.network
+    },
+  },
+
+  created() {
+    this.stopWalletWatch = this.$watch(
+      () => [this.walletAddress, this.walletNetwork],
+      async () => {
+        await this.refreshOperatorState()
+      },
+      { immediate: true }
+    )
   },
 
   async mounted() {
-    await this.checkContractDeployment()
-    if (this.walletStore.isAuth) {
-      await this.fetchUserData()
+    await this.refreshOperatorState()
+  },
+
+  unmounted() {
+    if (this.stopWalletWatch) {
+      this.stopWalletWatch()
     }
   },
 
   methods: {
+    async refreshOperatorState() {
+      const chainId = this.walletNetwork || this.store.chainId
+      if (chainId) {
+        await this.store.init(chainId, this.walletAddress)
+      }
+
+      await this.checkContractDeployment()
+
+      if (this.walletStore.isAuth) {
+        await this.fetchUserData()
+      }
+    },
+
     async checkContractDeployment() {
       try {
-        const chainId = this.store.chainId
+        const chainId = this.store.chainId || this.walletNetwork
         if (!chainId) return
         
         const addresses = this.getAddresses(chainId)
@@ -502,7 +536,11 @@ export default {
         this.contractsDeployed = addresses.operatorRegistry !== '0x0000000000000000000000000000000000000000'
         
         if (this.contractsDeployed) {
-          await this.fetchBondConfig()
+          try {
+            await this.fetchBondConfig()
+          } catch (e) {
+            console.warn('OperatorRegistry deployed but bond config metadata is unavailable:', e)
+          }
         }
       } catch (e) {
         console.error('Error checking contract deployment:', e)
@@ -513,14 +551,24 @@ export default {
     getAddresses(chainId) {
       return getModularStakingAddresses(chainId)
     },
+
+    getWalletProvider() {
+      let provider = this.walletStore.ethersProvider
+      if (!provider && typeof window !== 'undefined' && window.ethereum) {
+        provider = new ethers.BrowserProvider(window.ethereum)
+        window.ethersProvider = provider
+        this.walletStore.setEthersProvider(provider)
+      }
+      return provider
+    },
     
     async fetchBondConfig() {
       try {
-        const chainId = this.store.chainId
+        const chainId = this.store.chainId || this.walletNetwork
         const addresses = this.getAddresses(chainId)
         if (!addresses || !this.contractsDeployed) return
         
-        const provider = this.walletStore.ethersProvider
+        const provider = this.getWalletProvider()
         if (!provider) return
         
         const operatorRegistry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, provider)
@@ -538,11 +586,11 @@ export default {
     
     async fetchUserData() {
       try {
-        const chainId = this.store.chainId
+        const chainId = this.store.chainId || this.walletNetwork
         const addresses = this.getAddresses(chainId)
         if (!addresses || !this.contractsDeployed) return
         
-        const provider = this.walletStore.ethersProvider
+        const provider = this.getWalletProvider()
         if (!provider) return
         
         const userAddress = this.walletStore.address
@@ -632,13 +680,13 @@ export default {
       this.loading = true
       this.error = null
       try {
-        const chainId = this.store.chainId
+        const chainId = this.store.chainId || this.walletNetwork
         const addresses = this.getAddresses(chainId)
         if (!addresses || !this.contractsDeployed) {
           throw new Error('Contracts not deployed')
         }
         
-        const provider = this.walletStore.ethersProvider
+        const provider = this.getWalletProvider()
         const signer = await provider.getSigner()
         const sgtToken = new ethers.Contract(addresses.sgtToken, sgtTokenABI, signer)
         
@@ -662,13 +710,13 @@ export default {
       this.error = null
       this.successMessage = null
       try {
-        const chainId = this.store.chainId
+        const chainId = this.store.chainId || this.walletNetwork
         const addresses = this.getAddresses(chainId)
         if (!addresses || !this.contractsDeployed) {
           throw new Error('Contracts not deployed')
         }
         
-        const provider = this.walletStore.ethersProvider
+        const provider = this.getWalletProvider()
         const signer = await provider.getSigner()
         const operatorRegistry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, signer)
         
@@ -696,13 +744,13 @@ export default {
       this.error = null
       this.successMessage = null
       try {
-        const chainId = this.store.chainId
+        const chainId = this.store.chainId || this.walletNetwork
         const addresses = this.getAddresses(chainId)
         if (!addresses || !this.contractsDeployed) {
           throw new Error('Contracts not deployed')
         }
         
-        const provider = this.walletStore.ethersProvider
+        const provider = this.getWalletProvider()
         const signer = await provider.getSigner()
         const operatorRegistry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, signer)
         
@@ -729,13 +777,13 @@ export default {
       this.error = null
       this.successMessage = null
       try {
-        const chainId = this.store.chainId
+        const chainId = this.store.chainId || this.walletNetwork
         const addresses = this.getAddresses(chainId)
         if (!addresses || !this.contractsDeployed) {
           throw new Error('Contracts not deployed')
         }
         
-        const provider = this.walletStore.ethersProvider
+        const provider = this.getWalletProvider()
         const signer = await provider.getSigner()
         const operatorRegistry = new ethers.Contract(addresses.operatorRegistry, operatorRegistryABI, signer)
         

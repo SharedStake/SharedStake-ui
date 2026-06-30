@@ -17,7 +17,6 @@ export const architectureMeta = {
     "docs/modular-staking/AUDIT_WORKFLOW.md",
     "staking-contracts/contracts/v2/modular-staking/StakingRouter.sol",
     "staking-contracts/contracts/v2/modular-staking/modules/ValidatorModule.sol",
-    "staking-contracts/contracts/v2/modular-staking/modules/DVTModule.sol",
     "staking-contracts/contracts/v2/modular-staking/modules/LSTWrapModule.sol",
     "staking-contracts/contracts/v2/governance/VoteEscrowV2.sol",
     "staking-contracts/contracts/v2/governance/SharedStakeGovernor.sol",
@@ -38,7 +37,7 @@ export const coreArchitecture = [
     title: "Execution Modules",
     points: [
       "ValidatorModule handles solo-validator ETH flow behind the router.",
-      "DVTModule extends validator flow with cluster-attributed deposits and DVT controls.",
+      "Planned DVTModule support extends validator flow with cluster-attributed deposits and DVT controls; contract deployment and UI activation are deferred to the DVT follow-up PR.",
       "LSTWrapModule accepts oracle-priced LST exposure and mints/burns through router callbacks.",
     ],
   },
@@ -171,7 +170,7 @@ export const architectureDiagrams = [
       },
       {
         label: "Modules",
-        nodes: ["ValidatorModule", "DVTModule", "LSTWrapModule"],
+        nodes: ["ValidatorModule", "Planned DVTModule", "LSTWrapModule"],
       },
       {
         label: "Accounting",
@@ -188,7 +187,7 @@ export const architectureDiagrams = [
       },
     ],
     flows: [
-      "Submit ETH -> StakingRouter -> selected validator/DVT module -> StToken shares",
+      "Submit ETH -> StakingRouter -> selected validator module -> StToken shares",
       "Wrap LST -> LSTWrapModule -> StakingRouter callback -> StToken shares",
       "Request exit -> WithdrawalQueueV2 burns shares -> guardian finalizes ETH -> user claims",
       "Oracle report -> module validates -> router updates pooled ETH and fee shares",

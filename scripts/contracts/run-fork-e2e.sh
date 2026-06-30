@@ -258,9 +258,9 @@ bun run test:e2e -- \
   tests/e2e/airdrop.spec.js \
   tests/e2e/stake-approve-flow.spec.js \
   tests/e2e/modular-staking-v2.spec.js \
+  tests/e2e/solo-stake.spec.js \
   tests/e2e/wrap-panel.spec.js \
   tests/e2e/withdraw-panel.spec.js \
-  tests/e2e/dvt-panel.spec.js \
   tests/e2e/lock-gov.spec.js
 
 if [[ "$RUN_WALLET" -eq 1 ]]; then
