@@ -22,8 +22,8 @@ Copy `.env.production.example` to `.env.production` and fill in required values.
 ## Production Status
 
 ### V2 Modular Staking (current)
-✅ Contracts: StakingRouter + StakingCore + StToken + WstToken + WithdrawalQueueV2 + FeeController + DebtPool + VoteEscrowV2 + governance
-✅ 6-pass internal security audit complete — 398 contract tests passing, 7 Foundry invariants passing
+✅ Contracts: StakingRouter + StakingCore + StToken + WstToken + WithdrawalQueueV2 + FeeController + DebtPool + sgethV1Claim + VoteEscrowV2 + governance
+✅ Internal security audit baseline complete — contract tests and Foundry invariants passing
 ✅ Full frontend: Stake / Wrap / Withdraw / Lock / Governance panels at `/v2`
 ✅ Referral service backend skeleton (services/referral-service/)
 ✅ Security dependencies updated

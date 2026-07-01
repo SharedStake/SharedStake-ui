@@ -45,6 +45,7 @@ Deliver a production-oriented router-based staking system with:
 
 ### Debt distribution layer
 - `DebtPool.sol`: Merkle tree-based debt distribution for protocol liabilities and fee claims.
+- `SgEthV1Claim.sol`: sgETH V1 loss receipt-token Merkle claim contract. Claims are recipient-only and receipt transfers are disabled unless governance enables them.
 
 ### Exit layer
 - `WithdrawalQueueV2.sol`: request/finalize/claim lifecycle with TURBO/BUNKER modes.
@@ -72,6 +73,7 @@ Deliver a production-oriented router-based staking system with:
 | `StEthPriceOracle` | Chainlink-backed stETH price oracle for LST module with staleness checks. |
 | `InstitutionalPolicyRegistry` | Optional per-module policy gate provider. |
 | `DebtPool` | Merkle tree-based debt distribution for protocol liabilities and fee claims. |
+| `SgEthV1Claim` | Merkle-selected receipt-token claim for sgETH V1 loss recipients; non-transferable by default. |
 | `WithdrawalQueueV2` | Exit queue with request-time value lock, optional router accounting syncer, and guarded finalization. |
 | `Referral Service` | Offchain code-to-address mapping and referral code lifecycle (create/revoke/list/resolve). |
 | `Referral Sync Worker` | Reads onchain referral events and reports backend/onchain mapping divergence. |

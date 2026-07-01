@@ -256,6 +256,7 @@ PW_FORCE_FRESH_SERVER=1 \
 PW_WEB_SERVER_PORT="$WEB_PORT" \
 bun run test:e2e -- \
   tests/e2e/airdrop.spec.js \
+  tests/e2e/sgeth-v1-claim.spec.js \
   tests/e2e/stake-approve-flow.spec.js \
   tests/e2e/modular-staking-v2.spec.js \
   tests/e2e/solo-stake.spec.js \

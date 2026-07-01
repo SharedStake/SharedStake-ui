@@ -17,6 +17,7 @@ export const REQUIRED_V2_CONTRACT_KEYS = [
   'wstToken',
   'withdrawalQueueV2',
   'validatorModule',
+  'sgethV1Claim',
 ];
 
 const isAddress = (value) => /^0x[a-fA-F0-9]{40}$/.test(value || '');

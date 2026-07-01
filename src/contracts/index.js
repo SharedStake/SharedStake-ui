@@ -29,6 +29,7 @@ import withdrawalQueueV2ABI from './abis/withdrawalQueueV2.json'
 import oldVeth2WithdrawalQueueABI from './abis/oldVeth2WithdrawalQueue.json'
 import validatorModuleABI from './abis/validatorModule.json'
 import operatorRegistryABI from './abis/operatorRegistry.json'
+import sgethV1ClaimABI from './abis/sgethV1Claim.json'
 
 // Chain-specific contract addresses
 import mainnetAddresses from './addresses/mainnet.json'
@@ -134,7 +135,8 @@ let _ABIs = {
     withdrawalQueueV2: withdrawalQueueV2ABI,
     oldVeth2WithdrawalQueue: oldVeth2WithdrawalQueueABI,
     validatorModule: validatorModuleABI,
-    operatorRegistry: operatorRegistryABI
+    operatorRegistry: operatorRegistryABI,
+    sgethV1Claim: sgethV1ClaimABI
 }
 
 let connErr = () => {
@@ -401,6 +403,7 @@ export const rollovers = (useSigner = false) => createContractDefault("rollovers
 export const oldVeth2WithdrawalQueue = (useSigner = false) => createContractDefault('oldVeth2WithdrawalQueue', useSigner);
 export const sgETH = (useSigner = false) => createContractDefault('sgETH', useSigner);
 export const wsgETH = (useSigner = false) => createContractDefault("wsgETH", useSigner);
+export const sgethV1Claim = (useSigner = false) => createContractDefault("sgethV1Claim", useSigner);
 
 // Deprecated withdrawals contracts - returns array of contract addresses
 export const getDeprecatedWithdrawalsAddresses = () => {

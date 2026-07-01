@@ -25,6 +25,7 @@
   "withdrawals_deprecated_v1": "0xed4e21BD620F3C1Fd1853b1C52A9D023C33D83d4",
   "withdrawals_deprecated_v2": "0xa308f4a980c4a2960e9e87fc51dbf2b0b50ca432",
   "oldVeth2WithdrawalQueue": "",
+  "sgethV1Claim": "",
   "sgETH": "0x9e52dB44d62A8c9762FA847Bd2eBa9d0585782d1",
   "wsgETH": "0x31AA035313b1D2109e61Ee0E3662A86A8615fF1d"
 }

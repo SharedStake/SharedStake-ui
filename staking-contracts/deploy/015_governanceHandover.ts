@@ -27,6 +27,7 @@ const GOVERNED_DEPLOYMENTS = [
   "ReferralCodeRegistry",
   "DebtPool",
   "OperatorRegistry",
+  "SgEthV1Claim",
 ];
 
 async function grantRoleIfNeeded(contract: any, role: string, holder: string, label: string) {
@@ -215,6 +216,7 @@ func.dependencies = [
   "debtPool",
   "institutionalPolicyRegistry",
   "operator-registry",
+  "sgeth-v1-claim",
   "migration",
   "governance",
 ];
