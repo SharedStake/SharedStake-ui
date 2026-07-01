@@ -23,6 +23,13 @@
           for new farming pools!
         </div>
         <div class="notification">
+          sgETH V1 loss recipients can
+          <RouterLink to="/sgeth-v1-claim">
+            claim sgethV1Claim
+          </RouterLink>
+          receipt tokens.
+        </div>
+        <div class="notification">
           <!-- For new farming pools you can also use
           <a
             href="https://app.multifarm.fi/farms/ETH_Sharedstake"

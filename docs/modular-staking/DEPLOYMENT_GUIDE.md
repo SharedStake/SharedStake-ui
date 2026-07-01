@@ -329,6 +329,18 @@ feeController.setRecipients(
 );
 ```
 
+### Phase 3.5.1: sgETH V1 Claim Receipt Airdrop
+
+Deploy `SgEthV1Claim` with an audited Merkle root for selected sgETH V1 loss recipients:
+
+- `SGETH_V1_CLAIM_ROOT` or `V2_SGETH_V1_CLAIM_ROOT`: required on non-local networks
+- `SGETH_V1_CLAIM_GUARDIAN` or `V2_SGETH_V1_CLAIM_GUARDIAN`: optional pause guardian, defaults to governance
+- `SGETH_V1_CLAIM_TRANSFERS_ENABLED` or `V2_SGETH_V1_CLAIM_TRANSFERS_ENABLED`: optional boolean, defaults to `false`
+
+Claims are recipient-only: `claim(index, account, amount, proof)` reverts unless `msg.sender == account`. The receipt token name and symbol are both `sgethV1Claim`. Normal ERC20 transfers are disabled by default and can only be changed by governance.
+
+Before mainnet launch, replace `src/components/Earn/sgethV1ClaimAirdrop.js` with the audited production recipient tree that matches `SGETH_V1_CLAIM_ROOT`. The checked-in single-recipient tree is a deterministic local/fork fixture only.
+
 ### Phase 3.6: Operator Registry and Migration Helper
 
 #### Step 16: Deploy OperatorRegistry (via deploy script 020_operatorRegistry.ts)

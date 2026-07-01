@@ -91,6 +91,7 @@ normalized_addresses_json() {
   local debt_pool
   local institutional_policy_registry
   local operator_registry
+  local sgeth_v1_claim
   local migration_helper
   local sgt_v2
   local vote_escrow_v2
@@ -120,6 +121,7 @@ normalized_addresses_json() {
   debt_pool="$(read_address_or_empty "$network" "DebtPool")"
   institutional_policy_registry="$(read_address_or_empty "$network" "InstitutionalPolicyRegistry")"
   operator_registry="$(read_address_or_empty "$network" "OperatorRegistry")"
+  sgeth_v1_claim="$(read_address_or_empty "$network" "SgEthV1Claim")"
   migration_helper="$(read_address_or_empty "$network" "MigrationHelper")"
   sgt_v2="$(read_address_or_empty "$network" "SGTV2")"
   vote_escrow_v2="$(read_address_or_empty "$network" "VoteEscrowV2")"
@@ -150,6 +152,7 @@ normalized_addresses_json() {
     --arg debt_pool "$debt_pool" \
     --arg institutional_policy_registry "$institutional_policy_registry" \
     --arg operator_registry "$operator_registry" \
+    --arg sgeth_v1_claim "$sgeth_v1_claim" \
     --arg migration_helper "$migration_helper" \
     --arg sgt_v2 "$sgt_v2" \
     --arg vote_escrow_v2 "$vote_escrow_v2" \
@@ -179,6 +182,7 @@ normalized_addresses_json() {
       debtPool: $debt_pool,
       institutionalPolicyRegistry: $institutional_policy_registry,
       operatorRegistry: $operator_registry,
+      sgethV1Claim: $sgeth_v1_claim,
       migrationHelper: $migration_helper,
       sgtV2: $sgt_v2,
       voteEscrowV2: $vote_escrow_v2,

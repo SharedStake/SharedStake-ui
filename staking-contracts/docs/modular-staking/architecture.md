@@ -32,18 +32,19 @@ The SharedStake V3 modular staking system is a composable, upgradeable on-chain 
 
 ### Supporting Contracts (not proxied)
 
-| Contract | Role |
-|---|---|
-| `StakingCore` | Core accounting and share math |
-| `StToken` | Rebasing staking token (ERC-20) |
-| `WstToken` | Non-rebasing wrapped token |
-| `WithdrawalQueueV2` | Withdrawal processing queue |
-| `FeeController` | Fee routing and distribution |
-| `DebtPool` | Merkle-based debt distribution |
-| `OracleAdapter` | Price feed interface |
-| `QuorumOracleAdapter` | Multi-oracle quorum impl |
-| `StEthPriceOracle` | stETH parity price oracle |
-| `ReferralCodeRegistry` | Referral code management |
+| Contract               | Role                                                                  |
+| ---------------------- | --------------------------------------------------------------------- |
+| `StakingCore`          | Core accounting and share math                                        |
+| `StToken`              | Rebasing staking token (ERC-20)                                       |
+| `WstToken`             | Non-rebasing wrapped token                                            |
+| `WithdrawalQueueV2`    | Withdrawal processing queue                                           |
+| `FeeController`        | Fee routing and distribution                                          |
+| `DebtPool`             | Merkle-based debt distribution                                        |
+| `SgEthV1Claim`         | sgETH V1 loss receipt-token Merkle claim; non-transferable by default |
+| `OracleAdapter`        | Price feed interface                                                  |
+| `QuorumOracleAdapter`  | Multi-oracle quorum impl                                              |
+| `StEthPriceOracle`     | stETH parity price oracle                                             |
+| `ReferralCodeRegistry` | Referral code management                                              |
 
 ---
 
@@ -51,11 +52,11 @@ The SharedStake V3 modular staking system is a composable, upgradeable on-chain 
 
 **Contracts behind UUPS proxies in PR 379:**
 
-| Contract | Proxy pattern | Upgrade auth |
-|---|---|---|
-| `StakingRouter` | ERC-1967 UUPS | `GOV` role (timelock-gated) |
-| `ValidatorModule` | ERC-1967 UUPS | `GOV` role (timelock-gated) |
-| `LSTWrapModule` | ERC-1967 UUPS | `GOV` role (timelock-gated) |
+| Contract           | Proxy pattern | Upgrade auth                |
+| ------------------ | ------------- | --------------------------- |
+| `StakingRouter`    | ERC-1967 UUPS | `GOV` role (timelock-gated) |
+| `ValidatorModule`  | ERC-1967 UUPS | `GOV` role (timelock-gated) |
+| `LSTWrapModule`    | ERC-1967 UUPS | `GOV` role (timelock-gated) |
 | `OperatorRegistry` | ERC-1967 UUPS | `GOV` role (timelock-gated) |
 
 ### Why UUPS over redeployment
@@ -128,13 +129,13 @@ DVTModule will use the same UUPS proxy pattern and `GranularPauseUpgradeable` ba
 
 ## Security Properties
 
-| Property | Mechanism |
-|---|---|
-| Upgrade authorization | `GOV` role only; enforced by `_authorizeUpgrade()` |
-| Pause granularity | Per-selector pause via `GranularPauseUpgradeable` |
-| Initialization guard | `initializer` modifier on all `initialize()` functions |
-| Re-entrancy | `ReentrancyGuardUpgradeable` on ETH-accepting paths |
-| Oracle manipulation | `StEthPriceOracle` derives price from Lido's share math (`getPooledEthByShares`), not a spot feed; Chainlink is used only as a staleness heartbeat. `LSTWrapModule` enforces a `maxOracleAge` staleness guard. |
+| Property              | Mechanism                                                                                                                                                                                                      |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Upgrade authorization | `GOV` role only; enforced by `_authorizeUpgrade()`                                                                                                                                                             |
+| Pause granularity     | Per-selector pause via `GranularPauseUpgradeable`                                                                                                                                                              |
+| Initialization guard  | `initializer` modifier on all `initialize()` functions                                                                                                                                                         |
+| Re-entrancy           | `ReentrancyGuardUpgradeable` on ETH-accepting paths                                                                                                                                                            |
+| Oracle manipulation   | `StEthPriceOracle` derives price from Lido's share math (`getPooledEthByShares`), not a spot feed; Chainlink is used only as a staleness heartbeat. `LSTWrapModule` enforces a `maxOracleAge` staleness guard. |
 
 ---
 

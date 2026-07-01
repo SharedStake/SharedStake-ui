@@ -23,6 +23,7 @@ const ArchitectureHub = () => import("../components/Architecture/ArchitectureHub
 const ModularStakingApp = () => import("../components/ModularStaking/ModularStakingApp.vue");
 const SoloStakePanel = () => import("../components/ModularStaking/SoloStakePanel.vue");
 const GovernancePage = () => import("../components/Governance/GovernancePage.vue");
+const SgEthV1Claim = () => import("../components/Earn/SgEthV1Claim.vue");
 
 // Vue.use(VueRouter); // No longer needed in Vue Router 4
 
@@ -110,7 +111,12 @@ let routes = [{
         name: "Solo Stake",
         component: SoloStakePanel,
     },
-{
+    {
+        path: "/sgeth-v1-claim",
+        name: "sgethV1Claim",
+        component: SgEthV1Claim,
+    },
+    {
         path: "/govern",
         name: "Governance",
         component: GovernancePage,
