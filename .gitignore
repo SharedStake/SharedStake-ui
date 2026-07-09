@@ -50,6 +50,7 @@ skills/solidity-auditor
 artifacts/
 tools/
 .gstack/
+.claude/skills/
 
 # Git worktree management
 .worktrees/
