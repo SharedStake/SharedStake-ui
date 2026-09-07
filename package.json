@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.28.6",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.63.0",
     "@types/webpack-env": "1.18.8",
     "@vitejs/plugin-vue": "6.0.4",
     "autoprefixer": "10.4.24",
