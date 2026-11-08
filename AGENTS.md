@@ -1,15 +1,5 @@
 # Agent Instructions
 
-<!-- token-reduce:begin -->
-## Token-Reduce Routing
-
-- If file location is unknown, your first discovery command MUST be `./skills/token-reduce/scripts/token-reduce-paths.sh topic words`.
-- Use the user’s literal nouns from the prompt in that first query (feature name, file stem, hook name, symbol).
-- Use `./skills/token-reduce/scripts/token-reduce-snippet.sh topic words` only if one ranked excerpt is needed after the path list.
-- Do not start repo discovery with `find .`, `ls -R`, `grep -R`, `rg --files .`, or broad `Glob` patterns.
-- Use scoped `rg -g` and targeted reads only after helper output.
-<!-- token-reduce:end -->
-
 <!-- SHARED_ATTRIBUTION_RULES_START -->
 ## Shared Attribution Rules
 
@@ -66,29 +56,3 @@ All Devin calls MUST route through the skill wrapper. Direct `devin --print` and
 - If Devin asks for clarification, use Codex guidance first and Claude second before asking a human.
 - Inspect telemetry regularly (`./skills/devin-delegate/scripts/devin_delegate_telemetry.py summary --days 14`).
 <!-- devin-delegate:end -->
-
-<!-- delegate-skill:begin -->
-## AI Delegation Routing
-
-> Canonical routing table lives in `~/.claude/skills/delegate-skill/SKILL.md`. This block
-> mirrors it for non-Claude agents. Keep the two in sync when routing changes.
-
-`devin-delegate` = general implement/review workhorse (browser/sandbox is a sub-capability).
-`kimi-delegate` = cheap small read-only. `grok-delegate` = **dormant** (revival gate: ≥5
-successful calls + a documented devin failure on a large repo).
-
-| Task type | Delegate | Command |
-|-----------|----------|---------|
-| General implementation / review / debug (workhorse) | `devin-delegate` | `devin-delegate --task "..." --workspace /path/to/repo` |
-| Browser, UI, screenshot, sandbox (a devin capability) | `devin-delegate` | `devin-delegate --task "..." --workspace /path/to/repo` |
-| Cheap **small read-only** search / summarize / draft / review | `kimi-delegate` | `kimi-delegate --task "..."` |
-| Local Codex write-mode implementation | `spark` | invoke via Codex write-mode |
-| Multi-file refactor on a very large codebase (DORMANT) | `grok-delegate` | `grok-delegate --task "..."` |
-| Unknown / orchestration | `devin-delegate` (workhorse); if clearly cheap+small, `kimi-delegate` | `devin-delegate --task "scope: ..."` |
-
-### Rules
-
-- **Never call delegates directly** (`opencode`, `pi --provider kimi-coding`, `devin`) — always use the wrapper scripts. Wrappers inject the envelope, fallback chain, and telemetry.
-- **Always include scope** in the task prompt: goal, constraints, acceptance checks, expected output format.
-- **Auth errors exit 126** — do not auto-retry. Print resume steps for the user.
-<!-- delegate-skill:end -->
