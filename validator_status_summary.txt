@@ -1,0 +1,23 @@
+================================================================================
+COMPREHENSIVE VALIDATOR STATUS REPORT
+================================================================================
+Generated: 2025-11-14T23:35:09.212Z
+Total Validators Checked: 500
+
+CATEGORY BREAKDOWN:
+  ✅ Active Validators:     40
+  🚪 Exited Validators:    460
+  🔨 Slashed Validators:   0
+  ❌ Not Found:            0
+
+BALANCE SUMMARY:
+  Active Validators:
+    Total Balance:        1341.6635 ETH
+    Total Effective:      1280.0000 ETH
+  Exited Validators:
+    Total Balance:        0.0000 ETH
+    Total Effective:      0.0000 ETH
+  GRAND TOTAL:
+    Total Balance:        1341.6635 ETH
+    Total Effective:      1280.0000 ETH
+================================================================================

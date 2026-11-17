@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-11-15T14:46:12.676Z",
+  "withdrawal_address": "0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e",
+  "summary": {
+    "total_validators": 500,
+    "active_validators": 40,
+    "exited_validators": {
+      "total": 460,
+      "sampled": 50,
+      "with_withdrawals_found": 0,
+      "estimated_total_withdrawn_eth": 14720,
+      "minimum_expected_eth": 14720,
+      "average_per_validator_eth": 32
+    },
+    "active_total_balance_eth": 1341.6638758280005,
+    "active_with_eth1": {
+      "count": 30,
+      "total_balance_eth": 960.2048587539999
+    },
+    "active_with_bls": {
+      "count": 10,
+      "total_balance_eth": 381.4590170740001
+    }
+  },
+  "verification_urls": {
+    "beacon_scan": "https://beaconscan.com/withdrawals?address=0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e",
+    "etherscan": "https://etherscan.io/address/0xa1feaf41d843d53d0f6bed86a8cf592ce21c409e"
+  },
+  "sample_withdrawals": []
+}
