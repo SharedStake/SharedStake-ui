@@ -1,0 +1,103 @@
+[
+  {
+    "name": "StakingRouter",
+    "sourcePath": "contracts/v2/modular-staking/StakingRouter.sol",
+    "functions": [
+      {
+        "name": "submit",
+        "inputs": [{"name": "referral", "type": "address", "internalType": "address"}],
+        "stateMutability": "payable",
+        "tier": "primary"
+      },
+      {
+        "name": "submitToModule",
+        "inputs": [
+          {"name": "moduleId", "type": "bytes32", "internalType": "bytes32"},
+          {"name": "referral", "type": "address", "internalType": "address"}
+        ],
+        "stateMutability": "payable",
+        "tier": "primary"
+      },
+      {
+        "name": "setMaxDeltaBps",
+        "inputs": [{"name": "bps", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      }
+    ]
+  },
+  {
+    "name": "ValidatorModule",
+    "sourcePath": "contracts/v2/modular-staking/modules/ValidatorModule.sol",
+    "functions": [
+      {
+        "name": "depositToBeaconChain",
+        "inputs": [
+          {"name": "pubkey", "type": "bytes", "internalType": "bytes"},
+          {"name": "withdrawalCredentials", "type": "bytes", "internalType": "bytes"},
+          {"name": "signature", "type": "bytes", "internalType": "bytes"},
+          {"name": "depositDataRoot", "type": "bytes32", "internalType": "bytes32"}
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "reportBeacon",
+        "inputs": [
+          {"name": "validators", "type": "uint256", "internalType": "uint256"},
+          {"name": "balance", "type": "uint256", "internalType": "uint256"}
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ]
+  },
+  {
+    "name": "WithdrawalQueueV2",
+    "sourcePath": "contracts/v2/modular-staking/WithdrawalQueueV2.sol",
+    "functions": [
+      {
+        "name": "requestWithdrawals",
+        "inputs": [
+          {"name": "amounts", "type": "array", "internalType": "uint256[]"},
+          {"name": "owner", "type": "address", "internalType": "address"}
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "finalize",
+        "inputs": [{"name": "lastRequestId", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "payable",
+        "tier": "primary"
+      },
+      {
+        "name": "claimWithdrawal",
+        "inputs": [
+          {"name": "requestId", "type": "uint256", "internalType": "uint256"},
+          {"name": "recipient", "type": "address", "internalType": "address payable"}
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ]
+  },
+  {
+    "name": "WstToken",
+    "sourcePath": "contracts/v2/modular-staking/WstToken.sol",
+    "functions": [
+      {
+        "name": "wrap",
+        "inputs": [{"name": "stAmount", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "unwrap",
+        "inputs": [{"name": "wstAmount", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ]
+  }
+]

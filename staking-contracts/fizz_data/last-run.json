@@ -1,0 +1,1285 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-29T09:54:24.970Z",
+  "projectRoot": ".",
+  "suiteDir": "test/fizz",
+  "metaDir": "fizz_data",
+  "contracts": [
+    {
+      "name": "StakingRouter",
+      "sourcePath": "contracts/v2/modular-staking/StakingRouter.sol",
+      "sourceHash": "sha256:2ce1deac86654f15bd81128b027baea3aefdca6ba21e2ea9cbfc57bf8803accb",
+      "constructor": {
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      "functions": [
+        {
+          "name": "emergencyPauseAll",
+          "inputs": [
+            {
+              "name": "moduleIds",
+              "type": "array",
+              "internalType": "bytes32[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "emergencyPauseAll(bytes32[])"
+        },
+        {
+          "name": "enableCodeHashEnforcement",
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "enableCodeHashEnforcement()"
+        },
+        {
+          "name": "grantRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "grantRole(bytes32,address)"
+        },
+        {
+          "name": "initialize",
+          "inputs": [
+            {
+              "name": "stToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "gov",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "initialize(address,address)"
+        },
+        {
+          "name": "notifyBeaconDeposit",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "notifyBeaconDeposit(bytes32,uint256)"
+        },
+        {
+          "name": "pause",
+          "inputs": [
+            {
+              "name": "fnId",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "pause(uint16)"
+        },
+        {
+          "name": "pauseModule",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "pauseModule(bytes32)"
+        },
+        {
+          "name": "registerModule",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "moduleAddr",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "mintCapEth",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "registerModule(bytes32,address,uint256)"
+        },
+        {
+          "name": "renounceRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "renounceRole(bytes32,address)"
+        },
+        {
+          "name": "reportModuleBeaconBalance",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "newBeaconBalance",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "reportModuleBeaconBalance(bytes32,uint256)"
+        },
+        {
+          "name": "revokeRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "revokeRole(bytes32,address)"
+        },
+        {
+          "name": "setDefaultModule",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setDefaultModule(bytes32)"
+        },
+        {
+          "name": "setFeeController",
+          "inputs": [
+            {
+              "name": "fc",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setFeeController(address)"
+        },
+        {
+          "name": "setGlobalInflowLimit",
+          "inputs": [
+            {
+              "name": "windowSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxInflowEthPerWindow",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setGlobalInflowLimit(uint256,uint256)"
+        },
+        {
+          "name": "setMaxDeltaBps",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "secondary",
+          "signature": "setMaxDeltaBps(uint256)"
+        },
+        {
+          "name": "setMaxTotalPooledEther",
+          "inputs": [
+            {
+              "name": "cap",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setMaxTotalPooledEther(uint256)"
+        },
+        {
+          "name": "setMintCap",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "mintCapEth",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setMintCap(bytes32,uint256)"
+        },
+        {
+          "name": "setModuleCodeHashAllowed",
+          "inputs": [
+            {
+              "name": "moduleType",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "codeHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "allowed",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setModuleCodeHashAllowed(bytes32,bytes32,bool)"
+        },
+        {
+          "name": "setModuleInflowLimit",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "windowSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxInflowEthPerWindow",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setModuleInflowLimit(bytes32,uint256,uint256)"
+        },
+        {
+          "name": "setModulePolicy",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setModulePolicy(bytes32,bytes32)"
+        },
+        {
+          "name": "setPolicyRegistry",
+          "inputs": [
+            {
+              "name": "registry",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setPolicyRegistry(address)"
+        },
+        {
+          "name": "setReferralCodeRegistry",
+          "inputs": [
+            {
+              "name": "registry",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setReferralCodeRegistry(address)"
+        },
+        {
+          "name": "submit",
+          "inputs": [
+            {
+              "name": "referral",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submit(address)"
+        },
+        {
+          "name": "submitToModule",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "referral",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submitToModule(bytes32,address)"
+        },
+        {
+          "name": "submitToModuleWithReferralCode",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "referralCode",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submitToModuleWithReferralCode(bytes32,bytes32)"
+        },
+        {
+          "name": "submitToModuleWithSource",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "referral",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "sourceId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submitToModuleWithSource(bytes32,address,bytes32)"
+        },
+        {
+          "name": "submitToModuleWithSourceAndReferralCode",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "referralCode",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "sourceId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submitToModuleWithSourceAndReferralCode(bytes32,bytes32,bytes32)"
+        },
+        {
+          "name": "submitWithReferralCode",
+          "inputs": [
+            {
+              "name": "referralCode",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submitWithReferralCode(bytes32)"
+        },
+        {
+          "name": "submitWithSource",
+          "inputs": [
+            {
+              "name": "referral",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "sourceId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submitWithSource(address,bytes32)"
+        },
+        {
+          "name": "submitWithSourceAndReferralCode",
+          "inputs": [
+            {
+              "name": "referralCode",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "sourceId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "submitWithSourceAndReferralCode(bytes32,bytes32)"
+        },
+        {
+          "name": "unpause",
+          "inputs": [
+            {
+              "name": "fnId",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "unpause(uint16)"
+        },
+        {
+          "name": "unpauseModule",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "unpauseModule(bytes32)"
+        },
+        {
+          "name": "unwrapToModule",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "caller",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "stTokenAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "unwrapToModule(bytes32,address,uint256)"
+        },
+        {
+          "name": "upgradeTo",
+          "inputs": [
+            {
+              "name": "newImplementation",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "upgradeTo(address)"
+        },
+        {
+          "name": "upgradeToAndCall",
+          "inputs": [
+            {
+              "name": "newImplementation",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "data",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "upgradeToAndCall(address,bytes)"
+        },
+        {
+          "name": "wrapFromModule",
+          "inputs": [
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "ethEquiv",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "wrapFromModule(bytes32,address,uint256)"
+        }
+      ]
+    },
+    {
+      "name": "ValidatorModule",
+      "sourcePath": "contracts/v2/modular-staking/modules/ValidatorModule.sol",
+      "sourceHash": "sha256:2e8b54b59e45545c0dbde334b1a15d09b8700e1cb81c1362174d6787b0e3ab12",
+      "constructor": {
+        "inputs": [],
+        "stateMutability": "nonpayable"
+      },
+      "functions": [
+        {
+          "name": "approvePubkey",
+          "inputs": [
+            {
+              "name": "pubkey",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "approvePubkey(bytes)"
+        },
+        {
+          "name": "depositToBeaconChain",
+          "inputs": [
+            {
+              "name": "pubkey",
+              "type": "bytes",
+              "internalType": "bytes"
+            },
+            {
+              "name": "withdrawal_credentials",
+              "type": "bytes",
+              "internalType": "bytes"
+            },
+            {
+              "name": "signature",
+              "type": "bytes",
+              "internalType": "bytes"
+            },
+            {
+              "name": "deposit_data_root",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "depositToBeaconChain(bytes,bytes,bytes,bytes32)"
+        },
+        {
+          "name": "grantRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "grantRole(bytes32,address)"
+        },
+        {
+          "name": "initialize",
+          "inputs": [
+            {
+              "name": "router",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "moduleId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "gov",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "beaconDepositContract",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "initialize(address,bytes32,address,address)"
+        },
+        {
+          "name": "pause",
+          "inputs": [
+            {
+              "name": "fnId",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "pause(uint16)"
+        },
+        {
+          "name": "receiveDeposit",
+          "inputs": [],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "receiveDeposit()"
+        },
+        {
+          "name": "renounceRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "renounceRole(bytes32,address)"
+        },
+        {
+          "name": "reportBeacon",
+          "inputs": [
+            {
+              "name": "newBeaconValidators",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "newBeaconBalance",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "reportBeacon(uint256,uint256)"
+        },
+        {
+          "name": "revokePubkey",
+          "inputs": [
+            {
+              "name": "pubkey",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "revokePubkey(bytes)"
+        },
+        {
+          "name": "revokeRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "revokeRole(bytes32,address)"
+        },
+        {
+          "name": "setExpectedWithdrawalCredentials",
+          "inputs": [
+            {
+              "name": "_expected",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setExpectedWithdrawalCredentials(bytes32)"
+        },
+        {
+          "name": "setOperatorRegistry",
+          "inputs": [
+            {
+              "name": "registry",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setOperatorRegistry(address)"
+        },
+        {
+          "name": "sweepExitedEth",
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "sweepExitedEth()"
+        },
+        {
+          "name": "unpause",
+          "inputs": [
+            {
+              "name": "fnId",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "unpause(uint16)"
+        },
+        {
+          "name": "upgradeTo",
+          "inputs": [
+            {
+              "name": "newImplementation",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "upgradeTo(address)"
+        },
+        {
+          "name": "upgradeToAndCall",
+          "inputs": [
+            {
+              "name": "newImplementation",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "data",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "upgradeToAndCall(address,bytes)"
+        }
+      ]
+    },
+    {
+      "name": "WithdrawalQueueV2",
+      "sourcePath": "contracts/v2/modular-staking/WithdrawalQueueV2.sol",
+      "sourceHash": "sha256:8d3eaf8e886fa70b1c85a43a70c6c334d7773d07ef2c2ed2778bc41e7410c459",
+      "constructor": {
+        "inputs": [
+          {
+            "name": "stToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "gov",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      "functions": [
+        {
+          "name": "claimWithdrawal",
+          "inputs": [
+            {
+              "name": "requestId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address payable"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "claimWithdrawal(uint256,address payable)"
+        },
+        {
+          "name": "claimWithdrawals",
+          "inputs": [
+            {
+              "name": "requestIds",
+              "type": "array",
+              "internalType": "uint256[]"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address payable"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "claimWithdrawals(uint256[],address payable)"
+        },
+        {
+          "name": "finalize",
+          "inputs": [
+            {
+              "name": "lastRequestId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "payable",
+          "tier": "primary",
+          "signature": "finalize(uint256)"
+        },
+        {
+          "name": "grantRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "grantRole(bytes32,address)"
+        },
+        {
+          "name": "recoverEth",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address payable"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "recoverEth(address payable,uint256)"
+        },
+        {
+          "name": "renounceRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "renounceRole(bytes32,address)"
+        },
+        {
+          "name": "requestWithdrawals",
+          "inputs": [
+            {
+              "name": "amounts",
+              "type": "array",
+              "internalType": "uint256[]"
+            },
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "requestWithdrawals(uint256[],address)"
+        },
+        {
+          "name": "revokeRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "revokeRole(bytes32,address)"
+        },
+        {
+          "name": "setBunkerMaxRequestsPerFinalize",
+          "inputs": [
+            {
+              "name": "maxRequests",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setBunkerMaxRequestsPerFinalize(uint256)"
+        },
+        {
+          "name": "setBunkerMinRequestAge",
+          "inputs": [
+            {
+              "name": "minAge",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "setBunkerMinRequestAge(uint256)"
+        },
+        {
+          "name": "updateModeFromOracle",
+          "inputs": [
+            {
+              "name": "isBunkerMode",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "reportTimestamp",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "updateModeFromOracle(bool,uint256)"
+        },
+        {
+          "name": "withdrawRefund",
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "withdrawRefund()"
+        }
+      ]
+    },
+    {
+      "name": "WstToken",
+      "sourcePath": "contracts/v2/modular-staking/WstToken.sol",
+      "sourceHash": "sha256:c4dc3020d35503ed7877aca451ef17ad859d604f0f5a7cfc8eff4a57747f7735",
+      "constructor": {
+        "inputs": [
+          {
+            "name": "stToken",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      "functions": [
+        {
+          "name": "approve",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "approve(address,uint256)"
+        },
+        {
+          "name": "decreaseAllowance",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "subtractedValue",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "decreaseAllowance(address,uint256)"
+        },
+        {
+          "name": "increaseAllowance",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "addedValue",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "increaseAllowance(address,uint256)"
+        },
+        {
+          "name": "permit",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "spender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "value",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "v",
+              "type": "uint8",
+              "internalType": "uint8"
+            },
+            {
+              "name": "r",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "s",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"
+        },
+        {
+          "name": "transfer",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "transfer(address,uint256)"
+        },
+        {
+          "name": "transferFrom",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "transferFrom(address,address,uint256)"
+        },
+        {
+          "name": "unwrap",
+          "inputs": [
+            {
+              "name": "wstAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "unwrap(uint256)"
+        },
+        {
+          "name": "wrap",
+          "inputs": [
+            {
+              "name": "stAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "tier": "primary",
+          "signature": "wrap(uint256)"
+        }
+      ]
+    }
+  ],
+  "handlers": {
+    "Handlers.sol": "sha256:6f5d936a9ca2bc5ef7494f6990a565f02911460c438ee98242526d3be4982c02",
+    "StakingRouterHandler.sol": "sha256:3adbe0f966bf830ecced1bcdbef71004607439c2049e59ee89ef10e34fb60bb6",
+    "ValidatorModuleHandler.sol": "sha256:ec414cc844b650cf49c7e1a55f494fb1f01866e2f1065b5080d4416a9fd75eac",
+    "WithdrawalQueueV2Handler.sol": "sha256:9d3826cba66f533edbcd09d883410bf6d29e708da4fb3e2a136926874883e17f",
+    "WstTokenHandler.sol": "sha256:e9f8c4bce29f4091b39e0f8ec9ed2fb4913238b4095a26d3890009e01cbdbf70"
+  },
+  "properties": []
+}

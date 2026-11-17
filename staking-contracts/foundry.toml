@@ -1,0 +1,27 @@
+[profile.default]
+src = "contracts"
+test = "test/foundry"
+out = "out"
+cache_path = "cache/foundry"
+libs = ["node_modules", "lib"]
+remappings = [
+    "@openzeppelin/=node_modules/@openzeppelin/",
+    "solmate/=node_modules/solmate/",
+]
+# solc-version = "0.8.20"  # Let Foundry auto-detect from pragma
+optimizer = true
+optimizer-runs = 200
+via-ir = true
+
+[profile.default.invariant]
+runs = 256
+depth = 32
+fail_on_revert = false
+
+# >>> fizz fuzz profile
+[profile.fuzz]
+test = "test/fizz"
+via-ir = true
+optimizer = true
+optimizer-runs = 200
+# <<< fizz fuzz profile

@@ -21,7 +21,7 @@ export default defineConfig({
     port: 8080,
     host: true,
     watch: {
-      ignored: ['**/skills/**', '**/SharedDeposit/**', '**/.git/**']
+      ignored: ['**/skills/**', '**/.git/**']
     }
   },
   build: {
@@ -35,7 +35,7 @@ export default defineConfig({
           // Separate UI libraries
           'ui-vendor': ['vue-toastification', 'vue-ellipse-progress', 'axios'],
           // Separate utility libraries
-          'utils-vendor': ['bignumber.js', 'core-js', 'bnc-notify', 'marked']
+          'utils-vendor': ['bignumber.js', 'core-js', 'marked']
         }
       }
     }

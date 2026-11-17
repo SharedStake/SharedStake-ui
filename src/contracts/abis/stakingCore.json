@@ -60,6 +60,11 @@
   },
   {
     "inputs": [],
+    "name": "InvalidAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "InvalidAmount",
     "type": "error"
   },
@@ -106,6 +111,27 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "NotAContract",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "locked",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "postTotalPooled",
+        "type": "uint256"
+      }
+    ],
+    "name": "QueueExceedsPooledEther",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -125,6 +151,21 @@
       }
     ],
     "name": "ReferralCodeRegistryNotContract",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RouterModeAlreadyEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RouterModeDisabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
     "type": "error"
   },
   {
@@ -407,6 +448,19 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "gov",
+        "type": "address"
+      }
+    ],
+    "name": "RouterModeEnabled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "sender",
         "type": "address"
       },
@@ -486,6 +540,19 @@
       }
     ],
     "name": "Unpaused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "queue",
+        "type": "address"
+      }
+    ],
+    "name": "WithdrawalQueueSet",
     "type": "event"
   },
   {
@@ -616,6 +683,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "router",
+        "type": "address"
+      }
+    ],
+    "name": "enableRouterMode",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -805,6 +885,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "routerMode",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -826,6 +919,19 @@
       }
     ],
     "name": "setReferralCodeRegistry",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "queue",
+        "type": "address"
+      }
+    ],
+    "name": "setWithdrawalQueue",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -959,6 +1065,19 @@
     "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawalQueue",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

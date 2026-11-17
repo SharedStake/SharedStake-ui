@@ -2,127 +2,52 @@
   <div class="container">
     <div class="max-w-2xl mx-auto text-gray-300">
       <h1 class="text-2xl font-medium text-center border-b border-b-white pb-3 mb-6">
-        SharedStake V2 FAQ
+        SGT Discord FAQ
       </h1>
 
-      <div class="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4 mb-6">
-        <h3 class="text-lg font-semibold text-blue-300 mb-2">
-          📚 New Documentation Center Available
-        </h3>
-        <p class="text-sm mb-2">
-          For comprehensive V2 documentation, please visit our new <router-link
-            to="/docs"
-            class="text-blue-400 underline hover:text-blue-300"
-          >
-            Documentation Center
-          </router-link>.
-        </p>
-        <p class="text-sm">
-          The docs below cover common questions. For detailed technical information, see the full documentation.
-        </p>
-      </div>
+      <h2>How does SharedStake generate fees on the platform?</h2>
+      <p>When you initially deposit and stake vETH2, only a 0.315% fee goes to the DAO treasury plus 5% of earnings using the protocol. With a whopping 95% of earnings going directly to the liquidity providers, staking with SharedStake quickly becomes profitable.</p>
 
-      <h2>What is SharedStake V2?</h2>
-      <p>SharedStake V2 is a modular liquid staking protocol built on Ethereum. Users stake ETH to receive stETH shares (rebasing) or wstETH (non-rebasing wrapped tokens). The protocol uses a router-based architecture with multiple staking routes including solo validator and DVT modules.</p>
+      <h2>Can I stake any amount of ETH and earn a positive return?</h2>
+      <p>You can stake as little as 0.1 ETH and simply hold onto your vETH2 staking tokens to be eligible to receive ETH 2.0 staking rewards.</p>
 
-      <h2>What token do I receive when staking?</h2>
-      <p>You receive stETH shares in the V2 accounting model. You can wrap stETH to non-rebasing wstETH for DeFi composability. Both represent your share of the pooled ETH.</p>
+      <h2>Are displayed protocol APYs always 100% accurate?</h2>
+      <p>Protocol APYs are generated based on the total combined participants in the pool and the period of time all participants were staked. Coming in as a new participant, protocol APYs may slightly vary from those displayed. </p>
 
-      <h2>Are withdrawals instant?</h2>
-      <p>No. Withdrawals use a queue model: you request a withdrawal first, then claim your ETH once it's finalized by the guardian. This queue-based system ensures orderly exits and protocol stability.</p>
+      <h2>How does SharedStake compare with Lido Finance, Rocket Pool, and other competitors?</h2>
+      <p>SharedStake offers a competitive return compared to the rates offered by other staking services such as Lido and Rocket Pool. By using vETH2 instead of wETH or other wrapped tokens, we are able to give our users an additional 7-8% annually with off-chain profit distribution. Additionally, SharedStake is a community led project, whereas other staking services in the space are VC-lead. Other future benefits will include lending and borrowing, such as using your vETH2 stake as collateral.</p>
 
-      <h2>How does SharedStake compare to other liquid staking protocols?</h2>
-      <p>SharedStake V2 differentiates itself through:</p>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Modular Architecture:</strong> Router-based design allowing multiple staking routes (solo validator, DVT, LST wrap)</li>
-        <li><strong>Community-Led:</strong> Governed by the community rather than VC-controlled</li>
-        <li><strong>Flexible Routes:</strong> Support for different validator operation models</li>
-        <li><strong>Referral System:</strong> Built-in referral code and address tracking</li>
-        <li><strong>Queue-Based Exits:</strong> Structured withdrawal process with guardian controls</li>
-      </ul>
-      <p class="text-sm text-gray-400">
-        For detailed feature comparisons, see our <router-link
-          to="/docs/architecture"
-          class="underline"
-        >
-          Architecture documentation
-        </router-link>.
-      </p>
+      <h2>What is the long-term vision of SharedStake?</h2>
+      <p>Our vision is to be the best ETH 2.0 staking solution in DeFi by offering better rewards, user experience and DeFi Compatibility than any other Staking-as-a-Service model on the market.</p>
 
-      <h2>What are the referral options?</h2>
-      <p>SharedStake V2 supports two referral methods:</p>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Address Referral:</strong> Use <code>?ref=0x...</code> in URLs for direct wallet address referrals</li>
-        <li><strong>Code Referral:</strong> Use <code>?r=CODE</code> for shareable referral codes with optional backend resolution</li>
-      </ul>
-      <p class="text-sm text-gray-400">
-        See <router-link
-          to="/docs/referral"
-          class="underline"
-        >
-          Referral documentation
-        </router-link> for details.
-      </p>
+      <h2>Has SharedStake been audited before and if so, what were the results?</h2>
+      <p>We were audited by Certik. No major issues found and any minor concerns have since been addressed.</p>
+      <p><a href="https://www.certik.org/projects/sharedstake">Read to report here.</a></p>
 
-      <h2>How does the governance work in V2?</h2>
-      <p>V2 governance is currently in a read-only preview mode in the UI. The governance tab shows core parameters, but proposal creation, voting, and execution flows are still being developed. Governance operations are managed through timelock-controlled contracts with role-based access control.</p>
+      <h2>Explain the relationship between SharedStake and the Ethereum Foundation. Who is generating my return?</h2>
+      <p>SharedStake is partnered with the Ethereum Foundation to provide ETH 2.0 staking. Returns come directly from the Ethereum Foundation. By using vETH2 instead of wETH or other wrapped tokens, we are able to give our users an additional 7-8% annually with off-chain profit distribution.</p>
 
-      <h2>Is SharedStake V2 audited?</h2>
-      <p>Yes, SharedStake V2 has undergone comprehensive internal security audits with 6 audit passes covering:</p>
-      <ul class="list-disc ml-6 mb-4">
-        <li>Contract security and access control</li>
-        <li>Adversarial and fuzz testing</li>
-        <li>Foundry invariant testing</li>
-        <li>End-to-end validation on forked networks</li>
-      </ul>
-      <p class="text-sm text-gray-400">
-        See <router-link
-          to="/docs/security-risks"
-          class="underline"
-        >
-          Security & Risks documentation
-        </router-link> for details.
-      </p>
+      <h2>Can I redeem my staked ETH at any time?</h2>
+      <p>SharedStake keeps 10% of all ETH deposits in a side pool to allow for people to exit their stake at any time. However, the nature of ETH 2.0 staking is that all ETH staked is locked until the ETH 2.0 merge. If the side pool runs out, you will not be able to swap your vETH2 back for ETH until the merge.</p>
+      <p>However, we have set up vETH2 liquidity through <a href="https://saddle.finance/">Saddle Finance</a> to provide alternative exit options for users who wish to do so.</p>
+      
+      <h2>Where can I buy SGT?</h2>
+      <p>You can buy SGT on Uniswap via <a href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x84810bcf08744d5862b8181f12d17bfd57d3b078&use=V2">this link</a>.</p>
+      <p>Contract address for SGT is: 0x84810bcf08744d5862b8181f12d17bfd57d3b078. View more stats on <a href="https://etherscan.io/token/0x84810bcf08744d5862b8181f12d17bfd57d3b078">Etherscan</a></p>
 
-      <h2>What are the main risks?</h2>
-      <p>As with any DeFi protocol, risks include:</p>
-      <ul class="list-disc ml-6 mb-4">
-        <li>Smart contract risks and potential bugs</li>
-        <li>Oracle dependency and reporting quality</li>
-        <li>Operational key management risks</li>
-        <li>Protocol governance decisions</li>
-        <li>Ethereum network-level risks</li>
-      </ul>
-      <p class="text-sm text-gray-400">
-        Always review the <router-link
-          to="/docs/security-risks"
-          class="underline"
-        >
-          Security & Risks documentation
-        </router-link> before staking.
-      </p>
+      <h2>Why are there only 10m SGT tokens and how long till they are all in circulation?</h2>
+      <p>SGT tokenomics are the result of countless hours of internal and external participation in the SharedStake protocol. The emissions rate of our pools is determined by the DAO, which the community is incentivized to participate in.</p>
+      
+      <h2>Is SGT considered to be an “altcoin”?</h2>
+      <p>Yes. SGT is a governance token on the Ethereum blockchain used to improve the SharedStake protocol. “Altcoin'' is merely a blanket term, applied to anything that isn’t Bitcoin. Ultimately, viewing SGT as a governance token is more accurate.</p>
 
-      <h2>How can I participate in governance?</h2>
-      <p>Currently, governance operations are managed off-chain through the DAO processes. The UI governance tab is informational only. Full on-chain governance integration is planned for future releases.</p>
+      <h2>What are the benefits of staking SGT?</h2>
+      <p>Staking SGT rewards you with additional SGT tokens, an added benefit to holding SGT other than governance, and price exposure to SharedStake as a project. </p>
 
-      <h2>Where can I find technical documentation?</h2>
-      <p>
-        Comprehensive technical documentation is available in our <router-link
-          to="/docs"
-          class="underline"
-        >
-          Documentation Center
-        </router-link>, including:
-      </p>
-      <ul class="list-disc ml-6 mb-4">
-        <li>User Guide for staking flows</li>
-        <li>Architecture and contract details</li>
-        <li>Security and risk analysis</li>
-        <li>Operations and deployment guides</li>
-        <li>API and integration documentation</li>
-      </ul>
+      <h2>How can I help spread the word about ShareStake?</h2>
+      <p>Follow us on Twitter, Discord. Please help us by following, liking and resharing our news updates.</p>
 
-      <div class="flex gap-3 mt-6">
+      <div class="flex gap-3 mt-2">
         <a
           rel="noopener noreferrer nofollow"
           target="_blank"
@@ -136,6 +61,30 @@
           href="https://discord.com/invite/VezkjY9udC"
         >Discord</a>
       </div>
+
+      <h2>How can I be sure my investments will be safe from hackers?</h2>
+      <p>You can never have 100% protection from hackers. All DeFi protocols are exposed to some degree of smart contract risk, including hacks and exploits. SharedStake has been audited by CertiK, but this does not eliminate risk entirely. PLEASE DO NOT RISK ANY FUNDS YOU CANNOT AFFORD TO LOSE.</p>
+
+      <h2>Am I able to vote by holding SGT tokens?</h2>
+      <p>Yes, you can only participate in governance votes by owning SGT tokens. You can vote with your SGT on all SIPs (SharedStake Improvement Proposals) through <a href="https://snapshot.org/#/sharedstake.eth">Snapshot</a></p>
+
+      <h2>Am I able to create proposed changes to the protocol?</h2>
+      <p>There are many ways to participate in SharedStake, including making improvements to our protocol. We are always on the lookout for Solidity developers. However, users may also participate in SGT by engaging in governance on the Forum or Discord, or resharing our Twitter posts and participating in contests. There are many ways to engage SharedStake and shape its future. </p>
+
+      <h2>Where do I go to vote for proposals and discuss governance?</h2>
+      <p>SIP voting is held on Snapshot: <a href="https://snapshot.org/#/sharedstake.eth">https://snapshot.org/#/sharedstake.eth</a></p>
+
+      <h2>Are there any open positions with SharedStake?</h2>
+      <p>We are always on the look out for Solidity developers and other talent within the DeFi space. If you are interested in working with us, please reach out on our discord</p>
+
+      <h2>Where can I find video walkthroughs on how to use the protocol and partner protocols?</h2>
+      <p>Check out our <a href="https://www.youtube.com/channel/UCm_VXKxb9I9KY6-wqD17sfw">YouTube</a>!</p>
+
+      <h2>What is vETH2?</h2>
+      <p>vETH2 is SharedStake’s token which represents ETH staked in the ETH 2.0 staking contract. After the merge, vETH2 will be redeemable for ETH at a 1:1 rate. You can check out all blocks generated by SharedStake's ETH2 validators on <a href="https://beaconcha.in/blocks?q=sharedstake.org">the beacon chain</a>.</p>
+
+      <h2>What role does Saddle Finance play in SharedStake?</h2>
+      <p>SharedStake has partnered with <a href="https://saddle.finance/">Saddle Finance</a> to facilitate additional liquidity for vETH2. This also provides an additional yield opportunity for vETH2 holders on top of ETH 2.0 staking rewards.</p>
     </div>
   </div>
 </template>

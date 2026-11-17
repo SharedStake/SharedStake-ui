@@ -3,7 +3,7 @@
 
 case "${1:-help}" in
   contracts)
-    cd SharedDeposit && npx hardhat deploy --network sepolia --tags all
+    cd staking-contracts && npx hardhat deploy --network sepolia --tags all
     ;;
   services)
     docker-compose up -d

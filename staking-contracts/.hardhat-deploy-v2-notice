@@ -1,0 +1,19 @@
+HARDHAT-DEPLOY V2 - V1 PATTERNS DETECTED
+
+This file was created because hardhat-deploy v2 detected v1 patterns in your project.
+You can delete this file after reading.
+
+Detected issues:
+  - 'namedAccounts' found in hardhat.config.ts
+  - CommonJS 'module.exports' found in hardhat.config.ts
+
+To resolve this, either:
+
+1. Install hardhat-deploy v1 instead:
+   npm uninstall hardhat-deploy
+   npm install hardhat-deploy@1
+
+2. Migrate your project to v2:
+   https://rocketh.dev/hardhat-deploy/documentation/how-to/migration-from-v1.html
+
+For more information, see the migration guide.

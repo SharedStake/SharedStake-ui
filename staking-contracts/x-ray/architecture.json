@@ -1,0 +1,35 @@
+{
+  "title": "SharedStake V2 Modular Staking",
+  "nodes": [
+    {"id": "users", "label": "Users"},
+    {"id": "router", "label": "StakingRouter"},
+    {"id": "sttoken", "label": "StToken"},
+    {"id": "wst", "label": "WstToken / ERC4626 wrapper"},
+    {"id": "validator", "label": "ValidatorModule"},
+    {"id": "beacon", "label": "Beacon deposit contract"},
+    {"id": "queue", "label": "WithdrawalQueueV2"},
+    {"id": "oracle", "label": "Oracle / QuorumOracleAdapter"},
+    {"id": "fee", "label": "FeeController"},
+    {"id": "referral", "label": "ReferralRegistry"},
+    {"id": "debt", "label": "DebtPool"},
+    {"id": "gov", "label": "Governance / Guardian"}
+  ],
+  "edges": [
+    {"from": "users", "to": "router", "label": "stake ETH"},
+    {"from": "router", "to": "sttoken", "label": "mint shares / update pooled ETH"},
+    {"from": "router", "to": "validator", "label": "route ETH to module"},
+    {"from": "validator", "to": "beacon", "label": "32 ETH deposits"},
+    {"from": "oracle", "to": "validator", "label": "beacon report"},
+    {"from": "validator", "to": "router", "label": "report baseline delta"},
+    {"from": "router", "to": "fee", "label": "compute reward split"},
+    {"from": "router", "to": "referral", "label": "mint referral fee shares"},
+    {"from": "router", "to": "debt", "label": "mint debt fee shares"},
+    {"from": "debt", "to": "wst", "label": "wrap fee shares"},
+    {"from": "users", "to": "queue", "label": "request/claim withdrawal"},
+    {"from": "queue", "to": "sttoken", "label": "burn shares / reduce pool"},
+    {"from": "users", "to": "wst", "label": "wrap non-rebasing claim"},
+    {"from": "gov", "to": "router", "label": "modules, caps, codehash"},
+    {"from": "gov", "to": "queue", "label": "finalize batches"},
+    {"from": "gov", "to": "fee", "label": "recipient/split config"}
+  ]
+}

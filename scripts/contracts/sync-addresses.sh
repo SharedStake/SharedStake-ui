@@ -24,7 +24,7 @@ NETWORK="${1:-localhost}"
 TARGET="${2:-$REPO_ROOT/src/contracts/addresses/local.json}"
 
 require_cmd jq
-ensure_shareddeposit_present
+ensure_contracts_present
 
 mkdir -p "$(dirname "$TARGET")"
 

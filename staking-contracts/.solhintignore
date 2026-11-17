@@ -1,0 +1,26 @@
+# folders
+.yarn/
+build/
+dist/
+node_modules/
+flats/
+data/
+
+# files
+other_contracts/*
+contracts/interfaces/*
+contracts/util/*
+contracts/vEth2.sol
+contracts/masterChefGeneric_Iron.sol
+contracts/governance/VestingMerkleDistributor.sol
+deploy_log.json
+
+contracts/governance/SimpleVesting.sol
+contracts/util/SingleTokenVestingNonRevocable.sol
+./**/*.js
+test/**/*
+./**/*.md
+./**/*.json
+**/v2/interfaces/*
+contracts/v2/lib/xERC4626.sol
+contracts/v2/lib/PaymentSplitter.sol
